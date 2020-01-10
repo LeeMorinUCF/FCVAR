@@ -24,6 +24,13 @@
 # 
 ################################################################################
 
+
+# Load pracma package of tools for linear algebra. 
+# install.packages('pracma')
+library(pracma)
+# Dependency: null function. 
+
+
 ################################################################################
 # Define list object to contain estimation options.
 ################################################################################
@@ -516,6 +523,161 @@ updateRestrictions <- function(obj, p, r) {
 
 
 ################################################################################
+# Define function to obtain bounds on parameters.
+################################################################################
+# 
+# function [ UB, LB ] <- GetBounds(opt)
+# Written by Michal Popiel and Morten Nielsen (This version 04.11.2016)
+# 
+# DESCRIPTION: This function obtains upper and lower bounds on d,b or on 
+#   phi, given by db <- H*phi + h. 
+#
+# Input  <- opt   (object containing estimation options)
+# Output <- UB (a 2x1 or 1x1 upper bound for db or phi)
+#          LB (a 2x1 or 1x1 lower bound for db or phi)
+# 
+################################################################################
+
+
+GetBounds <- function(opt) {
+  
+  
+  if(is.null(opt$R_psi)) {
+    # R_psi empty. Upper and lower bounds are the max and min values input
+    # by the user. Both different and same bounds are permitted for d, b.
+    # Maximum
+    UB <- opt$dbMax
+    # Minimum
+    LB <- opt$dbMin
+  } else {
+    
+    
+    # This set of variables is defined for easy translation between
+    # phi (unrestricted parameter) and d,b (restricted parameters).
+    R <- opt$R_psi
+    s <- opt$r_psi
+    H <- null(R)
+    h <- t(R) %*% inv(R*t(R)) %*% s 
+    
+    UB <- NULL
+    LB <- NULL
+    
+    # If there are two restrictions imposed, both d and b are restricted
+    # and the upper and lower bounds are set to their restricted values.
+    if(nrow(R) == 2) {
+      UB <- t(h)
+      LB <- t(h)
+    }
+    end
+    
+    # If there is 1 restriction, then there is 1 free parameter.
+    if(size(R,1) == 1) {
+      
+      # Calculate endpoints of the grid from dbMin and dbMax to free
+      # parameter phi. Note that since the null space can be either
+      # positive or negative, the following conditional statements are
+      # needed.
+      if(h[1]>0) {
+        phiMin1 <- (opt$dbMin(1) - h[1]) / h[1]
+        phiMax1 <- (opt$dbMax(1) - h[1]) / h[1]
+      } else if(h[1]<0) {
+        phiMin1 <- (opt$dbMax(1) - h[1]) / h[1]
+        phiMax1 <- (opt$dbMin(1) - h[1]) / h[1]
+      }
+      else {
+        phiMin1 <- NA
+        phiMax1 <- NA
+      }
+      end
+      if(h[2]>0) {
+        phiMin2 <- (opt$dbMin(2) - h[2]) / h[2]
+        phiMax2 <- (opt$dbMax(2) - h[2]) / h[2]
+      } else if(h[2]<0) {
+        phiMin2 <- (opt$dbMax(2) - h[2]) / h[2]
+        phiMax2 <- (opt$dbMin(2) - h[2]) / h[2]
+      } else {
+        phiMin2 <- NA
+        phiMax2 <- NA
+      }
+      end
+      
+      # Take into account the condition d>=b, if required.
+      if(opt$constrained) {
+        if (h[1]>h[2]) {
+          phiMin3 <- (h[2]-h[1])/(h[1] - h[2])
+          phiMax3 <- NA
+        }
+        else {
+          phiMax3 <- (h[2]-h[1])/(h[1] - h[2])
+          phiMin3 <- NA
+        }
+        end
+      }
+      else {
+        phiMin3 <- NA
+        phiMax3 <- NA
+      }
+      end
+      
+      LB <- max(max(phiMin1, phiMin2), phiMin3)
+      UB <- min(min(phiMax1, phiMax2), phiMax3)    
+      end
+      
+      
+    }
+    
+  }
+  
+  UB_LB_bounds <- list(UB = UB, LB = LB)
+  
+  return(UB_LB_bounds)
+}
+
+#_________________________________________________________________________
+
+
+################################################################################
 # End
 ################################################################################
+
+
+
+################################################################################
+# Testing null() function
+################################################################################
+# 
+# 
+# install.packages('pracma')
+# library(pracma)
+# 
+# a <- matrix(c(
+#   16,     2,     3,    13,
+#   5,    11,    10,     8,
+#   9,     7,     6,    12,
+#   4,    14,    15,     1), 4, 4, byrow = TRUE)
+# 
+# null(a)
+# # [,1]
+# # [1,] -0.2236068
+# # [2,] -0.6708204
+# # [3,]  0.6708204
+# # [4,]  0.2236068
+# 
+# 
+# a <- matrix(c(
+#   1,8,15,67,
+#   7,    14,    16,     3), nrow = 2, ncol = 4, byrow = TRUE)
+# 
+# 
+# null(a)
+# # [,1]        [,2]
+# # [1,] -0.29767375 -0.89698149
+# # [2,] -0.63974275  0.43972988
+# # [3,]  0.70442146  0.01565751
+# # [4,] -0.07687621 -0.04262269
+# 
+# # Match the values for the matlab function.
+# # https://www.mathworks.com/help/matlab/ref/null.html
+# 
+
 
