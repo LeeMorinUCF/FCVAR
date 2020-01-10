@@ -1,4 +1,4 @@
-% This code replicates Table 4: FCVAR results for Model 1, in 
+% This code replicates Table 4: FCVAR results for Model 1, in
 % Maggie E.C. Jones, Morten \Orregaard Nielsen & Michal Ksawery Popiel (2014).
 %   "A fractionally cointegrated VAR analysis of economic voting and political support,"
 %   Canadian Journal of Economics.
@@ -22,7 +22,7 @@ x6 = data(:, [1 2 3 4 5 6]);
 p                = size(x1, 2); % system dimension.
 kmax             = 3;    % maximum number of lags for VECM.
 order            = 12;   % number of lags for white noise test in lag selection.
-printWNtest      = 1;    % to print results of white noise tests post-estimation.                      
+printWNtest      = 1;    % to print results of white noise tests post-estimation.
 
 % -------- Choosing estimation options ----------%
 opt = EstOptions; % Define variable to store Estimation Options (object).
@@ -45,13 +45,13 @@ opt.progress 	 = 0; % Show grid search progress indicator waitbar.
 opt.updateTime   = .5; % How often progress is updated (seconds).
 
 % Linux example:
-opt.progLoc = '"/usr/bin/fdpval"';  % location path with program name 
+opt.progLoc = '"/usr/bin/fdpval"';  % location path with program name
                                     % of fracdist program, if installed
-                                    % Note: use both single (outside) and double 
-                                    % quotes (inside). This is especially important 
+                                    % Note: use both single (outside) and double
+                                    % quotes (inside). This is especially important
                                     % if path name has spaces.
-% Windows example: 
-% opt.progLoc = '".\fdpval\fdpval"';  % program located in folder fdpval in current directory                                
+% Windows example:
+% opt.progLoc = '".\fdpval\fdpval"';  % program located in folder fdpval in current directory
 
 % There are many other options (see EstOptions.m for
 % everything else. These can be accessed/modified as in, for example:
@@ -76,7 +76,7 @@ rankTestStats = RankTests(x1, k, opt);
 
 %% --------- UNRESTRICTED MODEL ESTIMATION ---------- %
 
-r=1; 
+r=1;
 
 opt1 = DefaultOpt;  opt1.gridSearch = 0;
 
@@ -88,7 +88,7 @@ mv_wntest(m1.Residuals, order, printWNtest);
 %% --------- IMPOSE RESTRICTIONS AND TEST THEM ---------- %
 
 DefaultOpt.gridSearch = 0;	% turn off grid search for restricted models
-							%	because it's too intensive.
+							%	because it is too intensive.
 
 %% Test restriction that d=b=1.
 opt1 = DefaultOpt;
@@ -118,7 +118,7 @@ Hbeta1 = HypoTest(m1, m1r2); 	% Test the null of m1r2 against the alternative m1
 
 %% Test restriction that political variable is long-run exogenous.
 opt1 = DefaultOpt;
-opt1.R_Alpha = [1 0 0]; 
+opt1.R_Alpha = [1 0 0];
 
 m1r3 = FCVARestn(x1, k, r, opt1); % This restricted model is now in the structure m1r3.
 
