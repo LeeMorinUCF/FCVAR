@@ -114,19 +114,27 @@ DefaultOpt <- opt # Store the options for restoring them in between hypothesis t
 startProg <- Sys.time() # start timer
 
 
-## --------- LAG SELECTION ---------- #
+#--------------------------------------------------------------------------------
+# LAG SELECTION 
+#--------------------------------------------------------------------------------
 
 LagSelect(x1, kmax, p, order, opt)
 
 
-## --------- COINTEGRATION RANK TESTING ---------- #
+#--------------------------------------------------------------------------------
+# COINTEGRATION RANK TESTING
+#--------------------------------------------------------------------------------
+
 
 k <- 2
 
 rankTestStats <- RankTests(x1, k, opt)
 
 
-## --------- UNRESTRICTED MODEL ESTIMATION ---------- #
+#--------------------------------------------------------------------------------
+# UNRESTRICTED MODEL ESTIMATION
+#--------------------------------------------------------------------------------
+
 
 r<-1
 
@@ -137,8 +145,10 @@ m1 <- FCVARestn(x1, k, r, opt1) # This model is now in the structure m1.
 
 mv_wntest(m1.Residuals, order, printWNtest)
 
+#--------------------------------------------------------------------------------
+# IMPOSE RESTRICTIONS AND TEST THEM
+#--------------------------------------------------------------------------------
 
-## --------- IMPOSE RESTRICTIONS AND TEST THEM ---------- #
 
 Defaultopt$gridSearch <- 0	# turn off grid search for restricted models
 							#	because it is too intensive.
@@ -207,7 +217,10 @@ Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m
 
 
 
-## RESTRICTED MODEL OUTPUT - print normalized beta and alpha for model m1r4.
+#--------------------------------------------------------------------------------
+# RESTRICTED MODEL OUTPUT 
+#   - print normalized beta and alpha for model m1r4.
+#--------------------------------------------------------------------------------
 
 # Assign model.
 modelRstrct <- m1r4
