@@ -130,7 +130,8 @@ rankTestStats <- RankTests(x1, k, opt)
 
 r<-1
 
-opt1 <- DefaultOpt  opt1.gridSearch <- 0
+opt1 <- DefaultOpt  
+opt1.gridSearch <- 0
 
 m1 <- FCVARestn(x1, k, r, opt1) # This model is now in the structure m1.
 
@@ -144,7 +145,7 @@ Defaultopt$gridSearch <- 0	# turn off grid search for restricted models
 
 ## Test restriction that d<-b<-1.
 opt1 <- DefaultOpt
-opt1.R_psi <- [1 0]
+opt1.R_psi <- c(1, 0)
 opt1.r_psi <- 1
 
 m1r1 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r1.
@@ -157,7 +158,7 @@ Hdb <- HypoTest(m1, m1r1) 	# Test the null of m1r1 against the alternative m1 an
 
 ## Test restriction that political variables do not enter the cointegrating relation(s).
 opt1 <- DefaultOpt
-opt1.R_Beta <- [1 0 0]
+opt1.R_Beta <- c(1, 0, 0)
 
 m1r2 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r2.
 
@@ -170,7 +171,7 @@ Hbeta1 <- HypoTest(m1, m1r2) 	# Test the null of m1r2 against the alternative m1
 
 ## Test restriction that political variable is long-run exogenous.
 opt1 <- DefaultOpt
-opt1.R_Alpha <- [1 0 0]
+opt1.R_Alpha <- c(1, 0, 0)
 
 m1r3 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r3.
 
@@ -182,7 +183,7 @@ Halpha1 <- HypoTest(m1, m1r3) 	# Test the null of m1r3 against the alternative m
 
 ## Test restriction that interest-rate is long-run exogenous.
 opt1 <- DefaultOpt
-opt1.R_Alpha <- [0 1 0]
+opt1.R_Alpha <- c(0, 1, 0)
 
 m1r4 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r4.
 
@@ -194,8 +195,9 @@ Halpha2 <- HypoTest(m1, m1r4) 	# Test the null of m1r4 against the alternative m
 
 ## Test restriction that unemployment is long-run exogenous.
 opt1 <- DefaultOpt
-opt1.R_Alpha <- [0 0 1]
-k<-2 r<-1
+opt1.R_Alpha <- c(0, 0, 1)
+k<-2 
+r <-1
 m1r5 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r5.
 
 mv_wntest(m1r5.Residuals, order, printWNtest)
@@ -211,18 +213,20 @@ Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m
 modelRstrct <- m1r4
 
 # Perform Normalization.
-G <- inv(modelRstrct.coeffs.betaHat(1:r,1:r))
-betaHatR <- modelRstrct.coeffs.betaHat*G
-# alphaHat is post multiplied by G^{-1} so that pi<- a(G^{-1})Gb' <- ab'
-alphaHatR <- modelRstrct.coeffs.alphaHat*inv(G)'
-' # To close prime for transpose
+G <- solve(modelRstrct.coeffs.betaHat(1:r,1:r))
+betaHatR <- modelRstrct.coeffs.betaHat %*% G
+# alphaHat is post multiplied by G^{-1} so that pi = a(G^{-1})Gb' = ab'
+alphaHatR <- modelRstrct.coeffs.alphaHat %*% t(solve(G))
+
+# Yes, I know we are inverting, Harry, but this is quick and easy.
 
 # Print output.
 display(betaHatR)
 display(alphaHatR)
 
-
-toc(startProg) # report elapsed time
+endProg <- Sys.time() # stop timer
+print('Total computation time from start to end:')
+print(endProg - startProg) # report elapsed time
 
 
 ################################################################################
