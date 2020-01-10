@@ -289,6 +289,7 @@ updateRestrictions <- function(obj, p, r) {
     # Set as row vector, regardless of input.
     # obj$dbMin <- reshape(obj$dbMin,1,2)
     # Not needed since R "recycles". 
+    obj$dbMin <- matrix(obj$dbMin, nrow = 1, ncol = 2)
   }
   # Maximum
   if(length(obj$dbMax) == 1) {
@@ -301,6 +302,7 @@ updateRestrictions <- function(obj, p, r) {
     # Set as row vector, regardless of input.
     # obj$dbMax <- reshape(obj$dbMax,1,2)
     # Not needed since R "recycles". 
+    obj$dbMax <- matrix(obj$dbMax, nrow = 1, ncol = 2)
   }
   
   
