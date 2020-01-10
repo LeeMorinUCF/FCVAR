@@ -213,12 +213,12 @@ Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m
 modelRstrct <- m1r4
 
 # Perform Normalization.
-G <- solve(modelRstrct.coeffs.betaHat(1:r,1:r))
+G <- solve(modelRstrct.coeffs.betaHat[1:r, 1:r])
 betaHatR <- modelRstrct.coeffs.betaHat %*% G
 # alphaHat is post multiplied by G^{-1} so that pi = a(G^{-1})Gb' = ab'
 alphaHatR <- modelRstrct.coeffs.alphaHat %*% t(solve(G))
 
-# Yes, I know we are inverting, Harry, but this is quick and easy.
+# Yes, I know we shouldn't be inverting, Harry, but this is quick and easy.
 
 # Print output.
 display(betaHatR)
