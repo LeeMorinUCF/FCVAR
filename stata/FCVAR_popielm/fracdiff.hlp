@@ -1,0 +1,45 @@
+.-
+help for ^fracdiff^                
+.-
+
+Fractionally Difference Data
+--------------------------------------------
+	
+	^fracdiff^ varname(ts max =1) [if] [in], D(real) Name(string)
+
+^fracdiff^ is for use with time-series data.  You must ^tsset^ your data before 
+using ^FCVAR^; see help @tsset@.  Only one variable can be fractionally differenced
+at a time.
+
+
+Description
+-----------
+
+^fracdiff^ uses a fast fractional differencing algorithm developed by Jensen and Nielsen 
+(2013) to fractionally difference a series. The algorithm uses convulation and fast fourier 
+transforms and performs much faster than the process of calculation and summation of series 
+and binomial coefficients. See the paper for details.
+
+Options
+--------
+
+^D^ 	the fractional integration paramater
+
+^Name^  the name of the new variable contains the fractionally differenced series.
+
+
+References
+----------
+
+Jensen, Andreas Noack, and Morten Ørregaard Nielsen. A fast fractional 
+	difference algorithm. No. 13-04. 2013.
+	
+
+Author
+-------
+
+        Michal K. Popiel
+	Queen's University
+	www.michalpopiel.com
+	^popielm^ at ^econ.queensu.ca^
+        
