@@ -131,8 +131,8 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   
   
   # Find lag corresponding to min of information criteria
-  i_aic <- which(min(aic))
-  i_bic <- which(min(bic))
+  i_aic <- which.min(aic)
+  i_bic <- which.min(bic)
   
   #--------------------------------------------------------------------------------
   # Print output 
