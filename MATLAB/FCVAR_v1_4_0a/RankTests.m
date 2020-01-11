@@ -3,17 +3,17 @@ function [ rankTestStats ] = RankTests(x, k, opt)
 % Written by Michal Popiel and Morten Nielsen (This version 11.17.2014)
 % Based on Lee Morin & Morten Nielsen (June 5, 2013)
 %
-% DESCRIPTION: Performs a sequence of  likelihood ratio tests 
+% DESCRIPTION: Performs a sequence of  likelihood ratio tests
 % 	for cointegrating rank.
-% 
+%
 % The results are printed to screen if the indicator print2screen is 1.
 %
 % input = vector or matrix x of data.
 %       scalar k denoting lag length.
 %       opt (object containing estimation options)
-% 
-% output = rankTestStats structure with results from cointegrating rank 
-%           tests, containing the following (p+1) vectors with i'th element
+%
+% output = rankTestStats structure with results from cointegrating rank
+%           tests, containing the following (p+1) vectors with ith element
 %           corresponding to rank = i-1:
 %	dHat	(estimates of d)
 %	bHat	(estimate of b)
@@ -67,7 +67,7 @@ for r = 0 : p-1
     LRstat(r+1) =  - 2*( LogL(r+1) - LogL(p+1) );
 
 	p_val=[];
-    % Get P-values, if 
+    % Get P-values, if
     % (1) no deterministic terms, or
     % (2) there is only restricted constant and d=b, or
     % (3) there is only a level parameter and d=b.
@@ -76,14 +76,14 @@ for r = 0 : p-1
        (opt.levelParam && ~opt.unrConstant && opt.restrictDB) )
         p_val = get_pvalues(p-r, bHat(r+1), consT, LRstat(r+1), opt);
 	end
-    
+
     % If automatic calls to P-value program have not been installed or
     % enabled, then p_val is empty. Set it to 999 so that it can have a
     % value for storage in the rankTestStats matrix below.
     if(isempty(p_val))
         p_val = 999;
     end
-    
+
     % Store P-values.
     pv(r+1) = p_val;
 end
@@ -93,7 +93,7 @@ opt.print2screen = tempPrint2Screen;
 
 % Print the results to screen.
 if opt.print2screen
-    
+
     % create a variable for output strings
     yesNo = {'No','Yes'};
 
@@ -102,7 +102,7 @@ if opt.print2screen
     fprintf(1,'-----------------------------------------------------------------------------------------------------\n');
     fprintf(1,'Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt.N);
     fprintf(1,'Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T);
-    fprintf(1,'Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo{opt.rConstant+1}, opt.N );   
+    fprintf(1,'Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo{opt.rConstant+1}, opt.N );
     fprintf(1,'Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo{opt.unrConstant+1}, yesNo{opt.levelParam+1} );
     fprintf(1,'-----------------------------------------------------------------------------------------------------\n');
     fprintf(1,'Rank \t  d  \t  b  \t Log-likelihood\t LR statistic\t P-value\n');
@@ -115,7 +115,7 @@ if opt.print2screen
     end
     fprintf(1,'%2.0f   \t%5.3f\t%5.3f\t%15.3f\t         ----\t    ----\n', i, dHat(i+1), bHat(i+1), LogL(i+1));
     fprintf(1,'-----------------------------------------------------------------------------------------------------\n');
-    
+
 end
 
 % Return structure of rank test results.
@@ -130,11 +130,11 @@ end
 
 function [pv] = get_pvalues(q, b, consT, testStat, opt)
 % Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
-% 
+%
 % DESCRIPTION: This function calls the program FDPVAL in the terminal and
-% 	returns the P-value based on the user's inputs. The function's 
+% 	returns the P-value based on the user's inputs. The function's
 % 	arguments must be converted to strings in order to interact with the
-% 	terminal. 
+% 	terminal.
 %
 % Input = q        (number of variables minus rank)
 %         b        (parameter)
@@ -149,11 +149,11 @@ function [pv] = get_pvalues(q, b, consT, testStat, opt)
         % Series are stationary so use chi^2 with (p-r)^2 df, see JN2012
         pv = 1-chi2cdf(testStat, q^2);
     else
-        % For non-stationary systems use simulated P-values from 
+        % For non-stationary systems use simulated P-values from
 		% MacKinnon and Nielsen (2014, Journal of Applied Econometrics)
 		% and the C++ program conversion by Jason Rhinelander.
-        
-        % Convert user input to system commands and 
+
+        % Convert user input to system commands and
         % translate arguments to strings
         args = sprintf('%g %g %g %g', q, b, consT, testStat);
         % Combine path, program, and arguments
@@ -162,9 +162,9 @@ function [pv] = get_pvalues(q, b, consT, testStat, opt)
         % Evaluate system command
         % Note: fdpval is a separately installed program.
         % For more information see: https://github.com/jagerman/fracdist
-        % For download see https://github.com/jagerman/fracdist/releases 
+        % For download see https://github.com/jagerman/fracdist/releases
         [ flag , pval] = system([outCode]);
-    
+
         % Note: string is returned, so it needs to be converted
         if(flag==0) % check if program was executed without errors
             pv = str2double(pval);
@@ -173,4 +173,3 @@ function [pv] = get_pvalues(q, b, consT, testStat, opt)
         end
     end
 end
-

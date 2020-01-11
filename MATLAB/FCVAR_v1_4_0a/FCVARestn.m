@@ -1,7 +1,7 @@
 function [ results ] = FCVARestn(x,k,r,opt)
 % function [ results ] = FCVARestn(x,k,r,opt)
 % Written by Michal Popiel and Morten Nielsen (This version 04.09.2016)
-% 
+%
 % DESCRIPTION: This function performs estimation of the FCVAR system. It is
 % 	the main function in the program with several nested functions, each
 % 	described below. It estimates the model parameters, calculates the
@@ -17,7 +17,7 @@ function [ results ] = FCVARestn(x,k,r,opt)
 %            - results.options       (Estimation options)
 %            - results.like          (Model log-likelihood)
 %            - results.coeffs        (Parameter estimates)
-%            - results.rankJ         (Rank of Jacobian for 
+%            - results.rankJ         (Rank of Jacobian for
 %					identification condition)
 %            - results.fp            (Number of free parameters)
 %            - results.SE            (Standard errors)
@@ -27,61 +27,61 @@ function [ results ] = FCVARestn(x,k,r,opt)
 %_________________________________________________________________________
 
     global estimatesTEMP;
-    
+
     % --- Preliminary steps --- %
     T = size(x,1) - opt.N; % number of observations
     p = size(x,2);         % number of variables
-    
+
     % Update options based on initial user input.
     opt = updateRestrictions(opt,p,r);
-    
+
     % Clear previous instances of coefficient estimates. This is done
     %   because estimatesTemp is a global structure that will not be cleared
     %   automatically if estimation is interrupted.
     estimatesTEMP = [];
-      
-	  
+
+
     % --- GRID SEARCH --- %
-    
+
     % Hide all warnings for grid search.
     warning('off', 'all');
-    
+
     % Perform grid search and store results as starting values for
     %   numerical optimization below.
-    if(opt.gridSearch) 
+    if(opt.gridSearch)
         fprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n',...
             k,r);
         fprintf('This computation can be slow.\n');
         fprintf('Set opt.gridSearch = 0 to skip it.\n');
         opt.db0 = LikeGrid(x,k,r,opt);
-        % Change upper and lower bounds to limit the search to some small 
+        % Change upper and lower bounds to limit the search to some small
         %   interval around the starting values.
         opt.UB_db(1:2) = min(opt.db0(1:2) + [0.1 0.1], opt.dbMax);
         opt.LB_db(1:2) = max(opt.db0(1:2) - [0.1 0.1], opt.dbMin);
     else
-        % Call to GetBounds returns upper/lower bounds for (d,b) or 
-        %  depending on whether or not restrictions have been imposed. 
+        % Call to GetBounds returns upper/lower bounds for (d,b) or
+        %  depending on whether or not restrictions have been imposed.
         [ opt.UB_db, opt.LB_db ] = GetBounds(opt);
-        
-        
+
+
     end
-    
-   
+
+
     % Turn warnings back on for main estimation.
     warning('on','all');
-    
+
     % Hide warnings related to algorithm changes in numerical optimization.
     warning('off','optim:fminunc:SwitchingMethod');
     warning('off','optimL:fminunc:SwitchingMethod');
-    
+
     % Hide warnings related to singular matrix in numerical optimization.
     warning('off','MATLAB:nearlySingularMatrix');
 
-    
+
     % --- ESTIMATION --- %
-	
+
     % Store equality restrictions, inequality restrictions, upper and lower
-    %   bounds, and starting values for estimation because they need to be 
+    %   bounds, and starting values for estimation because they need to be
     %   adjusted based on the presence of level parameter or d=b restriction.
     Rpsi = opt.R_psi;
     rpsi = opt.r_psi;
@@ -89,50 +89,50 @@ function [ results ] = FCVARestn(x,k,r,opt)
     Cdb = opt.C_db;
     cdb = opt.c_db;
 
-    % If Rpsi is empty, then optimization is over (d,b), otherwise it is 
-    %  over phi. If it is over phi, need to make adjustments to startVals 
-    %  and make Cdb and cdb empty. 
-    
+    % If Rpsi is empty, then optimization is over (d,b), otherwise it is
+    %  over phi. If it is over phi, need to make adjustments to startVals
+    %  and make Cdb and cdb empty.
+
     if(size(Rpsi,1)==1)
         H_psi = null(Rpsi);
-        
+
         % Need to back out phi from given db0
-        startVals = inv(H_psi'*H_psi)*H_psi'*startVals(1:2)';
+        startVals = inv(H_psi'*H_psi)*H_psi'*startVals(1:2)'; % '
 
         if(opt.gridSearch)
             % Translate from d,b to phi.
             UB = inv(H_psi'*H_psi)*H_psi'*opt.UB_db';
-            LB = inv(H_psi'*H_psi)*H_psi'*opt.LB_db';      
+            LB = inv(H_psi'*H_psi)*H_psi'*opt.LB_db';
         else
             % Otherwise GetBounds returns the values in terms of phi.
             UB = opt.UB_db;
             LB = opt.LB_db;
         end
-            
+
         % Add warning about turning these off if non-empty?
         Cdb = [];
         cdb = [];
-        
+
         % Turn off equality restrictions if only one restriction is imposed
         %  because they will be imposed inside the profile likelihood
         %  function that is being maximized.
-        
+
         Rpsi = [];
         rpsi = [];
-        
+
     else
         UB = opt.UB_db;
-        LB = opt.LB_db;              
+        LB = opt.LB_db;
     end
-       
-    % If estimation involves level parameter, make appropriate 
+
+    % If estimation involves level parameter, make appropriate
     %   adjustments so that the dimensions of the restrictions correspond to
     %   the number of parameters being estimated, i.e. fill with zeros.
     if(opt.levelParam)
         % If there are equality restrictions add coefficients of 0 to the
         %  level parameter.
         if(~isempty(Rpsi))
-            Rpsi = [Rpsi zeros(size(Rpsi,1),p)];      
+            Rpsi = [Rpsi zeros(size(Rpsi,1),p)];
         end
         % If there are inequality restrictions add coefficients of 0 to the
         %  level parameter.
@@ -147,21 +147,21 @@ function [ results ] = FCVARestn(x,k,r,opt)
         else
             startVals = [startVals opt.db0(3:end)];
         end
-        
+
         % Level parameter is unrestricted, but the length of UB and LB
         %   needs to match the number of parameters in optimization.
         UB = [UB  ones(1,p)*Inf];
         LB = [LB -ones(1,p)*Inf];
-        
+
     end
-    
-        
+
+
    if(size(opt.R_psi)==2)
         % d,b are exactly identified by the linear restrictions and Rpsi is
         %  invertible. We use opt.R_psi here because Rpsi is adjusted
         %  depending on the presence of level parameters. Transpose is
         %  necessary to match input/output of other cases.
-        dbTemp = (opt.R_psi'*inv(opt.R_psi*opt.R_psi')*opt.r_psi)';   
+        dbTemp = (opt.R_psi'*inv(opt.R_psi*opt.R_psi')*opt.r_psi)'; % '
         y = x;
         if(opt.levelParam)
             % Optimize over level parameter for given (d,b).
@@ -192,38 +192,38 @@ function [ results ] = FCVARestn(x,k,r,opt)
             = fmincon(@( params ) -FCVARlike(x, params, k, r, opt), ...
             startVals, Cdb, cdb, Rpsi, rpsi, LB, UB, [], opt.ConFminOptions );
    end
-        
-        
+
+
     % Store the updated estimation options.
     results.startVals = startVals;
     results.options = opt;
     results.options.UB_db = UB;
-    results.options.LB_db = LB;        
-        
-        
+    results.options.LB_db = LB;
+
+
     % Adjust the sign of the likelihood and store the results
-    maxLike = -maxLike;    
+    maxLike = -maxLike;
     results.like = maxLike;
- 
+
     % Coefficients are taken from a global defined in the likelihood
     %   function
     results.coeffs = estimatesTEMP;
- 
-	
+
+
     % ----- CHECK RANK CONDITION ---- %
-    
+
     p1 = p + opt.rConstant;
     rankJ = []; %initialize the rank
-    
+
     if(r>0) % If rank is zero then Alpha and Beta are empty
-        
+
         if(isempty(opt.R_Beta))
             H_beta = eye(p1*r);
         else
             H_beta = null(opt.R_Beta);
         end
-        
-        % We use the commutation matrix K_pr to transform vec(A) into vec(A'),
+
+        % We use the commutation matrix K_pr to transform vec(A) into vec(A'), % '
 		%   see Magnus & Neudecker (1988, p. 47, eqn (1)).
 		Ip = eye(p);
         Kpr = reshape(kron(Ip(:),eye(r)),p*r,p*r);
@@ -232,7 +232,7 @@ function [ results ] = FCVARestn(x,k,r,opt)
         else
             A = null(opt.R_Alpha*inv(Kpr));
         end
-		
+
         rA = size(A,2); % number of free parameters in alpha
         rH = size(H_beta,2); % number of free parameters in beta (including constant)
 
@@ -245,32 +245,32 @@ function [ results ] = FCVARestn(x,k,r,opt)
         results.rankJ = rankJ;
 
     end
-    
-	
+
+
     % --- CHECK RANKS OF ALPHA AND BETA ---%
-	
+
     % Check that alpha and beta have full rank to ensure that restrictions
     %   do not reduce their rank.
     if(rank(results.coeffs.alphaHat) < r)
        fprintf('\nWarning: Alpha hat has rank less than r!\n')
     end
-    
+
     if( rank(results.coeffs.betaHat) < r)
         fprintf('\nWarning: Beta hat has rank less than r!\n')
     end
-    
-	
+
+
     % --- FREE PARAMETERS --- %
-	
+
     % Compute the number of free parameters in addition to those in alpha
     %   and beta.
     [ fp ] = FreeParams(k, r, p, opt, rankJ);
     % Store the result.
     results.fp = fp;
 
-	
+
     % --- STANDARD ERRORS --- %
-    
+
     if(opt.CalcSE)
         % If any restrictions have been imposed, the Hessian matrix must be
         %   adjusted to account for them.
@@ -278,12 +278,12 @@ function [ results ] = FCVARestn(x,k,r,opt)
 
             % Create R matrix with all restrictions.
 
-            % Count the number of restrictions on d,b. Note: opt.R_psi already 
-            %  contains restrict DB, so the size() is only reliable if 
-            %  it's turned off.
+            % Count the number of restrictions on d,b. Note: opt.R_psi already
+            %  contains restrict DB, so the size() is only reliable if
+            %  it's turned off. %'
             if(~isempty(opt.R_psi))
                 if(opt.restrictDB)
-                    rowDB = size(opt.R_psi,1) - 1; 
+                    rowDB = size(opt.R_psi,1) - 1;
                 else
                     rowDB = size(opt.R_psi,1);
                 end
@@ -291,7 +291,7 @@ function [ results ] = FCVARestn(x,k,r,opt)
                 % Otherwise d,b are unrestricted.
                 rowDB = 0;
             end
-            
+
             % Number of restrictions on alpha.
             rowA  = size(opt.R_Alpha,1);
 
@@ -310,19 +310,19 @@ function [ results ] = FCVARestn(x,k,r,opt)
 
             R = zeros(R_rows, R_cols);
 
-            % Fill in the matrix R. 
+            % Fill in the matrix R.
 
-            % Start with restrictions on (d,b) and note that if the model 
+            % Start with restrictions on (d,b) and note that if the model
             %   with d=b is being estimated, only the first column of R_psi is
-            %   considered. In that case, if there are zeros found in the first 
-            %   column, the user is asked to rewrite the restriction. 
+            %   considered. In that case, if there are zeros found in the first
+            %   column, the user is asked to rewrite the restriction.
             if(rowDB>0)
                 if(opt.restrictDB)
                     % If the model d=b is being estimated, only one
                     %  restriction can be imposed and that is on d.
-                    R(1:rowDB,1:colDB) = opt.R_psi(1,1); 
-                else                    
-                    R(1:rowDB,1:colDB) = opt.R_psi; 
+                    R(1:rowDB,1:colDB) = opt.R_psi(1,1);
+                else
+                    R(1:rowDB,1:colDB) = opt.R_psi;
                 end
             end
             % Put the R_Alpha matrix into the appropriate place in R.
@@ -344,35 +344,35 @@ function [ results ] = FCVARestn(x,k,r,opt)
             Q = -inv(H);
         end
     else
-        NumCoeffs = length(SEmat2vecU(results.coeffs, k, r, p, opt)); 
+        NumCoeffs = length(SEmat2vecU(results.coeffs, k, r, p, opt));
         Q = zeros(NumCoeffs);
     end
     % Calculate the standard errors and store them.
     SE = sqrt(diag(Q));
     results.SE = SEvec2matU(SE,k,r,p, opt);
-    results.NegInvHessian = Q;            
+    results.NegInvHessian = Q;
 
-	
-	
+
+
     % --- GET RESIDUALS --- %
-    
+
     [ epsilon ] = GetResiduals(x, k, r, results.coeffs, opt);
     results.Residuals = epsilon;
-    
-	
+
+
     % --- OBTAIN ROOTS OF CHARACTERISTIC POLYNOMIAL --- %
 
     cPolyRoots = CharPolyRoots(results.coeffs, opt, k, r, p);
     results.cPolyRoots = cPolyRoots;
-    
-	
+
+
     % --- PRINT OUTPUT --- %
-	
+
     if (opt.print2screen)
         if(~opt.CalcSE)
             fprintf('Warning: standard errors have not been calculated!\n');
         end
-        
+
         % create a variable for output strings
         yesNo = {'No','Yes'};
         fprintf(1,'\n-----------------------------------------------------------------------------------------------------\n');
@@ -380,7 +380,7 @@ function [ results ] = FCVARestn(x,k,r,opt)
         fprintf(1,'\n-----------------------------------------------------------------------------------------------------\n');
         fprintf(1,'Dimension of system:  %6.0f      Number of observations in sample:       %6.0f \n', p, T+opt.N);
         fprintf(1,'Number of lags:       %6.0f      Number of observations for estimation:  %6.0f \n', k, T);
-        fprintf(1,'Restricted constant:  %6s      Initial values:                         %6.0f\n', yesNo{opt.rConstant+1}, opt.N );   
+        fprintf(1,'Restricted constant:  %6s      Initial values:                         %6.0f\n', yesNo{opt.rConstant+1}, opt.N );
         fprintf(1,'Unrestricted constant:%6s      Level parameter:                        %6s\n', yesNo{opt.unrConstant+1}, yesNo{opt.levelParam+1} );
         if(size(opt.R_psi,1)==1)
             % 1 restriction.
@@ -520,14 +520,14 @@ if (opt.print2screen && opt.unrConstant)
     fprintf(1,  '-----------------------------------------------------------------------------------------------------\n');
     fprintf(1,  'Note: Standard errors in parenthesis (from numerical Hessian) but asymptotic distribution is unknown. \n');
     fprintf(1,  '-----------------------------------------------------------------------------------------------------\n');
-end    
-    
+end
+
 % Print Gamma coefficients if required.
 if opt.print2screen && opt.printGammas && (k > 0)
     for l = 1:k
         GammaHatk = results.coeffs.GammaHat( :, p*(l-1)+1 : p*l );
         GammaSEk = results.SE.GammaHat( :, p*(l-1)+1 : p*l );
- 
+
         fprintf(1,'    Lag matrix %d (Gamma_%d):                                                                            \n', l, l );
         fprintf(1,  '-----------------------------------------------------------------------------------------------------\n');
         fprintf(1,    '      Variable  ' );
@@ -549,7 +549,7 @@ if opt.print2screen && opt.printGammas && (k > 0)
             fprintf(1,'\n');
         end
         fprintf(1,  '-----------------------------------------------------------------------------------------------------\n');
-        fprintf(1,  'Note: Standard errors in parenthesis.                                                                \n');
+        fprintf(1,  'Note: Standard errors in parentheses.                                                                \n');
         fprintf(1,  '-----------------------------------------------------------------------------------------------------\n');
     end
 end
@@ -586,13 +586,3 @@ if (opt.print2screen &&  (~isempty(opt.R_Alpha) || ~isempty(opt.R_psi) ...
 end
 
 end
-
-
-
-
-
-
-
-
-
-
