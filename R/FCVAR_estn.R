@@ -357,9 +357,9 @@ FCVARestn <- function(x,k,r,opt) {
     # Following Boswijk & Doornik (2004, p.447) identification condition
     # Check conformability: 
     kronA <- kronecker(eye(p), 
-                       rbind(results$coeffs.betaHat, 
-                             results$coeffs.rhoHat)) %*% rbind(A, zeros(p*r,rH))
-    kronH <- kronecker(results$coeffs.alphaHat, 
+                       rbind(results$coeffs$betaHat, 
+                             results$coeffs$rhoHat)) %*% rbind(A, zeros(p*r,rH))
+    kronH <- kronecker(results$coeffs$alphaHat, 
                        diag(p1)) %*% rbind(matrix(0, nrow = p1*r, ncol = rA), H_beta)
     rankJ <- qr(kronA + kronH)$rank
     
@@ -374,12 +374,12 @@ FCVARestn <- function(x,k,r,opt) {
   
   # Check that alpha and beta have full rank to ensure that restrictions
   #   do not reduce their rank.
-  if(qr(results$coeffs.alphaHat)$rank < r) {
+  if(qr(results$coeffs$alphaHat)$rank < r) {
     print(sprintf('\nWarning: Alpha hat has rank less than r!\n'))
   }
   
   
-  if( qr(results$coeffs.betaHat)$rank < r) {
+  if( qr(results$coeffs$betaHat)$rank < r) {
     print(sprintf('\nWarning: Beta hat has rank less than r!\n'))
   }
   
@@ -500,13 +500,335 @@ FCVARestn <- function(x,k,r,opt) {
   results$NegInvHessian <- Q
   
   
+  #--------------------------------------------------------------------------------
+  # GET RESIDUALS
+  #--------------------------------------------------------------------------------
+  
+  
+  epsilon <- GetResiduals(x, k, r, results$coeffs, opt)
+  results$Residuals <- epsilon
+  
+  
   
   #--------------------------------------------------------------------------------
-  # 
+  # OBTAIN ROOTS OF CHARACTERISTIC POLYNOMIAL
   #--------------------------------------------------------------------------------
+  
+  cPolyRoots <- CharPolyRoots(results$coeffs, opt, k, r, p)
+  results$cPolyRoots <- cPolyRoots
+  
+  
+  #--------------------------------------------------------------------------------
+  # PRINT OUTPUT
+  #--------------------------------------------------------------------------------
+  
+  if (opt$print2screen) {
+    
+    
+    if (!opt$CalcSE) {
+      print(sprintf('Warning: standard errors have not been calculated!\n'))
+    }
+    
+    # create a variable for output strings
+    yesNo <- c('No','Yes')
+    print(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf('                      Fractionally Cointegrated VAR: Estimation Results                              '))
+    print(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf('Dimension of system:  %6.0f      Number of observations in sample:       %6.0f \n', p, T+opt$N))
+    print(sprintf('Number of lags:       %6.0f      Number of observations for estimation:  %6.0f \n', k, T))
+    print(sprintf('Restricted constant:  %6s      Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
+    print(sprintf('Unrestricted constant:%6s      Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
+    
+    
+    
+    
+  }
+  
+  if (nrow(opt$R_psi) == 1) {
+    
+    # 1 restriction.
+    dbUB <- H_psi*UB[1]
+    dbLB <- H_psi*LB[1]
+    dbStart <- H_psi*startVals[1]
+    print(sprintf('Starting value for d:    %1.3f    Parameter space for d: (%1.3f , %1.3f) \n', dbStart[1], dbLB[1], dbUB[1]))
+    print(sprintf('Starting value for b:    %1.3f    Parameter space for b: (%1.3f , %1.3f) \n', dbStart[2], dbLB[2], dbUB[2]))
+  } else {
+    # Unrestricted or 2 restrictions.
+    print(sprintf('Starting value for d:    %1.3f    Parameter space for d: (%1.3f , %1.3f) \n', startVals[1], LB[1], UB[1]))
+    print(sprintf('Starting value for b:    %1.3f    Parameter space for b: (%1.3f , %1.3f) \n', startVals[2], LB[2], UB[2]))
+    print(sprintf('Imposing d >= b:      %6s\n', yesNo[opt$constrained+1] ))
+    
+  }
+  
+  print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+  print(sprintf('Cointegrating rank:   %10.0f  AIC:            %10.3f \n', r, -2*maxLike + 2*fp))
+  print(sprintf('Log-likelihood:       %10.3f  BIC:            %10.3f \n', maxLike, -2*maxLike + fp*log(T)))
+  print(sprintf('log(det(Omega_hat)):  %10.3f  Free parameters:%10.0f \n', log(det(results$coeffs$OmegaHat)), fp))
+  print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+  print(sprintf(    '    Fractional parameters:                                                                             \n'))
+  print(sprintf(    '-----------------------------------------------------------------------------------------------------\n'))
+  print(sprintf(    '    Coefficient              \t Estimate              \t  Standard error \n'))
+  print(sprintf(    '-----------------------------------------------------------------------------------------------------\n'))
+  print(sprintf(    '         d                   \t %8.3f              \t     %8.3f                \n', results$coeffs$db[1], results$SE$db[1]))
+  
+  if (!opt$restrictDB) {
+    print(sprintf('         b                   \t %8.3f              \t     %8.3f                \n', results$coeffs$db[2], results$SE$db[2]))
+  }
+  
+  print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+  print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+  
+  
+  if (r > 0) {
+    
+    
+    if (opt$rConstant) {
+      varList <- '(beta and rho):'
+    }
+    else {
+      varList <- '(beta):        '
+    }
+    
+    print(sprintf('    Cointegrating equations %s                                                          \n', varList))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(    '      Variable      ' ))
+    
+    for (j in 1:r) {
+      print(sprintf(    '  CI equation %d  ', j))
+    }
+    
+    print(sprintf('\n'))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    
+    for (i in 1:p) {
+      print(sprintf(    '        Var%d       ',i ))
+      for (j in 1:r) {
+        print(sprintf('    %8.3f     ', results$coeffs$betaHat[i,j] ))
+      }
+      print(sprintf('\n'))
+    }
+    
+    
+    if (opt$rConstant) {
+      print(sprintf(    '      Constant     ' ))
+      for (j in 1:r) {
+        print(sprintf('    %8.3f     ', results$coeffs$rhoHat[j] ))
+      }
+      print(sprintf('\n'))
+    }
+    
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    
+    if (is.null(opt$R_Alpha) & is.null(opt$R_Beta) ) {
+      print(sprintf(  'Note: Identifying restriction imposed.                                                               \n'))
+      print(sprintf(  '-----------------------------------------------------------------------------------------------------\n')) 
+    }
+    
+    print(sprintf('    Adjustment matrix (alpha):                                                                         \n' ))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(    '      Variable      ' ))
+    
+    for (j in 1:r) {
+      print(sprintf(    '  CI equation %d  ', j))
+    }
+    
+    print(sprintf('\n'))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    
+    for (i in 1:p) {
+      print(sprintf(    '        Var %d      ',i ))
+      for (j in 1:r) {
+        print(sprintf('    %8.3f     ', results$coeffs$alphaHat[i,j] ))
+      }
+      
+      print(sprintf('\n'))
+      print(sprintf(    '         SE %d      ',i ))
+      
+      for (j in 1:r) {
+        print(sprintf('   (%8.3f  )  ', results$SE$alphaHat[i,j] ))
+      }
+      
+      print(sprintf('\n'))
+    }
+    
+    
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(  'Note: Standard errors in parenthesis.                                                                \n'))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf('    Long-run matrix (Pi):                                                                       \n' ))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(    '      Variable  ' ))
+    
+    for (j in 1:p) {
+      print(sprintf(    '       Var %d   ', j))
+    }
+    
+    print(sprintf('\n'))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    
+    for (i in 1:p) {
+      print(sprintf(    '      Var %d      ',i ))
+      for (j in 1:p) {
+        print(sprintf('   %8.3f    ', results$coeffs$PiHat[i,j] ))
+      }
+      
+      print(sprintf('\n'))
+    }
+    
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    
+    
+  }
+  
+  
+  
+  
+  
+  # Print level parameter if present.
+  if (opt$print2screen & opt$levelParam) {
+    print(sprintf(  '\n-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf('    Level parameter (mu):                                                                         \n' ))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    for (i in 1:p) {
+      print(sprintf(    '        Var %d      ',i ))
+      print(sprintf('    %8.3f     ', results$coeffs$muHat[i] ))
+      print(sprintf('\n'))
+      print(sprintf(    '         SE %d      ',i ))
+      print(sprintf('   (%8.3f  )  ', results$SE$muHat[i] ))
+      print(sprintf('\n'))
+    }
+    
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(  'Note: Standard errors in parenthesis (from numerical Hessian) but asymptotic distribution is unknown. \n'))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+  }
+  
+  
+  
+  
+  # Print unrestricted constant if present.
+  if (opt$print2screen & opt$unrConstant) {
+    print(sprintf(  '\n-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf('    Unrestricted constant term:                                                                     \n' ))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    for (i in 1:p) {
+      print(sprintf(    '        Var %d      ',i ))
+      print(sprintf('    %8.3f     ', results$coeffs$xiHat[i] ))
+      print(sprintf('\n'))
+      print(sprintf(    '         SE %d      ',i ))
+      print(sprintf('   (%8.3f  )  ', results$SE$xiHat[i] ))
+      print(sprintf('\n'))
+    }
+    
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(  'Note: Standard errors in parenthesis (from numerical Hessian) but asymptotic distribution is unknown. \n'))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+  }
+  
+  
+  
+  
+  # Print Gamma coefficients if required.
+  if (opt$print2screen && opt$printGammas & (k > 0)) {
+    
+    
+    for (l in 1:k) {
+      
+      
+      GammaHatk <- results$coeffs$GammaHat[, p*(l-1)+1 : p*l]
+      GammaSEk <- results$SE$GammaHat[, p*(l-1)+1 : p*l]
+      
+      print(sprintf('    Lag matrix %d (Gamma_%d):                                                                            \n', l, l ))
+      print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+      print(sprintf(    '      Variable  ' ))
+      
+      for (j in 1:p) {
+        print(sprintf(    '       Var %d   ', j))
+      }
+      
+      print(sprintf('\n'))
+      print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+      
+      for (i in 1:p) {
+        
+        print(sprintf(    '      Var %d      ',i ))
+        
+        for (j in 1:p) {
+          print(sprintf('   %8.3f    ', GammaHatk[i,j] ))
+        }
+        
+        print(sprintf('\n'))
+        print(sprintf(    '       SE %d       ',i ))
+        
+        for (j in 1:p) {
+          print(sprintf(' (%8.3f  )  ', GammaSEk[i,j] ))
+        }
+        
+        print(sprintf('\n'))
+        
+      }
+      
+      print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+      print(sprintf(  'Note: Standard errors in parentheses.                                                                \n'))
+      print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+      
+      
+    }
+    
+    
+  }
+  
+  
+  
+  
+  # Print roots of characteristic polynomial if required.
+  if (opt$print2screen & opt$printRoots) {
+    print(sprintf(  '\n-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(  '    Roots of the characteristic polynomial                                                           \n'))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(  '    Number     Real part    Imaginary part       Modulus                                             \n'))
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n'))
+    for (j in 1:length(cPolyRoots)) {
+      print(sprintf( '      %2.0f       %8.3f       %8.3f         %8.3f                                        \n',
+                     j, real(cPolyRoots[j]), imag(cPolyRoots[j]), abs(cPolyRoots[j]) ))
+    }
+    
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n\n'))
+  }
+  
+  
+  
+  # Print notifications regarding restrictions.
+  if (opt$print2screen &  (!is.null(opt$R_Alpha) | !is.null(opt$R_psi) 
+                            | !is.null(opt$R_Beta) )) {
+    print(sprintf(  '\n-----------------------------------------------------------------------------------------------------\n'))
+    print(sprintf(  'Restrictions imposed on the following parameters:\n'))
+    if(!is.null(opt$R_psi)) {
+      print(sprintf('- Psi. For details see "options$R_psi"\n'))
+    }
+    
+    if(!is.null(opt$R_Alpha)) {
+      print(sprintf('- Alpha. For details see "options$R_Alpha"\n'))
+    }
+    
+    if(!is.null(opt$R_Beta)) {
+      print(sprintf('- Beta. For details see "options$R_Beta"\n'))
+    }
+    
+    print(sprintf(  '-----------------------------------------------------------------------------------------------------\n\n'))
+  }
+  
+  
+  
+  
+  
+  
+  
   
   return(results)
 }
+
+
 
 
 
