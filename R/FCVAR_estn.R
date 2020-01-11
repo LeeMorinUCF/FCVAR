@@ -318,12 +318,198 @@ FCVARestn <- function(x,k,r,opt) {
   results$coeffs <- estimatesTEMP
   
   
+  #--------------------------------------------------------------------------------
+  # CHECK RANK CONDITION
+  #--------------------------------------------------------------------------------
   
   
   
+  p1 <- p + opt$rConstant
+  rankJ <- NULL # initialize the rank
+  
+  if(r > 0) {
+    # If rank is zero then Alpha and Beta are empty
+    
+    if(is.null(opt$R_Beta)) {
+      H_beta <- diag(p1*r)
+    } else {
+      H_beta <- null(opt$R_Beta)
+    }
+    
+    
+    # We use the commutation matrix K_pr to transform vec(A) into vec(A'), # '
+    #   see Magnus & Neudecker (1988, p. 47, eqn (1)).
+    Ip <- diag(p)
+    
+    # Need to make sure this builds in the proper order: 
+    Kpr <- matrix(kronecker(Ip, diag(r)), nrow = p*r, ncol = p*r)
+    if(is.null(opt$R_Alpha)) {
+      A <- Kpr %*% diag(p*r)
+    }
+    else {
+      A <- null(opt$R_Alpha %*% solve(Kpr))
+    }
+    
+    
+    rA <- ncol(A) # number of free parameters in alpha
+    rH <- ncol(H_beta) # number of free parameters in beta (including constant)
+    
+    # Following Boswijk & Doornik (2004, p.447) identification condition
+    # Check conformability: 
+    kronA <- kronecker(eye(p), 
+                       rbind(results$coeffs.betaHat, 
+                             results$coeffs.rhoHat)) %*% rbind(A, zeros(p*r,rH))
+    kronH <- kronecker(results$coeffs.alphaHat, 
+                       diag(p1)) %*% rbind(matrix(0, nrow = p1*r, ncol = rA), H_beta)
+    rankJ <- qr(kronA + kronH)$rank
+    
+    results$rankJ <- rankJ
+  } 
+  
+  
+  #--------------------------------------------------------------------------------
+  # CHECK RANKS OF ALPHA AND BETA
+  #--------------------------------------------------------------------------------
+  
+  
+  # Check that alpha and beta have full rank to ensure that restrictions
+  #   do not reduce their rank.
+  if(qr(results$coeffs.alphaHat)$rank < r) {
+    print(sprintf('\nWarning: Alpha hat has rank less than r!\n'))
+  }
+  
+  
+  if( qr(results$coeffs.betaHat)$rank < r) {
+    print(sprintf('\nWarning: Beta hat has rank less than r!\n'))
+  }
+  
+  
+  #--------------------------------------------------------------------------------
+  # FREE PARAMETERS
+  #--------------------------------------------------------------------------------
+  
+  # Compute the number of free parameters in addition to those in alpha
+  #   and beta.
+  fp <- FreeParams(k, r, p, opt, rankJ)
+  # Store the result.
+  results$fp <- fp
+  
+  
+  #--------------------------------------------------------------------------------
+  # STANDARD ERRORS
+  #--------------------------------------------------------------------------------
+  
+  
+  if(opt$CalcSE) {
+    
+    # If any restrictions have been imposed, the Hessian matrix must be
+    #   adjusted to account for them.
+    
+    if( !is.null(opt$R_Alpha) | !is.null(opt$R_psi) ) {
+      
+      # Create R matrix with all restrictions.
+      
+      # Count the number of restrictions on d,b. Note: opt$R_psi already
+      #  contains restrict DB, so the size() is only reliable if
+      #  it's turned off. 
+      if(!is.null(opt$R_psi)) {
+        if(opt$restrictDB)
+          rowDB <- nrow(opt$R_psi) - 1
+        else
+          rowDB <- nrow(opt$R_psi)
+        end
+      } else {
+        # Otherwise d,b are unrestricted.
+        rowDB <- 0
+      }
+        end
+        
+        # Number of restrictions on alpha.
+        rowA  <- nrow(opt$R_Alpha)
+        
+        # Count the variables.
+        colDB <- 1 + !opt$restrictDB
+        colA <- p*r
+        colG <- p*p*k
+        colMu <- opt$levelParam*p
+        colRh <- opt$unrConstant*p
+        # Length of vec(estimated coefficients in Hessian).
+        R_cols  <- colDB + colMu + colRh + colA + colG
+        
+        # The restriction matrix will have rows equal to the number of
+        #   restrictions.
+        R_rows <- rowDB + rowA
+        
+        R <- matrix(0, nrow = R_rows, ncol = R_cols)
+        
+        # Fill in the matrix R.
+        
+        # Start with restrictions on (d,b) and note that if the model
+        #   with d=b is being estimated, only the first column of R_psi is
+        #   considered. In that case, if there are zeros found in the first
+        #   column, the user is asked to rewrite the restriction.
+        if(rowDB > 0) {
+          if(opt$restrictDB) {
+            # If the model d=b is being estimated, only one
+            #  restriction can be imposed and that is on d.
+            R[1:rowDB,1:colDB] <- opt$R_psi[1,1]
+          }
+          else {
+            R[1:rowDB,1:colDB] <- opt$R_psi
+          }
+          end
+        }
+        end
+        # Put the R_Alpha matrix into the appropriate place in R.
+        if(!is.null(opt$R_Alpha)) {
+          R[1+rowDB: rowDB + rowA, 
+            1 + colDB + colMu + colRh: 
+              colDB + colMu + colRh + colA] <- opt$R_Alpha
+        }
+        end
+        
+        # Calculate unrestricted Hessian.
+        H <- FCVARhess(x, k, r, results$coeffs, opt)
+        
+        
+        # Calculate the restricted Hessian.
+        Q <- -solve(H) + solve(H) %*% t(R) %*% 
+          solve(R %*% solve(H) %*% t(R)) %*% R %*% solve(H)
+      
+
+
+    } else {
+      # Model is unrestricted.
+      H <- FCVARhess(x, k, r, results$coeffs, opt)
+      Q <- -solve(H)
+    }
+    end
+    
+    
+  } else {
+    NumCoeffs <- length(SEmat2vecU(results$coeffs, k, r, p, opt))
+    Q <- matrix(0, nrow = NumCoeffs, ncol = NumCoeffs)
+  }
+  end
+  
+  
+  
+  # Calculate the standard errors and store them.
+  SE <- sqrt(diag(Q))
+  results$SE <- SEvec2matU(SE,k,r,p, opt)
+  results$NegInvHessian <- Q
+  
+  
+  
+  #--------------------------------------------------------------------------------
+  # 
+  #--------------------------------------------------------------------------------
   
   return(results)
 }
+
+
+
 
 
 
