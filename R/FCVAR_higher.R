@@ -350,55 +350,68 @@ end
 # Define function to ...
 ################################################################################
 # 
-
-# 
-################################################################################
-
-
-function [pv] <- get_pvalues(q, b, consT, testStat, opt)
 # Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
-%
+#
 # DESCRIPTION: This function calls the program FDPVAL in the terminal and
 # 	returns the P-value based on the user's inputs. The function's
 # 	arguments must be converted to strings in order to interact with the
 # 	terminal.
-%
+#
 # Input <- q        (number of variables minus rank)
 #         b        (parameter)
 #         consT    (boolean variable indicating whether or not there is
 #                   constant present)
 #         testStat (value of the test statistic)
-%	      opt (object containing estimation options)
+#	      opt (object containing estimation options)
 # Output <- pv (P-value for likelihood ratio test)
-%_________________________________________________________________________
+# 
+################################################################################
 
-if(b<0.5)
-  # Series are stationary so use chi^2 with (p-r)^2 df, see JN2012
-  pv <- 1-chi2cdf(testStat, q^2)
-else
-  # For non-stationary systems use simulated P-values from
-  # MacKinnon and Nielsen (2014, Journal of Applied Econometrics)
-  # and the C++ program conversion by Jason Rhinelander.
+
+get_pvalues <- function(q, b, consT, testStat, opt) {
   
-  # Convert user input to system commands and
-  # translate arguments to strings
-  args <- sprintf('%g %g %g %g', q, b, consT, testStat)
-# Combine path, program, and arguments
-outCode <- sprintf('%s %s', opt$progLoc, args)
-
-# Evaluate system command
-# Note: fdpval is a separately installed program.
-# For more information see: https://github.com/jagerman/fracdist
-# For download see https://github.com/jagerman/fracdist/releases
-[ flag , pval] <- system([outCode])
-
-# Note: string is returned, so it needs to be converted
-if(flag==0) # check if program was executed without errors
-  pv <- str2double(pval)
-else # program failed
-  pv <- []
-end
-end
+  
+  
+  if(b < 0.5) {
+    # Series are stationary so use chi^2 with (p-r)^2 df, see JN2012
+    pv <- 1-chi2cdf(testStat, q^2)
+  } else {
+    
+    # For non-stationary systems use simulated P-values from
+    # MacKinnon and Nielsen (2014, Journal of Applied Econometrics)
+    # and the C++ program conversion by Jason Rhinelander.
+    
+    # Convert user input to system commands and
+    # translate arguments to strings
+    args <- sprintf('%g %g %g %g', q, b, consT, testStat)
+    # Combine path, program, and arguments
+    outCode <- sprintf('%s %s', opt$progLoc, args)
+    
+    # Evaluate system command
+    # Note: fdpval is a separately installed program.
+    # For more information see: https://github.com/jagerman/fracdist
+    # For download see https://github.com/jagerman/fracdist/releases
+    [ flag , pval] <- system([outCode])
+    # Doesn't work on all platforms. 
+    # Should replace with a wrapper for the fracdist code. 
+    
+    # Note: string is returned, so it needs to be converted
+    if(flag==0) {
+      
+      # check if program was executed without errors
+      pv <- str2double(pval)
+      
+    } else {
+      
+      # program failed
+      pv <- NULL
+      
+    } 
+    
+  }
+  
+  return(pv)
+}
 
 
 
