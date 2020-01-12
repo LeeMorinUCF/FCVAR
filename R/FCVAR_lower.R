@@ -774,6 +774,129 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 }
 
 
+################################################################################
+# Define function to collect parameters into a vector
+################################################################################
+# 
+# function [ param ] <- SEmat2vecU( coeffs, k, r, p , opt)
+# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
+# Based on Lee Morin & Morten Nielsen (August 22, 2011)
+# 
+# DESCRIPTION: This function transforms the model parameters in matrix
+# 	form into a vector.
+# 
+# Input <- coeffs (Matlab structure of coefficients in their usual matrix form)
+#         k (number of lags)
+#         r (number of cointegrating vectors)
+#         p (number of variables in the system)
+#         opt (object containing the estimation options)
+# Output <- param (vector of parameters)
+# 
+################################################################################
+
+
+SEmat2vecU <- function( coeffs, k, r, p , opt) {
+  
+  # If restriction d=b is imposed, only adjust d.
+  if (opt$restrictDB) {
+    param <- coeffs$db[1]
+  }
+  else {
+    param <- coeffs$db
+  }
+  
+  
+  # Level parameter MuHat.
+  if (opt$levelParam) {
+    param <- rbind(param, matrix(coeffs$muHat, nrow = 1, ncol = p))
+  }
+  
+  
+  # Unrestricted constant.
+  if (opt$unrConstant) {
+    param <- rbind(param, matrix(coeffs$xiHat, nrow = 1, ncol = p))
+  }
+  
+  
+  # alphaHat
+  if (r > 0) {
+    param <- rbind(param, matrix( coeffs$alphaHat, nrow = 1, ncol = p*r ))
+  }
+  
+  
+  # GammaHat
+  if (k > 0) {
+    param <- rbind(param, matrix( coeffs$GammaHat, nrow = 1, ncol = p*p*k ))
+  }
+  
+  
+  return(param)
+}
+
+
+
+################################################################################
+# Define function to extract parameters from a vector. 
+################################################################################
+# 
+# function [ coeffs ] <- SEvec2matU( param, k, r, p, opt )
+# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
+# Based on Lee Morin & Morten Nielsen (August 22, 2011)
+# 
+# DESCRIPTION: This function transforms the vectorized model parameters
+# 	into matrices.
+# 
+# Input <- param (vector of parameters)
+#         k (number of lags)
+#         r (number of cointegrating vectors)
+#         p (number of variables in the system)
+#         opt (object containing the estimation options)
+# Output <- coeffs (Matlab structure of coefficients in their usual matrix form)
+# 
+################################################################################
+
+SEvec2matU <- function( param, k, r, p, opt ) {
+  
+  
+  if (opt$restrictDB) {
+    coeffs$db <- matrix(c(param[1], param[1]), nrow = 1, ncol = 2)  # store d,b
+    param <- param(2:end)				# drop d,b from param
+  } else {
+    coeffs$db <- param[1:2]
+    param <- param[3:length(param)]
+  }
+  
+  
+  if (opt$levelParam) {
+    coeffs$muHat <- param[1:p]
+    param <- param[p+1:length(param)]
+  }
+  
+  
+  if (opt$unrConstant) {
+    coeffs$xiHat <- matrix(param[1:p], nrow = p, ncol = 1)
+    param <- param[p+1:length(param)]
+  }
+  
+  
+  if (r > 0) {
+    coeffs$alphaHat <- matrix( param[1:p*r], nrow = p, ncol = r)
+    param <- param[p*r+1:length(param)]
+  } else {
+    coeffs$alphaHat <- NULL
+  }
+  
+  
+  if (k > 0) {
+    coeffs$GammaHat <- matrix( param[1 : end], nrow = p, ncol = p*k)
+  } else {
+    coeffs$GammaHat <- NULL
+  }
+  
+  
+  return(coeffs)
+}
+
 
 
 
@@ -781,9 +904,6 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 # Functions to make: 
 
 
-
-# SEmat2vecU(results$coeffs, k, r, p, opt)
-# SEvec2matU(SE,k,r,p, opt)
 
 # cPolyRoots <- CharPolyRoots(results$coeffs, opt, k, r, p)
 

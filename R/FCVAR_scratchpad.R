@@ -2,81 +2,102 @@
 
 # Temporary staging area for Matlab code. 
 
-function [ hessian ] <- FCVARhess(x, k, r, coeffs, opt)
-# function [ hessian ] <- FCVARhess(x, k, r, coeffs, opt)
+
+function [ param ] <- SEmat2vecU( coeffs, k, r, p , opt)
+# function [ param ] <- SEmat2vecU( coeffs, k, r, p , opt)
 # Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
+# Based on Lee Morin & Morten Nielsen (August 22, 2011)
 # 
-# DESCRIPTION: This function calculates the Hessian matrix of the
-# 	log-likelihood numerically.
+# DESCRIPTION: This function transforms the model parameters in matrix
+# 	form into a vector.
 # 
-# Input <- x (matrix of variables to be included in the system)
+# Input <- coeffs (Matlab structure of coefficients in their usual matrix form)
 #         k (number of lags)
 #         r (number of cointegrating vectors)
-#         coeffs (coefficient estimates around which estimation takes place)
+#         p (number of variables in the system)
 #         opt (object containing the estimation options)
-# Output <- hessian (matrix of second derivatives)
+# Output <- param (vector of parameters)
+%_________________________________________________________________________
 
+# If restriction d=b is imposed, only adjust d.
+if opt$restrictDB
+param <- coeffs$db(1)
+else
+  param <- coeffs$db
+end
 
+# Level parameter MuHat.
+if opt$levelParam
+param <- [ param reshape(coeffs$muHat,1,p) ]
+end
 
-# Set dimensions of matrices.
-p <- size(x, 2)
+# Unrestricted constant.
+if opt$unrConstant
+param <- [ param reshape(coeffs$xiHat,1,p)]
+end
 
-# rhoHat and betaHat are not used in the Hessian calculation.
-rho <- coeffs$rhoHat
-beta <- coeffs$betaHat
+# alphaHat
+if r > 0
+param <- [  param reshape( coeffs$alphaHat, 1, p*r ) ]
+end
 
-# Specify delta (increment for numerical derivatives).
-delta <- 10^(-4)
-
-# Convert the parameters to vector form.
-phi0 <- SEmat2vecU(coeffs, k, r, p, opt)
-
-# Calculate vector of increments.
-deltaPhi <- delta*ones(size(phi0))
-
-nPhi <- length(phi0)
-
-# Initialize the Hessian matrix.
-hessian <- zeros(nPhi)
-
-# The loops below evaluate the likelihood at second order incremental
-#   shifts in the parameters. 
-
-for i <- 1:nPhi
-for j <- 1:i
-
-# positive shift in both parameters.
-phi1 <- phi0 + deltaPhi.*( (1:nPhi) == i ) + deltaPhi.*( (1:nPhi) == j )
-[ coeffsAdj ] <- SEvec2matU( phi1, k, r, p, opt )
-# calculate likelihood
-like1 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt )
-
-# negative shift in first parameter, positive shift in second
-# parameter. If same parameter, no shift.
-phi2 <- phi0 - deltaPhi.*( (1:nPhi) == i ) + deltaPhi.*( (1:nPhi) == j )
-[ coeffsAdj ] <- SEvec2matU( phi2, k, r, p, opt )
-# calculate likelihood
-like2 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
-
-# positive shift in first parameter, negative shift in second
-# parameter. If same parameter, no shift.
-phi3 <- phi0 + deltaPhi.*( (1:nPhi) == i ) - deltaPhi.*( (1:nPhi) == j )
-[ coeffsAdj ] <- SEvec2matU( phi3, k, r, p, opt )
-# calculate likelihood
-like3 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
-
-# negative shift in both parameters.
-phi4 <- phi0 - deltaPhi.*( (1:nPhi) == i ) - deltaPhi.*( (1:nPhi) == j )
-[ coeffsAdj ] <- SEvec2matU( phi4, k, r, p, opt )
-# calculate likelihood
-like4 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
-
-# The numerical approximation to the second derivative.
-hessian(i,j) <- ( like1 - like2 - like3 + like4 )/4/deltaPhi(i)/deltaPhi(j)
-
-# Hessian is symmetric.
-hessian(j,i) <- hessian(i,j)
+# GammaHat
+if k > 0
+param <- [  param reshape( coeffs$GammaHat, 1, p*p*k ) ]
+end
 
 end
+
+
+
+
+function [ coeffs ] <- SEvec2matU( param, k, r, p, opt )
+# function [ coeffs ] <- SEvec2matU( param, k, r, p, opt )
+# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
+# Based on Lee Morin & Morten Nielsen (August 22, 2011)
+# 
+# DESCRIPTION: This function transforms the vectorized model parameters
+# 	into matrices.
+# 
+# Input <- param (vector of parameters)
+#         k (number of lags)
+#         r (number of cointegrating vectors)
+#         p (number of variables in the system)
+#         opt (object containing the estimation options)
+# Output <- coeffs (Matlab structure of coefficients in their usual matrix form)
+%_________________________________________________________________________
+
+if opt$restrictDB
+coeffs$db <- [ param(1) param(1) ]  # store d,b
+param <- param(2:end)				# drop d,b from param
+else
+  coeffs$db <- param(1:2)
+param <- param(3:end)
 end
+
+if opt$levelParam
+coeffs$muHat <- param(1:p)
+param <- param(p+1:end)
 end
+
+if opt$unrConstant
+coeffs$xiHat <- matrix(param(1:p), nrow = p, ncol = 1)
+param <- param(p+1:end)
+end
+
+if r > 0
+coeffs$alphaHat <- reshape( param(1:p*r), p, r)
+param <- param(p*r+1:end)
+else
+coeffs$alphaHat <- NULL
+end
+
+if k > 0
+coeffs$GammaHat <- reshape( param(1 : end), p, p*k)
+else
+coeffs$GammaHat <- NULL
+end
+
+end
+
+
