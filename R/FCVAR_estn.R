@@ -95,7 +95,7 @@ FCVARestn <- function(x,k,r,opt) {
   # Perform grid search and store results as starting values for
   #   numerical optimization below.
   if(opt$gridSearch) {
-    print(sprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n',...
+    print(sprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n', 
             k,r))
     print(sprintf('This computation can be slow.\n'))
     print(sprintf('Set opt$gridSearch <- 0 to skip it.\n'))
@@ -245,8 +245,8 @@ FCVARestn <- function(x,k,r,opt) {
       # Optimize over level parameter for given (d,b).
       StartVal <- y[1, ]
       
-      # [ muHat, maxLike, ! ] ...
-      # <- fminunc(@( params ) -FCVARlikeMu(x, dbTemp, params, k, r, opt), ...
+      # [ muHat, maxLike, ! ] 
+      # <- fminunc(@( params ) -FCVARlikeMu(x, dbTemp, params, k, r, opt), 
       #            StartVal, opt$UncFminOptions )
       
       # Need to implement optimization correctly. 
@@ -282,8 +282,8 @@ FCVARestn <- function(x,k,r,opt) {
     
     
   } else {
-    # [ !, maxLike, ! ] ...
-    # <- fmincon(@( params ) -FCVARlike(x, params, k, r, opt), ...
+    # [ !, maxLike, ! ] 
+    # <- fmincon(@( params ) -FCVARlike(x, params, k, r, opt), 
     #            startVals, Cdb, cdb, Rpsi, rpsi, LB, UB, [], opt$ConFminOptions )
     
     # Need to implement optimization correctly. 
@@ -848,7 +848,7 @@ FCVARestn <- function(x,k,r,opt) {
 
 
 ################################################################################
-# Define function to ...
+# Define function to 
 ################################################################################
 # 
 
