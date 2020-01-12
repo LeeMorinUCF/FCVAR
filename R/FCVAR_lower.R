@@ -900,13 +900,128 @@ SEvec2matU <- function( param, k, r, p, opt ) {
 
 
 
+################################################################################
+# Define function to calculate the roots of the characteristic polynomial
+################################################################################
+# 
+# function cPolyRoots <- CharPolyRoots(coeffs, opt, k, r, p)
+# Written by Michal Popiel and Morten Nielsen (This version 12.07.2015)
+# Based on Lee Morin & Morten Nielsen (May 31, 2013)
+# 
+# DESCRIPTION: CharPolyRoots calculates the roots of the 
+#     characteristic polynomial and plots them with the unit circle 
+#     transformed for the fractional model, see Johansen (2008).
+# 
+# input <- coeffs (Matlab structure of coefficients
+#         opt (object containing the estimation options)
+#         k (number of lags)
+#         r (number of cointegrating vectors)
+#         p (number of variables in the system)
+# 
+# output <- complex vector cPolyRoots with the roots of the characteristic polynomial.
+# 
+# No dependencies.
+# 
+# Note: The roots are calculated from the companion form of the VAR, 
+#       where the roots are given as the inverse eigenvalues of the 
+#       coefficient matrix.
+# 
+################################################################################
+
+CharPolyRoots <- function(coeffs, opt, k, r, p) {
+  
+  
+  b <- coeffs$db[2]
+  
+  # First construct the coefficient matrix for the companion form of the VAR. 
+  PiStar <- diag(p)
+  if (r > 0) {
+    PiStar <- PiStar + coeffs$alphaHat %*% t(coeffs$betaHat)
+  }
+  
+  
+  if (k > 0) {
+    Gamma1 <- coeffs$GammaHat[ , 1 : p]
+    PiStar <- PiStar + Gamma1
+    for (i in 2:k) {
+      
+      Gammai <- coeffs$GammaHat[ , (i-1)*p + 1 : i*p]
+      GammaiMinus1 <- coeffs$GammaHat[ , (i-2)*p + 1 : (i-1)*p]
+      
+      PiStar <- rbind(PiStar, (Gammai - GammaiMinus1))
+      
+    }
+    
+    Gammak <- coeffs$GammaHat[ , (k-1)*p + 1 : k*p]
+    PiStar <- rbind(PiStar, ( - Gammak ))
+  }
+  
+  
+  # Pad with an identity for the transition of the lagged variables.
+  PiStar <- rbind(PiStar, diag(p*k))
+  PiStar <- rbind(PiStar, matrix(0, nrow = p*k, ncol = p*(k>0) ))
+  
+  # The roots are then the inverse eigenvalues of the matrix PiStar.
+  cPolyRoots <- 1 / eig(PiStar)
+  cPolyRoots <- cPolyRoots[order(-cPolyRoots)]
+  
+  # Generate graph depending on the indicator plotRoots.
+  if (opt$plotRoots) {
+    # Now calculate the line for the transformed unit circle.
+    # First do the negative half.
+    unitCircle <- seq( pi, 0, by = - 0.001)
+    psi <- - (pi - unitCircle)/2
+    unitCircleX <- cos( - unitCircle)
+    unitCircleY <- sin( - unitCircle)
+    transformedUnitCircleX <- (1 - (2*cos(psi))^b*cos(b*psi))
+    transformedUnitCircleY <- (    (2*cos(psi))^b*sin(b*psi))
+    # Then do the positive half.
+    unitCircle <- seq(0, pi, by = 0.001)
+    psi <- (pi - unitCircle)/2
+    unitCircleX <- c(unitCircleX, cos(unitCircle))
+    unitCircleY <- c(unitCircleY, sin(unitCircle))
+    transformedUnitCircleX <- c(transformedUnitCircleX, 1, 
+                                (1 - (2*cos(psi))^b*cos(b*psi)))
+    transformedUnitCircleY <- c(transformedUnitCircleY, 0, 
+                                (    (2*cos(psi))^b*sin(b*psi)))
+    
+    # Plot the unit circle and its image under the mapping
+    # along with the roots of the characterisitc polynomial.
+    
+    # Determine axes based on largest roots. 
+    maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
+                        transformedUnitCircleY, unitCircleY) )
+    minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
+                        transformedUnitCircleY, unitCircleY) )
+    maxXYaxis <- max( maxXYaxis, -minXYaxis )
+    
+    plot(transformedUnitCircleX, 
+         transformedUnitCircleY, 
+         main = c('Roots of the characteristic polynomial', 
+                  'with the image of the unit circle'), 
+         xlim = 2*c(-maxXYaxis, maxXYaxis),
+         ylim = 2*c(-maxXYaxis, maxXYaxis),
+         type = 'l', 
+         lwd = 3, 
+         col = 'red')
+    lines(unitCircleX, unitCircleY, lwd = 3, col = 'black')
+    points(real(cPolyRoots), imag(cPolyRoots), 
+           cex = 16, col = 'blue')
+    
+    
+    
+  }
+  
+  
+  return(cPolyRoots)
+}
+
+
+
+
+
 
 # Functions to make: 
-
-
-
-# cPolyRoots <- CharPolyRoots(results$coeffs, opt, k, r, p)
-
 
 
 #--------------------------------------------------------------------------------

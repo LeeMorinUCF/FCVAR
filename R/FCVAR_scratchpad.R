@@ -2,100 +2,125 @@
 
 # Temporary staging area for Matlab code. 
 
-
-function [ param ] <- SEmat2vecU( coeffs, k, r, p , opt)
-# function [ param ] <- SEmat2vecU( coeffs, k, r, p , opt)
-# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
-# Based on Lee Morin & Morten Nielsen (August 22, 2011)
+function cPolyRoots <- CharPolyRoots(coeffs, opt, k, r, p)
+# function cPolyRoots <- CharPolyRoots(coeffs, opt, k, r, p)
+# Written by Michal Popiel and Morten Nielsen (This version 12.07.2015)
+# Based on Lee Morin & Morten Nielsen (May 31, 2013)
 # 
-# DESCRIPTION: This function transforms the model parameters in matrix
-# 	form into a vector.
+# DESCRIPTION: CharPolyRoots calculates the roots of the 
+#     characteristic polynomial and plots them with the unit circle 
+#     transformed for the fractional model, see Johansen (2008).
 # 
-# Input <- coeffs (Matlab structure of coefficients in their usual matrix form)
+# input <- coeffs (Matlab structure of coefficients
+#         opt (object containing the estimation options)
 #         k (number of lags)
 #         r (number of cointegrating vectors)
 #         p (number of variables in the system)
-#         opt (object containing the estimation options)
-# Output <- param (vector of parameters)
-%_________________________________________________________________________
-
-# If restriction d=b is imposed, only adjust d.
-if opt$restrictDB
-param <- coeffs$db(1)
-else
-  param <- coeffs$db
-end
-
-# Level parameter MuHat.
-if opt$levelParam
-param <- [ param reshape(coeffs$muHat,1,p) ]
-end
-
-# Unrestricted constant.
-if opt$unrConstant
-param <- [ param reshape(coeffs$xiHat,1,p)]
-end
-
-# alphaHat
-if r > 0
-param <- [  param reshape( coeffs$alphaHat, 1, p*r ) ]
-end
-
-# GammaHat
-if k > 0
-param <- [  param reshape( coeffs$GammaHat, 1, p*p*k ) ]
-end
-
-end
-
-
-
-
-function [ coeffs ] <- SEvec2matU( param, k, r, p, opt )
-# function [ coeffs ] <- SEvec2matU( param, k, r, p, opt )
-# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
-# Based on Lee Morin & Morten Nielsen (August 22, 2011)
 # 
-# DESCRIPTION: This function transforms the vectorized model parameters
-# 	into matrices.
+# output <- complex vector cPolyRoots with the roots of the characteristic polynomial.
 # 
-# Input <- param (vector of parameters)
-#         k (number of lags)
-#         r (number of cointegrating vectors)
-#         p (number of variables in the system)
-#         opt (object containing the estimation options)
-# Output <- coeffs (Matlab structure of coefficients in their usual matrix form)
-%_________________________________________________________________________
+# No dependencies.
+# 
+# Note: The roots are calculated from the companion form of the VAR, 
+#       where the roots are given as the inverse eigenvalues of the 
+#       coefficient matrix.
 
-if opt$restrictDB
-coeffs$db <- [ param(1) param(1) ]  # store d,b
-param <- param(2:end)				# drop d,b from param
-else
-  coeffs$db <- param(1:2)
-param <- param(3:end)
-end
 
-if opt$levelParam
-coeffs$muHat <- param(1:p)
-param <- param(p+1:end)
-end
+b <- coeffs.db(2)
 
-if opt$unrConstant
-coeffs$xiHat <- matrix(param(1:p), nrow = p, ncol = 1)
-param <- param(p+1:end)
-end
-
+# First construct the coefficient matrix for the companion form of the VAR. 
+PiStar <- eye(p)
 if r > 0
-coeffs$alphaHat <- reshape( param(1:p*r), p, r)
-param <- param(p*r+1:end)
-else
-coeffs$alphaHat <- NULL
+PiStar <- PiStar + coeffs.alphaHat*t(coeffs.betaHat)
 end
 
 if k > 0
-coeffs$GammaHat <- reshape( param(1 : end), p, p*k)
-else
-coeffs$GammaHat <- NULL
+Gamma1 <- coeffs.GammaHat(:, 1 : p )
+PiStar <- PiStar + Gamma1
+for i <- 2:k
+
+Gammai <- coeffs.GammaHat(:, (i-1)*p + 1 : i*p )
+GammaiMinus1 <- coeffs.GammaHat(:, (i-2)*p + 1 : (i-1)*p )
+
+PiStar <- [ PiStar (Gammai - GammaiMinus1) ]
+
+end
+Gammak <- coeffs.GammaHat(:, (k-1)*p + 1 : k*p )
+PiStar <- [ PiStar  ( - Gammak ) ]
+end
+
+# Pad with an identity for the transition of the lagged variables.
+PiStar <- [  PiStar...
+            eye(p*k) zeros( p*k, p*(k>0) )  ]
+
+
+# The roots are then the inverse eigenvalues of the matrix PiStar.
+cPolyRoots <- 1 ./ eig(PiStar)
+cPolyRoots <- sort( cPolyRoots , 'descend')
+
+# # The inverse roots are then the eigenvalues of the matrix PiStar.
+# cPolyRoots <- eig(PiStar)
+# cPolyRoots <- sort( cPolyRoots , 'descend')
+
+# Generate graph depending on the indicator plotRoots.
+if (opt.plotRoots)
+  # Now calculate the line for the transformed unit circle.
+  # First do the negative half.
+  unitCircle <- ( pi : - 0.001 : 0)
+psi <- - (pi - unitCircle)/2
+unitCircleX <- cos( - unitCircle)
+unitCircleY <- sin( - unitCircle)
+transformedUnitCircleX <- (1 - (2*cos(psi)).^b.*cos(b*psi))
+transformedUnitCircleY <- (    (2*cos(psi)).^b.*sin(b*psi))
+# Then do the positive half.
+unitCircle <- (0 : 0.001 : pi)
+psi <- (pi - unitCircle)/2
+unitCircleX <- [ unitCircleX cos(unitCircle) ]
+unitCircleY <- [ unitCircleY sin(unitCircle) ]
+transformedUnitCircleX <- [ transformedUnitCircleX 1 ...
+                           (1 - (2*cos(psi)).^b.*cos(b*psi)) ]
+transformedUnitCircleY <- [ transformedUnitCircleY 0 ...
+                           (    (2*cos(psi)).^b.*sin(b*psi)) ]
+
+# Plot the unit circle and its image under the mapping
+# along with the roots of the characterisitc polynomial.
+figure
+plot(transformedUnitCircleX, transformedUnitCircleY)
+hold on
+plot(unitCircleX, unitCircleY)
+scatter(real(cPolyRoots), imag(cPolyRoots))
+maxXYaxis <- max( [ transformedUnitCircleX unitCircleX...
+                   transformedUnitCircleY unitCircleY ] )
+minXYaxis <- min( [ transformedUnitCircleX unitCircleX...
+                   transformedUnitCircleY unitCircleY ] )
+maxXYaxis <- max( maxXYaxis, -minXYaxis )
+axis( 2*[ -maxXYaxis maxXYaxis -maxXYaxis maxXYaxis ] )
+hold off
+axis equal
+title('Roots of the characteristic polynomial with the image of the unit circle')
+
+#     # Now transform the circle under the mapping 1/z to check if 
+#     # eigenvalues are inside the circle.
+#     transformedUnitCircleX1 <- transformedUnitCircleX./ ... 
+#                     (transformedUnitCircleX.^2+transformedUnitCircleY.^2)
+#     transformedUnitCircleY1 <- -transformedUnitCircleY./ ...
+#                     (transformedUnitCircleX.^2+transformedUnitCircleY.^2)
+
+#     # Plot the unit circle and its image under the mapping
+#     # along with the inverse roots of the characterisitc polynomial.
+#     plot(transformedUnitCircleX1, transformedUnitCircleY1)
+#     hold on
+#     plot(unitCircleX, unitCircleY)
+#     scatter(real(cPolyRoots), imag(cPolyRoots))
+#     maxXYaxis <- max( [ transformedUnitCircleX1 unitCircleX...
+#                        transformedUnitCircleY1 unitCircleY ] )
+#     minXYaxis <- min( [ transformedUnitCircleX1 unitCircleX...
+#                        transformedUnitCircleY1 unitCircleY ] )
+#     maxXYaxis <- max( maxXYaxis, -minXYaxis )
+#     axis( 2*[ -maxXYaxis maxXYaxis -maxXYaxis maxXYaxis ] )
+#     hold off
+#     title('Inverse roots of the characteristic polynomial with the image of the unit circle')
+
 end
 
 end
