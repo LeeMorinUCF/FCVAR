@@ -39,19 +39,19 @@
 # Define function to calculate cointegrating parameters from the data. 
 ################################################################################
 # 
-# function [ estimates ] = GetParams(x, k, r, db, opt)
+# function [ estimates ] <- GetParams(x, k, r, db, opt)
 # Written by Michal Popiel and Morten Nielsen (This version 04.13.2016)
 # Based on Lee Morin & Morten Nielsen (August 22, 2011)
 # 
 # DESCRIPTION: This function uses FWL and reduced rank regression to obtain
 # the estimates of Alpha, Beta, Rho, Pi, Gamma, and Omega
 # 
-# Input = x   (matrix of variables to be included in the system)
+# Input <- x   (matrix of variables to be included in the system)
 #         k   (number of lags)
 #         r   (number of cointegrating vectors)
 #         db  (value of d and b)
 #         opt (object containing the estimation options)
-# Output = estimates (Matlab structure containing the following)
+# Output <- estimates (Matlab structure containing the following)
 #          - estimates.db (taken directly from the input)
 #          - estimates.alphaHat
 #          - estimates.betaHat
@@ -140,7 +140,7 @@ GetParams <- function(x, k, r, db, opt) {
     V <- sortrows( whatever )
     V <- V[1:p1, ]
     # betaStar <- V( 1:p1, p1 : -1 : p1-r+1 )
-    betaStar <- V[ 1:p1, seq(p1, p1-r+1, by = -1) ]
+    betaStar <- V[ 1:p1, seq(p1, p1-r+1, by <- -1) ]
     
     
     
@@ -153,7 +153,7 @@ GetParams <- function(x, k, r, db, opt) {
       
       
       # [ betaStar, alphaHat, OmegaHat ]...
-      # = RstrctOptm_Switch(betaStar, S00, S01, S11, T, p, opt)
+      # <- RstrctOptm_Switch(betaStar, S00, S01, S11, T, p, opt)
       switched_mats <- RstrctOptm_Switch(betaStar, S00, S01, S11, T, p, opt)
       betaStar <- switched_mats$betaStar
       alphaHat <- switched_mats$alphaHat
@@ -319,7 +319,7 @@ FCVARlikeMu <- function(y, db, mu, k, r, opt) {
   
   
   t <- nrow(y)
-  x <- y - matrix(1, nrow = t, ncol = 1) %*% mu
+  x <- y - matrix(1, nrow <- t, ncol <- 1) %*% mu
   
   # Obtain concentrated parameter estimates.
   estimates <- GetParams(x, k, r, db, opt)
@@ -392,7 +392,7 @@ FCVARlike <- function(x, params, k, r, opt) {
   
   # Modify the data by a mu level.
   if (opt$levelParam) {
-    y <- x - matrix(1, nrow = T, ncol = p) %*% diag(mu)
+    y <- x - matrix(1, nrow <- T, ncol <- p) %*% diag(mu)
   }
   else {
     y <- x
@@ -436,15 +436,114 @@ FCVARlike <- function(x, params, k, r, opt) {
 
 
 
+################################################################################
+# Define function to transform the raw data by fractional differencing.
+################################################################################
+# 
+# function [ Z0, Z1, Z2, Z3 ] <- TransformData(x, k, db, opt)
+# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
+# Based on Lee Morin & Morten Nielsen (May 24, 2013)
+# 
+# DESCRIPTION: Returns the transformed data required for regression and
+# 	reduced rank regression.
+# 
+# Input <- x   (matrix of variables to be included in the system)
+#         k   (number of lags)
+#         db  (fractional differencing parameters d and b)
+#         opt (object containing the estimation options)
+# Output <- Z0, Z1, Z2, and Z3 of transformed data.
+# 
+# Calls the function FracDiff(x, d) and Lbk(x, b, k).
+# 
+################################################################################
+
+TransformData <- function(x, k, db, opt) {
+  
+  
+  # Number of initial values and sample size.
+  N <- opt$N
+  T <- nrow(x) - N
+  
+  # Extract parameters from input.
+  d <- db[1]
+  b <- db[2]
+  
+  # Transform data as required.
+  Z0 <- FracDiff(x, d)
+  
+  Z1 <- x
+  # Add a column with ones if model includes a restricted constant term.
+  if(opt$rConstant) {
+    Z1 <- rbind(x, matrix(1, nrow = N+T, ncol = 1))
+  }
+  
+  Z1 <- FracDiff(  Lbk( Z1 , b, 1)  ,  d - b )
+  
+  Z2 <- FracDiff(  Lbk( x , b, k)  , d)
+  
+  # Z3 contains the unrestricted deterministics
+  Z3 <- NULL
+  # # Add a column with ones if model includes a unrestricted constant term.
+  if(opt$unrConstant) {
+    Z3 <- matrix(1, nrow = T, ncol = 1)
+  }
+  
+  
+  # Trim off initial values.
+  Z0 <- Z0[N+1:end , ]
+  Z1 <- Z1[N+1:end , ]
+  if(k > 0) {
+    Z2 <- Z2[N+1:end , ]
+  }
+  
+  
+  # Return all arrays together as a list. 
+  Z_array <- list(
+    Z0 = Z0,
+    Z1 = Z1,
+    Z2 = Z2,
+    Z3 = Z3
+  )
+  
+  return(Z_array)
+}
+
+
+
+
+
 
 
 # Functions to make: 
-# Z_array <- TransformData(x, k, db, opt)
+# 
+# % Calls the function FracDiff(x, d) and Lbk(x, b, k).
+
+# fp <- FreeParams(k, r, p, opt, rankJ)
+
+
+# Calculate unrestricted Hessian.
+# H <- FCVARhess(x, k, r, results$coeffs, opt)
+
+# SEmat2vecU(results$coeffs, k, r, p, opt)
+# SEvec2matU(SE,k,r,p, opt)
+
+# cPolyRoots <- CharPolyRoots(results$coeffs, opt, k, r, p)
+
 
 
 #--------------------------------------------------------------------------------
 # 
 #--------------------------------------------------------------------------------
+
+
+
+################################################################################
+# Define function to 
+################################################################################
+# 
+
+# 
+################################################################################
 
 
 
