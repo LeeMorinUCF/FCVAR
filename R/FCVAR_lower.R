@@ -510,6 +510,112 @@ TransformData <- function(x, k, db, opt) {
 
 
 
+################################################################################
+# Define function to calculate lag polynomial in the fractional lag operator.
+################################################################################
+# 
+# function [ Lbkx ] <- Lbk(x, b, k)
+# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
+# Based on Lee Morin & Morten Nielsen (May 24, 2013)
+# 
+# DESCRIPTION: Lbk(x, b, k) is a lag polynomial in the fractional lag operator.
+# 
+# Input <- x (vector or matrix of data)
+#         b (scalar value at which to calculate the fractional lag)
+#         k (number of lags)
+# 
+# Output <- matrix  [ Lb^1 x, Lb^2 x, ..., Lb^k x] where Lb <- 1 - (1-L)^b. The output 
+#		matrix has the same number of rows as x but k times as many columns.
+# 
+# Calls the function FracDiff(x, d) 
+# 
+################################################################################
+
+
+Lbk <- function(x, b, k) {
+  
+  
+  p <- size(x,2)
+  
+  # Initialize output matrix.
+  Lbkx <- NULL
+  
+  # For i <- 1, set first column of Lbkx <- Lb^1 x.
+  if (k > 0) {
+    bx <- FracDiff(x, b)
+    Lbkx <- x - bx
+  }
+  
+  
+  if (k > 1) {
+    for (i in 2:k ) {
+      Lbkx <- rbind(Lbkx,  
+                    ( Lbkx[ , p*(i-2)+1 : ncol(Lbkx)] - 
+                        FracDiff(Lbkx[ , p*(i-2)+1 : ncol(Lbkx)], b) ))
+      
+    }  
+    
+  }
+  
+  
+  
+  return(Lbkx)
+}
+
+
+
+################################################################################
+# Define function to fractionally difference a series. 
+################################################################################
+# 
+# function [dx] = FracDiff(x,d)
+# Andreas Noack Jensen & Morten Nielsen
+# May 24, 2013
+# 
+# FracDiff(x,d) is a fractional differencing procedure based on the
+# 	fast fractional difference algorithm of Jensen & Nielsen (2014, JTSA).
+# 
+# input = x (vector or matrix of data)
+#         d (scalar value at which to calculate the fractional difference)
+# 
+# output = vector or matrix (1-L)^d x of same dimensions as x.
+# 
+################################################################################
+
+FracDiff <- function(x, d) {
+  
+  
+  T <- nrow(x)
+  p <- ncol(x)
+  k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
+  
+  # NEXTPOW2(N) returns the first P such that 2.^P >= abs(N).  It is
+  #     often useful for finding the nearest power of two sequence
+  #     length for FFT operations.
+  NFFT <- 2^nextpow2(2*T-1)
+  
+  # Array operation of the index of the series without the last element minus
+  # the order of integration+1, divided by that same series
+  b <- (k-d-1)/k
+  
+  # cumulative product of that series modified in previous line
+  b <- c(1, cumprod(b))
+  
+  # IFFT(X) is the inverse discrete Fourier transform of X.
+  #     IFFT(..., 'symmetric') causes IFFT to treat X as conjugate symmetric
+  #     along the active dimension.  This option is useful when X is not exactly
+  #     conjugate symmetric merely because of round-off error. 
+  # REPMAT Replicate and tile an array.
+  #     B = repmat(A,M,N) creates a large matrix B consisting of an M-by-N
+  #     tiling of copies of A. The size of B is [size(A,1)*M, size(A,2)*N].
+  #     The statement repmat(A,N) creates an N-by-N tiling.
+  dx <- ifft(repmat(fft(b, NFFT), 1, p) * fft(x, NFFT), 'symmetric')
+  
+  dx <- dx[1:T, ]
+  
+  return(dx)
+}
+end
 
 
 
