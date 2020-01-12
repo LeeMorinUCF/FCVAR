@@ -629,6 +629,66 @@ Qtest <- function(x, maxlag) {
 
 
 ################################################################################
+# Define function to perform a likelihood ratio test
+################################################################################
+# 
+# function results <- HypoTest(modelUNR, modelR)
+# Written by Michal Popiel and Morten Nielsen (This version 2.24.2015)
+# 
+# DESCRIPTION: This function performs a likelihood ratio test of the null
+# 	hypothesis: "model is modelR" against the alternative hypothesis:
+# 	"model is modelUNR".
+# 
+# Input <- modelUNR (structure of estimation results created for unrestricted model)
+#         modelR (structure of estimation results created for restricted model)
+# Output <- results: a Matlab structure containing test results
+#            - results$loglikUNR (loglikelihood of unrestricted model)
+#            - results$loglikR   (loglikelihood of restricted model)
+#            - results$df        (degrees of freedom for the test)
+#            - results$LRstat    (likelihood ratio test statistic)
+#            - results$p_LRtest  (P-value for test)
+# 
+################################################################################
+
+
+HypoTest <- function(modelUNR, modelR) {
+  
+  
+  # Calculate the test statistic.
+  LR_test <- 2*(modelUNR$like - modelR$like)
+  
+  # Calculate the degrees of freedom by taking the difference in free
+  # parameters between the unrestricted and restricted model.
+  df <- modelUNR$fp - modelR$fp
+  
+  # Calculate the P-value for the test.
+  p_LRtest <- 1 - pchisq(LR_test, df)
+  
+  # Print output.
+  print(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n', ...
+                modelUNR$like, modelR$like))
+  print(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',...
+                df,LR_test,p_LRtest))
+  
+  
+  # Return the test results in a list.
+  results <- list(
+    loglikUNR = modelUNR$like,
+    loglikR   = modelR$like, 
+    df        = df, 
+    LRstat    = LR_test, 
+    pv        = p_LRtest
+  )
+  
+  return(results)
+}
+
+
+
+
+
+
+################################################################################
 # Define function to...
 ################################################################################
 # 
