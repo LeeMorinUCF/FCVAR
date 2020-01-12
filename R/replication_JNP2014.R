@@ -136,7 +136,7 @@ rankTestStats <- RankTests(x1, k, opt)
 #--------------------------------------------------------------------------------
 
 
-r<-1
+r <- 1
 
 opt1 <- DefaultOpt  
 opt1$gridSearch <- 0
@@ -160,7 +160,7 @@ opt1$r_psi <- 1
 
 m1r1 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r1.
 
-mv_wntest(m1r1.Residuals, order, printWNtest)
+mv_wntest(m1r1$Residuals, order, printWNtest)
 
 Hdb <- HypoTest(m1, m1r1) 	# Test the null of m1r1 against the alternative m1 and
 							# store the results in the structure Hdb.
@@ -185,7 +185,7 @@ opt1$R_Alpha <- c(1, 0, 0)
 
 m1r3 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r3.
 
-mv_wntest(m1r3.Residuals, order, printWNtest)
+mv_wntest(m1r3$Residuals, order, printWNtest)
 
 Halpha1 <- HypoTest(m1, m1r3) 	# Test the null of m1r3 against the alternative m1 and
 								# store the results in the structure Halpha1.
@@ -197,7 +197,7 @@ opt1$R_Alpha <- c(0, 1, 0)
 
 m1r4 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r4.
 
-mv_wntest(m1r4.Residuals, order, printWNtest)
+mv_wntest(m1r4$Residuals, order, printWNtest)
 
 Halpha2 <- HypoTest(m1, m1r4) 	# Test the null of m1r4 against the alternative m1 and
 								# store the results in the structure Halpha2.
@@ -210,7 +210,7 @@ k<-2
 r <-1
 m1r5 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r5.
 
-mv_wntest(m1r5.Residuals, order, printWNtest)
+mv_wntest(m1r5$Residuals, order, printWNtest)
 
 Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m1 and
 								# store the results in the structure Halpha3.
@@ -226,10 +226,10 @@ Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m
 modelRstrct <- m1r4
 
 # Perform Normalization.
-G <- solve(modelRstrct.coeffs.betaHat[1:r, 1:r])
-betaHatR <- modelRstrct.coeffs.betaHat %*% G
+G <- solve(modelRstrct$coeffs$betaHat[1:r, 1:r])
+betaHatR <- modelRstrct$coeffs$betaHat %*% G
 # alphaHat is post multiplied by G^{-1} so that pi = a(G^{-1})Gb' = ab'
-alphaHatR <- modelRstrct.coeffs.alphaHat %*% t(solve(G))
+alphaHatR <- modelRstrct$coeffs$alphaHat %*% t(solve(G))
 
 # Yes, I know we shouldn't be inverting, Harry, but this is quick and easy.
 

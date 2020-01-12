@@ -2,127 +2,107 @@
 
 # Temporary staging area for Matlab code. 
 
-function cPolyRoots <- CharPolyRoots(coeffs, opt, k, r, p)
-# function cPolyRoots <- CharPolyRoots(coeffs, opt, k, r, p)
-# Written by Michal Popiel and Morten Nielsen (This version 12.07.2015)
-# Based on Lee Morin & Morten Nielsen (May 31, 2013)
-# 
-# DESCRIPTION: CharPolyRoots calculates the roots of the 
-#     characteristic polynomial and plots them with the unit circle 
-#     transformed for the fractional model, see Johansen (2008).
-# 
-# input <- coeffs (Matlab structure of coefficients
-#         opt (object containing the estimation options)
-#         k (number of lags)
-#         r (number of cointegrating vectors)
-#         p (number of variables in the system)
-# 
-# output <- complex vector cPolyRoots with the roots of the characteristic polynomial.
-# 
-# No dependencies.
-# 
-# Note: The roots are calculated from the companion form of the VAR, 
-#       where the roots are given as the inverse eigenvalues of the 
-#       coefficient matrix.
+function [ Q, pvQ, LM, pvLM, mvQ, pvMVQ ] <- mv_wntest(x, maxlag, printResults)
+# function [ Q, pvQ, LM, pvLM, mvQ, pvMVQ ] <- 
+#                       mv_wntest(x, maxlag, printResults)
+# Written by Michal Popiel and Morten Nielsen (This version 7.21.2015)
+%
+# DESCRIPTION: This function performs a multivariate Ljung-Box Q-test for
+# 	white noise and univariate Q-tests and LM-tests for white noise on the
+# 	columns of x.
+# 	The LM test should be consistent for heteroskedastic series, Q-test is not.
+%
+# Input <- x            (matrix of variables under test, typically model residuals)
+#         maxlag       (number of lags for serial correlation tests)
+#         printResults (set =1 to print results to screen)
+# Output <- Q     (1xp vector of Q statistics for individual series)
+%		   pvQ 	 (1xp vector of P-values for Q-test on individual series)
+#          LM    (1xp vector of LM statistics for individual series)
+%		   pvLM	 (1xp vector of P-values for LM-test on individual series)
+#          mvQ   (multivariate Q statistic)
+#          pvMVQ (P-value for multivariate Q-statistic using p^2*maxlag df)
+%_________________________________________________________________________
 
+p <- size(x,2)
 
-b <- coeffs.db(2)
+# Create bins for values
+pvQ  <- ones(1,p)
+pvLM <- ones(1,p)
+Q  <- zeros(1,p)
+LM <- zeros(1,p)
 
-# First construct the coefficient matrix for the companion form of the VAR. 
-PiStar <- eye(p)
-if r > 0
-PiStar <- PiStar + coeffs.alphaHat*t(coeffs.betaHat)
+# Perform univariate Q and LM tests and store the results.
+for i <- 1:p
+[Q(i),  pvQ(i)] <- Qtest(x(:,i), maxlag)
+[LM(i), pvLM(i)] <- LMtest(x(:,i),maxlag)
 end
 
-if k > 0
-Gamma1 <- coeffs.GammaHat(:, 1 : p )
-PiStar <- PiStar + Gamma1
-for i <- 2:k
+# Perform multivariate Q test.
+[mvQ, pvMVQ] <- Qtest(x,maxlag)
 
-Gammai <- coeffs.GammaHat(:, (i-1)*p + 1 : i*p )
-GammaiMinus1 <- coeffs.GammaHat(:, (i-2)*p + 1 : (i-1)*p )
-
-PiStar <- [ PiStar (Gammai - GammaiMinus1) ]
-
+# Print output
+if printResults
+fprintf('\n       White Noise Test Results (lag <- %g)\n', maxlag)
+fprintf('---------------------------------------------\n')
+fprintf('Variable |       Q  P-val |      LM  P-val  |\n')
+fprintf('---------------------------------------------\n')
+fprintf('Multivar | %7.3f  %4.3f |     ----  ----  |\n', mvQ, pvMVQ)
+for i=1:p
+fprintf('Var%g     | %7.3f  %4.3f | %7.3f  %4.3f  |\n',
+        i, Q(i), pvQ(i), LM(i), pvLM(i) )
 end
-Gammak <- coeffs.GammaHat(:, (k-1)*p + 1 : k*p )
-PiStar <- [ PiStar  ( - Gammak ) ]
+fprintf('---------------------------------------------\n')
 end
-
-# Pad with an identity for the transition of the lagged variables.
-PiStar <- [  PiStar...
-            eye(p*k) zeros( p*k, p*(k>0) )  ]
-
-
-# The roots are then the inverse eigenvalues of the matrix PiStar.
-cPolyRoots <- 1 ./ eig(PiStar)
-cPolyRoots <- sort( cPolyRoots , 'descend')
-
-# # The inverse roots are then the eigenvalues of the matrix PiStar.
-# cPolyRoots <- eig(PiStar)
-# cPolyRoots <- sort( cPolyRoots , 'descend')
-
-# Generate graph depending on the indicator plotRoots.
-if (opt.plotRoots)
-  # Now calculate the line for the transformed unit circle.
-  # First do the negative half.
-  unitCircle <- ( pi : - 0.001 : 0)
-psi <- - (pi - unitCircle)/2
-unitCircleX <- cos( - unitCircle)
-unitCircleY <- sin( - unitCircle)
-transformedUnitCircleX <- (1 - (2*cos(psi)).^b.*cos(b*psi))
-transformedUnitCircleY <- (    (2*cos(psi)).^b.*sin(b*psi))
-# Then do the positive half.
-unitCircle <- (0 : 0.001 : pi)
-psi <- (pi - unitCircle)/2
-unitCircleX <- [ unitCircleX cos(unitCircle) ]
-unitCircleY <- [ unitCircleY sin(unitCircle) ]
-transformedUnitCircleX <- [ transformedUnitCircleX 1 ...
-                           (1 - (2*cos(psi)).^b.*cos(b*psi)) ]
-transformedUnitCircleY <- [ transformedUnitCircleY 0 ...
-                           (    (2*cos(psi)).^b.*sin(b*psi)) ]
-
-# Plot the unit circle and its image under the mapping
-# along with the roots of the characterisitc polynomial.
-figure
-plot(transformedUnitCircleX, transformedUnitCircleY)
-hold on
-plot(unitCircleX, unitCircleY)
-scatter(real(cPolyRoots), imag(cPolyRoots))
-maxXYaxis <- max( [ transformedUnitCircleX unitCircleX...
-                   transformedUnitCircleY unitCircleY ] )
-minXYaxis <- min( [ transformedUnitCircleX unitCircleX...
-                   transformedUnitCircleY unitCircleY ] )
-maxXYaxis <- max( maxXYaxis, -minXYaxis )
-axis( 2*[ -maxXYaxis maxXYaxis -maxXYaxis maxXYaxis ] )
-hold off
-axis equal
-title('Roots of the characteristic polynomial with the image of the unit circle')
-
-#     # Now transform the circle under the mapping 1/z to check if 
-#     # eigenvalues are inside the circle.
-#     transformedUnitCircleX1 <- transformedUnitCircleX./ ... 
-#                     (transformedUnitCircleX.^2+transformedUnitCircleY.^2)
-#     transformedUnitCircleY1 <- -transformedUnitCircleY./ ...
-#                     (transformedUnitCircleX.^2+transformedUnitCircleY.^2)
-
-#     # Plot the unit circle and its image under the mapping
-#     # along with the inverse roots of the characterisitc polynomial.
-#     plot(transformedUnitCircleX1, transformedUnitCircleY1)
-#     hold on
-#     plot(unitCircleX, unitCircleY)
-#     scatter(real(cPolyRoots), imag(cPolyRoots))
-#     maxXYaxis <- max( [ transformedUnitCircleX1 unitCircleX...
-#                        transformedUnitCircleY1 unitCircleY ] )
-#     minXYaxis <- min( [ transformedUnitCircleX1 unitCircleX...
-#                        transformedUnitCircleY1 unitCircleY ] )
-#     maxXYaxis <- max( maxXYaxis, -minXYaxis )
-#     axis( 2*[ -maxXYaxis maxXYaxis -maxXYaxis maxXYaxis ] )
-#     hold off
-#     title('Inverse roots of the characteristic polynomial with the image of the unit circle')
-
 end
 
+function [ LMstat, pv ] <- LMtest(x,q)
+# Breusch-Godfrey Lagrange Multiplier test for serial correlation.
+T <- size(x,1)
+x <- x-mean(x)
+y <- x(q+1:end)
+z <- x(1:end-q)
+for i <- 1:q-1
+z <- [x(i+1:end-q+i) z]
+end
+e <- y
+s <- z(:,1:q).*repmat(e,1,q)
+sbar <- mean(s)
+# The next line bsxfun(@FUNC, A, B) applies the element-by-element binary
+# operation FUNC to arrays A and B, with singleton expansion enabled.
+s <- bsxfun(@minus, s, sbar)
+S <- s'*s/T %'
+LMstat <- T*sbar*S^(-1)*sbar' #'
+pv <- 1-chi2cdf(LMstat,q)
 end
 
 
+function [ Qstat, pv ] <- Qtest(x, maxlag)
+# (Multivariate) Ljung-Box Q-test for serial correlation, see
+# 	Luetkepohl (2005, New Introduction to Multiple Time Series Analysis, p. 169).
+T <- size(x,1)
+p <- size(x,2)
+
+C0=zeros(p)
+for t=1:T
+C0=C0+x(t,:)'*x(t,:) %'
+end
+C0=C0./T
+
+C <- zeros(p,p,maxlag) # a3 <- array(seq(12), dim = c(2, 2, 3))
+for i=1:maxlag
+for t=i+1:T
+C(:,:,i)=C(:,:,i)+x(t,:)'*x(t-i,:) %'
+end
+C(:,:,i)=C(:,:,i)./(T-i) # Note division by (T-i) instead of T.
+end
+
+# (Multivariate) Q statistic
+Qstat <- 0
+for j=1:maxlag
+#         Qstat <- Qstat+trace(C(:,:,j)'*inv(C0)*C(:,:,j)*inv(C0)) / (T-j) %'
+# The following line is a more efficient calculation than the previous
+Qstat <- Qstat+trace( (C(:,:,j)'/C0)*(C(:,:,j)/C0) ) / (T-j) %'
+end
+Qstat <- Qstat*T*(T+2)
+pv <- 1-chi2cdf(Qstat,p*p*maxlag) # P-value is calculated with p^2*maxlag df.
+end

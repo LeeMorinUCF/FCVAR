@@ -429,15 +429,212 @@ get_pvalues <- function(q, b, consT, testStat, opt) {
 
 
 ################################################################################
-# Define function to ...
+# Define function to perform a multivariate Ljung-Box Q-test for
+# 	white noise.
+################################################################################
+# 
+# function [ Q, pvQ, LM, pvLM, mvQ, pvMVQ ] <- 
+#                       mv_wntest(x, maxlag, printResults)
+# Written by Michal Popiel and Morten Nielsen (This version 7.21.2015)
+# 
+# DESCRIPTION: This function performs a multivariate Ljung-Box Q-test for
+# 	white noise and univariate Q-tests and LM-tests for white noise on the
+# 	columns of x.
+# 	The LM test should be consistent for heteroskedastic series, Q-test is not.
+# 
+# Input <- x            (matrix of variables under test, typically model residuals)
+#         maxlag       (number of lags for serial correlation tests)
+#         printResults (set =1 to print results to screen)
+# Output <- Q     (1xp vector of Q statistics for individual series)
+#		       pvQ 	 (1xp vector of P-values for Q-test on individual series)
+#          LM    (1xp vector of LM statistics for individual series)
+#		       pvLM	 (1xp vector of P-values for LM-test on individual series)
+#          mvQ   (multivariate Q statistic)
+#          pvMVQ (P-value for multivariate Q-statistic using p^2*maxlag df)
+# 
+################################################################################
+
+
+mv_wntest <- function(x, maxlag, printResults) {
+  
+  p <- ncol(x)
+  
+  # Create bins for values
+  pvQ  <- matrix(1, nrow = 1, ncol = p)
+  pvLM <- matrix(1, nrow = 1, ncol = p)
+  Q  <- matrix(0, nrow = 1, ncol = p)
+  LM <- matrix(0, nrow = 1, ncol = p)
+  
+  # Perform univariate Q and LM tests and store the results.
+  for (i in 1:p) {
+    
+    Qtest_out <- Qtest(x[,i], maxlag)
+    Q[i] <- Qtest_out$Q
+    pvQ[i] <- Qtest_out$pvQ
+    
+    LMtest_out <- LMtest(x[,i],maxlag)
+    LM[i] <- LMtest_out$LMstat
+    pvLM[i] <- LMtest_out$pv
+    
+  }
+  
+  
+  # Perform multivariate Q test.
+  # [mvQ, pvMVQ] <- Qtest(x,maxlag)
+  Qtest_out <- Qtest(x, maxlag)
+  mvQ <- Qtest_out$Q
+  pvMVQ <- Qtest_out$pvQ
+  
+  
+  # Print output
+  if (printResults) {
+    print(sprintf('\n       White Noise Test Results (lag <- %g)\n', maxlag))
+    print(sprintf('---------------------------------------------\n'))
+    print(sprintf('Variable |       Q  P-val |      LM  P-val  |\n'))
+    print(sprintf('---------------------------------------------\n'))
+    print(sprintf('Multivar | %7.3f  %4.3f |     ----  ----  |\n', mvQ, pvMVQ))
+    for (i in 1:p) {
+      print(sprintf('Var%g     | %7.3f  %4.3f | %7.3f  %4.3f  |\n',
+              i, Q[i], pvQ[i], LM[i], pvLM[i] ))
+    }
+    
+    print(sprintf('---------------------------------------------\n'))
+  }
+  end
+  
+  
+  # Output a list of results. 
+  mv_wntest_out <- list(
+    Q = Q, 
+    pvQ = pvQ, 
+    LM = LM, 
+    pvLM = pvLM, 
+    mvQ = mvQ, 
+    pvMVQ = pvMVQ
+  )
+  
+  return(mv_wntest_out)
+}
+
+
+
+################################################################################
+# Define function to perform a Breusch-Godfrey Lagrange Multiplier 
+# test for serial correlation
+################################################################################
+# 
+# Breusch-Godfrey Lagrange Multiplier test for serial correlation.
+# 
+################################################################################
+
+
+LMtest <- function(x,q) {
+  
+  
+  # Breusch-Godfrey Lagrange Multiplier test for serial correlation.
+  T <- nrow(x)
+  x <- x - mean(x)
+  y <- x[(q+1):T]
+  z <- x[1:(T-q)]
+  
+  for (i in 1:(q-1)) {
+    z <- rbind(x[(i+1):(T-q+i)], z)
+  }
+  
+  
+  e <- y
+  # s <- z[,1:q] * repmat(e,1,q)
+  # Translate this properly: 
+  s <- z[,1:q] * rep(e,1,q)
+  sbar <- mean(s)
+  
+  # The next line bsxfun(@FUNC, A, B) applies the element-by-element binary
+  # operation FUNC to arrays A and B, with singleton expansion enabled.
+  # Need to translate this to R: 
+  s <- mapply(minus, s, sbar)
+  
+  S <- t(s) %*% s/T
+  LMstat <- T*sbar*S^(-1)*t(sbar)
+  pv <- 1 - pchisq(LMstat, q)
+  
+  
+  # Output a list of results. 
+  LMtest_out <- list(
+    LMstat = LMstat,
+    pv = pv
+  )
+  
+  return(LMtest_out)
+}
+
+
+
+################################################################################
+# Define function to perform a Ljung-Box Q-test for serial correlation
+################################################################################
+# 
+# (Multivariate) Ljung-Box Q-test for serial correlation, see
+# 	Luetkepohl (2005, New Introduction to Multiple Time Series Analysis, p. 169).
+# 
+################################################################################
+
+Qtest <- function(x, maxlag) {
+  
+  
+  T <- nrow(x)
+  p <- ncol(x)
+  
+  C0 = matrix(0, nrow = p, ncol = p)
+  for (t in 1:T) {
+    C0 = C0 + t(x[t, ]) %*% x[t, ]
+  }
+  C0 = C0/T
+  
+  C <- array(rep(0, p*p*maxlag), dim = c(p,p,maxlag))
+  for (i in 1:maxlag) {
+    for (t in (i+1):T) {
+      C[ , ,i] <- C[ , ,i] + t(x[t, ]) %*% x[t-i, ]
+    }
+    
+    C[ , ,i] <- C[ , ,i]/(T-i) # Note division by (T-i) instead of T.
+  }
+  
+  
+  # (Multivariate) Q statistic
+  Qstat <- 0
+  for (j in 1:maxlag) {
+    # Qstat <- Qstat+trace(C(:,:,j)'*inv(C0)*C(:,:,j)*inv(C0)) / (T-j) %'
+    # The following line is a more efficient calculation than the previous
+    # Qstat <- Qstat+trace( (C(:,:,j)'/C0)*(C(:,:,j)/C0) ) / (T-j) %' #'
+    # Need function for trace: 
+    Qstat <- Qstat + trace( (t(C[ , ,j])/C0) %*% (CC[ , ,j]/C0) ) / (T-j)
+  }
+  
+  
+  Qstat <- Qstat*T*(T+2)
+  pv <- 1 - pchisq(Qstat, p*p*maxlag) # P-value is calculated with p^2*maxlag df.
+  
+  
+  # Output a list of results. 
+  Qtest_out <- list(
+    Qstat = Qstat,
+    pv = pv
+  )
+  
+  return(Qtest_out)
+}
+
+                       
+
+
+
+################################################################################
+# Define function to...
 ################################################################################
 # 
 
 # 
 ################################################################################
-
-
-
 
 
 
