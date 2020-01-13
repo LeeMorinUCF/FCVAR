@@ -76,9 +76,15 @@ rankTestStats = RankTests(x1, k, opt);
 
 %% --------- UNRESTRICTED MODEL ESTIMATION ---------- %
 
+k = 2;
+
 r=1;
 
 opt1 = DefaultOpt;  opt1.gridSearch = 0;
+
+% Testing GetBounds()
+obj = opt1;
+
 
 m1 = FCVARestn(x1, k, r, opt1); % This model is now in the structure m1.
 

@@ -26,7 +26,7 @@
 ################################################################################
 
 # Clear workspace.
-rm(list<-ls(all<-TRUE))
+rm(list = ls(all = TRUE))
 
 
 ################################################################################
@@ -43,8 +43,19 @@ setwd(wd_path)
 # source('Auxiliary.R')
 
 # Load library containing Estimation Options required for estimation.
-# source('EstOptions.R')
+source('EstOptions.R')
 # Contains a single function EstOptions() with default options. 
+
+# Load library with Main Estimation Function for FCVAR
+source('FCVAR_estn.R')
+
+# Load library of Functions for FCVAR Estimation
+source('FCVAR_lower.R')
+# Load library of Pre- and Post-Estimation Functions for FCVAR
+source('FCVAR_higher.R')
+
+# Load fracdiff library for testing.
+library(fracdiff)
 
 
 ################################################################################
@@ -136,12 +147,26 @@ rankTestStats <- RankTests(x1, k, opt)
 #--------------------------------------------------------------------------------
 
 
+k <- 2
+
 r <- 1
 
-opt1 <- DefaultOpt  
+opt1 <- DefaultOpt
 opt1$gridSearch <- 0
 
-m1 <- FCVARestn(x1, k, r, opt1) # This model is now in the structure m1.
+
+opt <- opt1
+opt$gridSearch <- 0
+x <- x1
+
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+
+# m1 <- FCVARestn(x1, k, r, opt1) # This model is now in the structure m1.
+m1 <- FCVARestn(x, k, r, opt) # This model is now in the structure m1.
+
+
 
 mv_wntest(m1.Residuals, order, printWNtest)
 

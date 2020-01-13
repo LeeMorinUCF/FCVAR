@@ -315,7 +315,7 @@ GetParams <- function(x, k, r, db, opt) {
 
 
 
-FCVARlikeMu <- function(y, db, mu, k, r, opt) {
+FCVARlikeMu <- function(mu, y, db, k, r, opt) {
   
   
   t <- nrow(y)
@@ -358,12 +358,15 @@ FCVARlikeMu <- function(y, db, mu, k, r, opt) {
 
 
 
-FCVARlike <- function(x, params, k, r, opt) {
+FCVARlike <- function(params, x, k, r, opt) {
   
   # global estimatesTEMP
   
   T <- nrow(x)
   p <- ncol(x)
+  
+  print('params = ')
+  print(params)
   
   
   # If there is one linear restriction imposed, optimization is over phi,
@@ -376,15 +379,14 @@ FCVARlike <- function(x, params, k, r, opt) {
     d <- db[1]
     b <- db[2]
     if (opt$levelParam) {
-      mu <- params[2:end]
+      mu <- params[2:length(params)]
     }
     
-  }
-  else {
+  } else {
     d <- params[1]
     b <- params[2]    
     if (opt$levelParam) {
-      mu <- params[3:end]
+      mu <- params[3:length(params)]
     }
     
   }
@@ -393,8 +395,7 @@ FCVARlike <- function(x, params, k, r, opt) {
   # Modify the data by a mu level.
   if (opt$levelParam) {
     y <- x - matrix(1, nrow = T, ncol = p) %*% diag(mu)
-  }
-  else {
+  } else {
     y <- x
   }
   
@@ -587,35 +588,60 @@ FracDiff <- function(x, d) {
   
   T <- nrow(x)
   p <- ncol(x)
-  k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
   
-  # NEXTPOW2(N) returns the first P such that 2.^P >= abs(N).  It is
-  #     often useful for finding the nearest power of two sequence
-  #     length for FFT operations.
-  NFFT <- 2^nextpow2(2*T-1)
+  # #--------------------------------------------------------------------------------
+  # # Upgrade to the FFT version in a later version.
+  # #--------------------------------------------------------------------------------
+  # 
+  # k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
+  # 
+  # # NEXTPOW2(N) returns the first P such that 2.^P >= abs(N).  It is
+  # #     often useful for finding the nearest power of two sequence
+  # #     length for FFT operations.
+  # NFFT <- 2^nextpow2(2*T-1)
+  # 
+  # # Array operation of the index of the series without the last element minus
+  # # the order of integration+1, divided by that same series
+  # b <- (k-d-1)/k
+  # 
+  # # cumulative product of that series modified in previous line
+  # b <- c(1, cumprod(b))
+  # 
+  # # IFFT(X) is the inverse discrete Fourier transform of X.
+  # #     IFFT(..., 'symmetric') causes IFFT to treat X as conjugate symmetric
+  # #     along the active dimension.  This option is useful when X is not exactly
+  # #     conjugate symmetric merely because of round-off error. 
+  # # REPMAT Replicate and tile an array.
+  # #     B = repmat(A,M,N) creates a large matrix B consisting of an M-by-N
+  # #     tiling of copies of A. The size of B is [size(A,1)*M, size(A,2)*N].
+  # #     The statement repmat(A,N) creates an N-by-N tiling.
+  # dx <- ifft(repmat(fft(b, NFFT), 1, p) * fft(x, NFFT), 'symmetric')
+  # 
+  # dx <- dx[1:T, ]
+  # 
+  # 
+  # #--------------------------------------------------------------------------------
   
-  # Array operation of the index of the series without the last element minus
-  # the order of integration+1, divided by that same series
-  b <- (k-d-1)/k
+  # For now, just use a wrapper for the diffseries() function in the fracdiff package. 
+  # except that only differences the first column. 
+  # This is based on the FFT version by Jensen and Nielsen (2014). 
+  # x_diff <- diffseries(x, 0.8)
+  dx <- data.frame(matrix(NA, nrow = nrow(x), 
+                          ncol = ncol(x)))
+  for (col_num in 1:length(colnames(x))) {
+    dx[, col_num] <- diffseries(x[, col_num], d)
+  }
+  # Problem: Their implementation does not match Morten's.
   
-  # cumulative product of that series modified in previous line
-  b <- c(1, cumprod(b))
+  # For now, I will go with the tried-and-tested "slow version".
   
-  # IFFT(X) is the inverse discrete Fourier transform of X.
-  #     IFFT(..., 'symmetric') causes IFFT to treat X as conjugate symmetric
-  #     along the active dimension.  This option is useful when X is not exactly
-  #     conjugate symmetric merely because of round-off error. 
-  # REPMAT Replicate and tile an array.
-  #     B = repmat(A,M,N) creates a large matrix B consisting of an M-by-N
-  #     tiling of copies of A. The size of B is [size(A,1)*M, size(A,2)*N].
-  #     The statement repmat(A,N) creates an N-by-N tiling.
-  dx <- ifft(repmat(fft(b, NFFT), 1, p) * fft(x, NFFT), 'symmetric')
   
-  dx <- dx[1:T, ]
+  
+  
   
   return(dx)
 }
-end
+
 
 
 ################################################################################

@@ -104,11 +104,10 @@ FCVARestn <- function(x,k,r,opt) {
     #   interval around the starting values.
     opt$UB_db[1:2] <- pmin(opt$db0[1:2] + c(0.1, 0.1), opt$dbMax)
     opt$LB_db[1:2] <- pmax(opt$db0[1:2] - c(0.1, 0.1), opt$dbMin)
-  }
-  else {
+  } else {
     # Call to GetBounds returns upper/lower bounds for (d,b) or
     #  depending on whether or not restrictions have been imposed.
-    UB_LB_bounds <- GetBounds(obj)
+    UB_LB_bounds <- GetBounds(opt)
     opt$UB_db <- UB_LB_bounds$UB
     opt$LB_db <- UB_LB_bounds$LB
     
@@ -138,7 +137,7 @@ FCVARestn <- function(x,k,r,opt) {
   #   adjusted based on the presence of level parameter or d=b restriction.
   Rpsi <- opt$R_psi
   rpsi <- opt$r_psi
-  startVals <- opt$db0[1:2] # starting values for mu get added later.
+  startVals <- matrix(opt$db0[1:2], nrow = 1, ncol = 2) # starting values for mu get added later.
   Cdb <- opt$C_db
   cdb <- opt$c_db
   
@@ -148,12 +147,13 @@ FCVARestn <- function(x,k,r,opt) {
   
   
   
-  if(size(Rpsi,1)==1) {
+  if(nrow(Rpsi) == 1) {
     
     H_psi <- null(Rpsi)
     
     # Need to back out phi from given db0
-    startVals <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(startVals[1:2])
+    # startVals <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(startVals[1:2])
+    startVals <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(startVals)
     
     if(opt$gridSearch) {
       # Translate from d,b to phi.
@@ -213,7 +213,7 @@ FCVARestn <- function(x,k,r,opt) {
     #   to the startVals variable to account for the level parameter.
     if(opt$gridSearch == 0) {
       # Check conformability:
-      startVals <- c(startVals, x[1, ])
+      startVals <- unlist(c(startVals, x[1, ]))
     }
     else {
       # Check conformability:
@@ -230,8 +230,15 @@ FCVARestn <- function(x,k,r,opt) {
   }
   
   
+  print('Made it here in FCVAR_estn!')
   
-  if(size(opt$R_psi)==2) {
+  
+  # if(size(opt$R_psi) == 2) {
+  if(nrow(opt$R_psi) == 2) { # i.e. 2 restrictions?
+    
+    
+    print('Condition (size(opt$R_psi) == 2) is imposed, whatever that means.')
+    print('I think it means 2 restrictions but correct me if I am wrong.')
     
     
     # d,b are exactly identified by the linear restrictions and Rpsi is
@@ -285,6 +292,13 @@ FCVARestn <- function(x,k,r,opt) {
     # [ !, maxLike, ! ] 
     # <- fmincon(@( params ) -FCVARlike(x, params, k, r, opt), 
     #            startVals, Cdb, cdb, Rpsi, rpsi, LB, UB, [], opt$ConFminOptions )
+    
+    # Test the likelihood function. 
+    print('like = ')
+    # params <- c(0.8, 0.8)
+    params <- startVals
+    print(FCVARlike(params, x, k, r, opt))
+    
     
     # Need to implement optimization correctly. 
     min_out <- optim_con(-FCVARlike(params, x, k, r, opt), 

@@ -146,8 +146,8 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
   print(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T))
   print(sprintf('Order for WN tests:   %6.0f     Number of observations for estimation:  %6.0f \n', order, T-opt$N))
-  print(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo{opt$rConstant+1}, opt$N )   )
-  print(sprintf('Unrestricted constant: %6s     Level parameter:                        %6s\n', yesNo{opt$unrConstant+1}, yesNo{opt$levelParam+1} ))
+  print(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N )   )
+  print(sprintf('Unrestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
   print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
   print(sprintf('k  r    d    b      LogL     LR    pv    AIC       BIC     pmvQ'))
   for (i in 1:p) {
@@ -297,7 +297,7 @@ RankTests <- function(x, k, opt) {
   opt$print2screen <- tempPrint2Screen
   
   # Print the results to screen.
-  if opt$print2screen {
+  if (opt$print2screen) {
     
     # create a variable for output strings
     yesNo <- c('No','Yes')
@@ -307,8 +307,8 @@ RankTests <- function(x, k, opt) {
     print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
     print(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt$N))
     print(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T))
-    print(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo{opt$rConstant+1}, opt$N ))
-    print(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo{opt$unrConstant+1}, yesNo{opt$levelParam+1} ))
+    print(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
+    print(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
     print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
     print(sprintf('Rank \t  d  \t  b  \t Log-likelihood\t LR statistic\t P-value\n'))
     for (i in 1:p) {
@@ -391,7 +391,8 @@ get_pvalues <- function(q, b, consT, testStat, opt) {
     # Note: fdpval is a separately installed program.
     # For more information see: https://github.com/jagerman/fracdist
     # For download see https://github.com/jagerman/fracdist/releases
-    [ flag , pval] <- system([outCode])
+    # [ flag , pval] <- system([outCode])
+    fracdist_out <- 7
     # Doesn't work on all platforms. 
     # Should replace with a wrapper for the fracdist code. 
     
@@ -665,9 +666,9 @@ HypoTest <- function(modelUNR, modelR) {
   p_LRtest <- 1 - pchisq(LR_test, df)
   
   # Print output.
-  print(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n', ...
+  print(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n', 
                 modelUNR$like, modelR$like))
-  print(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',...
+  print(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
                 df,LR_test,p_LRtest))
   
   
