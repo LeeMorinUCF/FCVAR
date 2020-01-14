@@ -65,13 +65,13 @@
 
 GetParams <- function(x, k, r, db, opt) {
   
-  print('Made it to GetParams!')
-  print('k = ')
-  print(k)
-  print('r = ')
-  print(r)
-  print('db = ')
-  print(db)
+  # print('Made it to GetParams!')
+  # print('k = ')
+  # print(k)
+  # print('r = ')
+  # print(r)
+  # print('db = ')
+  # print(db)
   
   Z_array <- TransformData(x, k, db, opt)
   Z0 <- Z_array$Z0
@@ -457,11 +457,62 @@ FCVARlike <- function(params, x, k, r, opt) {
   p <- ncol(y)
   like <- - T*p/2*( log(2*pi) + 1)  - T/2*log(det(estimates$OmegaHat))
   
+  # Assign the value for the global variable estimatesTEMP.
+  # Might adjust this later but it will work for now. 
+  # print('Search list in FCVARlike():')
+  # print(search())
+  assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
   
   return(like)
 }
 
 
+
+
+################################################################################
+# Define function to calculate the likelihood, 
+# evaluated at the parameters provided as inputs. 
+################################################################################
+# 
+# function [ like ] <- FullFCVARlike(x, k, r, coeffs, beta, rho, opt)
+# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
+# Based on Lee Morin & Morten Nielsen (August 22, 2011)
+# 
+# DESCRIPTION: This function returns the value of the log-likelihood
+# 	evaluated at the parameters provided as inputs.
+# 
+# Input <- x (matrix of variables to be included in the system)
+#         k (number of lags)
+#         r (number of cointegrating vectors)
+#         coeffs (Matlab structure of coefficients)
+#         beta (value of beta)
+#         rho  (value of rho)
+#         opt  (object containing the estimation options)
+# Output <- like (value of the log likelihood)
+# 
+################################################################################
+
+FullFCVARlike <- function(x, k, r, coeffs, beta, rho, opt) {
+  
+  
+  # Add betaHat and rhoHat to the coefficients to get residuals because they
+  #   are not used in the Hessian calculation and are missing from the
+  #   structure coeffs
+  coeffs$betaHat <- beta
+  coeffs$rhoHat <- rho
+  
+  # Obtain residuals.
+  epsilon <- GetResiduals(x, k, r, coeffs, opt)
+  
+  
+  # Calculate value of likelihood function.
+  T <- nrow(x) - opt$N
+  p <- ncol(x)
+  OmegaHat <- t(epsilon) %*% epsilon/T
+  like <- - T*p/2*( log(2*pi) + 1)  - T/2*log(det(OmegaHat)) 
+  
+  return(like)
+}
 
 
 
@@ -536,6 +587,76 @@ TransformData <- function(x, k, db, opt) {
   
   return(Z_array)
 }
+
+
+################################################################################
+# Define function to calculate residuals from given parameter values.
+################################################################################
+# 
+# function [ epsilon ] <- GetResiduals(x, k, r, coeffs, opt)
+# Written by Michal Popiel and Morten Nielsen (This version 10.22.2014)
+# Based on Lee Morin & Morten Nielsen (August 22, 2011)
+# 
+# DESCRIPTION: This function calculates the model residuals.
+# 
+# Input <- x (matrix of variables to be included in the system)
+#         k (number of lags)
+#         r (number of cointegrating vectors)
+#         coeffs (Matlab structure of coefficients)
+#         opt (object containing the estimation options)
+# Output <- epsilon (matrix of residuals from model estimation evaluated at
+#                     the parameter estimates specified in coeffs) 
+# 
+################################################################################
+
+GetResiduals <- function(x, k, r, coeffs, opt) {
+  
+  
+  # If level parameter is included, the data must be shifted before
+  #   calculating the residuals:
+  if (opt$levelParam) {
+    T <- size(x,1)
+    y <- x - ones(T,1)*coeffs$muHat
+  } else {
+    y <- x
+  }
+  
+  #--------------------------------------------------------------------------------
+  # Transform data 
+  #--------------------------------------------------------------------------------
+  # [ Z0, Z1, Z2, Z3 ] <- TransformData(y, k, coeffs$db, opt)
+  Z_array <- TransformData(y, k, coeffs$db, opt)
+  Z0 <- Z_array$Z0
+  Z1 <- Z_array$Z1
+  Z2 <- Z_array$Z2
+  Z3 <- Z_array$Z3
+  
+  #--------------------------------------------------------------------------------
+  # Calculate residuals 
+  #--------------------------------------------------------------------------------
+  epsilon <- Z0
+  
+  if (r > 0) {
+    epsilon <- epsilon - 
+      Z1 %*% cbind(coeffs$betaHat, coeffs$rhoHat) %*% t(coeffs$alphaHat)
+  }
+  
+  
+  if (k > 0) {
+  epsilon <- epsilon - Z2 %*% t(coeffs$GammaHat)
+  }
+  
+  
+  if (opt$unrConstant) {
+    epsilon <- epsilon - Z3 %*% t(coeffs$xiHat)
+  }
+  
+  
+  
+  return(epsilon)
+}
+end
+
 
 
 
@@ -874,25 +995,25 @@ SEmat2vecU <- function( coeffs, k, r, p , opt) {
   
   # Level parameter MuHat.
   if (opt$levelParam) {
-    param <- rbind(param, matrix(coeffs$muHat, nrow = 1, ncol = p))
+    param <- cbind(param, matrix(coeffs$muHat, nrow = 1, ncol = p))
   }
   
   
   # Unrestricted constant.
   if (opt$unrConstant) {
-    param <- rbind(param, matrix(coeffs$xiHat, nrow = 1, ncol = p))
+    param <- cbind(param, matrix(coeffs$xiHat, nrow = 1, ncol = p))
   }
   
   
   # alphaHat
   if (r > 0) {
-    param <- rbind(param, matrix( coeffs$alphaHat, nrow = 1, ncol = p*r ))
+    param <- cbind(param, matrix( coeffs$alphaHat, nrow = 1, ncol = p*r ))
   }
   
   
   # GammaHat
   if (k > 0) {
-    param <- rbind(param, matrix( coeffs$GammaHat, nrow = 1, ncol = p*p*k ))
+    param <- cbind(param, matrix( coeffs$GammaHat, nrow = 1, ncol = p*p*k ))
   }
   
   
@@ -926,7 +1047,7 @@ SEvec2matU <- function( param, k, r, p, opt ) {
   
   if (opt$restrictDB) {
     coeffs$db <- matrix(c(param[1], param[1]), nrow = 1, ncol = 2)  # store d,b
-    param <- param(2:end)				# drop d,b from param
+    param <- param[2:length(param)]				# drop d,b from param
   } else {
     coeffs$db <- param[1:2]
     param <- param[3:length(param)]
@@ -935,26 +1056,26 @@ SEvec2matU <- function( param, k, r, p, opt ) {
   
   if (opt$levelParam) {
     coeffs$muHat <- param[1:p]
-    param <- param[p+1:length(param)]
+    param <- param[(p+1):length(param)]
   }
   
   
   if (opt$unrConstant) {
     coeffs$xiHat <- matrix(param[1:p], nrow = p, ncol = 1)
-    param <- param[p+1:length(param)]
+    param <- param[(p+1):length(param)]
   }
   
   
   if (r > 0) {
     coeffs$alphaHat <- matrix( param[1:p*r], nrow = p, ncol = r)
-    param <- param[p*r+1:length(param)]
+    param <- param[(p*r+1):length(param)]
   } else {
     coeffs$alphaHat <- NULL
   }
   
   
   if (k > 0) {
-    coeffs$GammaHat <- matrix( param[1 : end], nrow = p, ncol = p*k)
+    coeffs$GammaHat <- matrix( param[1 : length(param)], nrow = p, ncol = p*k)
   } else {
     coeffs$GammaHat <- NULL
   }

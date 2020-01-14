@@ -230,7 +230,7 @@ FCVARestn <- function(x,k,r,opt) {
   }
   
   
-  print('Made it here in FCVAR_estn!')
+  # print('Made it here in FCVAR_estn!')
   
   
   # if(size(opt$R_psi) == 2) {
@@ -321,8 +321,23 @@ FCVARestn <- function(x,k,r,opt) {
   #--------------------------------------------------------------------------------
   
   # Store the updated estimation options. 
-  results$startVals <- startVals
-  results$options <- opt
+  # results$startVals <- startVals
+  # results$options <- opt
+  results <- list(
+    startVals = startVals,
+    options = opt,
+    like = NA,
+    coeffs = NA,
+    rankJ = NA,
+    fp = NA,
+    SE = NA,
+    NegInvHessian = NA,
+    Residuals = NA,
+    cPolyRoots = NA
+  )
+  
+  
+  # Store the bounds on d and b.
   results$options$UB_db <- UB
   results$options$LB_db <- LB
   
@@ -331,21 +346,30 @@ FCVARestn <- function(x,k,r,opt) {
   maxLike <- -maxLike
   results$like <- maxLike
   
+  
+  
+  # print('estimatesTEMP = ')
+  # print(estimatesTEMP)
+  
+  estimatesTEMP <- get('estimatesTEMP', envir = .GlobalEnv)
+  
+  print('estimatesTEMP = ')
+  print(estimatesTEMP)
+  
   # Coefficients are taken from a global defined in the likelihood
   #   function
   results$coeffs <- estimatesTEMP
-  
   
   #--------------------------------------------------------------------------------
   # CHECK RANK CONDITION
   #--------------------------------------------------------------------------------
   
-  
+  print('Warning: Check rank conditions cancelled out!')
   
   p1 <- p + opt$rConstant
   rankJ <- NULL # initialize the rank
   
-  if(r > 0) {
+  if ( FALSE & (r > 0) ) {
     # If rank is zero then Alpha and Beta are empty
     
     if(is.null(opt$R_Beta)) {
@@ -363,8 +387,7 @@ FCVARestn <- function(x,k,r,opt) {
     Kpr <- matrix(kronecker(Ip, diag(r)), nrow = p*r, ncol = p*r)
     if(is.null(opt$R_Alpha)) {
       A <- Kpr %*% diag(p*r)
-    }
-    else {
+    } else {
       A <- null(opt$R_Alpha %*% solve(Kpr))
     }
     
@@ -374,9 +397,22 @@ FCVARestn <- function(x,k,r,opt) {
     
     # Following Boswijk & Doornik (2004, p.447) identification condition
     # Check conformability: 
-    kronA <- kronecker(eye(p), 
+    
+    print(diag(p))
+    print(rbind(results$coeffs$betaHat, 
+                results$coeffs$rhoHat))
+    print(rbind(A, matrix(0, nrow = p*r, ncol = rH)))
+    print(kronecker(diag(p), 
+                    rbind(results$coeffs$betaHat, 
+                          results$coeffs$rhoHat)))
+    
+    kronA <- kronecker(diag(p), 
                        rbind(results$coeffs$betaHat, 
-                             results$coeffs$rhoHat)) %*% rbind(A, zeros(p*r,rH))
+                             results$coeffs$rhoHat)) %*% 
+      rbind(A, matrix(0, nrow = p*r, ncol = rH))
+    
+    
+    
     kronH <- kronecker(results$coeffs$alphaHat, 
                        diag(p1)) %*% rbind(matrix(0, nrow = p1*r, ncol = rA), H_beta)
     rankJ <- qr(kronA + kronH)$rank
@@ -401,6 +437,7 @@ FCVARestn <- function(x,k,r,opt) {
     print(sprintf('\nWarning: Beta hat has rank less than r!\n'))
   }
   
+  # print('Made it here in FCVAR_estn!')
   
   #--------------------------------------------------------------------------------
   # FREE PARAMETERS
@@ -413,6 +450,8 @@ FCVARestn <- function(x,k,r,opt) {
   results$fp <- fp
   
   
+  print('Made it here in FCVAR_estn!')
+  
   #--------------------------------------------------------------------------------
   # STANDARD ERRORS
   #--------------------------------------------------------------------------------
@@ -423,7 +462,7 @@ FCVARestn <- function(x,k,r,opt) {
     # If any restrictions have been imposed, the Hessian matrix must be
     #   adjusted to account for them.
     
-    if( !is.null(opt$R_Alpha) | !is.null(opt$R_psi) ) {
+    if ( !is.null(opt$R_Alpha) | !is.null(opt$R_psi) ) {
       
       # Create R matrix with all restrictions.
       
@@ -431,84 +470,110 @@ FCVARestn <- function(x,k,r,opt) {
       #  contains restrict DB, so the size() is only reliable if
       #  it's turned off. 
       if(!is.null(opt$R_psi)) {
-        if(opt$restrictDB)
+        if(opt$restrictDB) {
           rowDB <- nrow(opt$R_psi) - 1
-        else
+        } else {
           rowDB <- nrow(opt$R_psi)
-        end
+        }
+        
       } else {
         # Otherwise d,b are unrestricted.
         rowDB <- 0
       }
-        end
-        
-        # Number of restrictions on alpha.
-        rowA  <- nrow(opt$R_Alpha)
-        
-        # Count the variables.
-        colDB <- 1 + !opt$restrictDB
-        colA <- p*r
-        colG <- p*p*k
-        colMu <- opt$levelParam*p
-        colRh <- opt$unrConstant*p
-        # Length of vec(estimated coefficients in Hessian).
-        R_cols  <- colDB + colMu + colRh + colA + colG
-        
-        # The restriction matrix will have rows equal to the number of
-        #   restrictions.
-        R_rows <- rowDB + rowA
-        
-        R <- matrix(0, nrow = R_rows, ncol = R_cols)
-        
-        # Fill in the matrix R.
-        
-        # Start with restrictions on (d,b) and note that if the model
-        #   with d=b is being estimated, only the first column of R_psi is
-        #   considered. In that case, if there are zeros found in the first
-        #   column, the user is asked to rewrite the restriction.
-        if(rowDB > 0) {
-          if(opt$restrictDB) {
-            # If the model d=b is being estimated, only one
-            #  restriction can be imposed and that is on d.
-            R[1:rowDB,1:colDB] <- opt$R_psi[1,1]
-          }
-          else {
-            R[1:rowDB,1:colDB] <- opt$R_psi
-          }
-          end
-        }
-        end
-        # Put the R_Alpha matrix into the appropriate place in R.
-        if(!is.null(opt$R_Alpha)) {
-          R[1+rowDB: rowDB + rowA, 
-            1 + colDB + colMu + colRh: 
-              colDB + colMu + colRh + colA] <- opt$R_Alpha
-        }
-        end
-        
-        # Calculate unrestricted Hessian.
-        H <- FCVARhess(x, k, r, results$coeffs, opt)
-        
-        
-        # Calculate the restricted Hessian.
-        Q <- -solve(H) + solve(H) %*% t(R) %*% 
-          solve(R %*% solve(H) %*% t(R)) %*% R %*% solve(H)
       
-
-
+      
+      # Number of restrictions on alpha.
+      rowA  <- sum(nrow(opt$R_Alpha))
+      
+      # Count the variables.
+      colDB <- 1 + !opt$restrictDB
+      colA <- p*r
+      colG <- p*p*k
+      colMu <- opt$levelParam*p
+      colRh <- opt$unrConstant*p
+      # Length of vec(estimated coefficients in Hessian).
+      R_cols  <- colDB + colMu + colRh + colA + colG
+      
+      print('colDB = ')
+      print(colDB)
+      print('colMu = ')
+      print(colMu)
+      print('colRh = ')
+      print(colRh)
+      print('colA = ')
+      print(colA)
+      print('colG = ')
+      print(colG)
+      print('R_cols = ')
+      print(R_cols)
+      
+      # The restriction matrix will have rows equal to the number of
+      #   restrictions.
+      R_rows <- rowDB + rowA
+      
+      print('rowA = ')
+      print(rowA)
+      print('rowDB = ')
+      print(rowDB)
+      print('R_rows = ')
+      print(R_rows)
+      
+      
+      
+      R <- matrix(0, nrow = R_rows, ncol = R_cols)
+      
+      # Fill in the matrix R.
+      
+      # Start with restrictions on (d,b) and note that if the model
+      #   with d=b is being estimated, only the first column of R_psi is
+      #   considered. In that case, if there are zeros found in the first
+      #   column, the user is asked to rewrite the restriction.
+      if(rowDB > 0) {
+        if(opt$restrictDB) {
+          # If the model d=b is being estimated, only one
+          #  restriction can be imposed and that is on d.
+          R[1:rowDB,1:colDB] <- opt$R_psi[1,1]
+        } else {
+          R[1:rowDB,1:colDB] <- opt$R_psi
+        }
+        
+      }
+      
+      # Put the R_Alpha matrix into the appropriate place in R.
+      if(!is.null(opt$R_Alpha)) {
+        R[1+rowDB: rowDB + rowA, 
+          1 + colDB + colMu + colRh: 
+            colDB + colMu + colRh + colA] <- opt$R_Alpha
+      }
+      
+      
+      # coeffs <- results$coeffs
+      
+      # Calculate unrestricted Hessian.
+      H <- FCVARhess(x, k, r, results$coeffs, opt)
+      
+      print('H = ')
+      print(H)
+      
+      # Calculate the restricted Hessian.
+      Q <- -solve(H) + solve(H) %*% t(R) %*% 
+        solve(R %*% solve(H) %*% t(R)) %*% R %*% solve(H)
+      
+      
+      
     } else {
       # Model is unrestricted.
       H <- FCVARhess(x, k, r, results$coeffs, opt)
       Q <- -solve(H)
     }
-    end
+    
     
     
   } else {
     NumCoeffs <- length(SEmat2vecU(results$coeffs, k, r, p, opt))
     Q <- matrix(0, nrow = NumCoeffs, ncol = NumCoeffs)
   }
-  end
+  
   
   
   

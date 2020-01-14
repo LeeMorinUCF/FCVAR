@@ -393,10 +393,10 @@ updateRestrictions <- function(opt, p, r) {
     
   }
   
-  print('Made it here in EstnOptions!')
-  
-  print('opt$R_psi = ')
-  print(opt$R_psi)
+  # print('Made it here in EstnOptions!')
+  # 
+  # print('opt$R_psi = ')
+  # print(opt$R_psi)
   
   # Check restrictions on fractional parameters.
   if (is.null(opt$R_psi)) {
@@ -413,10 +413,10 @@ updateRestrictions <- function(opt, p, r) {
     UB <- UB_LB_bounds$UB
     LB <- UB_LB_bounds$LB
     
-    print('LB, UB = ')
-    print(UB_LB_bounds)
-    print(LB)
-    print(UB)
+    # print('LB, UB = ')
+    # print(UB_LB_bounds)
+    # print(LB)
+    # print(UB)
     
     if(LB > UB) {
       print(sprintf('\nWarning: Redefine restrictions on fractional parameters.\n'))
@@ -533,7 +533,7 @@ updateRestrictions <- function(opt, p, r) {
   }
   
   
-  print('Made it to the end of EstnOptions!')
+  # print('Made it to the end of EstnOptions!')
   
   # Return the updated object of estimation options.
   newOpt <- opt
@@ -562,11 +562,11 @@ updateRestrictions <- function(opt, p, r) {
 GetBounds <- function(opt) {
   
   
-  print('Made it here in GetBounds!')
-  
-  print('opt$R_psi = ')
-  print(opt$R_psi)
-  print(is.null(opt$R_psi))
+  # print('Made it here in GetBounds!')
+  # 
+  # print('opt$R_psi = ')
+  # print(opt$R_psi)
+  # print(is.null(opt$R_psi))
   
   if(is.null(opt$R_psi)) {
     # R_psi empty. Upper and lower bounds are the max and min values input
@@ -576,10 +576,10 @@ GetBounds <- function(opt) {
     # Minimum
     LB <- opt$dbMin
     
-    print('Made it to the null case in GetBounds!')
-    print('LB, UB = ')
-    print(LB)
-    print(UB)
+    # print('Made it to the null case in GetBounds!')
+    # print('LB, UB = ')
+    # print(LB)
+    # print(UB)
     
   } else {
     
@@ -592,17 +592,17 @@ GetBounds <- function(opt) {
     H <- null(R)
     
     
-    print('Made it to the else case in GetBounds!')
-    print('R * R^T = ')
-    print(R %*% t(R))
+    # print('Made it to the else case in GetBounds!')
+    # print('R * R^T = ')
+    # print(R %*% t(R))
     
     h <- t(R) %*% solve(R %*% t(R)) %*% s 
     
     
-    print('H = ')
-    print(H)
-    print('h = ')
-    print(h)
+    # print('H = ')
+    # print(H)
+    # print('h = ')
+    # print(h)
     # print('nrow(R) = ')
     # print(nrow(R))
     # print('ncol(R) = ')
@@ -627,7 +627,7 @@ GetBounds <- function(opt) {
     if(nrow(R) == 1) {
       
       
-      print('Made it to the one-restriction case in GetBounds!')
+      # print('Made it to the one-restriction case in GetBounds!')
       
       # Calculate endpoints of the grid from dbMin and dbMax to free
       # parameter phi. Note that since the null space can be either
@@ -686,10 +686,10 @@ GetBounds <- function(opt) {
   UB_LB_bounds <- list(UB = UB, LB = LB)
   
   
-  print('LB, UB = ')
-  print(UB_LB_bounds)
-  print(LB)
-  print(UB)
+  # print('LB, UB = ')
+  # print(UB_LB_bounds)
+  # print(LB)
+  # print(UB)
   
   return(UB_LB_bounds)
 }
