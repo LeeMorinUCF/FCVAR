@@ -394,8 +394,8 @@ FCVARlike <- function(params, x, k, r, opt) {
   T <- nrow(x)
   p <- ncol(x)
   
-  print('params = ')
-  print(params)
+  # print('params = ')
+  # print(params)
   
   
   # If there is one linear restriction imposed, optimization is over phi,
@@ -898,6 +898,7 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
   
   # Specify delta (increment for numerical derivatives).
   delta <- 10^(-4)
+  # delta <- 10^(-8)
   
   # Convert the parameters to vector form.
   phi0 <- SEmat2vecU(coeffs, k, r, p, opt)
@@ -1132,25 +1133,27 @@ CharPolyRoots <- function(coeffs, opt, k, r, p) {
     PiStar <- PiStar + Gamma1
     for (i in 2:k) {
       
-      Gammai <- coeffs$GammaHat[ , (i-1)*p + 1 : i*p]
-      GammaiMinus1 <- coeffs$GammaHat[ , (i-2)*p + 1 : (i-1)*p]
+      Gammai <- coeffs$GammaHat[ , seq(((i-1)*p + 1), i*p)]
+      GammaiMinus1 <- coeffs$GammaHat[ , seq(((i-2)*p + 1), (i-1)*p)]
       
-      PiStar <- rbind(PiStar, (Gammai - GammaiMinus1))
+      PiStar <- cbind(PiStar, (Gammai - GammaiMinus1))
       
     }
     
-    Gammak <- coeffs$GammaHat[ , (k-1)*p + 1 : k*p]
-    PiStar <- rbind(PiStar, ( - Gammak ))
+    Gammak <- coeffs$GammaHat[ , seq(((k-1)*p + 1), k*p)]
+    PiStar <- cbind(PiStar, ( - Gammak ))
   }
   
   
   # Pad with an identity for the transition of the lagged variables.
-  PiStar <- rbind(PiStar, diag(p*k))
-  PiStar <- rbind(PiStar, matrix(0, nrow = p*k, ncol = p*(k>0) ))
+  PiStar <- rbind(PiStar, 
+                  cbind(diag(p*k), 
+                        matrix(0, nrow = p*k, ncol = p*(k>0) )))
   
+   
   # The roots are then the inverse eigenvalues of the matrix PiStar.
-  cPolyRoots <- 1 / eig(PiStar)
-  cPolyRoots <- cPolyRoots[order(-cPolyRoots)]
+  cPolyRoots <- 1 / eigen(PiStar)$values
+  cPolyRoots <- cPolyRoots[order(-Mod(cPolyRoots))]
   
   # Generate graph depending on the indicator plotRoots.
   if (opt$plotRoots) {
@@ -1186,14 +1189,16 @@ CharPolyRoots <- function(coeffs, opt, k, r, p) {
          transformedUnitCircleY, 
          main = c('Roots of the characteristic polynomial', 
                   'with the image of the unit circle'), 
+         xlab = 'Real Part of Root', 
+         ylab = 'Imaginary Part of Root', 
          xlim = 2*c(-maxXYaxis, maxXYaxis),
          ylim = 2*c(-maxXYaxis, maxXYaxis),
          type = 'l', 
          lwd = 3, 
          col = 'red')
     lines(unitCircleX, unitCircleY, lwd = 3, col = 'black')
-    points(real(cPolyRoots), imag(cPolyRoots), 
-           cex = 16, col = 'blue')
+    points(Re(cPolyRoots), Im(cPolyRoots), 
+           pch = 16, col = 'blue')
     
     
     

@@ -59,7 +59,7 @@ opt.progLoc = '"/usr/bin/fdpval"';  % location path with program name
 
 DefaultOpt = opt; % Store the options for restoring them in between hypothesis tests.
 
-startProg = tic(); % start timer
+% startProg = tic(); % start timer
 
 
 %% --------- LAG SELECTION ---------- %
@@ -176,4 +176,4 @@ display(betaHatR);
 display(alphaHatR);
 
 
-toc(startProg); % report elapsed time
+% toc(startProg); % report elapsed time
