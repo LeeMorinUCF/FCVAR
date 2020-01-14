@@ -64,14 +64,14 @@ startProg = tic(); % start timer
 
 %% --------- LAG SELECTION ---------- %
 
-LagSelect(x1, kmax, p, order, opt);
+% LagSelect(x1, kmax, p, order, opt);
 
 
 %% --------- COINTEGRATION RANK TESTING ---------- %
 
 k = 2;
 
-rankTestStats = RankTests(x1, k, opt);
+% rankTestStats = RankTests(x1, k, opt);
 
 
 %% --------- UNRESTRICTED MODEL ESTIMATION ---------- %
@@ -84,7 +84,8 @@ opt1 = DefaultOpt;  opt1.gridSearch = 0;
 
 % Testing GetBounds()
 obj = opt1;
-
+opt = opt1;
+x = x1;
 
 m1 = FCVARestn(x1, k, r, opt1); % This model is now in the structure m1.
 

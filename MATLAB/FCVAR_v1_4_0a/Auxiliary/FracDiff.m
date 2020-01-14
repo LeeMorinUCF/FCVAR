@@ -8,13 +8,13 @@ function [dx] = FracDiff(x, d)
 %
 % input = x (vector or matrix of data)
 %         d (scalar value at which to calculate the fractional difference)
-% 
+%
 % output = vector or matrix (1-L)^d x of same dimensions as x.
 %______________________________________________________
 
 
     [T, p] = size(x);
-    k = (1 : T-1)';
+    k = (1 : T-1)'; %'
 
     % NEXTPOW2(N) returns the first P such that 2.^P >= abs(N).  It is
     %     often useful for finding the nearest power of two sequence
@@ -31,7 +31,7 @@ function [dx] = FracDiff(x, d)
     % IFFT(X) is the inverse discrete Fourier transform of X.
     %     IFFT(..., 'symmetric') causes IFFT to treat X as conjugate symmetric
     %     along the active dimension.  This option is useful when X is not exactly
-    %     conjugate symmetric merely because of round-off error. 
+    %     conjugate symmetric merely because of round-off error.
     % REPMAT Replicate and tile an array.
     %     B = repmat(A,M,N) creates a large matrix B consisting of an M-by-N
     %     tiling of copies of A. The size of B is [size(A,1)*M, size(A,2)*N].

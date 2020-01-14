@@ -129,7 +129,7 @@ startProg <- Sys.time() # start timer
 # LAG SELECTION 
 #--------------------------------------------------------------------------------
 
-LagSelect(x1, kmax, p, order, opt)
+# LagSelect(x1, kmax, p, order, opt)
 
 
 #--------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ LagSelect(x1, kmax, p, order, opt)
 
 k <- 2
 
-rankTestStats <- RankTests(x1, k, opt)
+# rankTestStats <- RankTests(x1, k, opt)
 
 
 #--------------------------------------------------------------------------------

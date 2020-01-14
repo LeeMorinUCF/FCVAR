@@ -301,10 +301,14 @@ FCVARestn <- function(x,k,r,opt) {
     
     
     # Need to implement optimization correctly. 
-    min_out <- optim_con(-FCVARlike(params, x, k, r, opt), 
-                     startVals, Cdb, cdb, Rpsi, rpsi, LB, UB, opt$ConFminOptions)
+    min_out <- optim(startVals, 
+                     function(params) {-FCVARlike(params, x, k, r, opt)}) 
+                     # Cdb, cdb, Rpsi, rpsi, LB, UB, opt$ConFminOptions)
     
-    maxLike <- min_out$f
+    print('min_out = ')
+    print(min_out)
+    
+    maxLike <- min_out$value
   }
   
 

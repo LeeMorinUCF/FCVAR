@@ -65,12 +65,19 @@
 
 GetParams <- function(x, k, r, db, opt) {
   
+  print('Made it to GetParams!')
+  print('k = ')
+  print(k)
+  print('r = ')
+  print(r)
+  print('db = ')
+  print(db)
   
   Z_array <- TransformData(x, k, db, opt)
-  Z0 <- Z_array$mat_0
-  Z1 <- Z_array$mat_1
-  Z2 <- Z_array$mat_2
-  Z3 <- Z_array$mat_3
+  Z0 <- Z_array$Z0
+  Z1 <- Z_array$Z1
+  Z2 <- Z_array$Z2
+  Z3 <- Z_array$Z3
   
   T <- nrow(Z0)
   p <- ncol(Z0)
@@ -87,8 +94,7 @@ GetParams <- function(x, k, r, db, opt) {
     Z1hat <- Z1 - Z3 %*% ( solve(t(Z3) %*% Z3) %*% t(Z3) %*% Z1 )
     if(k > 0) {
       Z2hat <- Z2 - Z3 %*% ( solve(t(Z3) %*% Z3) %*% t(Z3) %*% Z2 )
-    }
-    else {
+    } else {
       Z2hat <- Z2
     }
     
@@ -131,16 +137,40 @@ GetParams <- function(x, k, r, db, opt) {
     
   } else if (( r > 0 ) & ( r < p )) {
     
+    # For d = startVal, need to match this:
+    # >> [V,D] = eig( inv(S11)*S10*inv(S00)*S01 );
+    # >> V
+    # 
+    # V =
+    #   
+    #   -0.9441   -0.8883    0.3380
+    # -0.1072    0.0466    0.0062
+    # -0.3117    0.4569    0.9411
+    # 
+    # >> D
+    # 
+    # D =
+    #   
+    #   0.0506         0         0
+    # 0    0.0257         0
+    # 0         0    0.0015
+    # 
+    # >>
+    #   
+    
+    
     # Clean this up:
-    eig_out <- eig_replace( solve(S11) %*% S10 %*% solve(S00) %*% S01 )
-    V <- eig_out$V
-    D <- eig_out$D
+    eig_out <- eigen( solve(S11) %*% S10 %*% solve(S00) %*% S01 )
+    D <- eig_out$values # Only the vector, not the diagonal matrix. 
+    V1 <- eig_out$vectors
     
     # V <- sortrows( [ V diag(D) ], p1+1 )
-    V <- sortrows( whatever )
-    V <- V[1:p1, ]
+    V2 <- t( cbind(t(V1), D)[order(D), ] )
+    
+    V <- V2[1:p1, ]
     # betaStar <- V( 1:p1, p1 : -1 : p1-r+1 )
-    betaStar <- V[ 1:p1, seq(p1, p1-r+1, by <- -1) ]
+    betaStar <- matrix(V[ 1:p1, seq(p1, p1-r+1, by <- -1) ], 
+                       nrow = p1, ncol = p1-r-1)
     
     
     
@@ -170,7 +200,7 @@ GetParams <- function(x, k, r, db, opt) {
       # Otherwise, alpha and beta are unrestricted, but unidentified.
       alphaHat <- S01 %*% betaStar %*% solve(t(betaStar) %*% S11 %*% betaStar) 
       OmegaHat <- S00 - alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
-      betaHat <- betaStar[1:p, 1:r]
+      betaHat <- matrix(betaStar[1:p, 1:r], nrow = p, ncol = r)
       PiHat <- alphaHat %*% t(betaHat) 
       # Transform betaHat and alphaHat to identify beta.
       #   The G matrix is used to identify beta by filling the first
@@ -227,12 +257,11 @@ GetParams <- function(x, k, r, db, opt) {
   xiHat <- NULL
   if (k == 0) {
     GammaHat <- NULL
-  }
-  else {
+  } else {
+    
     if(r > 0) {
       GammaHat <- t( solve(t(Z2hat) %*% Z2hat) %*% t(Z2hat) %*% (Z0hat - Z1hat %*% t(PiStar)) )
-    }
-    else {
+    } else {
       GammaHat <- t( solve(t(Z2hat) %*% Z2hat) %*% t(Z2hat) %*% Z0hat ) 
     }
     
@@ -418,8 +447,7 @@ FCVARlike <- function(params, x, k, r, opt) {
   #   params vector
   if (opt$levelParam) {
     estimatesTEMP$muHat <- mu
-  }
-  else {
+  } else {
     estimatesTEMP$muHat <- NULL
   }
   
@@ -475,7 +503,7 @@ TransformData <- function(x, k, db, opt) {
   Z1 <- x
   # Add a column with ones if model includes a restricted constant term.
   if(opt$rConstant) {
-    Z1 <- rbind(x, matrix(1, nrow = N+T, ncol = 1))
+    Z1 <- cbind(x, matrix(1, nrow = N+T, ncol = 1))
   }
   
   Z1 <- FracDiff(  Lbk( Z1 , b, 1)  ,  d - b )
@@ -491,10 +519,10 @@ TransformData <- function(x, k, db, opt) {
   
   
   # Trim off initial values.
-  Z0 <- Z0[N+1:end , ]
-  Z1 <- Z1[N+1:end , ]
+  Z0 <- Z0[(N+1):nrow(Z0), ]
+  Z1 <- Z1[(N+1):nrow(Z1), ]
   if(k > 0) {
-    Z2 <- Z2[N+1:end , ]
+    Z2 <- Z2[(N+1):nrow(Z2), ]
   }
   
   
@@ -536,7 +564,7 @@ TransformData <- function(x, k, db, opt) {
 Lbk <- function(x, b, k) {
   
   
-  p <- size(x,2)
+  p <- ncol(x)
   
   # Initialize output matrix.
   Lbkx <- NULL
@@ -550,7 +578,7 @@ Lbk <- function(x, b, k) {
   
   if (k > 1) {
     for (i in 2:k ) {
-      Lbkx <- rbind(Lbkx,  
+      Lbkx <- cbind(Lbkx,  
                     ( Lbkx[ , p*(i-2)+1 : ncol(Lbkx)] - 
                         FracDiff(Lbkx[ , p*(i-2)+1 : ncol(Lbkx)], b) ))
       
@@ -626,17 +654,29 @@ FracDiff <- function(x, d) {
   # except that only differences the first column. 
   # This is based on the FFT version by Jensen and Nielsen (2014). 
   # x_diff <- diffseries(x, 0.8)
-  dx <- data.frame(matrix(NA, nrow = nrow(x), 
-                          ncol = ncol(x)))
-  for (col_num in 1:length(colnames(x))) {
-    dx[, col_num] <- diffseries(x[, col_num], d)
-  }
+  # dx_MM <- data.frame(matrix(NA, nrow = nrow(x),
+  #                         ncol = ncol(x)))
+  # for (col_num in 1:length(colnames(x))) {
+  #   dx_MM[, col_num] <- diffseries(x[, col_num], d)
+  # }
+  # head(dx_MM)
   # Problem: Their implementation does not match Morten's.
   
   # For now, I will go with the tried-and-tested "slow version".
-  
-  
-  
+  k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
+  b <- (k-d-1)/k
+  b <- c(1, cumprod(b))
+
+  xlead <- data.frame(matrix(0,
+                             nrow = T,
+                             ncol = ncol(x)))
+  colnames(xlead) <- colnames(x)
+
+  dx <- filter(rbind(xlead, x),
+               filter = b,
+               sides = 1)
+  # Trim off the leading rows.
+  dx <- dx[seq(T+1, 2*T), ]
   
   
   return(dx)
