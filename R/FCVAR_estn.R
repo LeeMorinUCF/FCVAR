@@ -555,6 +555,14 @@ FCVARestn <- function(x,k,r,opt) {
       print('H = ')
       print(H)
       
+      # Check condition of Hessian.
+      # eigenH <- eigen(H)
+      # max(abs(eigenH$values))
+      # max(abs(eigenH$values))
+      # max(abs(eigenH$values))/min(abs(eigenH$values))
+      
+      print(R %*% solve(H) %*% t(R))
+      
       # Calculate the restricted Hessian.
       Q <- -solve(H) + solve(H) %*% t(R) %*% 
         solve(R %*% solve(H) %*% t(R)) %*% R %*% solve(H)

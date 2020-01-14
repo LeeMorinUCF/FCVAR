@@ -616,7 +616,7 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
   #   calculating the residuals:
   if (opt$levelParam) {
     T <- size(x,1)
-    y <- x - ones(T,1)*coeffs$muHat
+    y <- x - matrix(1, nrow = T, ncol = 1) %*% coeffs$muHat
   } else {
     y <- x
   }
