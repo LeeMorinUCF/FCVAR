@@ -168,7 +168,7 @@ m1 <- FCVARestn(x, k, r, opt) # This model is now in the structure m1.
 
 
 
-mv_wntest(m1.Residuals, order, printWNtest)
+mv_wntest(m1$Residuals, order, printWNtest)
 
 #--------------------------------------------------------------------------------
 # IMPOSE RESTRICTIONS AND TEST THEM

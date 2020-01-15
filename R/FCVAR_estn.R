@@ -294,10 +294,10 @@ FCVARestn <- function(x,k,r,opt) {
     #            startVals, Cdb, cdb, Rpsi, rpsi, LB, UB, [], opt$ConFminOptions )
     
     # Test the likelihood function. 
-    print('like = ')
-    # params <- c(0.8, 0.8)
-    params <- startVals
-    print(FCVARlike(params, x, k, r, opt))
+    # print('like = ')
+    # # params <- c(0.8, 0.8)
+    # params <- startVals
+    # print(FCVARlike(params, x, k, r, opt))
     
     
     # Need to implement optimization correctly. 
@@ -305,8 +305,8 @@ FCVARestn <- function(x,k,r,opt) {
                      function(params) {-FCVARlike(params, x, k, r, opt)}) 
                      # Cdb, cdb, Rpsi, rpsi, LB, UB, opt$ConFminOptions)
     
-    print('min_out = ')
-    print(min_out)
+    # print('min_out = ')
+    # print(min_out)
     
     maxLike <- min_out$value
   }
@@ -353,8 +353,8 @@ FCVARestn <- function(x,k,r,opt) {
   
   estimatesTEMP <- get('estimatesTEMP', envir = .GlobalEnv)
   
-  print('estimatesTEMP = ')
-  print(estimatesTEMP)
+  # print('estimatesTEMP = ')
+  # print(estimatesTEMP)
   
   # Coefficients are taken from a global defined in the likelihood
   #   function
@@ -364,12 +364,12 @@ FCVARestn <- function(x,k,r,opt) {
   # CHECK RANK CONDITION
   #--------------------------------------------------------------------------------
   
-  print('Warning: Check rank conditions cancelled out!')
+  # print('Warning: Check rank conditions cancelled out!')
   
   p1 <- p + opt$rConstant
   rankJ <- NULL # initialize the rank
   
-  if ( FALSE & (r > 0) ) {
+  if (r > 0) {
     # If rank is zero then Alpha and Beta are empty
     
     if(is.null(opt$R_Beta)) {
@@ -398,23 +398,23 @@ FCVARestn <- function(x,k,r,opt) {
     # Following Boswijk & Doornik (2004, p.447) identification condition
     # Check conformability: 
     
-    print(diag(p))
-    print(rbind(results$coeffs$betaHat, 
-                results$coeffs$rhoHat))
-    print(rbind(A, matrix(0, nrow = p*r, ncol = rH)))
-    print(kronecker(diag(p), 
-                    rbind(results$coeffs$betaHat, 
-                          results$coeffs$rhoHat)))
+    # print(diag(p))
+    # print(rbind(results$coeffs$betaHat, 
+    #             results$coeffs$rhoHat))
+    # print(rbind(A, matrix(0, nrow = p*r, ncol = rH)))
+    # print(kronecker(diag(p), 
+    #                 rbind(results$coeffs$betaHat, 
+    #                       results$coeffs$rhoHat)))
     
     kronA <- kronecker(diag(p), 
                        rbind(results$coeffs$betaHat, 
                              results$coeffs$rhoHat)) %*% 
-      rbind(A, matrix(0, nrow = p*r, ncol = rH))
+      cbind(A, matrix(0, nrow = p*r, ncol = rH))
     
     
     
-    kronH <- kronecker(results$coeffs$alphaHat, 
-                       diag(p1)) %*% rbind(matrix(0, nrow = p1*r, ncol = rA), H_beta)
+    kronH <- kronecker(results$coeffs$alphaHat, diag(p1)) %*% 
+      cbind(matrix(0, nrow = p1*r, ncol = rA),  H_beta)
     rankJ <- qr(kronA + kronH)$rank
     
     results$rankJ <- rankJ
@@ -450,7 +450,7 @@ FCVARestn <- function(x,k,r,opt) {
   results$fp <- fp
   
   
-  print('Completed Free Parameters in FCVAR_estn!')
+  # print('Completed Free Parameters in FCVAR_estn!')
   
   #--------------------------------------------------------------------------------
   # STANDARD ERRORS
@@ -494,29 +494,29 @@ FCVARestn <- function(x,k,r,opt) {
       # Length of vec(estimated coefficients in Hessian).
       R_cols  <- colDB + colMu + colRh + colA + colG
       
-      print('colDB = ')
-      print(colDB)
-      print('colMu = ')
-      print(colMu)
-      print('colRh = ')
-      print(colRh)
-      print('colA = ')
-      print(colA)
-      print('colG = ')
-      print(colG)
-      print('R_cols = ')
-      print(R_cols)
+      # print('colDB = ')
+      # print(colDB)
+      # print('colMu = ')
+      # print(colMu)
+      # print('colRh = ')
+      # print(colRh)
+      # print('colA = ')
+      # print(colA)
+      # print('colG = ')
+      # print(colG)
+      # print('R_cols = ')
+      # print(R_cols)
       
       # The restriction matrix will have rows equal to the number of
       #   restrictions.
       R_rows <- rowDB + rowA
       
-      print('rowA = ')
-      print(rowA)
-      print('rowDB = ')
-      print(rowDB)
-      print('R_rows = ')
-      print(R_rows)
+      # print('rowA = ')
+      # print(rowA)
+      # print('rowDB = ')
+      # print(rowDB)
+      # print('R_rows = ')
+      # print(R_rows)
       
       
       
@@ -552,11 +552,15 @@ FCVARestn <- function(x,k,r,opt) {
       # Calculate unrestricted Hessian.
       H <- FCVARhess(x, k, r, results$coeffs, opt)
       
+      # Harry would go crazy if he saw how many times we 
+      # would be inverting this matrix! 
+      Hinv <- solve(H)
+      
       # print('H = ')
       # print(H)
       # print(H/10^(5))
-      print('diag(H) = ')
-      print(diag(H)/10^(5))
+      # print('diag(H) = ')
+      # print(diag(H)/10^(5))
       
       # Check condition of Hessian.
       # eigenH <- eigen(H)
@@ -569,20 +573,26 @@ FCVARestn <- function(x,k,r,opt) {
       # But matlab is happy to make it a matrix of zeros
       # when multiplied by the empty bread in R. 
       if (R_rows > 0) {
-        Q_meat <- t(R) %*% solve(R %*% solve(H) %*% t(R)) %*% R
+        # Q_meat <- t(R) %*% solve(R %*% solve(H) %*% t(R)) %*% R
+        Q_meat <- t(R) %*% solve(R %*% Hinv %*% t(R)) %*% R
       } else {
         Q_meat <- matrix(0, nrow = R_cols, ncol = R_cols)
       }
       
+      # # Calculate the restricted Hessian.
+      # Q <- -solve(H) + 
+      #   solve(H) %*% 
+      #   # t(R) %*% solve(R %*% solve(H) %*% t(R)) %*% R %*% 
+      #   Q_meat %*% 
+      #   solve(H)
+      
+      
       # Calculate the restricted Hessian.
-      Q <- -solve(H) + 
-        solve(H) %*% 
+      Q <- -Hinv + 
+        Hinv %*% 
         # t(R) %*% solve(R %*% solve(H) %*% t(R)) %*% R %*% 
         Q_meat %*% 
-        solve(H)
-      
-      # Harry would go crazy if he saw how many times we 
-      # would be inverting this matrix! 
+        Hinv
       
       
       
@@ -600,8 +610,8 @@ FCVARestn <- function(x,k,r,opt) {
     Q <- matrix(0, nrow = NumCoeffs, ncol = NumCoeffs)
   }
   
-  print('Q = ')
-  print(Q)
+  # print('Q = ')
+  # print(Q)
   
   
   # Calculate the standard errors and store them.
@@ -610,7 +620,7 @@ FCVARestn <- function(x,k,r,opt) {
   results$NegInvHessian <- Q
   
   
-  print('Completed standard errors in FCVAR_estn!')
+  # print('Completed standard errors in FCVAR_estn!')
   
   #--------------------------------------------------------------------------------
   # GET RESIDUALS

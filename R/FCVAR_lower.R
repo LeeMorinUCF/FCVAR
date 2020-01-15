@@ -615,7 +615,7 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
   # If level parameter is included, the data must be shifted before
   #   calculating the residuals:
   if (opt$levelParam) {
-    T <- size(x,1)
+    T <- nrow(x)
     y <- x - matrix(1, nrow = T, ncol = 1) %*% coeffs$muHat
   } else {
     y <- x
@@ -638,7 +638,7 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
   
   if (r > 0) {
     epsilon <- epsilon - 
-      Z1 %*% cbind(coeffs$betaHat, coeffs$rhoHat) %*% t(coeffs$alphaHat)
+      Z1 %*% rbind(coeffs$betaHat, coeffs$rhoHat) %*% t(coeffs$alphaHat)
   }
   
   
@@ -655,7 +655,7 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
   
   return(epsilon)
 }
-end
+
 
 
 

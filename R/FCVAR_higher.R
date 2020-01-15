@@ -585,7 +585,7 @@ Qtest <- function(x, maxlag) {
   T <- nrow(x)
   p <- ncol(x)
   
-  C0 = matrix(0, nrow = p, ncol = p)
+  C0 <- matrix(0, nrow = p, ncol = p)
   for (t in 1:T) {
     C0 = C0 + t(x[t, ]) %*% x[t, ]
   }
