@@ -535,22 +535,22 @@ mv_wntest <- function(x, maxlag, printResults) {
 
 LMtest <- function(x,q) {
   
-  print('In LMtest')
-  print(size(x))
-  print(q)
-  print(nrow(x))
-  print(ncol(x))
+  # print('In LMtest')
+  # print(size(x))
+  # print(q)
+  # print(nrow(x))
+  # print(ncol(x))
   # print('(q+1):T = ')
   # print((q+1):T)
   
   
-  print(sprintf('x is %d by %d', nrow(x), ncol(x)))
+  # print(sprintf('x is %d by %d', nrow(x), ncol(x)))
   
   # Breusch-Godfrey Lagrange Multiplier test for serial correlation.
   T <- nrow(x)
   x <- x - mean(x)
   
-  print(sprintf('x is %d by %d', nrow(x), ncol(x)))
+  # print(sprintf('x is %d by %d', nrow(x), ncol(x)))
   
   # print(x)
   
@@ -563,37 +563,37 @@ LMtest <- function(x,q) {
   
   
   
-  print(head(y))
-  print(tail(y))
-  print(sprintf('y is %d by %d', nrow(y), ncol(y)))
+  # print(head(y))
+  # print(tail(y))
+  # print(sprintf('y is %d by %d', nrow(y), ncol(y)))
   
   
   e <- y
-  print(head(e))
-  print(tail(e))
+  # print(head(e))
+  # print(tail(e))
   
   
-  print(sprintf('e is %d by %d', nrow(e), ncol(e)))
-  print(sprintf('z is %d by %d', nrow(z), ncol(z)))
-  kron_test <- kron(matrix(1, 1, q), e)
-  print(sprintf('kron_test is %d by %d', nrow(kron_test), ncol(kron_test)))
+  # print(sprintf('e is %d by %d', nrow(e), ncol(e)))
+  # print(sprintf('z is %d by %d', nrow(z), ncol(z)))
+  # kron_test <- kron(matrix(1, 1, q), e)
+  # print(sprintf('kron_test is %d by %d', nrow(kron_test), ncol(kron_test)))
   
   
   # s <- z[,1:q] * repmat(e,1,q)
   # Translate this properly: 
   s <- z[,1:q,  drop = FALSE] * kron(matrix(1, 1, q), e)
   
-  print(sprintf('s is %d by %d', nrow(s), ncol(s)))
+  # print(sprintf('s is %d by %d', nrow(s), ncol(s)))
   
   sbar <- t(colMeans(s))
   
-  print('sbar = ')
-  print(sbar)
+  # print('sbar = ')
+  # print(sbar)
   
   kron_sbar <- kron(matrix(1, nrow(s)), sbar)
   
-  print(head(kron_sbar))
-  print(tail(kron_sbar))
+  # print(head(kron_sbar))
+  # print(tail(kron_sbar))
   
   # The next line bsxfun(@FUNC, A, B) applies the element-by-element binary
   # operation FUNC to arrays A and B, with singleton expansion enabled.
