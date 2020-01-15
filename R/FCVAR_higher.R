@@ -102,27 +102,33 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   
   for (k in 0:kmax) {
     
+    cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
+    
     # ----- Estimation ---------#         
-    results <- FCVARestn(x,k,r,opt)
+    results <- FCVARestn(x, k, r, opt)
+    
+    
+    cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
     
     # ----- Record relevant output ---------%
     loglik[k+1] <- results$like
-    D[k+1, ]    <- results$coeffs.db
+    D[k+1, ]    <- results$coeffs$db
     aic[k+1]    <- -2*loglik[k+1] + 2*results$fp
     bic[k+1]    <- -2*loglik[k+1] + results$fp*log(T - opt$N)
     
     # ----- White noise tests ---------%
-    pvWN_list <- mv_wntest(results$Residuals, order, printWN)   
+    mv_wntest_out <- mv_wntest(results$Residuals, order, printWN)   
     # [ ~, pvWNQ(k+1,:), ~, pvWNLM(k+1,:), ~, pvMVq(k+1,:) ]  <- mv_wntest(...)
-    # Need to make sense of this after writing mv_wntest
-    pvWNQ[k+1, ] <- pvWN_list[2]
-    pvWNLM[k+1, ] <- pvWN_list[4]
-    pvMVq[k+1, ] <- pvWN_list[6]
+    # Need to make sense of this after writing mv_wntest. Check.
+    pvWNQ[k+1, ] <- mv_wntest_out$pvQ
+    pvWNLM[k+1, ] <- mv_wntest_out$pvLM
+    pvMVq[k+1, ] <- mv_wntest_out$pvMVQ
+    
     
     # ----- LR test of lag <- k vs lag <- k-1 -----%
     if (k > 0) {
-      LRtest(k+1)   <- 2*(loglik(k+1)-loglik(k))
-      pvLRtest(k+1) <- 1-chi2cdf(LRtest(k+1), p^2)
+      LRtest[k+1]   <- 2*(loglik[k+1] - loglik[k])
+      pvLRtest[k+1] <- 1 - pchisq(LRtest[k+1], p^2)
     }
     
     
@@ -141,54 +147,55 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   # create a variable for output strings
   yesNo <- c('No','Yes') # Ironic order, No?
   
-  print(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
-  print(sprintf('                        Lag Selection Results \n'))
-  print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
-  print(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T))
-  print(sprintf('Order for WN tests:   %6.0f     Number of observations for estimation:  %6.0f \n', order, T-opt$N))
-  print(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N )   )
-  print(sprintf('Unrestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
-  print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
-  print(sprintf('k  r    d    b      LogL     LR    pv    AIC       BIC     pmvQ'))
+  cat(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
+  cat(sprintf('                        Lag Selection Results \n'))
+  cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T))
+  cat(sprintf('Order for WN tests:   %6.0f     Number of observations for estimation:  %6.0f \n', order, T-opt$N))
+  cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N )   )
+  cat(sprintf('Unrestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
+  cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+  cat(sprintf('k  r    d    b      LogL     LR    pv    AIC       BIC     pmvQ'))
   for (i in 1:p) {
-    print(sprintf(' pQ%1.0f  pLM%1.0f', i,i))
+    cat(sprintf(' pQ%1.0f  pLM%1.0f', i,i))
   }
   
   
-  print(sprintf('\n'))
+  cat(sprintf('\n'))
   for (k in seq(kmax, 0, by = -1) ) {
     
-    #       print(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f %8.2f %4.2f',      
+    #       cat(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f %8.2f %4.2f',      
     #             k, r, D(k+1,:), loglik(k+1), LRtest(k+1),
     #           pvLRtest(k+1), aic(k+1), bic(k+1), pvMVq(k+1,:))
-    print(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f',
-                  k, r, D[k+1, ], loglik[k+1], LRtest[k+1],
+    cat(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f',
+                  k, r, D[k+1, 1], D[k+1, 2], loglik[k+1], LRtest[k+1],
                   pvLRtest[k+1], aic[k+1]))
     # For AIC add asterisk if min value
-    if(k+1 == i_aic) {print(sprintf('*'))} else {print(sprintf(' '))} 
+    if(k+1 == i_aic) {cat(sprintf('*'))} else {cat(sprintf(' '))} 
     # Print BIC information criteria and add asterisk if min value
-    print(sprintf(' %8.2f', bic[k+1]))
-    if(k+1 == i_bic) {print(sprintf('*'))} else {print(sprintf(' '))}
+    cat(sprintf(' %8.2f', bic[k+1]))
+    if(k+1 == i_bic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
     # Print multivariate white noise test P-values
-    print(sprintf(' %4.2f', pvMVq[k+1, ]))
+    cat(sprintf(' %4.2f', pvMVq[k+1, ]))
     # Print the individual series white noise test P-values
     for (i in 1:p) {
-      print(sprintf(' %4.2f %4.2f', pvWNQ[k+1,i], pvWNLM[k+1,i]))
+      cat(sprintf(' %4.2f %4.2f', pvWNQ[k+1,i], pvWNLM[k+1,i]))
     }
     
     
-    print(sprintf('\n'))
+    cat(sprintf('\n'))
     
   }
   
   
-  print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+  cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
   
 }
 
 
 ################################################################################
-# Define function to ...
+# Define function to perform a sequence of likelihood ratio tests
+# 	for cointegrating rank.
 ################################################################################
 # 
 # function [ rankTestStats ] <- RankTests(x, k, opt)
@@ -253,9 +260,16 @@ RankTests <- function(x, k, opt) {
   
   # Estimate models for all ranks
   for (r in 0 : p) {
-    results <- FCVARestn(x,k,r, opt)
-    dHat[r+1] <- results$coeffs.db[1]
-    bHat[r+1] <- results$coeffs.db[2]
+    
+    
+    cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
+          
+    results <- FCVARestn(x, k, r, opt)
+    
+    cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
+    
+    dHat[r+1] <- results$coeffs$db[1]
+    bHat[r+1] <- results$coeffs$db[2]
     LogL[r+1] <- results$like
   }
   
@@ -272,10 +286,13 @@ RankTests <- function(x, k, opt) {
     # (1) no deterministic terms, or
     # (2) there is only restricted constant and d=b, or
     # (3) there is only a level parameter and d=b.
-    if((~opt$rConstant & ~opt$unrConstant & ~opt$levelParam) |
-       (opt$rConstant  & ~opt$unrConstant & opt$restrictDB) |
-       (opt$levelParam & ~opt$unrConstant & opt$restrictDB) ) {
+    if (FALSE & ( 
+      (!opt$rConstant & !opt$unrConstant & !opt$levelParam) |
+      (opt$rConstant  & !opt$unrConstant & opt$restrictDB) |
+      (opt$levelParam & !opt$unrConstant & opt$restrictDB) )  ) {
+      
       p_val <- get_pvalues(p-r, bHat[r+1], consT, LRstat[r+1], opt)
+      
     }
     
     # If automatic calls to P-value program have not been installed or
@@ -302,27 +319,27 @@ RankTests <- function(x, k, opt) {
     # create a variable for output strings
     yesNo <- c('No','Yes')
     
-    print(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
-    print(sprintf('                         Likelihood Ratio Tests for Cointegrating Rank                               \n'))
-    print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
-    print(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt$N))
-    print(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T))
-    print(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
-    print(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
-    print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
-    print(sprintf('Rank \t  d  \t  b  \t Log-likelihood\t LR statistic\t P-value\n'))
+    cat(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('                         Likelihood Ratio Tests for Cointegrating Rank                               \n'))
+    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt$N))
+    cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T))
+    cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
+    cat(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
+    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('Rank \t  d  \t  b  \t Log-likelihood\t LR statistic\t P-value\n'))
     for (i in 1:p) {
-      if (pv(i) != 999) {
-        print(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t%13.3f\t%8.3f\n', i-1, dHat(i), bHat(i), LogL(i), LRstat(i), pv(i)))
+      if (pv[i] != 999) {
+        cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t%13.3f\t%8.3f\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i], pv[i]))
       }
       else {
-        print(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t%13.3f\t    ----\n', i-1, dHat(i), bHat(i), LogL(i), LRstat(i)))
+        cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t%13.3f\t    ----\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i]))
       }
       
     }
     
-    print(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t         ----\t    ----\n', i, dHat(i+1), bHat(i+1), LogL(i+1)))
-    print(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t         ----\t    ----\n', i, dHat[i+1], bHat[i+1], LogL[i+1]))
+    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
     
     
   }
@@ -332,12 +349,15 @@ RankTests <- function(x, k, opt) {
   
   
   
-  # Return structure of rank test results$
-  rankTestStats$dHat   <- dHat
-  rankTestStats$bHat   <- bHat
-  rankTestStats$LogL   <- LogL
-  rankTestStats$LRstat <- LRstat
-  rankTestStats$pv     <- pv
+  # Return list of rank test results. 
+  rankTestStats <- list(
+    dHat   = dHat,
+    bHat   = bHat,
+    LogL   = LogL,
+    LRstat = LRstat,
+    pv     = pv
+  )
+  
   
   
   return(rankTestStats)
@@ -370,11 +390,12 @@ RankTests <- function(x, k, opt) {
 
 get_pvalues <- function(q, b, consT, testStat, opt) {
   
+  print('b = ')
+  print(b)
   
-  
-  if(b < 0.5) {
+  if (b < 0.5) {
     # Series are stationary so use chi^2 with (p-r)^2 df, see JN2012
-    pv <- 1-chi2cdf(testStat, q^2)
+    pv <- 1 - chi2cdf(testStat, q^2)
   } else {
     
     # For non-stationary systems use simulated P-values from
@@ -397,10 +418,11 @@ get_pvalues <- function(q, b, consT, testStat, opt) {
     # Should replace with a wrapper for the fracdist code. 
     
     # Note: string is returned, so it needs to be converted
-    if(flag==0) {
+    if(flag == 0) {
       
       # check if program was executed without errors
-      pv <- str2double(pval)
+      # pv <- str2double(pval)
+      pv <- pval
       
     } else {
       
@@ -482,7 +504,7 @@ mv_wntest <- function(x, maxlag, printResults) {
     
   }
   
-  print('Finished the loop on columns')
+  # print('Finished the loop on columns')
   
   # Perform multivariate Q test.
   # [mvQ, pvMVQ] <- Qtest(x,maxlag)
@@ -544,13 +566,13 @@ LMtest <- function(x,q) {
   # print((q+1):T)
   
   
-  # print(sprintf('x is %d by %d', nrow(x), ncol(x)))
+  # cat(sprintf('x is %d by %d', nrow(x), ncol(x)))
   
   # Breusch-Godfrey Lagrange Multiplier test for serial correlation.
   T <- nrow(x)
   x <- x - mean(x)
   
-  # print(sprintf('x is %d by %d', nrow(x), ncol(x)))
+  # cat(sprintf('x is %d by %d', nrow(x), ncol(x)))
   
   # print(x)
   
@@ -565,7 +587,7 @@ LMtest <- function(x,q) {
   
   # print(head(y))
   # print(tail(y))
-  # print(sprintf('y is %d by %d', nrow(y), ncol(y)))
+  # cat(sprintf('y is %d by %d', nrow(y), ncol(y)))
   
   
   e <- y
@@ -573,17 +595,17 @@ LMtest <- function(x,q) {
   # print(tail(e))
   
   
-  # print(sprintf('e is %d by %d', nrow(e), ncol(e)))
-  # print(sprintf('z is %d by %d', nrow(z), ncol(z)))
+  # cat(sprintf('e is %d by %d', nrow(e), ncol(e)))
+  # cat(sprintf('z is %d by %d', nrow(z), ncol(z)))
   # kron_test <- kron(matrix(1, 1, q), e)
-  # print(sprintf('kron_test is %d by %d', nrow(kron_test), ncol(kron_test)))
+  # cat(sprintf('kron_test is %d by %d', nrow(kron_test), ncol(kron_test)))
   
   
   # s <- z[,1:q] * repmat(e,1,q)
   # Translate this properly: 
   s <- z[,1:q,  drop = FALSE] * kron(matrix(1, 1, q), e)
   
-  # print(sprintf('s is %d by %d', nrow(s), ncol(s)))
+  # cat(sprintf('s is %d by %d', nrow(s), ncol(s)))
   
   sbar <- t(colMeans(s))
   
@@ -729,9 +751,9 @@ HypoTest <- function(modelUNR, modelR) {
   p_LRtest <- 1 - pchisq(LR_test, df)
   
   # Print output.
-  print(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n', 
+  cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n', 
                 modelUNR$like, modelR$like))
-  print(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
+  cat(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
                 df,LR_test,p_LRtest))
   
   

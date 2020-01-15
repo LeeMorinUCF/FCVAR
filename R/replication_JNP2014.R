@@ -131,6 +131,14 @@ startProg <- Sys.time() # start timer
 
 # LagSelect(x1, kmax, p, order, opt)
 
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+opt <- DefaultOpt
+opt$gridSearch <- 0
+LagSelect(x, kmax, p, order, opt)
+
 
 #--------------------------------------------------------------------------------
 # COINTEGRATION RANK TESTING
@@ -141,6 +149,15 @@ k <- 2
 
 # rankTestStats <- RankTests(x1, k, opt)
 
+
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+k <- 2
+opt <- DefaultOpt
+opt$gridSearch <- 0
+rankTestStats <- RankTests(x, k, opt)
 
 #--------------------------------------------------------------------------------
 # UNRESTRICTED MODEL ESTIMATION
@@ -169,6 +186,7 @@ m1 <- FCVARestn(x, k, r, opt) # This model is now in the structure m1.
 
 
 
+source('FCVAR_higher.R')
 mv_wntest(m1$Residuals, order, printWNtest)
 
 #--------------------------------------------------------------------------------

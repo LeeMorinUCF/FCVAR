@@ -1,11 +1,11 @@
 function [ params ] = LikeGrid(x,k,r,opt)
 % function [ params ] = LikeGrid(x,k,r,opt)
 % Written by Michal Popiel and Morten Nielsen (This version 04.12.2016)
-% 
+%
 % DESCRIPTION: This function evaluates the likelihood over a grid of values
-% 	for (d,b) (or phi). It can be used when parameter estimates are sensitive to 
-% 	starting values to give an approximation of the global max which can 
-% 	then be used as the starting value in the numerical optimization in 
+% 	for (d,b) (or phi). It can be used when parameter estimates are sensitive to
+% 	starting values to give an approximation of the global max which can
+% 	then be used as the starting value in the numerical optimization in
 % 	FCVARestn().
 %
 % Input = x   (matrix of variables to be included in the system)
@@ -24,43 +24,43 @@ function [ params ] = LikeGrid(x,k,r,opt)
 %_________________________________________________________________________
 
     p = size(x,2);
-    
+
     if(opt.progress ~= 0)
         if(opt.progress == 1)
             M_status_bar = waitbar(0,['Model: k= ',num2str(k), ', r= ', num2str(r)]);
         end
         lastTic = tic();
     end
-        
-    
-	
+
+
+
     % --- INITIALIZATION --- %
     % Check if performing a 2-dimensional or 1-dimensional grid search. The
     %   step size will be smaller if searching in only one dimension.
-    if(isempty(opt.R_psi)) 
+    if(isempty(opt.R_psi))
         Grid2d = 1;
         dbStep = 0.02;
     else
         Grid2d = 0;
         dbStep = 0.01;
     end
-    
+
     % If equality restrictions are imposed, need to construct a grid over
-    %   phi and obtain db = H*phi + h. 
+    %   phi and obtain db = H*phi + h.
     if(~isempty(opt.R_psi))
         % This set of variables is defined for easy translation between
         %   phi (unrestricted parameter) and d,b (restricted parameters).
         R = opt.R_psi;
         s = opt.r_psi;
         H = null(R);
-        h = R'*inv(R*R')*s; 
-    end      
+        h = R'*inv(R*R')*s;
+    end
 
     % GetBounds returns upper and lower bounds in terms of phi when
     % restrictions are imposed and in terms of d and b when they are
     % unrestricted. It also adjusts for limits on d and b imposed by user.
     [dbMax, dbMin] = GetBounds(opt);
-    
+
     % Set up the grid.
     if(Grid2d)
         % Search over d as well as b.
@@ -80,7 +80,7 @@ function [ params ] = LikeGrid(x,k,r,opt)
             % in b are less than or equal to those in d. This should be
             % moved to the beginning of the loop for faster computation
             % later.
-            totIters = sum(sum(bsxfun(@le,repmat(bGrid',1, nD),dGrid)));
+            totIters = sum(sum(bsxfun(@le,repmat(bGrid',1, nD),dGrid))); %'
         else
             % Unconstrained so search through entire grid for d.
             dStart   = 1;
@@ -89,7 +89,7 @@ function [ params ] = LikeGrid(x,k,r,opt)
     else
         % Only searching over one parameter.
         bGrid =  dbMin(1):dbStep:dbMax(1);
-        nB    = length(bGrid); 
+        nB    = length(bGrid);
         nD    = 1;
         dStart   = 1;
         totIters = nB;
@@ -101,7 +101,7 @@ function [ params ] = LikeGrid(x,k,r,opt)
     %   of the maximum.
     like  = ones(nB,nD)*NaN;
 
-    % Initialize storage bin and starting values for optimization involving 
+    % Initialize storage bin and starting values for optimization involving
     %   level parameter.
     if(opt.levelParam)
         mu  = zeros(p, nB, nD);
@@ -109,12 +109,12 @@ function [ params ] = LikeGrid(x,k,r,opt)
     end
 
     iterCount = 0;
-	
+
     % --- CALCULATE LIKELIHOOD OVER THE GRID --- %
     for iB=1:nB
-        
+
         b = bGrid(iB);
-        
+
         % If d>=b (constrained) then search only over values of d that are
         %   greater than or equal to b. Also, perform this operation only if
         %   searching over both d and b.
@@ -123,11 +123,11 @@ function [ params ] = LikeGrid(x,k,r,opt)
             % grid for d that is >= b
             dStart =  find(dGrid>=b, 1);
         end
-        
+
         for iD=dStart:nD
-           
+
             iterCount = iterCount + 1;
-            
+
 
             % db is definied in terms of d,b for use by FCVARlikeMU
             % if level parameters are present and for displaying in
@@ -142,7 +142,7 @@ function [ params ] = LikeGrid(x,k,r,opt)
                 phi = bGrid(iB);
                 db = H*phi + h;
             end
-        
+
             if(opt.levelParam)
                 % Optimize over level parameter for given (d,b).
                 [ muHat, maxLike, ~ ] ...
@@ -157,23 +157,23 @@ function [ params ] = LikeGrid(x,k,r,opt)
                 % whether or not restrictions have been imposed.
                 like(iB,iD)   = FCVARlike(x, phi, k, r, opt);
             end
-            
+
             if(opt.progress ~= 0)
-                if(toc(lastTic) > opt.updateTime || iterCount == totIters) 
+                if(toc(lastTic) > opt.updateTime || iterCount == totIters)
                     if(opt.progress == 1)
                         SimNotes = sprintf('Model: k=%g, r=%g\nb=%4.2f, d=%4.2f, like=%8.2f',...
-                                    k, r, db(2),db(1), like(iB,iD) );                
+                                    k, r, db(2),db(1), like(iB,iD) );
                         waitbar(iterCount/totIters,M_status_bar, SimNotes);
                     else
                         fprintf('Progress = %5.1f%%, b=%4.2f, d=%4.2f, like=%g\n',...
-                                    (iterCount/totIters)*100, db(2), db(1), like(iB,iD) );                
+                                    (iterCount/totIters)*100, db(2), db(1), like(iB,iD) );
                     end
                     lastTic = tic();
-                end          
+                end
             end
-          
+
         end
-   
+
     end
 
 
@@ -196,9 +196,9 @@ function [ params ] = LikeGrid(x,k,r,opt)
     % Global max.
         [ indexB, indexD ] = find(like == max(max(like)));
     end
-    
+
     if(length(indexD)>1 || length(indexB)>1)
-        % If maximum is not unique, take the index pair corresponding to 
+        % If maximum is not unique, take the index pair corresponding to
         % the highest value of b.
         if(Grid2d)
             % Sort in ascending order according to indexB.
@@ -212,10 +212,10 @@ function [ params ] = LikeGrid(x,k,r,opt)
         indexD = indexD(end);
         fprintf('\nWarning, grid search did not find a unique maximum of the log-likelihood function.\n')
     end
-          
+
     % Translate to d,b.
     if(~isempty(opt.R_psi))
-        dbHatStar = (H*bGrid(indexB) + h)';
+        dbHatStar = (H*bGrid(indexB) + h)'; %'
     else
         dbHatStar = [dGrid(indexD) bGrid(indexB)];
     end
@@ -225,11 +225,11 @@ function [ params ] = LikeGrid(x,k,r,opt)
 
     % Add level parameter corresponding to max likelihood.
     if(opt.levelParam)
-        muHatStar  = mu(:, indexB, indexD)';
+        muHatStar  = mu(:, indexB, indexD)'; %'
         params = [params muHatStar];
     end
 
-    
+
     % --- PLOT THE LIKELIHOOD --- %
     if opt.plotLike
         figure;
@@ -240,15 +240,15 @@ function [ params ] = LikeGrid(x,k,r,opt)
                 title(['Rank: ',num2str(r),' Lag: ',num2str(k)]);
         else
             % 1-dimensional plot.
-            plot(bGrid, like) , 
+            plot(bGrid, like) ,
             if(isempty(opt.R_psi))
                 xlabel('d=b'),
             else
-                xlabel('phi'), 
+                xlabel('phi'),
             end
             ...
                 ylabel('log-likelihood'), ...
                 title(['Rank: ',num2str(r),' Lag: ',num2str(k)]);
         end
-    end   
+    end
 end

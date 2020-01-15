@@ -129,8 +129,10 @@ GetParams <- function(x, k, r, db, opt) {
   if (r == 0) {
     
     betaHat <- NULL
-    betaStar <- NULL
-    alphaHat <- NULL
+    # betaStar <- NULL # Doesn't work for PiHat below
+    betaStar <- NA
+    # alphaHat <- NULL # Doesn't work for PiHat below
+    alphaHat <- NA
     PiHat <- NULL
     rhoHat <- NULL
     OmegaHat <- S00
@@ -167,11 +169,14 @@ GetParams <- function(x, k, r, db, opt) {
     # V <- sortrows( [ V diag(D) ], p1+1 )
     V2 <- t( cbind(t(V1), D)[order(D), ] )
     
-    V <- V2[1:p1, ]
+    # V <- V2[1:p1, ]
+    V <- V2[1:p1, , drop = FALSE]
     # betaStar <- V( 1:p1, p1 : -1 : p1-r+1 )
-    betaStar <- matrix(V[ 1:p1, seq(p1, p1-r+1, by <- -1) ], 
-                       nrow = p1, ncol = p1-r-1)
-    
+    # betaStar <- matrix(V[ 1:p1, seq(p1, p1-r+1, by = -1) ], 
+    #                    nrow = p1, ncol = p1-r-1)
+    betaStar <- V[ 1:p1, seq(p1, p1-r+1, by = -1), drop = FALSE]
+    # Error when k = 2 and r = 2:
+    # data length exceeds size of matrix
     
     
     
@@ -196,6 +201,10 @@ GetParams <- function(x, k, r, db, opt) {
       
     } else {
       
+      # print('betaStar = ')
+      # print(betaStar)
+      # print('S11 = ')
+      # print(S11)
       
       # Otherwise, alpha and beta are unrestricted, but unidentified.
       alphaHat <- S01 %*% betaStar %*% solve(t(betaStar) %*% S11 %*% betaStar) 
@@ -218,17 +227,16 @@ GetParams <- function(x, k, r, db, opt) {
     # Extract coefficient vector for restricted constant model if required.
     if (opt$rConstant) {
       rhoHat <- betaStar[p1, ]
-    }
-    else {
+    } else {
       rhoHat <- NULL
     }
     
     
   } else {
     
-    # (r <- p) and do no need reduced rank regression
+    # (r = p) and do no need reduced rank regression
     V <- S01 %*% solve(S11)
-    betaHat <- t(V[,1:p]) 
+    betaHat <- t(V[, 1:p, drop = FALSE]) 
     # For restriced constant, rho <- last column of V.
     alphaHat <- diag(p)
     PiHat <- betaHat
@@ -241,9 +249,15 @@ GetParams <- function(x, k, r, db, opt) {
       rhoHat <- NULL
     }
     
+    # print('V = ')
+    # print(V)
+    # print('betaHat = ')
+    # print(betaHat)
+    # print('rhoHat = ')
+    # print(rhoHat)
     
     # Check conformability: 
-    betaStar <- cbind(betaHat, rhoHat) 
+    betaStar <- rbind(betaHat, rhoHat) 
     
   }
   
@@ -273,16 +287,14 @@ GetParams <- function(x, k, r, db, opt) {
     if(k>0) {
       if(r>0) {
         xiHat <- t( solve(t(Z3) %*% Z3) %*% t(Z3) %*% (Z0 - Z1 %*% t(PiStar) - Z2 %*% t(GammaHat)) )  
-      }
-      else {
+      } else {
         xiHat <- t( solve(t(Z3) %*% Z3) %*% t(Z3) %*% (Z0 - Z2 %*% t(GammaHat)) ) 
       }
       
     } else {
       if(r>0) {
         xiHat <- t( solve(t(Z3) %*% Z3) %*% t(Z3) %*% (Z0 - Z1 %*% t(PiStar)) ) 
-      }
-      else {
+      } else {
         xiHat <- t( solve(t(Z3) %*% Z3) %*% t(Z3) %*% Z0 )  
       }
       
@@ -318,6 +330,357 @@ GetParams <- function(x, k, r, db, opt) {
 
 
 
+################################################################################
+# Define function to calculate the likelihood function
+# on a grid of candidate parameter values.
+################################################################################
+# 
+# function [ params ] <- LikeGrid(x,k,r,opt)
+# Written by Michal Popiel and Morten Nielsen (This version 04.12.2016)
+# 
+# DESCRIPTION: This function evaluates the likelihood over a grid of values
+# 	for (d,b) (or phi). It can be used when parameter estimates are sensitive to
+# 	starting values to give an approximation of the global max which can
+# 	then be used as the starting value in the numerical optimization in
+# 	FCVARestn().
+# 
+# Input <- x   (matrix of variables to be included in the system)
+#         k   (number of lags)
+#         r   (number of cointegrating vectors)
+#         opt (object containing the estimation options)
+# Output <- params (row vector of d,b, and mu (if level parameter is selected)
+#					corresponding to a maximum over the grid of (d,b), or phi)
+# 
+# Note:	If opt$LocalMax == 0, LikeGrid returns the parameter values
+#       corresponding to the global maximum of the likelihood on the grid.
+#       If opt$LocalMax == 1, LikeGrid returns the parameter values for the
+#       local maximum corresponding to the highest value of b. This
+#       alleviates the identification problem mentioned in Johansen and
+#       Nielsen (2010, section 2.3).
+# 
+################################################################################
+
+
+LikeGrid <- function(x, k, r, opt) {
+  
+  
+  
+  p <- ncol(x)
+  
+  if(opt$progress != 0) {
+    if(opt$progress == 1) {
+      # This is cute but... not right now:
+      # M_status_bar <- waitbar(0,['Model: k= ',num2str(k), ', r= ', num2str(r)])
+    }
+    
+    lastTic <- tic()
+  }
+  
+  #--------------------------------------------------------------------------------
+  # INITIALIZATION
+  #--------------------------------------------------------------------------------
+    
+  # Check if performing a 2-dimensional or 1-dimensional grid search. The
+  #   step size will be smaller if searching in only one dimension.
+  if(is.null(opt$R_psi)) {
+    Grid2d <- 1
+    dbStep <- 0.02
+  } else {
+    Grid2d <- 0
+    dbStep <- 0.01
+  }
+  
+  
+  
+  # If equality restrictions are imposed, need to construct a grid over
+  #   phi and obtain db <- H*phi + h.
+  if(!is.null(opt$R_psi)) {
+    # This set of variables is defined for easy translation between
+    #   phi (unrestricted parameter) and d,b (restricted parameters).
+    R <- opt$R_psi
+    s <- opt$r_psi
+    H <- null(R)
+    h <- t(R) %*% solve(R %*% t(R)) %*% s
+  }
+  
+  
+  # GetBounds returns upper and lower bounds in terms of phi when
+  # restrictions are imposed and in terms of d and b when they are
+  # unrestricted. It also adjusts for limits on d and b imposed by user.
+  UB_LB_bounds <- GetBounds(opt)
+  dbMax <- UB_LB_bounds$UB
+  dbMin <- UB_LB_bounds$LB
+  
+  
+  
+  # Set up the grid.
+  if(Grid2d) {
+    
+    # Search over d as well as b.
+    # Set up grid for d parameter
+    dGrid <-  seq(dbMin[1], dbMax[1], by = dbStep)
+    # Number of grid points
+    nD    <- length(dGrid)
+    # Set up grid for b parameter
+    bGrid <-  seq(dbMin[2], dbMax[2], by = dbStep)
+    # Number of grid points
+    nB    <- length(bGrid)
+    if(opt$constrained) {
+      # Since it is possible to have different grid lengths for d and
+      # b when the parameters have different max/min values, the
+      # following function calculates the total number of iterations
+      # by counting the number of instances in which the grid values
+      # in b are less than or equal to those in d. This should be
+      # moved to the beginning of the loop for faster computation
+      # later.
+      # totIters <- sum(sum(bsxfun(@le,repmat(bGrid',1, nD),dGrid))) %' ))))
+      bdGrid <- expand.grid(dGrid = dGrid, bGrid = bGrid)
+      totIters <- sum(bdGrid[, 'bGrid'] <= bdGrid[, 'dGrid'])
+    } else {
+      # Unconstrained so search through entire grid for d.
+      dStart   <- 1
+      totIters <- nB*nD
+    }
+    
+    
+  } else {
+    # Only searching over one parameter.
+    bGrid <-  seq(dbMin[1], dbMax[1], by = dbStep)
+    nB    <- length(bGrid)
+    nD    <- 1
+    dStart   <- 1
+    totIters <- nB
+  }
+  
+  
+  
+  # Create a matrix of NA's to store likelihoods, we use NA's here
+  #   because NA entries are not plotted and do not affect the finding
+  #   of the maximum.
+  like  <- matrix(NA, nrow = nB, ncol = nD)
+  
+  # Initialize storage bin and starting values for optimization involving
+  #   level parameter.
+  if(opt$levelParam) {
+    mu  <- array(0, dim = c(p, nB, nD))
+    StartVal <- x[1, ,drop = FALSE]
+  }
+  
+  
+  #--------------------------------------------------------------------------------
+  # CALCULATE LIKELIHOOD OVER THE GRID
+  #--------------------------------------------------------------------------------
+  
+  
+  
+  iterCount <- 0
+  
+  for (iB in 1:nB) {
+    
+    b <- bGrid[iB]
+    
+    # If d>=b (constrained) then search only over values of d that are
+    #   greater than or equal to b. Also, perform this operation only if
+    #   searching over both d and b.
+    if(opt$constrained & Grid2d) {
+      # Start at the index that corresponds to the first value in the
+      # grid for d that is >= b
+      # dStart <-  find(dGrid>=b, 1)
+      dStart <- dGrid[dGrid >= b][1]
+    }
+    
+    
+    for (iD in dStart:nD) {
+      
+      iterCount <- iterCount + 1
+      
+      # db is definied in terms of d,b for use by FCVARlikeMU
+      # if level parameters are present and for displaying in
+      # the output. phi is used by FCVARlike, which can
+      # handle both phi or d,b and makes appropriate
+      # adjustments inside the function.
+      if(is.null(opt$R_psi)) {
+        d <- dGrid[iD]
+        db <- cbind(d, b)
+        phi <- db
+      } else {
+        phi <- bGrid[iB]
+        db <- H*phi + h
+      }
+      
+      
+      if(opt$levelParam) {
+        # Optimize over level parameter for given (d,b).
+        # [ muHat, maxLike, ! ] ...
+        # <- fminunc(@( params ) -FCVARlikeMu(x, db, params, k, r, opt), ...
+        #            StartVal, opt$UncFminOptions )
+        
+        min_out <- optim(StartVal, 
+                         function(params) {-FCVARlikeMu(params, x, db, k, r, opt)}) 
+        
+        muHat <- min_out$par
+        maxLike <- min_out$value
+        
+        # Store the results.
+        like[iB,iD] <- -maxLike
+        mu[, iB,iD] <- muHat
+        
+      } else {
+        # Only called if no level parameters. phi contains
+        # either one or two parameters, depending on
+        # whether or not restrictions have been imposed.
+        like[iB,iD] <- FCVARlike(phi, x, k, r, opt)
+      }
+      
+      
+      if(opt$progress != 0) {
+        if(toc(lastTic) > opt$updateTime | iterCount == totIters) {
+          if(opt$progress == 1) {
+            SimNotes <- sprintf('Model: k=%g, r=%g\nb=%4.2f, d=%4.2f, like=%8.2f',
+                                k, r, db[2],db[1], like[iB,iD] )
+            # waitbar(iterCount/totIters,M_status_bar, SimNotes)
+          } else {
+            fprintf('Progress <- %5.1f%%, b=%4.2f, d=%4.2f, like=%g\n',
+                    (iterCount/totIters)*100, db[2], db[1], like[iB,iD] ) 
+          }
+          
+          lastTic <- tic() 
+        }
+        
+      }
+      
+      
+    }
+    
+    
+  }
+  
+  
+  #--------------------------------------------------------------------------------
+  # FIND THE MAX OVER THE GRID
+  #--------------------------------------------------------------------------------
+  
+  
+  if(opt$LocalMax) {
+    
+    # Local max.
+    if(Grid2d) {
+      # [!,smax,!,!] <- extrema2(like,1)
+      # [indexB,indexD] <- ind2sub(size(like),smax)
+      indexB_and_D <- which(like == max(like), arr.ind = TRUE)
+      indexB <- indexB_and_D[, 1, drop = FALSE]
+      indexD <- indexB_and_D[, 2, drop = FALSE]
+      
+    } else {
+      # [!,indexB,!,!] <- extrema(like)
+      indexB <- which(like == max(like))
+      indexD <- 1
+    }
+    
+    
+    # If there is no local max, return global max.
+    if(is.null(indexB) | is.null(indexD)) {
+      # [ indexB, indexD ] <- find(like == max(max(like)))
+      
+      indexB_and_D <- which(like == max(like), arr.ind = TRUE)
+      indexB <- indexB_and_D[, 1, drop = FALSE]
+      indexD <- indexB_and_D[, 2, drop = FALSE]
+    }
+    
+    
+  } else {
+    # Global max.
+    # [ indexB, indexD ] <- find(like == max(max(like)))
+    
+    indexB_and_D <- which(like == max(like), arr.ind = TRUE)
+    indexB <- indexB_and_D[, 1, drop = FALSE]
+    indexD <- indexB_and_D[, 2, drop = FALSE]
+  }
+  
+  
+  if(length(indexD)>1 | length(indexB)>1) {
+    # If maximum is not unique, take the index pair corresponding to
+    # the highest value of b.
+    if(Grid2d) {
+      # Sort in ascending order according to indexB.
+      # [indexB,indBindx] <- sort(indexB)
+      indexB <- indexB[order(indexB)]
+      indBindx <- order(indexB)
+      indexD <- indexD[indBindx]
+    } else {
+      # Sort in ascending order.
+      indexB <- indexB[order(indexB)]
+    }
+    
+    indexB <- indexB[length(indexB)]
+    indexD <- indexD[length(indexD)]
+    fprintf('\nWarning, grid search did not find a unique maximum of the log-likelihood function.\n')  
+  }
+  
+  # Translate to d,b.
+  if(!is.null(opt$R_psi)) {
+    dbHatStar <- t(H %*% bGrid[indexB] + h)
+  } else {
+    dbHatStar <- cbind(dGrid[indexD], bGrid[indexB])
+  }
+  
+  
+  #--------------------------------------------------------------------------------
+  # STORE THE PARAMETER VALUES
+  #--------------------------------------------------------------------------------
+  
+  
+  params <- dbHatStar
+  
+  # Add level parameter corresponding to max likelihood.
+  if(opt$levelParam) {
+    muHatStar  <- t(mu[, indexB, indexD, drop = FALSE])
+    params <- cbind(params, muHatStar)
+  }
+  
+  
+  #--------------------------------------------------------------------------------
+  # PLOT THE LIKELIHOOD
+  #--------------------------------------------------------------------------------
+  
+  
+  if (opt$plotLike) {
+    # 
+    cat(sprintf("Sorry, but I don't feel like plotting the likelihood function right now."))
+    # figure
+    if(Grid2d) {
+      # 2-dimensional plot.
+      # mesh(dGrid, bGrid,like), xlabel('d'), ...
+      # zlabel('log-likelihood'), ylabel('b'), ...
+      # title(['Rank: ',num2str(r),' Lag: ',num2str(k)])
+    } else {
+      # 1-dimensional plot.
+      # plot(bGrid, like) ,
+      if (is.null(opt$R_psi)) {
+        # xlabel('d=b'),
+      } else {
+        # xlabel('phi'),
+      }
+      
+      # ...
+      # ylabel('log-likelihood'), ...
+      # title(['Rank: ',num2str(r),' Lag: ',num2str(k)])
+    }
+    
+  }
+  
+  
+  
+  return(params)
+}
+
+
+
+
+
+
+
+
 
 
 ################################################################################
@@ -349,6 +712,8 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
   
   t <- nrow(y)
   x <- y - matrix(1, nrow = t, ncol = 1) %*% mu
+  
+  # print(summary(x))
   
   # Obtain concentrated parameter estimates.
   estimates <- GetParams(x, k, r, db, opt)
@@ -540,6 +905,8 @@ FullFCVARlike <- function(x, k, r, coeffs, beta, rho, opt) {
 TransformData <- function(x, k, db, opt) {
   
   
+  # print(summary(x))
+  
   # Number of initial values and sample size.
   N <- opt$N
   T <- nrow(x) - N
@@ -684,6 +1051,12 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
 
 Lbk <- function(x, b, k) {
   
+  # print('summary(x) = ')
+  # print(summary(x))
+  # print('b = ')
+  # print(b)
+  # print('k = ')
+  # print(k)
   
   p <- ncol(x)
   
@@ -700,8 +1073,8 @@ Lbk <- function(x, b, k) {
   if (k > 1) {
     for (i in 2:k ) {
       Lbkx <- cbind(Lbkx,  
-                    ( Lbkx[ , p*(i-2)+1 : ncol(Lbkx)] - 
-                        FracDiff(Lbkx[ , p*(i-2)+1 : ncol(Lbkx)], b) ))
+                    ( Lbkx[ , (p*(i-2)+1) : ncol(Lbkx)] - 
+                        FracDiff(Lbkx[ , (p*(i-2)+1) : ncol(Lbkx)], b) ))
       
     }  
     
@@ -734,71 +1107,81 @@ Lbk <- function(x, b, k) {
 
 FracDiff <- function(x, d) {
   
-  
-  T <- nrow(x)
-  p <- ncol(x)
-  
-  # #--------------------------------------------------------------------------------
-  # # Upgrade to the FFT version in a later version.
-  # #--------------------------------------------------------------------------------
-  # 
-  # k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
-  # 
-  # # NEXTPOW2(N) returns the first P such that 2.^P >= abs(N).  It is
-  # #     often useful for finding the nearest power of two sequence
-  # #     length for FFT operations.
-  # NFFT <- 2^nextpow2(2*T-1)
-  # 
-  # # Array operation of the index of the series without the last element minus
-  # # the order of integration+1, divided by that same series
-  # b <- (k-d-1)/k
-  # 
-  # # cumulative product of that series modified in previous line
-  # b <- c(1, cumprod(b))
-  # 
-  # # IFFT(X) is the inverse discrete Fourier transform of X.
-  # #     IFFT(..., 'symmetric') causes IFFT to treat X as conjugate symmetric
-  # #     along the active dimension.  This option is useful when X is not exactly
-  # #     conjugate symmetric merely because of round-off error. 
-  # # REPMAT Replicate and tile an array.
-  # #     B = repmat(A,M,N) creates a large matrix B consisting of an M-by-N
-  # #     tiling of copies of A. The size of B is [size(A,1)*M, size(A,2)*N].
-  # #     The statement repmat(A,N) creates an N-by-N tiling.
-  # dx <- ifft(repmat(fft(b, NFFT), 1, p) * fft(x, NFFT), 'symmetric')
-  # 
-  # dx <- dx[1:T, ]
-  # 
-  # 
-  # #--------------------------------------------------------------------------------
-  
-  # For now, just use a wrapper for the diffseries() function in the fracdiff package. 
-  # except that only differences the first column. 
-  # This is based on the FFT version by Jensen and Nielsen (2014). 
-  # x_diff <- diffseries(x, 0.8)
-  # dx_MM <- data.frame(matrix(NA, nrow = nrow(x),
-  #                         ncol = ncol(x)))
-  # for (col_num in 1:length(colnames(x))) {
-  #   dx_MM[, col_num] <- diffseries(x[, col_num], d)
-  # }
-  # head(dx_MM)
-  # Problem: Their implementation does not match Morten's.
-  
-  # For now, I will go with the tried-and-tested "slow version".
-  k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
-  b <- (k-d-1)/k
-  b <- c(1, cumprod(b))
-
-  xlead <- data.frame(matrix(0,
-                             nrow = T,
-                             ncol = ncol(x)))
-  colnames(xlead) <- colnames(x)
-
-  dx <- filter(rbind(xlead, x),
-               filter = b,
-               sides = 1)
-  # Trim off the leading rows.
-  dx <- dx[seq(T+1, 2*T), ]
-  
+  if(is.null(x)) {
+    dx <- NULL
+  } else {
+    
+    
+    T <- nrow(x)
+    p <- ncol(x)
+    
+    # #--------------------------------------------------------------------------------
+    # # Upgrade to the FFT version in a later version.
+    # #--------------------------------------------------------------------------------
+    # 
+    # k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
+    # 
+    # # NEXTPOW2(N) returns the first P such that 2.^P >= abs(N).  It is
+    # #     often useful for finding the nearest power of two sequence
+    # #     length for FFT operations.
+    # NFFT <- 2^nextpow2(2*T-1)
+    # 
+    # # Array operation of the index of the series without the last element minus
+    # # the order of integration+1, divided by that same series
+    # b <- (k-d-1)/k
+    # 
+    # # cumulative product of that series modified in previous line
+    # b <- c(1, cumprod(b))
+    # 
+    # # IFFT(X) is the inverse discrete Fourier transform of X.
+    # #     IFFT(..., 'symmetric') causes IFFT to treat X as conjugate symmetric
+    # #     along the active dimension.  This option is useful when X is not exactly
+    # #     conjugate symmetric merely because of round-off error. 
+    # # REPMAT Replicate and tile an array.
+    # #     B = repmat(A,M,N) creates a large matrix B consisting of an M-by-N
+    # #     tiling of copies of A. The size of B is [size(A,1)*M, size(A,2)*N].
+    # #     The statement repmat(A,N) creates an N-by-N tiling.
+    # dx <- ifft(repmat(fft(b, NFFT), 1, p) * fft(x, NFFT), 'symmetric')
+    # 
+    # dx <- dx[1:T, ]
+    # 
+    # 
+    # #--------------------------------------------------------------------------------
+    
+    # For now, just use a wrapper for the diffseries() function in the fracdiff package. 
+    # except that only differences the first column. 
+    # This is based on the FFT version by Jensen and Nielsen (2014). 
+    # x_diff <- diffseries(x, 0.8)
+    # dx_MM <- data.frame(matrix(NA, nrow = nrow(x),
+    #                         ncol = ncol(x)))
+    # for (col_num in 1:length(colnames(x))) {
+    #   dx_MM[, col_num] <- diffseries(x[, col_num], d)
+    # }
+    # head(dx_MM)
+    # Problem: Their implementation does not match Morten's.
+    
+    # For now, I will go with the tried-and-tested "slow version".
+    
+    # print('T = ')
+    # print(T)
+    # print(summary(x))
+    
+    k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
+    b <- (k-d-1)/k
+    b <- c(1, cumprod(b))
+    
+    xlead <- data.frame(matrix(0,
+                               nrow = T,
+                               ncol = ncol(x)))
+    colnames(xlead) <- colnames(x)
+    
+    dx <- filter(rbind(xlead, x),
+                 filter = b,
+                 sides = 1)
+    # Trim off the leading rows.
+    dx <- dx[seq(T+1, 2*T), ]
+    
+  }
   
   return(dx)
 }
@@ -1127,28 +1510,47 @@ CharPolyRoots <- function(coeffs, opt, k, r, p) {
     PiStar <- PiStar + coeffs$alphaHat %*% t(coeffs$betaHat)
   }
   
+  # print('coeffs$GammaHat = ')
+  # print(coeffs$GammaHat)
+  # print('i = ')
+  # print(i)
+  # print('p = ')
+  # print(p)
+  # print('2:k = ')
+  # print(2:k)
+  
   
   if (k > 0) {
     Gamma1 <- coeffs$GammaHat[ , 1 : p]
     PiStar <- PiStar + Gamma1
-    for (i in 2:k) {
-      
-      Gammai <- coeffs$GammaHat[ , seq(((i-1)*p + 1), i*p)]
-      GammaiMinus1 <- coeffs$GammaHat[ , seq(((i-2)*p + 1), (i-1)*p)]
-      
-      PiStar <- cbind(PiStar, (Gammai - GammaiMinus1))
-      
+    if (k > 1) {
+      for (i in 2:k) {
+        
+        Gammai <- coeffs$GammaHat[ , seq(((i-1)*p + 1), i*p)]
+        GammaiMinus1 <- coeffs$GammaHat[ , seq(((i-2)*p + 1), (i-1)*p)]
+        
+        PiStar <- cbind(PiStar, (Gammai - GammaiMinus1))
+        
+      }
     }
     
     Gammak <- coeffs$GammaHat[ , seq(((k-1)*p + 1), k*p)]
     PiStar <- cbind(PiStar, ( - Gammak ))
   }
   
+  # print('PiStar = ')
+  # print(PiStar)
+  # print('p = ')
+  # print(p)
+  # print('k = ')
+  # print(k)
   
   # Pad with an identity for the transition of the lagged variables.
-  PiStar <- rbind(PiStar, 
-                  cbind(diag(p*k), 
-                        matrix(0, nrow = p*k, ncol = p*(k>0) )))
+  if (k > 0) {
+    PiStar <- rbind(PiStar, 
+                    cbind(diag(p*k), 
+                          matrix(0, nrow = p*k, ncol = p )))
+  }
   
    
   # The roots are then the inverse eigenvalues of the matrix PiStar.
