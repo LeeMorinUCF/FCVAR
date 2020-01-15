@@ -162,6 +162,7 @@ x <- x1
 source('EstOptions.R')
 source('FCVAR_estn.R')
 source('FCVAR_lower.R')
+source('FCVAR_higher.R')
 
 # m1 <- FCVARestn(x1, k, r, opt1) # This model is now in the structure m1.
 m1 <- FCVARestn(x, k, r, opt) # This model is now in the structure m1.

@@ -342,7 +342,7 @@ RankTests <- function(x, k, opt) {
   
   return(rankTestStats)
 }
-end
+
 
 
 
@@ -458,6 +458,7 @@ get_pvalues <- function(q, b, consT, testStat, opt) {
 
 mv_wntest <- function(x, maxlag, printResults) {
   
+  T <- nrow(x)
   p <- ncol(x)
   
   # Create bins for values
@@ -469,39 +470,42 @@ mv_wntest <- function(x, maxlag, printResults) {
   # Perform univariate Q and LM tests and store the results.
   for (i in 1:p) {
     
-    Qtest_out <- Qtest(x[,i], maxlag)
-    Q[i] <- Qtest_out$Q
-    pvQ[i] <- Qtest_out$pvQ
+    # Qtest_out <- Qtest(matrix(x[,i], nrow = T, ncol = 1), maxlag)
+    Qtest_out <- Qtest(x[,i, drop = FALSE], maxlag)
+    Q[i] <- Qtest_out$Qstat
+    pvQ[i] <- Qtest_out$pv
     
-    LMtest_out <- LMtest(x[,i],maxlag)
+    # LMtest_out <- LMtest(matrix(x[,i], nrow = T, ncol = 1), maxlag)
+    LMtest_out <- LMtest(x[,i, drop = FALSE], maxlag)
     LM[i] <- LMtest_out$LMstat
     pvLM[i] <- LMtest_out$pv
     
   }
   
+  print('Finished the loop on columns')
   
   # Perform multivariate Q test.
   # [mvQ, pvMVQ] <- Qtest(x,maxlag)
-  Qtest_out <- Qtest(x, maxlag)
-  mvQ <- Qtest_out$Q
-  pvMVQ <- Qtest_out$pvQ
+  # Qtest_out <- Qtest(matrix(x, nrow = T, ncol = p), maxlag)
+  Qtest_out <- Qtest(x[ , , drop = FALSE], maxlag)
+  mvQ <- Qtest_out$Qstat
+  pvMVQ <- Qtest_out$pv
   
   
   # Print output
   if (printResults) {
-    print(sprintf('\n       White Noise Test Results (lag <- %g)\n', maxlag))
-    print(sprintf('---------------------------------------------\n'))
-    print(sprintf('Variable |       Q  P-val |      LM  P-val  |\n'))
-    print(sprintf('---------------------------------------------\n'))
-    print(sprintf('Multivar | %7.3f  %4.3f |     ----  ----  |\n', mvQ, pvMVQ))
+    cat(sprintf('\n       White Noise Test Results (lag = %g)\n', maxlag))
+    cat(sprintf('---------------------------------------------\n'))
+    cat(sprintf('Variable |       Q  P-val |      LM  P-val  |\n'))
+    cat(sprintf('---------------------------------------------\n'))
+    cat(sprintf('Multivar | %7.3f  %4.3f |     ----  ----  |\n', mvQ, pvMVQ))
     for (i in 1:p) {
-      print(sprintf('Var%g     | %7.3f  %4.3f | %7.3f  %4.3f  |\n',
+      cat(sprintf('Var%g     | %7.3f  %4.3f | %7.3f  %4.3f  |\n',
               i, Q[i], pvQ[i], LM[i], pvLM[i] ))
     }
     
-    print(sprintf('---------------------------------------------\n'))
+    cat(sprintf('---------------------------------------------\n'))
   }
-  end
   
   
   # Output a list of results. 
@@ -531,31 +535,77 @@ mv_wntest <- function(x, maxlag, printResults) {
 
 LMtest <- function(x,q) {
   
+  print('In LMtest')
+  print(size(x))
+  print(q)
+  print(nrow(x))
+  print(ncol(x))
+  # print('(q+1):T = ')
+  # print((q+1):T)
+  
+  
+  print(sprintf('x is %d by %d', nrow(x), ncol(x)))
   
   # Breusch-Godfrey Lagrange Multiplier test for serial correlation.
   T <- nrow(x)
   x <- x - mean(x)
-  y <- x[(q+1):T]
-  z <- x[1:(T-q)]
+  
+  print(sprintf('x is %d by %d', nrow(x), ncol(x)))
+  
+  # print(x)
+  
+  y <- x[seq(q+1, T), ,  drop = FALSE]
+  z <- x[seq(1, T-q), ,  drop = FALSE]
   
   for (i in 1:(q-1)) {
-    z <- rbind(x[(i+1):(T-q+i)], z)
+    z <- cbind(x[seq(i+1, T-q+i), ,  drop = FALSE], z)
   }
   
   
+  
+  print(head(y))
+  print(tail(y))
+  print(sprintf('y is %d by %d', nrow(y), ncol(y)))
+  
+  
   e <- y
+  print(head(e))
+  print(tail(e))
+  
+  
+  print(sprintf('e is %d by %d', nrow(e), ncol(e)))
+  print(sprintf('z is %d by %d', nrow(z), ncol(z)))
+  kron_test <- kron(matrix(1, 1, q), e)
+  print(sprintf('kron_test is %d by %d', nrow(kron_test), ncol(kron_test)))
+  
+  
   # s <- z[,1:q] * repmat(e,1,q)
   # Translate this properly: 
-  s <- z[,1:q] * rep(e,1,q)
-  sbar <- mean(s)
+  s <- z[,1:q,  drop = FALSE] * kron(matrix(1, 1, q), e)
+  
+  print(sprintf('s is %d by %d', nrow(s), ncol(s)))
+  
+  sbar <- t(colMeans(s))
+  
+  print('sbar = ')
+  print(sbar)
+  
+  kron_sbar <- kron(matrix(1, nrow(s)), sbar)
+  
+  print(head(kron_sbar))
+  print(tail(kron_sbar))
   
   # The next line bsxfun(@FUNC, A, B) applies the element-by-element binary
   # operation FUNC to arrays A and B, with singleton expansion enabled.
   # Need to translate this to R: 
-  s <- mapply(minus, s, sbar)
+  # s <- mapply(minus, s, sbar)
+  # Never mind that fancy pants stuff for something that
+  # is not even calculated in a loop. 
+  s <- s - kron_sbar
   
   S <- t(s) %*% s/T
-  LMstat <- T*sbar*S^(-1)*t(sbar)
+  # LMstat <- T*sbar %*% S^(-1) %*% t(sbar)
+  LMstat <- T*sbar %*% solve(S) %*% t(sbar)
   pv <- 1 - pchisq(LMstat, q)
   
   
@@ -581,20 +631,33 @@ LMtest <- function(x,q) {
 
 Qtest <- function(x, maxlag) {
   
+  # print('class(x) = ')
+  # print(class(x))
   
   T <- nrow(x)
   p <- ncol(x)
   
+  # print('p = ')
+  # print(p)
+  # print('T = ')
+  # print(T)
+  
+  # t <- 7
+  # print(x[t, , drop = FALSE])
+  # print(t(x[t, , drop = FALSE]))
+  # print(t(x[t, , drop = FALSE]) %*% x[t, , drop = FALSE])
+  
   C0 <- matrix(0, nrow = p, ncol = p)
   for (t in 1:T) {
-    C0 = C0 + t(x[t, ]) %*% x[t, ]
+    # C0 <- C0 + x[t, ] %*% t(x[t, ])
+    C0 <- C0 + t(x[t, , drop = FALSE]) %*% x[t, , drop = FALSE]
   }
-  C0 = C0/T
+  C0 <- C0/T
   
   C <- array(rep(0, p*p*maxlag), dim = c(p,p,maxlag))
   for (i in 1:maxlag) {
     for (t in (i+1):T) {
-      C[ , ,i] <- C[ , ,i] + t(x[t, ]) %*% x[t-i, ]
+      C[ , ,i] <- C[ , ,i] + t(x[t, , drop = FALSE]) %*% x[t-i, , drop = FALSE]
     }
     
     C[ , ,i] <- C[ , ,i]/(T-i) # Note division by (T-i) instead of T.
@@ -608,7 +671,7 @@ Qtest <- function(x, maxlag) {
     # The following line is a more efficient calculation than the previous
     # Qstat <- Qstat+trace( (C(:,:,j)'/C0)*(C(:,:,j)/C0) ) / (T-j) %' #'
     # Need function for trace: 
-    Qstat <- Qstat + trace( (t(C[ , ,j])/C0) %*% (CC[ , ,j]/C0) ) / (T-j)
+    Qstat <- Qstat + sum(diag( (t(C[ , ,j]) %*% solve(C0)) %*% (C[ , ,j] %*% solve(C0)) )) / (T-j)
   }
   
   
