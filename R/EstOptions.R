@@ -384,6 +384,10 @@ updateRestrictions <- function(opt, p, r) {
     # Stacking a matrix on a new row:
     opt$R_psi <- rbind(opt$R_psi, c(1, -1))
     opt$r_psi <- c(opt$r_psi, 0)
+    # Alternative with matrix notation:
+    # opt$R_psi <- cbind(opt$R_psi, matrix(c(1, -1), nrow = 1, ncol = 2))
+    # opt$r_psi <- matrix(c(opt$r_psi, 0), nrow = 2, ncol = 1)
+    # But it led to non-conformable matrices.
     if(opt$constrained) {
       cat(sprintf('\nNote: Redundant options. Both constrained (d>=b) and restrict (d=b) selected.'))
       cat(sprintf('\n Only d=b imposed.\n'))

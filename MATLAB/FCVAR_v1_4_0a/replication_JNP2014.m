@@ -89,6 +89,13 @@ x = x1;
 
 m1 = FCVARestn(x1, k, r, opt1); % This model is now in the structure m1.
 
+
+
+
+
+
+
+
 mv_wntest(m1.Residuals, order, printWNtest);
 
 
@@ -120,6 +127,15 @@ mv_wntest(m1r2.Residuals, order, printWNtest);
 
 Hbeta1 = HypoTest(m1, m1r2); 	% Test the null of m1r2 against the alternative m1 and
 								% store the results in the structure Hbeta1.
+
+
+# Test the testing function.
+DefaultOpt.gridSearch = 0;
+opt = DefaultOpt;
+opt.R_Beta = [1 0 0];
+
+
+
 
 
 

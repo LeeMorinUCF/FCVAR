@@ -245,6 +245,8 @@ FCVARestn <- function(x,k,r,opt) {
     
     print('Condition (size(opt$R_psi) == 2) is imposed, whatever that means.')
     print('I think it means 2 restrictions but correct me if I am wrong.')
+    print('In any case, I replaced it with this condition: (nrow(opt$R_psi) == 2),')
+    print('which is equivalent to (size(opt$R_psi, 1) == 2) in Matlab.')
     
     
     # d,b are exactly identified by the linear restrictions and Rpsi is
@@ -309,6 +311,7 @@ FCVARestn <- function(x,k,r,opt) {
     # print('like = ')
     # # params <- c(0.8, 0.8)
     # params <- startVals
+    # FCVARlike(params, x, k, r, opt)
     # print(FCVARlike(params, x, k, r, opt))
     
     
@@ -358,7 +361,7 @@ FCVARestn <- function(x,k,r,opt) {
   maxLike <- -maxLike
   results$like <- maxLike
   
-  
+  # Some people might find this offensive:
   
   # print('estimatesTEMP = ')
   # print(estimatesTEMP)
@@ -560,9 +563,9 @@ FCVARestn <- function(x,k,r,opt) {
       
       # Put the R_Alpha matrix into the appropriate place in R.
       if(!is.null(opt$R_Alpha)) {
-        R[1+rowDB: rowDB + rowA, 
-          1 + colDB + colMu + colRh: 
-            colDB + colMu + colRh + colA] <- opt$R_Alpha
+        R[(1+rowDB):(rowDB + rowA), 
+          (1 + colDB + colMu + colRh): 
+            (colDB + colMu + colRh + colA)] <- opt$R_Alpha
       }
       
       

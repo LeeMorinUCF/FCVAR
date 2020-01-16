@@ -108,7 +108,10 @@ GetParams <- function(x, k, r, db, opt) {
   # FWL Regressions
   #--------------------------------------------------------------------------------
   
-  if ( (k == 0) | is.infinite(kappa(t(Z2hat) %*% Z2hat)) ) {
+  # print('Z2hat = ')
+  # print(Z2hat)
+  
+  if ( (k == 0) || is.infinite(kappa(t(Z2hat) %*% Z2hat)) ) {
     
     # No lags, so there are no effects of Z2.
     R0 <- Z0hat
@@ -200,7 +203,7 @@ GetParams <- function(x, k, r, db, opt) {
     #   maximized subject to the constraints. This section of the code
     #   replaces the call to the switching algorithm in the previous
     #   version.
-    if(!is.null(opt$R_Alpha) | !is.null(opt$R_Beta) ) {
+    if (!is.null(opt$R_Alpha) | !is.null(opt$R_Beta) ) {
       
       
       # [ betaStar, alphaHat, OmegaHat ]...
@@ -1034,7 +1037,7 @@ RstrctOptm_Switch <- function(beta0, S00, S01, S11, T, p, opt) {
   
   # Least squares estimator of Pi, used in calculations below.
   PiLS <- t((S01 %*% solve(S11))) 
-  vecPiLS <- PiLS
+  vecPiLS <- matrix(PiLS, nrow = length(PiLS), ncol = 1)
   
   
   
@@ -1060,13 +1063,28 @@ RstrctOptm_Switch <- function(beta0, S00, S01, S11, T, p, opt) {
   lambda <- c(1, 1.2, 2, 4, 8)
   nS <- length(lambda)
   likeSearch <- matrix(NA, nrow = nS, ncol = 1)
-  OmegaSearch <- matrix(0, dim = c(p, p,nS))
+  OmegaSearch <- array(0, dim = c(p, p,nS))
+  
+  # print('vecPiLS = ')
+  # print(vecPiLS)
+  # print('alphaHat = ')
+  # print(alphaHat)
+  # print('kron(alphaHat, diag(p1)) = ')
+  # print(kron(alphaHat, diag(p1)))
+  # print('h = ')
+  # print(h)
+  # print('kron(alphaHat, diag(p1)) %*% h = ')
+  # print(kron(alphaHat, diag(p1)) %*% h)
+  # 
+  
+  
   
   # Get candidate values for entering the switching algorithm.
   vecPhi1 <- solve(t(H) %*% 
                      kron(t(alphaHat) %*% solve(OmegaHat) %*% alphaHat, S11) %*% 
                      H) %*% 
-    t(H) %*% (kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*% (vecPiLS - kron(alphaHat, diag(p1)) %*% h)
+    t(H) %*% (kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*% 
+    (vecPiLS - kron(alphaHat, diag(p1)) %*% h)
   
   # Translate vecPhi to betaStar.
   vecB <- H %*% vecPhi1 + h
@@ -1125,6 +1143,7 @@ RstrctOptm_Switch <- function(beta0, S00, S01, S11, T, p, opt) {
       alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
     
     #  ---- beta update step ---- %
+    
     # Update vecPhi.
     vecPhi1 <- solve(t(H) %*% 
                        kron(t(alphaHat) %*% inv(OmegaHat) %*% alphaHat, S11) %*% 
@@ -1194,7 +1213,8 @@ RstrctOptm_Switch <- function(beta0, S00, S01, S11, T, p, opt) {
           # Calculate and store OmegaHat
           OmegaSearch[ , , iL] <- S00 - 
             S01 %*% betaStar %*% t(alphaHat) - 
-            alphaHat %*% t(betaStar) %*% t(S01) + 
+      
+                  alphaHat %*% t(betaStar) %*% t(S01) + 
             alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
           
           # Calculate and store log-likelihood
@@ -1737,6 +1757,14 @@ SEmat2vecU <- function( coeffs, k, r, p , opt) {
 
 SEvec2matU <- function( param, k, r, p, opt ) {
   
+  # Create list for output. 
+  coeffs <- list(
+    db = NULL,
+    muHat = NULL,
+    xiHat = NULL,
+    alphaHat = NULL,
+    GammaHat = NULL
+  )
   
   if (opt$restrictDB) {
     coeffs$db <- matrix(c(param[1], param[1]), nrow = 1, ncol = 2)  # store d,b
