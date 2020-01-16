@@ -37,6 +37,11 @@ rm(list = ls(all = TRUE))
 wd_path <- '~/Research/FCVAR/GitRepo/FCVAR/R'
 setwd(wd_path)
 
+# Add path containing Auxillary files required for estimation.
+# aux_path <- '~/Research/FCVAR/GitRepo/FCVAR/R/Auxiliary'
+# Load library containing Auxillary functions required for estimation.
+# source('Auxiliary.R')
+
 # Load library containing Estimation Options required for estimation.
 source('EstOptions.R')
 # Contains a single function EstOptions() with default options. 
@@ -46,7 +51,6 @@ source('FCVAR_estn.R')
 
 # Load library of Functions for FCVAR Estimation
 source('FCVAR_lower.R')
-
 # Load library of Pre- and Post-Estimation Functions for FCVAR
 source('FCVAR_higher.R')
 
@@ -126,22 +130,40 @@ startProg <- Sys.time() # start timer
 # LAG SELECTION 
 ################################################################################
 
-opt$gridSearch <- 0 # Life is too short. 
-LagSelect(x1, kmax, p, order, opt)
+# LagSelect(x1, kmax, p, order, opt)
+
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+opt <- DefaultOpt
+opt$gridSearch <- 0
+LagSelect(x, kmax, p, order, opt)
 
 
 ################################################################################
 # COINTEGRATION RANK TESTING
 ################################################################################
 
+
 k <- 2
 
-rankTestStats <- RankTests(x1, k, opt)
+# rankTestStats <- RankTests(x1, k, opt)
 
+
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+k <- 2
+opt <- DefaultOpt
+opt$gridSearch <- 0
+rankTestStats <- RankTests(x, k, opt)
 
 ################################################################################
 # UNRESTRICTED MODEL ESTIMATION
 ################################################################################
+
 
 k <- 2
 
@@ -150,23 +172,41 @@ r <- 1
 opt1 <- DefaultOpt
 opt1$gridSearch <- 0
 
+#--------------------------------------------------------------------------------
+# 
+#--------------------------------------------------------------------------------
 
-m1 <- FCVARestn(x1, k, r, opt1) # This model is now in the structure m1.
+opt <- opt1
+opt$gridSearch <- 0
+x <- x1
 
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+
+# m1 <- FCVARestn(x1, k, r, opt1) # This model is now in the structure m1.
+m1 <- FCVARestn(x, k, r, opt) # This model is now in the structure m1.
+
+
+
+source('FCVAR_higher.R')
 mv_wntest_m1 <- mv_wntest(m1$Residuals, order, printWNtest)
-
 
 ################################################################################
 # IMPOSE RESTRICTIONS AND TEST THEM
 ################################################################################
 
-DefaultOpt$gridSearch <- 0	# turn off grid search for restricted models
-							#	because it is too intensive.
 
+
+
+Defaultopt$gridSearch <- 0	# turn off grid search for restricted models
+							#	because it is too intensive.
 
 #--------------------------------------------------------------------------------
 # Test restriction that d<-b<-1.
 #--------------------------------------------------------------------------------
+
 
 opt1 <- DefaultOpt
 opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
@@ -175,15 +215,34 @@ opt1$r_psi <- 1
 m1r1 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r1.
 
 
+#--------------------------------------------------------------------------------
+# Testing version:
+#--------------------------------------------------------------------------------
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+opt <- DefaultOpt
+opt$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
+opt$r_psi <- 1
+m1r1 <- FCVARestn(x, k, r, opt) # This restricted model is now in the structure m1r1.
+#--------------------------------------------------------------------------------
+
+
+
 mv_wntest_m1r1 <- mv_wntest(m1r1$Residuals, order, printWNtest)
 
 Hdb <- HypoTest(m1, m1r1) 	# Test the null of m1r1 against the alternative m1 and
 							# store the results in the structure Hdb.
 
 
+
+
+
 #--------------------------------------------------------------------------------
 # Test restriction that political variables do not enter the cointegrating relation(s).
 #--------------------------------------------------------------------------------
+
 
 opt1 <- DefaultOpt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
@@ -191,10 +250,28 @@ opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 m1r2 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r2.
 
 
+#--------------------------------------------------------------------------------
+# Testing version:
+#--------------------------------------------------------------------------------
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+opt <- DefaultOpt
+opt$gridSearch <- 0
+opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+m1r2 <- FCVARestn(x, k, r, opt) # This restricted model is now in the structure m1r2.
+#--------------------------------------------------------------------------------
+
+
 mv_wntest_m1r2 <- mv_wntest(m1r2$Residuals, order, printWNtest)
 
 Hbeta1 <- HypoTest(m1, m1r2) 	# Test the null of m1r2 against the alternative m1 and
 								# store the results in the structure Hbeta1.
+
+
+
+
 
 
 #--------------------------------------------------------------------------------
@@ -207,6 +284,19 @@ opt1$gridSearch <- 0
 
 m1r3 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r3.
 
+#--------------------------------------------------------------------------------
+# Testing version:
+#--------------------------------------------------------------------------------
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+opt <- DefaultOpt
+opt$R_Alpha <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+opt$gridSearch <- 0
+m1r3 <- FCVARestn(x, k, r, opt) # This restricted model is now in the structure m1r3.
+#--------------------------------------------------------------------------------
+
 
 mv_wntest_m1r3 <- mv_wntest(m1r3$Residuals, order, printWNtest)
 
@@ -214,16 +304,19 @@ Halpha1 <- HypoTest(m1, m1r3) 	# Test the null of m1r3 against the alternative m
 								# store the results in the structure Halpha1.
 
 
+
+
 #--------------------------------------------------------------------------------
 # Test restriction that interest-rate is long-run exogenous.
 #--------------------------------------------------------------------------------
 
+
+## Test restriction that interest-rate is long-run exogenous.
 opt1 <- DefaultOpt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 opt1$gridSearch <- 0
 
 m1r4 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r4.
-
 
 mv_wntest_m1r4 <- mv_wntest(m1r4$Residuals, order, printWNtest)
 
@@ -231,23 +324,26 @@ Halpha2 <- HypoTest(m1, m1r4) 	# Test the null of m1r4 against the alternative m
 								# store the results in the structure Halpha2.
 
 
+
+
+
 #--------------------------------------------------------------------------------
-# Test restriction that unemployment is long-run exogenous.
+## Test restriction that unemployment is long-run exogenous.
 #--------------------------------------------------------------------------------
+
 
 opt1 <- DefaultOpt
 opt1$gridSearch <- 0
 opt1$R_Alpha <- matrix(c(0, 0, 1), nrow = 1, ncol = 3)
 k<-2 
 r <-1
-
 m1r5 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r5.
-
 
 mv_wntest_m1r5 <- mv_wntest(m1r5$Residuals, order, printWNtest)
 
 Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m1 and
 								# store the results in the structure Halpha3.
+
 
 
 #--------------------------------------------------------------------------------
@@ -267,17 +363,18 @@ alphaHatR <- modelRstrct$coeffs$alphaHat %*% t(solve(G))
 # Yes, I know we shouldn't be inverting, Harry, but this is quick and easy.
 
 # Print output.
-print('betaHatR = ')
 print(betaHatR)
-print('alphaHatR = ')
 print(alphaHatR)
 
 
-################################################################################
 
+
+# toc(startProg)
 endProg <- Sys.time() # stop timer
 print('Total computation time from start to end:')
 print(endProg - startProg) # report elapsed time
+
+
 
 ################################################################################
 # End
