@@ -976,6 +976,296 @@ TransformData <- function(x, k, db, opt) {
 
 
 ################################################################################
+# Define function to calculate restricted estimates with a switching algorithm.
+################################################################################
+# 
+# function [betaStar, alphaHat, OmegaHat] 
+#                   <- RstrctOptm_Switch(beta0, S00, S01, S11, T, p, opt)
+# Written by Michal Popiel and Morten Nielsen (This version 03.29.2016)
+# 
+# DESCRIPTION: This function is imposes the switching algorithm of Boswijk
+#   and Doornik (2004, page 455) to optimize over free parameters psi 
+#   and phi directly, combined with the line search proposed by 
+#	Doornik (2016, working paper). We translate between  (psi, phi) and 
+#	(alpha, beta) using the relation of R_Alpha*vec(alpha) <- 0 and 
+#	A*psi <- vec(alpha'), and R_Beta*vec(beta) <- r_beta and 
+#	H*phi+h <- vec(beta). Note the transposes.
+#
+# Input <- beta0 (unrestricted estimate of beta)
+#         S00, S01, S11 (product moments)
+#         T (number of observations)
+#         p (number of variables)
+#         opt (object containing the estimation options)
+# Output <- betaStar (estimate of betaStar)
+#          alphaHat (estimate of alpha)
+#          OmegaHat (estimate of Omega)
+# 
+################################################################################
+
+
+RstrctOptm_Switch <- function(beta0, S00, S01, S11, T, p, opt) {
+  
+  
+  r  <- ncol(beta0)
+  p1 <- p + opt$rConstant
+  
+  # Restrictions on beta.
+  if(is.null(opt$R_Beta)) {
+    H <- diag(p1*r)
+    h <- matrix(0, nrow = p1*r, ncol = 1)
+  } else {
+    H <- null(opt$R_Beta)
+    h <- t(opt$R_Beta) %*% 
+      solve(opt$R_Beta %*% t(opt$R_Beta)) %*% opt$r_Beta 
+  }
+  
+  
+  # Restrictions on alpha.
+  #   We use the commutation matrix K_pr to transform vec(A) into vec(A'),
+  #   see Magnus & Neudecker (1988, p. 47, eqn (1)).
+  Ip  <- diag(p)
+  Kpr <- matrix(kron(Ip, diag(r)), nrow = p*r, ncol = p*r)
+  if(is.null(opt$R_Alpha)) {
+    A <- Kpr %*% diag(p*r)  
+  } else {
+    A <- null(opt$R_Alpha %*% solve(Kpr))
+  }
+  
+  
+  # Least squares estimator of Pi, used in calculations below.
+  PiLS <- t((S01 %*% solve(S11))) 
+  vecPiLS <- PiLS
+  
+  
+  
+  
+  
+  # Starting values for switching algorithm.
+  betaStar <- beta0
+  alphaHat <-  S01 %*% beta0 %*% solve(t(beta0) %*% S11 %*% beta0)
+  OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) - 
+    alphaHat %*% t(betaStar) %*% t(S01) + 
+    alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+  
+  # Algorithm specifications.
+  iters   <- opt$UncFminOptions$MaxFunEvals 
+  Tol     <- opt$UncFminOptions$TolFun
+  conv    <- 0
+  i       <- 0
+  
+  # Tolerance for entering the line search epsilon_s in Doornik's paper.
+  TolSearch <- 0.01
+  
+  # Line search parameters.
+  lambda <- c(1, 1.2, 2, 4, 8)
+  nS <- length(lambda)
+  likeSearch <- matrix(NA, nrow = nS, ncol = 1)
+  OmegaSearch <- matrix(0, dim = c(p, p,nS))
+  
+  # Get candidate values for entering the switching algorithm.
+  vecPhi1 <- solve(t(H) %*% 
+                     kron(t(alphaHat) %*% solve(OmegaHat) %*% alphaHat, S11) %*% 
+                     H) %*% 
+    t(H) %*% (kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*% (vecPiLS - kron(alphaHat, diag(p1)) %*% h)
+  
+  # Translate vecPhi to betaStar.
+  vecB <- H %*% vecPhi1 + h
+  betaStar <- matrix(vecB, nrow = p1, ncol = r)    
+  
+  # Candidate value of vecPsi.
+  vecPsi1 <- solve(t(A) %*% 
+                     kron(solve(OmegaHat), t(betaStar) %*% S11 %*% betaStar) %*% 
+                     A) %*%
+    t(A) %*% (kron(solve(OmegaHat), t(betaStar) %*% S11)) %*% vecPiLS
+  
+  # Translate vecPsi to alphaHat.
+  vecA <- A %*% vecPsi1 # This is vec(alpha')
+  alphaHat <- matrix(solve(Kpr) %*% vecA, nrow = p, ncol = r)
+  
+  # Candidate values of piHat and OmegaHat.
+  piHat1 <- alphaHat %*% t(betaStar)
+  OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) - 
+    alphaHat %*% t(betaStar) %*% t(S01) + 
+    alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+  
+  
+  
+  
+  
+  # Calculate the likelihood.
+  like1 <- - log(det(OmegaHat))
+  
+  while(i<=iters && !conv) {
+    
+    # Update values for convergence criteria.
+    piHat0  <- piHat1
+    like0   <- like1
+    
+    if(i == 1) {
+      # Initialize candidate values. 
+      vecPhi0_c <- vecPhi1
+      vecPsi0_c <- vecPsi1
+    }
+    
+    
+    #  ---- alpha update step ---- %
+    # Update vecPsi.
+    vecPsi1 <- solve(t(A) %*% kron(solve(OmegaHat), t(betaStar) %*% 
+                                     S11 %*% betaStar) %*% A) %*%
+      t(A) %*% (kron(solve(OmegaHat), t(betaStar) %*% S11)) %*% vecPiLS
+    
+    # Translate vecPsi to alphaHat.
+    vecA <- A %*% vecPsi1 # This is vec(alpha')
+    alphaHat <- matrix(solve(Kpr) %*% vecA, nrow = p, ncol = r)    
+    
+    #  ---- omega update step ---- %
+    # Update OmegaHat.
+    OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) - 
+      alphaHat %*% t(betaStar) %*% t(S01) + 
+      alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+    
+    #  ---- beta update step ---- %
+    # Update vecPhi.
+    vecPhi1 <- solve(t(H) %*% 
+                       kron(t(alphaHat) %*% inv(OmegaHat) %*% alphaHat, S11) %*% 
+                       H) %*% 
+      t(H) %*% (kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*%
+      (vecPiLS - kron(alphaHat, diag(p1)) %*% h)
+    
+    # Translate vecPhi to betaStar.
+    vecB <- H %*% vecPhi1 + h
+    betaStar <- matrix(vecB, nrow = p1, ncol = r)    
+    
+    #  ---- pi and likelihood update  ---- %
+    # Update estimate of piHat.
+    piHat1 <- alphaHat %*% t(betaStar)
+    
+    # Update OmegaHat with new alpha and new beta.
+    OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) - 
+      alphaHat %*% t(betaStar) %*% t(S01) + 
+      alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+    
+    
+    
+    
+    # Calculate the likelihood.
+    like1 <- - log(det(OmegaHat))
+    
+    if(i > 0) {
+      
+      
+      # Calculate relative change in likelihood
+      likeChange <- (like1 - like0) / (1 + abs(like0))
+      
+      
+      
+      # Check relative change and enter line search if below tolerance.
+      if(likeChange < TolSearch && opt$LineSearch) {
+        
+        
+        # Calculate changes in parameters.
+        deltaPhi <- vecPhi1 - vecPhi0_c
+        deltaPsi <- vecPsi1 - vecPsi0_c
+        
+        # Initialize parameter bins
+        vecPhi2 <- matrix(NA, nrow = length(vecPhi1), ncol = nS)
+        vecPsi2 <- matrix(NA, nrow = length(vecPsi1), ncol = nS)
+        
+        # Values already calculated for lambda = 1.
+        vecPhi2[ ,1]       <- vecPhi1 
+        vecPsi2[ ,1]       <- vecPsi1
+        likeSearch[1]      <- like1
+        OmegaSearch[ , ,1] <- OmegaHat
+        
+        
+        
+        for (iL in 2:nS) {
+          
+          # New candidates for parameters based on line search.
+          vecPhi2[ , iL] <- vecPhi0_c + lambda[iL]*deltaPhi
+          vecPsi2[ , iL] <- vecPsi0_c + lambda[iL]*deltaPsi
+          
+          # Translate to alpha and beta
+          vecA <- A %*% vecPsi2[ , iL] 
+          alphaHat <- matrix(solve(Kpr) %*% vecA, nrow = p, ncol = r)
+          vecB <- H %*% vecPhi2[ , iL] + h
+          betaStar <- matrix(vecB, nrow = p1, ncol = r) 
+          
+          # Calculate and store OmegaHat
+          OmegaSearch[ , , iL] <- S00 - 
+            S01 %*% betaStar %*% t(alphaHat) - 
+            alphaHat %*% t(betaStar) %*% t(S01) + 
+            alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+          
+          # Calculate and store log-likelihood
+          likeSearch[iL] <- - log(det(OmegaSearch[ , , iL]))                 
+          
+        }
+        
+        
+        
+        
+        # Update max likelihood and OmegaHat based on line search.
+        # [ iSearch ] <- find(likeSearch == max(max(likeSearch)))
+        iSearch <- which(likeSearch == max(likeSearch), arr.ind = TRUE)
+        
+        # If there are identical likelihoods, choose smallest
+        # increment
+        iSearch  <- min(iSearch)
+        like1    <- likeSearch[iSearch]
+        OmegaHat <- OmegaSearch[ , , iSearch]
+        # Save old candidate parameter vectors for next iteration.
+        vecPhi0_c  <- vecPhi1
+        vecPsi0_c  <- vecPsi1
+        
+        # Update new candidate parameter vectors.
+        vecPhi1  <- vecPhi2[ ,iSearch]
+        vecPsi1  <- vecPsi2[ ,iSearch]
+        # Update coefficients.
+        vecA     <- A %*% vecPsi1 
+        alphaHat <- matrix(solve(Kpr) %*% vecA, nrow = p, ncol = r)
+        vecB     <- H %*% vecPhi1 + h
+        betaStar <- matrix(vecB, nrow = p1, ncol = r) 
+        # Update estimate of piHat.
+        piHat1 <- alphaHat %*% t(betaStar)
+        
+        
+      }
+      
+      
+      # Calculate relative change in likelihood
+      likeChange <- (like1 - like0) / (1 + abs(like0))
+      
+      # Calculate relative change in coefficients.
+      piChange   <- max(abs(piHat1 - piHat0) / (1 + abs(piHat0)) )
+      
+      # Check convergence.        
+      if(abs(likeChange) <= Tol && piChange <= sqrt(Tol)) {
+        conv <- 1
+      }
+      
+      
+    }
+    
+    i <- i+1
+  }
+  
+
+
+  
+  # Return a list of parameters from the switching algorithm.
+  switched_mats <- list(
+    betaStar = betaStar,
+    alphaHat = alphaHat,
+    OmegaHat = OmegaHat
+  )
+  
+  return(switched_mats)
+}
+
+
+
+################################################################################
 # Define function to calculate residuals from given parameter values.
 ################################################################################
 # 
