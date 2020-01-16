@@ -33,6 +33,7 @@ else
     h = opt.R_Beta'*inv(opt.R_Beta*opt.R_Beta')*opt.r_Beta;
 end
 
+
 % Restrictions on alpha.
 %   We use the commutation matrix K_pr to transform vec(A) into vec(A'),
 %   see Magnus & Neudecker (1988, p. 47, eqn (1)).
