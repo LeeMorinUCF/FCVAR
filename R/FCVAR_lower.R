@@ -108,12 +108,28 @@ GetParams <- function(x, k, r, db, opt) {
   # FWL Regressions
   #--------------------------------------------------------------------------------
   
-  if (k == 0) {
+  if ( (k == 0) | is.infinite(kappa(t(Z2hat) %*% Z2hat)) ) {
+    
     # No lags, so there are no effects of Z2.
     R0 <- Z0hat
     R1 <- Z1hat
+    # Includes the case when Z2hat is near zero and 
+    # t(Z2hat) %*% Z2hat is ill-conditioned. 
+    
   } else {
+    
+    # print('dim(Z2hat) = ')
+    # print(dim(Z2hat))
+    # print('summary(Z2hat) = ')
+    # print(summary(Z2hat))
+    # print('t(Z2hat) %*% Z2hat = ')
+    # print(t(Z2hat) %*% Z2hat)
+    # print('kappa(t(Z2hat) %*% Z2hat) = ')
+    # print(kappa(t(Z2hat) %*% Z2hat))
+    
     # Lags included: Obtain the residuals from FWL regressions.
+    # Unless, of course, Z2hat is near zero and 
+    # t(Z2hat) %*% Z2hat is ill-conditioned. 
     R0 <- Z0hat - Z2hat %*% ( solve(t(Z2hat) %*% Z2hat) %*% t(Z2hat) %*% Z0hat )
     R1 <- Z1hat - Z2hat %*% ( solve(t(Z2hat) %*% Z2hat) %*% t(Z2hat) %*% Z1hat )
   }
@@ -194,7 +210,7 @@ GetParams <- function(x, k, r, db, opt) {
       alphaHat <- switched_mats$alphaHat
       OmegaHat <- switched_mats$OmegaHat
       
-      betaHat <- betaStar[1:p, 1:r]
+      betaHat <- betaStar[1:p, 1:r, drop = FALSE]
       PiHat <- alphaHat %*% t(betaHat) 
       
       
@@ -261,7 +277,8 @@ GetParams <- function(x, k, r, db, opt) {
     
   }
   
-  
+  # print('betaHat = ')
+  # print(betaHat)
   
   # Calculate PiStar independently of how betaStar was estimated.
   PiStar <- alphaHat %*% t(betaStar) 
@@ -942,6 +959,8 @@ TransformData <- function(x, k, db, opt) {
   if(k > 0) {
     Z2 <- Z2[(N+1):nrow(Z2), ]
   }
+  
+  
   
   
   # Return all arrays together as a list. 

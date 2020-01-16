@@ -247,8 +247,8 @@ updateRestrictions <- function(opt, p, r) {
   if(opt$levelParam & opt$rConstant) {
     
     opt$rConstant <- 0
-    print(sprintf('\nWarning, both restricted constant and level parameter selected.\n'))
-    print(sprintf('Only level parameter will be included.\n'))
+    cat(sprintf('\nWarning, both restricted constant and level parameter selected.\n'))
+    cat(sprintf('Only level parameter will be included.\n'))
     
   }
   
@@ -265,8 +265,8 @@ updateRestrictions <- function(opt, p, r) {
      opt$db0[1] != opt$db0[2]) {
     
     opt$db0 <- c(opt$db0[1], opt$db0[1])
-    print(sprintf('\nWarning, d=b imposed but starting values are different for d,b.\n'))
-    print(sprintf('db0 set to (%g, %g).\n', opt$db0[1], opt$db0[2]))
+    cat(sprintf('\nWarning, d=b imposed but starting values are different for d,b.\n'))
+    cat(sprintf('db0 set to (%g, %g).\n', opt$db0[1], opt$db0[2]))
     
   }
   
@@ -280,8 +280,8 @@ updateRestrictions <- function(opt, p, r) {
   if ( length(opt$dbMin) > 2 | length(opt$dbMax) > 2 ) {
     
     
-    print(sprintf('\nWARNING: Too many parameters specified in dbMin or dbMax.\n'))
-    print(sprintf('\nOnly the first two elements will be used to set bounds in estimation.\n'))
+    cat(sprintf('\nWARNING: Too many parameters specified in dbMin or dbMax.\n'))
+    cat(sprintf('\nOnly the first two elements will be used to set bounds in estimation.\n'))
     # Cut off extra bounds
     if ( length(opt$dbMin) > 2 ) {
       opt$dbMin <- opt$dbMin[1:2]
@@ -302,8 +302,8 @@ updateRestrictions <- function(opt, p, r) {
   if( length(opt$dbMin) == 1 ) {
     opt$dbMin <- c(opt$dbMin, opt$dbMin)
     # Notification to user.
-    print(sprintf('\nWarning: minimum value specified for d only.\n'))
-    print(sprintf('Min value of b set to %2.4f\n', opt$dbMin[2]))
+    cat(sprintf('\nWarning: minimum value specified for d only.\n'))
+    cat(sprintf('Min value of b set to %2.4f\n', opt$dbMin[2]))
   } else {
     # Set as row vector, regardless of input.
     # opt$dbMin <- reshape(opt$dbMin,1,2)
@@ -314,8 +314,8 @@ updateRestrictions <- function(opt, p, r) {
   if(length(opt$dbMax) == 1) {
     opt$dbMax <- c(opt$dbMax, opt$dbMax)
     # Notification to user.
-    print(sprintf('\nWarning: maximum value specified for d only.\n'))
-    print(sprintf('Max value of b set to %2.4f\n', opt$dbMax[2]))
+    cat(sprintf('\nWarning: maximum value specified for d only.\n'))
+    cat(sprintf('Max value of b set to %2.4f\n', opt$dbMax[2]))
   } else {
     # Set as row vector, regardless of input.
     # opt$dbMax <- reshape(opt$dbMax,1,2)
@@ -328,11 +328,11 @@ updateRestrictions <- function(opt, p, r) {
   # Check for consistency among min and max values for fractional
   # parameters.
   if( opt$dbMin[1] > opt$dbMax[1] ) {
-    print(sprintf('\nWarning, min > max for bounds on d.\n'))
+    cat(sprintf('\nWarning, min > max for bounds on d.\n'))
     stop('Invalid bounds inmposed on d.')
   }
   if( opt$dbMin[2] > opt$dbMax[2] ) {
-    print(sprintf('\nWarning, min > max for bounds on b.\n'))
+    cat(sprintf('\nWarning, min > max for bounds on b.\n'))
     stop('Invalid bounds inmposed on b.')
   }
   
@@ -343,12 +343,12 @@ updateRestrictions <- function(opt, p, r) {
   # inequalities.
   if(!is.null(opt$C_db) & opt$constrained) {
     
-    print(sprintf('\nWarning, inequality restrictions imposed and constrained selected.\n'))
-    print(sprintf('Restrictions in C_db override constrained options.\n'))
+    cat(sprintf('\nWarning, inequality restrictions imposed and constrained selected.\n'))
+    cat(sprintf('Restrictions in C_db override constrained options.\n'))
     opt$constrained <- 0
     
     if(opt$gridSearch) {
-      print(sprintf('Grid search has been switched off.\n'))
+      cat(sprintf('Grid search has been switched off.\n'))
       opt$gridSearch <- 0
     }
     
@@ -362,8 +362,8 @@ updateRestrictions <- function(opt, p, r) {
     # First check if restriction is valid
     if (opt$restrictDB & ((opt$R_psi[1,1] == 0) | 
                           (opt$R_psi[1,2] != 0)) ) {
-      print(sprintf('\nError in R_psi. When restrictDB = 1, only '))
-      print(sprintf('restrictions on d can be imposed.\n'))
+      cat(sprintf('\nError in R_psi. When restrictDB = 1, only '))
+      cat(sprintf('restrictions on d can be imposed.\n'))
       stop('Invalid restriction for d=b model.')
     }
     
@@ -385,8 +385,8 @@ updateRestrictions <- function(opt, p, r) {
     opt$R_psi <- rbind(opt$R_psi, c(1, -1))
     opt$r_psi <- c(opt$r_psi, 0)
     if(opt$constrained) {
-      print(sprintf('\nNote: Redundant options. Both constrained (d>=b) and restrict (d=b) selected.'))
-      print(sprintf('\n Only d=b imposed.\n'))
+      cat(sprintf('\nNote: Redundant options. Both constrained (d>=b) and restrict (d=b) selected.'))
+      cat(sprintf('\n Only d=b imposed.\n'))
       # Turn off (d>=b) constraint.
       opt$constrained <- 0
     }
@@ -403,7 +403,7 @@ updateRestrictions <- function(opt, p, r) {
     
     # Ensure that parameter space for fractional parameters is non-empty.
     if(opt$dbMax[1] < opt$dbMin[2] & opt$constrained) {
-      print(sprintf('\nWarning: Redefine restrictions on fractional parameters.\n'))
+      cat(sprintf('\nWarning: Redefine restrictions on fractional parameters.\n'))
       stop('Empty parameter space for (d,b).')
     }
     
@@ -417,23 +417,27 @@ updateRestrictions <- function(opt, p, r) {
     # print(UB_LB_bounds)
     # print(LB)
     # print(UB)
+    # 
+    # print('Check (LB > UB):')
+    # print('Check (LB > UB):')
     
-    if(LB > UB) {
-      print(sprintf('\nWarning: Redefine restrictions on fractional parameters.\n'))
+    # if (LB > UB) {
+    if (any(LB > UB)) {
+      cat(sprintf('\nWarning: Redefine restrictions on fractional parameters.\n'))
       stop('Empty parameter space for (d,b).')
     }
     
     # Check if grid search is necessary.
     if ( (nrow(opt$R_psi) > 1 & opt$gridSearch) ) {
-      print(sprintf('\nd and b are exactly identified by imposed restrictions\n'))
-      print(sprintf('so grid search has been turned off.\n'))
+      cat(sprintf('\nd and b are exactly identified by imposed restrictions\n'))
+      cat(sprintf('so grid search has been turned off.\n'))
       opt$gridSearch = 0
     }
     
     # Check for redundancies.
     if(qr(opt$R_psi)$rank < nrow(opt$R_psi)) {
-      print(sprintf('\nWARNING: R_psi has reduced rank!\n'))
-      print(sprintf('\nRedefine R_psi with linearly independent restrictions.\n'))
+      cat(sprintf('\nWARNING: R_psi has reduced rank!\n'))
+      cat(sprintf('\nRedefine R_psi with linearly independent restrictions.\n'))
       stop('Redundant restrictions in R_psi matrix')
     }
     
@@ -451,30 +455,30 @@ updateRestrictions <- function(opt, p, r) {
     
     # Check if restricted parameters actually exist.
     if(r == 0) {
-      print(sprintf('\nWARNING: Cannot impose restrictions on alpha if r=0!\n'))
-      print(sprintf('Either remove the restriction (set R_Alpha = NULL)  or increase rank (set r>0).\n'))
+      cat(sprintf('\nWARNING: Cannot impose restrictions on alpha if r=0!\n'))
+      cat(sprintf('Either remove the restriction (set R_Alpha = NULL)  or increase rank (set r>0).\n'))
       stop('Imposing restrictions on empty parameters')
     }
     
     # Check if column length of R_Alpha matches the number of
     # parameters.
-    if(ncol(opt$R_Alpha) != p %*% r) {
-      print(sprintf('\nWARNING: The length of R_Alpha does not match the number of parameters!\n'))
-      print(sprintf('Please respecify R_Alpha so that the number of columns is p*r.\n'))
+    if(ncol(opt$R_Alpha) != p * r) {
+      cat(sprintf('\nWARNING: The length of R_Alpha does not match the number of parameters!\n'))
+      cat(sprintf('Please respecify R_Alpha so that the number of columns is p*r.\n'))
       stop('Restriction misspecification')
     }
     
     # Check for redundancies.
     if(qr(opt$R_Alpha)$rank < nrow(opt$R_Alpha)) {
-      print(sprintf('\nWARNING: R_Alpha has reduced rank!\n'))
-      print(sprintf('\nRedefine R_Alpha with linearly independent restrictions.\n'))
+      cat(sprintf('\nWARNING: R_Alpha has reduced rank!\n'))
+      cat(sprintf('\nRedefine R_Alpha with linearly independent restrictions.\n'))
       stop('Redundant restrictions in R_Alpha matrix')
     }
     end
     # Check if user has imposed non-homogeneous alpha restrictions.
-    if(!is.null(opt$r_Alpha) & (opt$r_Alpha != 0)) {
-      print(sprintf('\nWARNING: r_Alpha contains non-homogeneous restrictions (r_alpha non-zero).\n'))
-      print(sprintf('All alpha restrictions have been made homogeneous.\n'))
+    if(!is.null(opt$r_Alpha) && (opt$r_Alpha != 0)) {
+      cat(sprintf('\nWARNING: r_Alpha contains non-homogeneous restrictions (r_alpha non-zero).\n'))
+      cat(sprintf('All alpha restrictions have been made homogeneous.\n'))
     }
     
     opt$r_Alpha <- matrix(0, nrow = nrow(opt$R_Alpha), ncol = 1)
@@ -488,23 +492,23 @@ updateRestrictions <- function(opt, p, r) {
     
     # Check if restricted parameters actually exist.
     if(r == 0) {
-      print(sprintf('\nWARNING: Cannot impose restrictions on Beta if r=0!\n'))
-      print(sprintf('Either remove the restriction (set R_Beta = NULL)  or increase rank (set r>0).\n'))
+      cat(sprintf('\nWARNING: Cannot impose restrictions on Beta if r=0!\n'))
+      cat(sprintf('Either remove the restriction (set R_Beta = NULL)  or increase rank (set r>0).\n'))
       stop('Imposing restrictions on empty parameters')
     }
     
     # Check if column length of R_Beta matches the number of
     # parameters (note p1 not p).
-    if(ncol(opt$R_Beta) != p1 %*% r) {
-      print(sprintf('\nWARNING: The length of R_Beta does not match the number of parameters!\n'))
-      print(sprintf('Please respecify R_Beta so that the number of columns is p1*r.\n'))
+    if(ncol(opt$R_Beta) != p1 * r) {
+      cat(sprintf('\nWARNING: The length of R_Beta does not match the number of parameters!\n'))
+      cat(sprintf('Please respecify R_Beta so that the number of columns is p1*r.\n'))
       stop('Restriction misspecification')
     }
     
     # Check for redundancies.
     if(qr(opt$R_Beta)$rank < nrow(opt$R_Beta)) {
-      print(sprintf('\nWARNING: R_Beta has reduced rank!\n'))
-      print(sprintf('\nRedefine R_Beta with linearly independent restrictions.\n'))
+      cat(sprintf('\nWARNING: R_Beta has reduced rank!\n'))
+      cat(sprintf('\nRedefine R_Beta with linearly independent restrictions.\n'))
       stop('Redundant restrictions in R_Beta matrix')
     }
     
@@ -520,10 +524,10 @@ updateRestrictions <- function(opt, p, r) {
       # a restricted constant is being estimated, then it
       # needs to be accounted for in the restrictions.
       if(nrow(opt$r_Beta) != nrow(opt$R_Beta)) {
-        print(sprintf('\nWARNING: Row dimensions of R_Beta and r_Beta do not match!\n'))
-        print(sprintf('Please redefine these matrices so that dimensions match.\n'))
-        print(sprintf('Note: if a restricted constant has been included, \n'))
-        print(sprintf('the Beta matrix has an additional row.\n'))
+        cat(sprintf('\nWARNING: Row dimensions of R_Beta and r_Beta do not match!\n'))
+        cat(sprintf('Please redefine these matrices so that dimensions match.\n'))
+        cat(sprintf('Note: if a restricted constant has been included, \n'))
+        cat(sprintf('the Beta matrix has an additional row.\n'))
         stop('All restrictions must be specified in the r_Beta variable')
       }
       

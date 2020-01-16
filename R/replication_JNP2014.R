@@ -125,9 +125,9 @@ DefaultOpt <- opt # Store the options for restoring them in between hypothesis t
 startProg <- Sys.time() # start timer
 
 
-#--------------------------------------------------------------------------------
+################################################################################
 # LAG SELECTION 
-#--------------------------------------------------------------------------------
+################################################################################
 
 # LagSelect(x1, kmax, p, order, opt)
 
@@ -140,9 +140,9 @@ opt$gridSearch <- 0
 LagSelect(x, kmax, p, order, opt)
 
 
-#--------------------------------------------------------------------------------
+################################################################################
 # COINTEGRATION RANK TESTING
-#--------------------------------------------------------------------------------
+################################################################################
 
 
 k <- 2
@@ -159,9 +159,9 @@ opt <- DefaultOpt
 opt$gridSearch <- 0
 rankTestStats <- RankTests(x, k, opt)
 
-#--------------------------------------------------------------------------------
+################################################################################
 # UNRESTRICTED MODEL ESTIMATION
-#--------------------------------------------------------------------------------
+################################################################################
 
 
 k <- 2
@@ -171,6 +171,9 @@ r <- 1
 opt1 <- DefaultOpt
 opt1$gridSearch <- 0
 
+#--------------------------------------------------------------------------------
+# 
+#--------------------------------------------------------------------------------
 
 opt <- opt1
 opt$gridSearch <- 0
@@ -187,74 +190,139 @@ m1 <- FCVARestn(x, k, r, opt) # This model is now in the structure m1.
 
 
 source('FCVAR_higher.R')
-mv_wntest(m1$Residuals, order, printWNtest)
+mv_wntest_m1 <- mv_wntest(m1$Residuals, order, printWNtest)
 
-#--------------------------------------------------------------------------------
+################################################################################
 # IMPOSE RESTRICTIONS AND TEST THEM
-#--------------------------------------------------------------------------------
+################################################################################
+
+
 
 
 Defaultopt$gridSearch <- 0	# turn off grid search for restricted models
 							#	because it is too intensive.
 
-## Test restriction that d<-b<-1.
+#--------------------------------------------------------------------------------
+# Test restriction that d<-b<-1.
+#--------------------------------------------------------------------------------
+
+
 opt1 <- DefaultOpt
-opt1$R_psi <- c(1, 0)
+opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt1$r_psi <- 1
 
 m1r1 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r1.
 
-mv_wntest(m1r1$Residuals, order, printWNtest)
+
+#--------------------------------------------------------------------------------
+# Testing version:
+#--------------------------------------------------------------------------------
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+opt <- DefaultOpt
+opt$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
+opt$r_psi <- 1
+m1r1 <- FCVARestn(x, k, r, opt) # This restricted model is now in the structure m1r1.
+#--------------------------------------------------------------------------------
+
+
+
+mv_wntest_m1r1 <- mv_wntest(m1r1$Residuals, order, printWNtest)
 
 Hdb <- HypoTest(m1, m1r1) 	# Test the null of m1r1 against the alternative m1 and
 							# store the results in the structure Hdb.
 
 
-## Test restriction that political variables do not enter the cointegrating relation(s).
+
+
+
+#--------------------------------------------------------------------------------
+# Test restriction that political variables do not enter the cointegrating relation(s).
+#--------------------------------------------------------------------------------
+
+
 opt1 <- DefaultOpt
 opt1$R_Beta <- c(1, 0, 0)
 
 m1r2 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r2.
 
-mv_wntest(m1r2.Residuals, order, printWNtest)
+
+#--------------------------------------------------------------------------------
+# Testing version:
+#--------------------------------------------------------------------------------
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+opt <- DefaultOpt
+opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+m1r2 <- FCVARestn(x, k, r, opt) # This restricted model is now in the structure m1r2.
+#--------------------------------------------------------------------------------
+
+
+mv_wntest_m1r2 <- mv_wntest(m1r2.Residuals, order, printWNtest)
 
 Hbeta1 <- HypoTest(m1, m1r2) 	# Test the null of m1r2 against the alternative m1 and
 								# store the results in the structure Hbeta1.
 
 
 
-## Test restriction that political variable is long-run exogenous.
+
+
+
+#--------------------------------------------------------------------------------
+# Test restriction that political variable is long-run exogenous.
+#--------------------------------------------------------------------------------
+
 opt1 <- DefaultOpt
-opt1$R_Alpha <- c(1, 0, 0)
+opt1$R_Alpha <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 
 m1r3 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r3.
 
-mv_wntest(m1r3$Residuals, order, printWNtest)
+
+
+mv_wntest_m1r3 <- mv_wntest(m1r3$Residuals, order, printWNtest)
 
 Halpha1 <- HypoTest(m1, m1r3) 	# Test the null of m1r3 against the alternative m1 and
 								# store the results in the structure Halpha1.
 
 
+
+
+#--------------------------------------------------------------------------------
+# Test restriction that interest-rate is long-run exogenous.
+#--------------------------------------------------------------------------------
+
+
 ## Test restriction that interest-rate is long-run exogenous.
 opt1 <- DefaultOpt
-opt1$R_Alpha <- c(0, 1, 0)
+opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 
 m1r4 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r4.
 
-mv_wntest(m1r4$Residuals, order, printWNtest)
+mv_wntest_m1r4 <- mv_wntest(m1r4$Residuals, order, printWNtest)
 
 Halpha2 <- HypoTest(m1, m1r4) 	# Test the null of m1r4 against the alternative m1 and
 								# store the results in the structure Halpha2.
 
 
+
+
+
+#--------------------------------------------------------------------------------
 ## Test restriction that unemployment is long-run exogenous.
+#--------------------------------------------------------------------------------
+
+
 opt1 <- DefaultOpt
-opt1$R_Alpha <- c(0, 0, 1)
+opt1$R_Alpha <- matrix(c(0, 0, 1), nrow = 1, ncol = 3)
 k<-2 
 r <-1
 m1r5 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r5.
 
-mv_wntest(m1r5$Residuals, order, printWNtest)
+mv_wntest_m1r5 <- mv_wntest(m1r5$Residuals, order, printWNtest)
 
 Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m1 and
 								# store the results in the structure Halpha3.

@@ -87,6 +87,9 @@ FCVARestn <- function(x,k,r,opt) {
   #   automatically if estimation is interrupted.
   estimatesTEMP <- NULL
   
+  # Assign the value for the global variable estimatesTEMP.
+  # Might adjust this later but it will work for now. 
+  assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
   
   #--------------------------------------------------------------------------------
   # GRID SEARCH
@@ -201,14 +204,14 @@ FCVARestn <- function(x,k,r,opt) {
     #  level parameter.
     if(!is.null(Rpsi)) {
       # Check conformability:
-      Rpsi <- rbind(Rpsi, matrix(0, nrow = nrow(Rpsi), ncol = p))
+      Rpsi <- cbind(Rpsi, matrix(0, nrow = nrow(Rpsi), ncol = p))
     }
     
     # If there are inequality restrictions add coefficients of 0 to the
     #  level parameter.
     if(!is.null(Cdb)) {
       # Check conformability:
-      Cdb <- rbind(Cdb, matrix(0, nrow = nrow(Cdb), ncol = p))
+      Cdb <- cbind(Cdb, matrix(0, nrow = nrow(Cdb), ncol = p))
     }
     
     # If grid search has not been used to set all initial values, add p
@@ -248,7 +251,7 @@ FCVARestn <- function(x,k,r,opt) {
     #  invertible. We use opt$R_psi here because Rpsi is adjusted
     #  depending on the presence of level parameters. Transpose is
     #  necessary to match input/output of other cases.
-    dbTemp <- t(t(opt$R_psi) %*% solve(opt$R_psi*t(opt$R_psi)) %*% opt$r_psi)
+    dbTemp <- t(t(opt$R_psi) %*% solve(opt$R_psi %*% t(opt$R_psi)) %*% opt$r_psi)
     y <- x
     
     if(opt$levelParam) {
@@ -263,7 +266,7 @@ FCVARestn <- function(x,k,r,opt) {
       # min_out <- optim_unc(-FCVARlikeMu(params, x, dbTemp, k, r, opt), 
       #                      startVal, opt$UncFminOptions)
       
-      min_out <- optim(startVal, 
+      min_out <- optim(StartVal, 
                        function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)}) 
       
       muHat <- min_out$par
@@ -290,6 +293,11 @@ FCVARestn <- function(x,k,r,opt) {
     } else {
       estimatesTEMP$muHat <- NULL
     }
+    
+    
+    # Assign the value for the global variable estimatesTEMP.
+    # Might adjust this later but it will work for now. 
+    assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
     
     
   } else {
@@ -403,12 +411,15 @@ FCVARestn <- function(x,k,r,opt) {
     # Check conformability: 
     
     # print(diag(p))
-    # print(rbind(results$coeffs$betaHat, 
+    # print(results$coeffs$betaHat)
+    # print(results$coeffs$rhoHat)
+    # print(rbind(results$coeffs$betaHat,
     #             results$coeffs$rhoHat))
-    # print(rbind(A, matrix(0, nrow = p*r, ncol = rH)))
-    # print(kronecker(diag(p), 
-    #                 rbind(results$coeffs$betaHat, 
+    # print(cbind(A, matrix(0, nrow = p*r, ncol = rH)))
+    # print(kronecker(diag(p),
+    #                 rbind(results$coeffs$betaHat,
     #                       results$coeffs$rhoHat)))
+    # print(A)
     
     kronA <- kronecker(diag(p), 
                        rbind(results$coeffs$betaHat, 
