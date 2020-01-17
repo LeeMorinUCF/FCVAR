@@ -878,8 +878,111 @@ FCVARsim <- function(data, model, NumPeriods) {
 
 
 
+################################################################################
+# Define function to calculate recursive forecasts with the FCVAR model
+################################################################################
+# 
+# function xf <- FCVARforecast(data, model, NumPeriods)
+# Written by Michal Popiel and Morten Nielsen (This version 11.17.2014)
+# 
+# DESCRIPTION: This function calculates recursive forecasts. It uses
+#   FracDiff() and Lbk(), which are nested below.
+# 
+# Input <- data (T x p matrix of data)
+#         model (a Matlab structure containing estimation results)
+#         NumPeriods (number of steps ahead for forecast)
+# Output <- xf (NumPeriods x p matrix of forecasted values)
+# 
+################################################################################
 
 
+
+FCVARforecast <- function(data, model, NumPeriods) {
+  
+  
+  #--------------------------------------------------------------------------------
+  # Preliminary steps 
+  #--------------------------------------------------------------------------------
+  
+  x <- data 
+  p <- ncol(data)
+  opt <- model$options
+  cf  <- model$coeffs
+  d <- cf$db[1]
+  b <- cf$db[2]
+  
+  #--------------------------------------------------------------------------------
+  # Recursively generate forecasts 
+  #--------------------------------------------------------------------------------
+  
+  for (i in 1:NumPeriods) {
+    
+    
+    # Append x with zeros to simplify calculations.
+    x <- cbind(x, matrix(0, nrow = 1, ncol = p))
+    T <- nrow(x)
+    
+    # Adjust by level parameter if present.
+    if(opt$levelParam) {
+      y <- x - matrx(1, nrow = T, ncol = 1) %*% cf$muHat
+    } else {
+      y <- x
+    }
+    
+    
+    # Main term, take fractional lag.
+    z <- Lbk(y, d, 1)
+    
+    # Error correction term.
+    if(!is.null(cf$alphaHat)) {
+      z <- z + FracDiff( Lbk(y, b, 1), d-b ) %*% t(cf.PiHat)
+      if(opt.rConstant) {
+        z <- z + FracDiff( Lbk(ones(T,1), b, 1), d - b ) %*% 
+          cf$rhoHat %*% t(cf$alphaHat)
+      }
+      
+    }
+    
+    
+    # Add unrestricted constant if present.
+    if(opt$unrConstant) {
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% t(cf.xiHat)
+    }
+    
+    
+    # Add lags if present.
+    if(!is.null(cf$GammaHat)) {
+      k <- size(cf$GammaHat,2)/p
+      z <- z +  FracDiff(  Lbk( y , b, k)  , d) %*% t(cf$GammaHat)
+    }
+    
+    
+    # Adjust by level parameter if present.
+    if(opt$levelParam) {
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+    }
+    
+    
+    # Append forecast to x matrix.
+    x <- cbind(x[1:(T-1),], z[T, ])
+    
+  }
+  
+  
+  #--------------------------------------------------------------------------------
+  # Return forecasts.
+  #--------------------------------------------------------------------------------
+  
+  xf <- x[(nrow(data)+1):nrow(x), ]
+  
+  return(xf)
+}
+
+
+
+#--------------------------------------------------------------------------------
+#
+#--------------------------------------------------------------------------------
 
 
 
