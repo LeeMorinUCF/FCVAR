@@ -806,7 +806,7 @@ FCVARsim <- function(data, model, NumPeriods) {
   err <- matrix(rnorm(NumPeriods*p), nrow = NumPeriods, ncol = p)
   
   #--------------------------------------------------------------------------------
-  # --- Recursively generate simulated data values --- %
+  # Recursively generate simulated data values 
   #--------------------------------------------------------------------------------
   
   for (i in 1:NumPeriods) {
@@ -876,6 +876,131 @@ FCVARsim <- function(data, model, NumPeriods) {
   return(xSim)
 }
 
+
+################################################################################
+# Define function to simulate bootstrap samples for the FCVAR model
+################################################################################
+# 
+# function xBS <- FCVARsimBS(data, model, NumPeriods)
+# Written by Michal Popiel and Morten Nielsen (This version 08.06.2015)
+# 
+# DESCRIPTION: This function simulates the FCVAR model as specified by
+#               input "model" and starting values specified by "data." It
+#               creates a bootstrap sample by augmenting each iteration
+#               with a bootstrap error. The errors are sampled from the
+#               residuals specified under the "model" input and have a
+#               positive or negative sign with equal probability
+#               (Rademacher distribution). 
+# 
+# Input <- data       (T x p matrix of data)
+#         model      (a Matlab structure containing estimation results)
+#         NumPeriods (number of steps for simulation)
+# Output <- xBS       (NumPeriods x p matrix of simulated bootstrap values)
+# 
+################################################################################
+
+
+
+FCVARsimBS <- function(data, model, NumPeriods) {
+  
+  
+  #--------------------------------------------------------------------------------
+  # Preliminary definitions 
+  #--------------------------------------------------------------------------------
+  
+  x <- data 
+  p <- ncol(dat)
+  opt <- model$options
+  cf  <- model$coeffs
+  d <- cf.db[1]
+  b <- cf.db[2]
+  T <- nrow(model$Residuals)
+  
+  # Generate disturbance term for use in the bootstrap
+  
+  # Centre residuals
+  res <- model$Residuals - 
+    matrix(1, nrow = nrow(model$Residuals), ncol= 1) %*% mean(model$Residuals)
+  
+  # Generate draws from Rademacher distribution for Wild bootstrap
+  eRD <- - matrix(1, nrow = T, ncol = p) + 
+    2*( matrix(rnorm(T), nrow = T, ncol = 1) > 0) %*% matrix(1, nrow = 1, ncol = p)
+  
+  # Generate error term
+  err <- res * eRD
+  
+  
+  
+  #--------------------------------------------------------------------------------
+  # Recursively generate bootstrap sample
+  #--------------------------------------------------------------------------------
+  
+  
+  for (i in 1:NumPeriods) {
+    
+    
+    # append x with zeros to simplify calculations
+    x <- rbind(x, mtrix(0, nrow = 1, ncol = p))
+    T <- nrow(x)
+    
+    # Adjust by level parameter if present
+    if(opt$levelParam) {
+      y <- x - matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+    } else {
+      y <- x
+    }
+    
+    
+    # Main term, take fractional lag
+    z <- Lbk(y, d, 1)
+    
+    # Error correction term
+    if(!is.null(cf$alphaHat)) {
+      z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
+      if(opt$rConstant) {
+        z <- z + FracDiff( Lbk(matrix(1, nrow = T, ncol = 1), b, 1), d - b ) %*% 
+          cf$rhoHat %*% t(cf$alphaHat)
+      }
+      
+    }
+    
+    
+    # Add unrestricted constant if present
+    if(opt$unrConstant) {
+      z <- z + matrix(1, nrow = T, nol = 1) %*% t(cf$xiHat)
+    }
+    
+    
+    # Add lags if present
+    if(!is.null(cf$GammaHat)) {
+      k <- ncol(cf$GammaHat)/p
+      z <- z +  FracDiff(  Lbk( y , b, k)  , d) %*% t(cf$GammaHat)
+    }
+    
+    
+    # Adjust by level parameter if present
+    if(opt$levelParam) {
+      z <- z + matrix(1, nrow = T,ncol = 1) %*% cf$muHat
+    }
+    
+    
+    # Add disturbance term
+    z[T, ] <- z[T, ] + err[i, ]
+    
+    # Append generated observation to x matrix
+    x <- rbind(x[1:(T-1), ], z[T, ])
+    
+  }
+  
+  
+  #--------------------------------------------------------------------------------
+  # Return bootstrap sample
+  #--------------------------------------------------------------------------------
+  
+  xBS <- x[(nrow(data)+1):nrow(x), ]
+  
+  return(xBS)
+}
 
 
 ################################################################################
@@ -1124,7 +1249,6 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #          mUNR (model estimates under the alternative)
 # 
 ################################################################################
-
 
 
 FCVARbootRank <- function(x, k, opt, r1, r2, B) {
