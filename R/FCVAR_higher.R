@@ -770,6 +770,115 @@ HypoTest <- function(modelUNR, modelR) {
 }
 
 
+################################################################################
+# Define function to simulate the FCVAR model
+################################################################################
+# 
+# function xSim <- FCVARsim(data, model, NumPeriods)
+# Written by Michal Popiel and Morten Nielsen (This version 08.06.2015)
+# 
+# DESCRIPTION: This function simulates the FCVAR model as specified by
+#               input "model" and starting values specified by "data."
+#               Errors are drawn from a Normal distribution. 
+# 
+# Input <- data       (N x p matrix of data)
+#         model      (a Matlab structure containing estimation results)
+#         NumPeriods (number of steps for simulation)
+# Output <- xSim      (NumPeriods x p matrix of simulated data values)
+# 
+################################################################################
+
+FCVARsim <- function(data, model, NumPeriods) {
+  
+  
+  #--------------------------------------------------------------------------------
+  # Preliminary definitions 
+  #--------------------------------------------------------------------------------
+  
+  x <- data 
+  p <- ncol(data)
+  opt <- model$options
+  cf  <- model$coeffs
+  d <- cf$db[1]
+  b <- cf$db[2]
+  
+  # Generate disturbance term
+  err <- matrix(rnorm(NumPeriods*p), nrow = NumPeriods, ncol = p)
+  
+  #--------------------------------------------------------------------------------
+  # --- Recursively generate simulated data values --- %
+  #--------------------------------------------------------------------------------
+  
+  for (i in 1:NumPeriods) {
+    
+    
+    # append x with zeros to simplify calculations.
+    x <- cbind(x, matrix(0, nrow = 1, ncol = p))
+    T <- nrow(x)
+    
+    # Adjust by level parameter if present.
+    if(opt$levelParam) {
+      y <- x - matrix(1, nrow = T, nol = 1) %*% cf$muHat
+    } else {
+      y <- x
+    }
+    
+    
+    # Main term, take fractional lag.
+    z <- Lbk(y,d,1)
+    
+    # Error correction term.
+    if (!is.null(cf$alphaHat)) {
+      
+      z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
+
+            if (opt$rConstant) {
+              z <- z + FracDiff( Lbk(matrix(1, nrow = T, ncol = 1), b, 1), d - b ) %*% 
+                cf$rhoHat %*% t(cf$alphaHat)
+            }
+      
+    }
+    
+    
+    # Add unrestricted constant if present.
+    if(opt$unrConstant) {
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% t(cf$xiHat)
+    }
+    
+    
+    # Add lags if present.
+    if (!is.null(cf$GammaHat)) {
+      k <- ncol(cf$GammaHat)/p
+      z <- z +  FracDiff(  Lbk( y , b, k)  , d) %*% t(cf$GammaHat)
+    }
+    
+    
+    # Adjust by level parameter if present.
+    if (opt$levelParam) {
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+    }
+    
+    
+    # Add disturbance term
+    z[T,] <- z[T,] + err[i, ]
+    
+    # Append to x matrix.
+    x <- cbind(x[1:(T-1), ], z[T,])
+    
+  }
+  
+  #--------------------------------------------------------------------------------
+  # Return simulated data values, including (EXcluding?) initial values.
+  #--------------------------------------------------------------------------------
+  
+  xSim <- x[(nrow(data)+1):nrow(x), ]
+  
+  return(xSim)
+}
+
+
+
+
 
 
 
