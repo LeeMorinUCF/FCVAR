@@ -132,6 +132,8 @@ startProg <- Sys.time() # start timer
 
 # LagSelect(x1, kmax, p, order, opt)
 
+x <- x1
+
 source('EstOptions.R')
 source('FCVAR_estn.R')
 source('FCVAR_lower.R')
@@ -159,6 +161,21 @@ k <- 2
 opt <- DefaultOpt
 opt$gridSearch <- 0
 rankTestStats <- RankTests(x, k, opt)
+
+
+# Testing the gridsearch option.
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+opt2 <- DefaultOpt
+# opt2$gridSearch <- 0
+opt2$gridSearch <- 1
+startRankTest <- Sys.time() # start timer
+
+rankTestStats <- RankTests(x, k, opt2)
+
+endRankTest <- Sys.time() # stop timer
+print(endRankTest - startRankTest) # report elapsed time
+
 
 ################################################################################
 # UNRESTRICTED MODEL ESTIMATION

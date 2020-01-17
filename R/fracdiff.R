@@ -13,7 +13,14 @@
 # 
 # output = vector (1-L)^d x of same dimension as x.
 
-fracdiff <- function(x, d){
+fracdiff_JN <- function(x, d){
+  
+  ##################################################
+  # In the fracdiff package they demean x first.
+  # x <- x - mean(x)
+  # With the above line added, the results are the same.
+  ##################################################
+  
   iT <- length(x)
   np2 <- nextn(2*iT - 1, 2)
   k <- 1:(iT-1)

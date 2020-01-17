@@ -654,7 +654,23 @@ LikeGrid <- function(x, k, r, opt) {
   
   # Add level parameter corresponding to max likelihood.
   if(opt$levelParam) {
-    muHatStar  <- t(mu[, indexB, indexD, drop = FALSE])
+    # muHatStar  <- t(mu[, indexB, indexD, drop = FALSE])
+    # mu is not a matrix so transpose t() doesnt apply.
+    # It is a vector, so it should not matter much. 
+    # Also, without the drop = FALSE, it will automatically collapse to a vector. 
+    
+    print('mu[, indexB, indexD] = ')
+    print(mu[, indexB, indexD])
+    print('params = ')
+    print(params)
+    
+    
+    muHatStar  <- mu[, indexB, indexD]
+    
+    
+    print('cbind(params, muHatStar) = ')
+    print(cbind(params, muHatStar))
+    
     params <- cbind(params, muHatStar)
   }
   
@@ -1421,11 +1437,12 @@ Lbk <- function(x, b, k) {
 ################################################################################
 # 
 # function [dx] = FracDiff(x,d)
-# Andreas Noack Jensen & Morten Nielsen
-# May 24, 2013
+# Lee Morin & Morten Nielsen
+# 
 # 
 # FracDiff(x,d) is a fractional differencing procedure based on the
-# 	fast fractional difference algorithm of Jensen & Nielsen (2014, JTSA).
+# 	simple filter in the time domain.
+#   It is used mainly to test other calculations. 
 # 
 # input = x (vector or matrix of data)
 #         d (scalar value at which to calculate the fractional difference)
@@ -1434,7 +1451,7 @@ Lbk <- function(x, b, k) {
 # 
 ################################################################################
 
-FracDiff <- function(x, d) {
+FracDiff_filter <- function(x, d) {
   
   if(is.null(x)) {
     dx <- NULL
@@ -1444,65 +1461,33 @@ FracDiff <- function(x, d) {
     T <- nrow(x)
     p <- ncol(x)
     
-    # #--------------------------------------------------------------------------------
-    # # Upgrade to the FFT version in a later version.
-    # #--------------------------------------------------------------------------------
-    # 
-    # k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
-    # 
-    # # NEXTPOW2(N) returns the first P such that 2.^P >= abs(N).  It is
-    # #     often useful for finding the nearest power of two sequence
-    # #     length for FFT operations.
-    # NFFT <- 2^nextpow2(2*T-1)
-    # 
-    # # Array operation of the index of the series without the last element minus
-    # # the order of integration+1, divided by that same series
-    # b <- (k-d-1)/k
-    # 
-    # # cumulative product of that series modified in previous line
-    # b <- c(1, cumprod(b))
-    # 
-    # # IFFT(X) is the inverse discrete Fourier transform of X.
-    # #     IFFT(..., 'symmetric') causes IFFT to treat X as conjugate symmetric
-    # #     along the active dimension.  This option is useful when X is not exactly
-    # #     conjugate symmetric merely because of round-off error. 
-    # # REPMAT Replicate and tile an array.
-    # #     B = repmat(A,M,N) creates a large matrix B consisting of an M-by-N
-    # #     tiling of copies of A. The size of B is [size(A,1)*M, size(A,2)*N].
-    # #     The statement repmat(A,N) creates an N-by-N tiling.
-    # dx <- ifft(repmat(fft(b, NFFT), 1, p) * fft(x, NFFT), 'symmetric')
-    # 
-    # dx <- dx[1:T, ]
-    # 
-    # 
-    # #--------------------------------------------------------------------------------
-    
-    # For now, just use a wrapper for the diffseries() function in the fracdiff package. 
-    # except that only differences the first column. 
-    # This is based on the FFT version by Jensen and Nielsen (2014). 
-    # x_diff <- diffseries(x, 0.8)
-    # dx_MM <- data.frame(matrix(NA, nrow = nrow(x),
-    #                         ncol = ncol(x)))
-    # for (col_num in 1:length(colnames(x))) {
-    #   dx_MM[, col_num] <- diffseries(x[, col_num], d)
-    # }
-    # head(dx_MM)
-    # Problem: Their implementation does not match Morten's.
-    
-    # For now, I will go with the tried-and-tested "slow version".
-    
     # print('T = ')
     # print(T)
+    # print('p = ')
+    # print(p)
+    
     # print(summary(x))
     
     k <- matrix(seq(1, T-1), nrow = T-1, ncol = 1)
     b <- (k-d-1)/k
     b <- c(1, cumprod(b))
     
-    xlead <- data.frame(matrix(0,
-                               nrow = T,
-                               ncol = ncol(x)))
+    # xlead <- data.frame(matrix(0,
+    #                            nrow = T,
+    #                            ncol = ncol(x)))
+    xlead <- matrix(0,
+                    nrow = T,
+                    ncol = ncol(x))
     colnames(xlead) <- colnames(x)
+    
+    # print('xlead = ')
+    # print(xlead)
+    # print('x = ')
+    # print(x)
+    # print('rbind(xlead, x) = ')
+    # print(rbind(xlead, x))
+    
+    
     
     dx <- filter(rbind(xlead, x),
                  filter = b,
@@ -1516,9 +1501,77 @@ FracDiff <- function(x, d) {
 }
 
 
+################################################################################
+# Define function to fractionally difference a series. 
+################################################################################
+# 
+# function [dx] = FracDiff(x,d)
+# Andreas Noack Jensen & Morten Nielsen
+# May 24, 2013
+# 
+# FracDiff(x,d) is a fractional differencing procedure based on the
+# 	fast fractional difference algorithm of Jensen & Nielsen (2014, JTSA).
+# 
+# input = x (vector or matrix of data)
+#         d (scalar value at which to calculate the fractional difference)
+# 
+# output = vector or matrix (1-L)^d x of same dimensions as x.
+# 
+################################################################################
+
+
+FracDiff <- function(x, d) {
+  
+  
+  print(summary(x))
+  
+  if(is.null(x)) {
+    dx <- NULL
+  } else {
+    
+    
+    # T <- nrow(x)
+    p <- ncol(x)
+    
+    
+    
+    iT <- nrow(x)
+    np2 <- nextn(2*iT - 1, 2)
+    
+    k <- 1:(iT-1)
+    b <- c(1, cumprod((k - d - 1)/k))
+    
+    
+    # print('np2 = ')
+    # print(np2)
+    # print('iT = ')
+    # print(iT)
+    # 
+    # print('c(...) = ')
+    # print(summary(c(x, rep(0, np2 - iT))))
+    
+    dx <- matrix(0, nrow = iT, ncol = p)
+    
+    for (i in 1:p) {
+      
+      
+      dxi <- fft(fft(c(b, rep(0, np2 - iT))) * fft(c(x[, i], rep(0, np2 - iT))), inverse = T) / np2
+      
+      dx[, i] <- Re(dxi[1:iT])
+      
+    }
+    
+    
+    
+  }
+  
+  return(dx)
+}
+
+
 
 ################################################################################
-# Define function to counts the number of free parameters
+# Define function to count the number of free parameters
 ################################################################################
 # 
 # function [ fp ] <- FreeParams(k, r, p, opt, rankJ)

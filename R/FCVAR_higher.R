@@ -252,8 +252,7 @@ RankTests <- function(x, k, opt) {
   # For calculation of P-values
   if(opt$rConstant | opt$levelParam) {
     consT <- 1
-  }
-  else {
+  } else {
     consT <- 0
   }
   
