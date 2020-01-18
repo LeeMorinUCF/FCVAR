@@ -405,6 +405,7 @@ LikeGrid <- function(x, k, r, opt) {
   if(is.null(opt$R_psi)) {
     Grid2d <- 1
     dbStep <- 0.02
+    # dbStep <- 0.2
   } else {
     Grid2d <- 0
     dbStep <- 0.01
@@ -553,15 +554,15 @@ LikeGrid <- function(x, k, r, opt) {
       }
       
       
-      if(opt$progress != 0) {
-        if(toc(lastTic) > opt$updateTime | iterCount == totIters) {
-          if(opt$progress == 1) {
+      if (opt$progress != 0) {
+        if (toc(lastTic) > opt$updateTime | iterCount == totIters) {
+          if (opt$progress == 1) {
             SimNotes <- sprintf('Model: k=%g, r=%g\nb=%4.2f, d=%4.2f, like=%8.2f',
                                 k, r, db[2],db[1], like[iB,iD] )
             # waitbar(iterCount/totIters,M_status_bar, SimNotes)
           } else {
-            fprintf('Progress <- %5.1f%%, b=%4.2f, d=%4.2f, like=%g\n',
-                    (iterCount/totIters)*100, db[2], db[1], like[iB,iD] ) 
+            cat(sprintf('Progress <- %5.1f%%, b=%4.2f, d=%4.2f, like=%g\n',
+                    (iterCount/totIters)*100, db[2], db[1], like[iB,iD] )) 
           }
           
           lastTic <- tic() 
@@ -659,19 +660,47 @@ LikeGrid <- function(x, k, r, opt) {
     # It is a vector, so it should not matter much. 
     # Also, without the drop = FALSE, it will automatically collapse to a vector. 
     
-    print('mu[, indexB, indexD] = ')
-    print(mu[, indexB, indexD])
-    print('params = ')
-    print(params)
+    
+    # # Troubleshooting here:
+    # test <- array(seq(18), dim = c(2,3,3))
+    # test
+    # # Take a slice.
+    # test_vec <- test[ ,2,2]
+    # test_vec
+    # 
+    # par_test <- matrix(c(100,200), nrow = 1, ncol = 2)
+    # par_test
+    # 
+    # c(par_test, test_vec)
+    # cbind(par_test, test_vec)
+    # 
+    # matrix(c(par_test, test_vec), nrow = 1, ncol = length(par_test) + length(test_vec))
+    
+    
+    
+    # print('mu[, indexB, indexD] = ')
+    # print(mu[, indexB, indexD])
+    # print('params = ')
+    # print(params)
     
     
     muHatStar  <- mu[, indexB, indexD]
     
     
-    print('cbind(params, muHatStar) = ')
-    print(cbind(params, muHatStar))
+    # print('cbind(params, muHatStar) = ')
+    # print(cbind(params, muHatStar))
+    # 
+    # params <- cbind(params, muHatStar)
     
-    params <- cbind(params, muHatStar)
+    # Don't ask:
+    params <- matrix(c(params, muHatStar), 
+                     nrow = 1, ncol = length(params) + length(muHatStar))
+    # Vectors and matrices and arrays. Oh my!
+    
+    
+    # print('params = ')
+    # print(params)
+    
   }
   
   
@@ -1523,7 +1552,7 @@ FracDiff_filter <- function(x, d) {
 FracDiff <- function(x, d) {
   
   
-  print(summary(x))
+  # print(summary(x))
   
   if(is.null(x)) {
     dx <- NULL

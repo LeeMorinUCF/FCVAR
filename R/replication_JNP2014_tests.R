@@ -140,6 +140,9 @@ source('FCVAR_lower.R')
 source('FCVAR_higher.R')
 opt <- DefaultOpt
 opt$gridSearch <- 0
+opt$db0 <- c(0.676, 0.676)
+# opt$gridSearch <- 1
+# opt$progress <- 2
 LagSelect(x, kmax, p, order, opt)
 
 

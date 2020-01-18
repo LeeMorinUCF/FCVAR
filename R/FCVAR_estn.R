@@ -106,10 +106,19 @@ FCVARestn <- function(x,k,r,opt) {
     cat(sprintf('This computation can be slow.\n'))
     cat(sprintf('Set opt$gridSearch <- 0 to skip it.\n'))
     opt$db0 <- LikeGrid(x, k, r, opt)
+    
+    # print('opt$db0 = ')
+    # print(opt$db0)
+    
     # Change upper and lower bounds to limit the search to some small
     #   interval around the starting values.
     opt$UB_db[1:2] <- pmin(opt$db0[1:2] + c(0.1, 0.1), opt$dbMax)
     opt$LB_db[1:2] <- pmax(opt$db0[1:2] - c(0.1, 0.1), opt$dbMin)
+    
+    # print('opt$UB_db = ')
+    # print(opt$UB_db)
+    
+    
   } else {
     # Call to GetBounds returns upper/lower bounds for (d,b) or
     #  depending on whether or not restrictions have been imposed.
@@ -163,10 +172,19 @@ FCVARestn <- function(x,k,r,opt) {
     
     if(opt$gridSearch) {
       # Translate from d,b to phi.
-      UB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(opt$UB_db)
-      LB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(opt$LB_db)
-    }
-    else {
+      
+      # print('H_psi = ')
+      # print(H_psi)
+      # print('opt$UB_db = ')
+      # print(opt$UB_db)
+      # print('t(opt$UB_db) = ')
+      # print(t(opt$UB_db))
+      
+      # UB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(opt$UB_db)
+      UB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% opt$UB_db
+      # LB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(opt$LB_db)
+      LB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% opt$LB_db
+    } else {
       # Otherwise GetBounds returns the values in terms of phi.
       UB <- opt$UB_db
       LB <- opt$LB_db
