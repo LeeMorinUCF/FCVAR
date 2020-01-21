@@ -239,7 +239,7 @@ mv_wntest_m1 <- mv_wntest(m1$Residuals, order, printWNtest)
 
 
 
-Defaultopt$gridSearch <- 0	# turn off grid search for restricted models
+DefaultOpt$gridSearch <- 0	# turn off grid search for restricted models
 							#	because it is too intensive.
 
 #--------------------------------------------------------------------------------

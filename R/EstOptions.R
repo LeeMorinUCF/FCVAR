@@ -48,14 +48,20 @@ EstOptions <- function() {
     #--------------------------------------------------------------------------------
     
     # Estimation options for unconstrained optimization.
-    UncFminOptions = list(MaxFunEvals = 1000, TolFun = 1e-8, 
-                          TolX = 1e-8, Display = 'off'),
+    UncFminOptions = list(MaxFunEvals = 1000, 
+                          TolFun = 1e-8 #, # Not all are used in R. 
+                          # TolX = 1e-8, 
+                          # Display = 'off'
+                          ),
     
     # Estimation options for constrained optimization.
-    ConFminOptions = list(MaxFunEvals = 1000, TolFun = 1e-8, 
-                          TolX = 1e-8, Display = 'off', 
+    ConFminOptions = list(MaxFunEvals = 1000, 
+                          TolFun = 1e-8, 
+                          # TolX = 1e-8, 
+                          # Display = 'off', 
                           # Algorithm = 'interior-point', 
                           Algorithm = 'L-BFGS-B'),
+    # L-BFGS-B is limited-memory BFGS with bounds. 
     
     # Activate live search for switching algorithm in restricted model
     # estimation.

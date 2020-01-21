@@ -238,8 +238,7 @@ FCVARestn <- function(x,k,r,opt) {
     if(opt$gridSearch == 0) {
       # Check conformability:
       startVals <- unlist(c(startVals, x[1, ]))
-    }
-    else {
+    } else {
       # Check conformability:
       startVals <- c(startVals, opt$db0[3:length(opt$db0)])
     }
@@ -261,10 +260,10 @@ FCVARestn <- function(x,k,r,opt) {
   if(nrow(opt$R_psi) == 2) { # i.e. 2 restrictions?
     
     
-    print('Condition (size(opt$R_psi) == 2) is imposed, whatever that means.')
-    print('I think it means 2 restrictions but correct me if I am wrong.')
-    print('In any case, I replaced it with this condition: (nrow(opt$R_psi) == 2),')
-    print('which is equivalent to (size(opt$R_psi, 1) == 2) in Matlab.')
+    # print('Condition (size(opt$R_psi) == 2) is imposed, whatever that means.')
+    # print('I think it means 2 restrictions but correct me if I am wrong.')
+    # print('In any case, I replaced it with this condition: (nrow(opt$R_psi) == 2),')
+    # print('which is equivalent to (size(opt$R_psi, 1) == 2) in Matlab.')
     
     
     # d,b are exactly identified by the linear restrictions and Rpsi is
@@ -286,8 +285,15 @@ FCVARestn <- function(x,k,r,opt) {
       # min_out <- optim_unc(-FCVARlikeMu(params, x, dbTemp, k, r, opt), 
       #                      startVal, opt$UncFminOptions)
       
+      # min_out <- optim(StartVal, 
+      #                  function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)}) 
+      
+      # Add the options for optimization. Check. 
       min_out <- optim(StartVal, 
-                       function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)}) 
+                       function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)}, 
+                       control = list(maxit = opt$UncFminOptions$MaxFunEvals, 
+                                      reltol = opt$UncFminOptions$TolFun)) 
+      
       
       muHat <- min_out$par
       maxLike <- min_out$value
@@ -334,41 +340,56 @@ FCVARestn <- function(x,k,r,opt) {
     
     
     # Need to implement optimization correctly. 
-    min_out <- optim(startVals, 
-                     function(params) {-FCVARlike(params, x, k, r, opt)}) 
+    # min_out <- optim(startVals, 
+    #                  function(params) {-FCVARlike(params, x, k, r, opt)}) 
                      # Cdb, cdb, Rpsi, rpsi, LB, UB, opt$ConFminOptions)
     
-    # Constrained version with L-BFGS-B:
-    # First, using only the equality bounds: 
-    min_out <- optim(startVals, 
-                     function(params) {-FCVARlike(params, x, k, r, opt)}, 
-                     method = 'L-BFGS-B', lower = LB, upper = UB, 
-                     control = list(maxit = opt$ConFminOptions$MaxFunEvals, 
-                                    reltol = opt$ConFminOptions$TolFun)) 
-    # This version uses inequality bounds: 
-    min_out <- constrOptim(startVals, 
-                     function(params) {-FCVARlike(params, x, k, r, opt)}, 
-                     ui = Cdb, 
-                     ci = - cdb,
-                     method = 'L-BFGS-B', lower = LB, upper = UB, 
-                     control = list(maxit = opt$ConFminOptions$MaxFunEvals, 
-                                    reltol = opt$ConFminOptions$TolFun)) 
+    # Algorithm depends on whether there are inequality restrictions. 
+    if(!is.null(Cdb)) {
+      
+      print('Imposing inequality restrictions on d and b. ')
+      print('Cdb = ')
+      print(Cdb)
+      print('cdb = ')
+      print(cdb)
+      
+      # This version uses inequality bounds: 
+      min_out <- constrOptim(startVals,
+                             function(params) {-FCVARlike(params, x, k, r, opt)},
+                             ui = Cdb,
+                             ci = - cdb,
+                             method = 'L-BFGS-B', lower = LB, upper = UB,
+                             control = list(maxit = opt$ConFminOptions$MaxFunEvals,
+                                            pgtol = opt$ConFminOptions$TolFun))
+    } else {
+      # Constrained version with L-BFGS-B:
+      # This uses only the box constraints LB and UB: 
+      min_out <- optim(startVals,
+                       function(params) {-FCVARlike(params, x, k, r, opt)},
+                       method = 'L-BFGS-B', lower = LB, upper = UB,
+                       control = list(maxit = opt$ConFminOptions$MaxFunEvals,
+                                      pgtol = opt$ConFminOptions$TolFun))
+    }
     
+    
+    
+    # Might not be necessary?
+    # It seems as though it is imposing constraints just fine. 
     # Finally, all constraints imposed:
     # Equality constraints with Rpsi and rpsi can be satisfied 
     # by concentrating out one parameter and optimizing over the other. 
     # Need an equation for b as a function of d, Rpsi and rpsi. 
-    startValsSub <- startVals[-2]
-    min_out <- constrOptim(startValsSub, 
-                           function(params) {-FCVARlike(c(params[1], 
-                                                          b_rest(d, Rpsi, rpsi), 
-                                                          params[3:length(params)]),
-                                                        x, k, r, opt)}, 
-                           ui = Cdb, 
-                           ci = - cdb,
-                           method = 'L-BFGS-B', lower = LB, upper = UB, 
-                           control = list(maxit = opt$ConFminOptions$MaxFunEvals, 
-                                          reltol = opt$ConFminOptions$TolFun)) 
+    # startValsSub <- startVals[-2]
+    # min_out <- constrOptim(startValsSub, 
+    #                        function(params) {-FCVARlike(c(params[1], 
+    #                                                       b_rest(d, Rpsi, rpsi), 
+    #                                                       params[3:length(params)]),
+    #                                                     x, k, r, opt)}, 
+    #                        ui = Cdb, 
+    #                        ci = - cdb,
+    #                        method = 'L-BFGS-B', lower = LB, upper = UB, 
+    #                        control = list(maxit = opt$ConFminOptions$MaxFunEvals, 
+    #                                       reltol = opt$ConFminOptions$TolFun)) 
     
     
     # print('min_out = ')

@@ -393,7 +393,7 @@ LikeGrid <- function(x, k, r, opt) {
       # M_status_bar <- waitbar(0,['Model: k= ',num2str(k), ', r= ', num2str(r)])
     }
     
-    lastTic <- tic()
+    # lastTic <- tic()
   }
   
   #--------------------------------------------------------------------------------
@@ -571,7 +571,7 @@ LikeGrid <- function(x, k, r, opt) {
                     (iterCount/totIters)*100, db[2], db[1], like[iB,iD] )) 
           }
           
-          lastTic <- tic() 
+          # lastTic <- tic() 
         }
         
       }
@@ -612,14 +612,14 @@ LikeGrid <- function(x, k, r, opt) {
   # like[bGrid > 0.469 & bGrid < 0.471, dGrid == 0.01]
 
   # Restricted version:
-  like_df <- data.frame(cbind(bGrid, like))
-  colnames(like_df) <- c('phi', 'like')
-  like_df[, 'b'] <- NA
-  like_df[, 'b'] <- H[1]*like_df[, 'phi'] + h[1]
-  head(like_df[order(-like_df[ , 'like']), ])
-  
-  head(like_df[order(-like_df[ , 'like']), ][like_df[ , 'b'] > 0.65 & 
-                                               like_df[ , 'b'] < 0.68, ])
+  # like_df <- data.frame(cbind(bGrid, like))
+  # colnames(like_df) <- c('phi', 'like')
+  # like_df[, 'b'] <- NA
+  # like_df[, 'b'] <- H[1]*like_df[, 'phi'] + h[1]
+  # head(like_df[order(-like_df[ , 'like']), ])
+  # 
+  # head(like_df[order(-like_df[ , 'like']), ][like_df[ , 'b'] > 0.65 & 
+  #                                              like_df[ , 'b'] < 0.68, ])
   
   
   # db <- H*phi + h
@@ -757,8 +757,9 @@ LikeGrid <- function(x, k, r, opt) {
   
   
   if (opt$plotLike) {
-    # 
-    cat(sprintf("Sorry, but I don't feel like plotting the likelihood function right now."))
+    
+    # cat(sprintf("Sorry, but I don't feel like plotting the likelihood function right now."))
+    # Oh, alright, I'll plot it anyway. 
     
     if(Grid2d) {
       # 2-dimensional plot.
