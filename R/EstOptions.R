@@ -54,7 +54,8 @@ EstOptions <- function() {
     # Estimation options for constrained optimization.
     ConFminOptions = list(MaxFunEvals = 1000, TolFun = 1e-8, 
                           TolX = 1e-8, Display = 'off', 
-                          Algorithm = 'interior-point'),
+                          # Algorithm = 'interior-point', 
+                          Algorithm = 'L-BFGS-B'),
     
     # Activate live search for switching algorithm in restricted model
     # estimation.
@@ -71,8 +72,8 @@ EstOptions <- function() {
     db0 = c(1, 1),
     
     # Constrain parameter space for d,b. If set to 1, then impose
-    # dbMin<= b <= d <= dbMax. If this option is set to 0 then
-    # dbMin<= d <= dbMax and dbMin <= b <= dbMax are imposed separately.
+    # dbMin <= b <= d <= dbMax. If this option is set to 0 then
+    # dbMin <= d <= dbMax and dbMin <= b <= dbMax are imposed separately.
     constrained = 1,
     
     # If restrictDB = 1, then d=b is imposed. If = 0, the restriction
@@ -105,7 +106,7 @@ EstOptions <- function() {
     # Inequality constraints on parameters d and b.
     # Specified as C_db * [d b] <= c_db
     # Note: these restrictions are non-standard and should only be
-    # specified if constrained=0. Furthermore, the grid search is not
+    # specified if constrained = 0. Furthermore, the grid search is not
     # equipped to handle these types of restrictions.
     C_db = NULL,
     c_db = NULL,

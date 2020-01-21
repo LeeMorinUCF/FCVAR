@@ -90,8 +90,8 @@ opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
 opt$unrConstant  <- 0 # include an unrestricted constant? 1 <- yes, 0 <- no.
 opt$rConstant    <- 0 # include a restricted constant? 1 <- yes, 0 <- no.
 opt$levelParam   <- 1 # include level parameter? 1 <- yes, 0 <- no.
-opt$constrained  <- 0 # impose restriction dbMax ><- d ><- b ><- dbMin ? 1 <- yes, 0 <- no.
-opt$restrictDB   <- 1 # impose restriction d<-b ? 1 <- yes, 0 <- no.
+opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$db0          <- c(0.8, 0.8) # set starting values for optimization algorithm.
 opt$N            <- 0 # number of initial values to condition upon.
 opt$print2screen <- 1 # print output.

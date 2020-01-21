@@ -500,6 +500,11 @@ LikeGrid <- function(x, k, r, opt) {
     
     b <- bGrid[iB]
     
+    if (opt$progress == 2) {
+      cat(sprintf('Now estimating for iteration %d of %d: b = %f.\n ', 
+                  iterCount, totIters, b))
+    }
+    
     # If d>=b (constrained) then search only over values of d that are
     #   greater than or equal to b. Also, perform this operation only if
     #   searching over both d and b.
@@ -555,13 +560,14 @@ LikeGrid <- function(x, k, r, opt) {
       
       
       if (opt$progress != 0) {
-        if (toc(lastTic) > opt$updateTime | iterCount == totIters) {
+        # if (toc(lastTic) > opt$updateTime | iterCount == totIters) {
+        if ( iterCount == totIters) {
           if (opt$progress == 1) {
             SimNotes <- sprintf('Model: k=%g, r=%g\nb=%4.2f, d=%4.2f, like=%8.2f',
                                 k, r, db[2],db[1], like[iB,iD] )
             # waitbar(iterCount/totIters,M_status_bar, SimNotes)
           } else {
-            cat(sprintf('Progress <- %5.1f%%, b=%4.2f, d=%4.2f, like=%g\n',
+            cat(sprintf('Progress : %5.1f%%, b=%4.2f, d=%4.2f, like=%g\n',
                     (iterCount/totIters)*100, db[2], db[1], like[iB,iD] )) 
           }
           
@@ -576,6 +582,47 @@ LikeGrid <- function(x, k, r, opt) {
     
   }
   
+  # # Save the workspace at this point. 
+  # save.image(file = 'LikeGridData1.RData')
+  # 
+  # # Testing: Analyze the like grid
+  # nrow(like)
+  # ncol(like)
+  # summary(like)
+  # max(like)
+  # min(like)
+  # 
+  # # Stack into a data frame.
+  # like_df <- data.frame(expand.grid(b = bGrid, 
+  #                                   d = dGrid), 
+  #                       like = NA)
+  # head(like_df)
+  # tail(like_df)
+  # 
+  # for (col_num in 1:ncol(like)) {
+  #   like_df[seq((col_num - 1)*length(bGrid) + 1,
+  #             col_num*length(bGrid)), 'like'] <- like[, col_num]
+  # }
+  # 
+  # head(like_df[order(-like_df[ , 'like']), ])
+  # tail(like_df[order(-like_df[ , 'like']), ])
+  # 
+  # # Test some values. 
+  # like[bGrid == 0.49, dGrid == 0.01]
+  # like[bGrid > 0.469 & bGrid < 0.471, dGrid == 0.01]
+
+  # Restricted version:
+  like_df <- data.frame(cbind(bGrid, like))
+  colnames(like_df) <- c('phi', 'like')
+  like_df[, 'b'] <- NA
+  like_df[, 'b'] <- H[1]*like_df[, 'phi'] + h[1]
+  head(like_df[order(-like_df[ , 'like']), ])
+  
+  head(like_df[order(-like_df[ , 'like']), ][like_df[ , 'b'] > 0.65 & 
+                                               like_df[ , 'b'] < 0.68, ])
+  
+  
+  # db <- H*phi + h
   
   #--------------------------------------------------------------------------------
   # FIND THE MAX OVER THE GRID
@@ -635,7 +682,7 @@ LikeGrid <- function(x, k, r, opt) {
     
     indexB <- indexB[length(indexB)]
     indexD <- indexD[length(indexD)]
-    fprintf('\nWarning, grid search did not find a unique maximum of the log-likelihood function.\n')  
+    cat(sprintf('\nWarning, grid search did not find a unique maximum of the log-likelihood function.\n')  )
   }
   
   # Translate to d,b.
@@ -712,24 +759,47 @@ LikeGrid <- function(x, k, r, opt) {
   if (opt$plotLike) {
     # 
     cat(sprintf("Sorry, but I don't feel like plotting the likelihood function right now."))
-    # figure
+    
     if(Grid2d) {
       # 2-dimensional plot.
-      # mesh(dGrid, bGrid,like), xlabel('d'), ...
-      # zlabel('log-likelihood'), ylabel('b'), ...
-      # title(['Rank: ',num2str(r),' Lag: ',num2str(k)])
+      
+      # Color palette (100 colors)
+      col.pal <- colorRampPalette(c("blue", "red"))
+      colors <- col.pal(100)
+      # height of facets
+      like.facet.center <- (like[-1, -1] + like[-1, -ncol(like)] + like[-nrow(like), -1] + like[-nrow(like), -ncol(like)])/4
+      # Range of the facet center on a 100-scale (number of colors)
+      like.facet.range <- cut(like.facet.center, 100)
+      
+      
+      persp(dGrid, bGrid, 
+            like, 
+            phi = 45, theta = 45,
+            xlab = 'd', 
+            ylab = 'b',
+            main = c('Log-likelihood Function ', 
+                     sprintf('Rank: %d, Lags: %d', r, k)), 
+            # col = 'red', 
+            col = colors[like.facet.range]
+      )
+      
     } else {
       # 1-dimensional plot.
-      # plot(bGrid, like) ,
       if (is.null(opt$R_psi)) {
-        # xlabel('d=b'),
+        like_x_label <- 'd=b'
       } else {
-        # xlabel('phi'),
+        like_x_label <- 'phi'
       }
       
-      # ...
-      # ylabel('log-likelihood'), ...
-      # title(['Rank: ',num2str(r),' Lag: ',num2str(k)])
+      plot(bGrid, like,
+           main = c('Log-likelihood Function ', 
+                    sprintf('Rank: %d, Lags: %d', r, k)), 
+           ylab = 'log-likelihood',
+           xlab = like_x_label, 
+           type = 'l', 
+           col = 'blue', 
+           lwd = 3)
+      
     }
     
   }

@@ -62,7 +62,9 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   # Determine (initial) dimensions of system.
   T <- nrow(x) # Length of sample (before truncation for initial values).
   p <- ncol(x) # Number of variables.
-  printWN <- 0    # Set to zero to avoid printing output for each WN test
+  
+  # Do not print output for each WN test. 
+  printWN <- 0 
   
   # Do not print FCVAR estimation for each lag in the loop.
   opt$print2screen <- 0
@@ -72,6 +74,10 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   
   # Do not calculate standard errors.
   opt$CalcSE <- 0
+  
+  # Shouldn't this be done here, too?
+  # Update options based on initial user input.
+  opt <- updateRestrictions(opt, p, r)
   
   
   #--------------------------------------------------------------------------------

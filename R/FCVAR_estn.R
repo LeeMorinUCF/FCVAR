@@ -338,6 +338,39 @@ FCVARestn <- function(x,k,r,opt) {
                      function(params) {-FCVARlike(params, x, k, r, opt)}) 
                      # Cdb, cdb, Rpsi, rpsi, LB, UB, opt$ConFminOptions)
     
+    # Constrained version with L-BFGS-B:
+    # First, using only the equality bounds: 
+    min_out <- optim(startVals, 
+                     function(params) {-FCVARlike(params, x, k, r, opt)}, 
+                     method = 'L-BFGS-B', lower = LB, upper = UB, 
+                     control = list(maxit = opt$ConFminOptions$MaxFunEvals, 
+                                    reltol = opt$ConFminOptions$TolFun)) 
+    # This version uses inequality bounds: 
+    min_out <- constrOptim(startVals, 
+                     function(params) {-FCVARlike(params, x, k, r, opt)}, 
+                     ui = Cdb, 
+                     ci = - cdb,
+                     method = 'L-BFGS-B', lower = LB, upper = UB, 
+                     control = list(maxit = opt$ConFminOptions$MaxFunEvals, 
+                                    reltol = opt$ConFminOptions$TolFun)) 
+    
+    # Finally, all constraints imposed:
+    # Equality constraints with Rpsi and rpsi can be satisfied 
+    # by concentrating out one parameter and optimizing over the other. 
+    # Need an equation for b as a function of d, Rpsi and rpsi. 
+    startValsSub <- startVals[-2]
+    min_out <- constrOptim(startValsSub, 
+                           function(params) {-FCVARlike(c(params[1], 
+                                                          b_rest(d, Rpsi, rpsi), 
+                                                          params[3:length(params)]),
+                                                        x, k, r, opt)}, 
+                           ui = Cdb, 
+                           ci = - cdb,
+                           method = 'L-BFGS-B', lower = LB, upper = UB, 
+                           control = list(maxit = opt$ConFminOptions$MaxFunEvals, 
+                                          reltol = opt$ConFminOptions$TolFun)) 
+    
+    
     # print('min_out = ')
     # print(min_out)
     
