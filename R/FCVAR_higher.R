@@ -793,15 +793,16 @@ HypoTest <- function(modelUNR, modelR) {
 # 
 ################################################################################
 
-FCVARsim <- function(data, model, NumPeriods) {
+FCVARsim <- function(x, model, NumPeriods) {
   
   
   #--------------------------------------------------------------------------------
   # Preliminary definitions 
   #--------------------------------------------------------------------------------
   
-  x <- data 
-  p <- ncol(data)
+  # x <- data 
+  # p <- ncol(data)
+  p <- ncol(x)
   opt <- model$options
   cf  <- model$coeffs
   d <- cf$db[1]
@@ -818,7 +819,7 @@ FCVARsim <- function(data, model, NumPeriods) {
     
     
     # append x with zeros to simplify calculations.
-    x <- cbind(x, matrix(0, nrow = 1, ncol = p))
+    x <- rbind(x, rep(0, p))
     T <- nrow(x)
     
     # Adjust by level parameter if present.
@@ -868,7 +869,7 @@ FCVARsim <- function(data, model, NumPeriods) {
     z[T,] <- z[T,] + err[i, ]
     
     # Append to x matrix.
-    x <- cbind(x[1:(T-1), ], z[T,])
+    x <- rbind(x[1:(T-1), ], z[T,])
     
   }
   
@@ -953,7 +954,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
     
     
     # append x with zeros to simplify calculations
-    x <- rbind(x, matrix(0, nrow = 1, ncol = p))
+    x <- rbind(x, rep(0, p))
     T <- nrow(x)
     
     # Adjust by level parameter if present
@@ -1179,7 +1180,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
   mUNR <- FCVARestn(x, k, r, optUNR)
   
   cat(sprintf('\nHypothesis test to bootstrap:\n'))
-  cat(H)
+  # cat(H)
   H <- HypoTest(mUNR, mBS)
   
   # How often should the number of iterations be displayed

@@ -152,6 +152,7 @@ Halpha1 = HypoTest(m1, m1r3); 	% Test the null of m1r3 against the alternative m
 
 
 %% Test restriction that interest-rate is long-run exogenous.
+DefaultOpt.gridSearch = 0;
 opt1 = DefaultOpt;
 opt1.R_Alpha = [0 1 0];
 

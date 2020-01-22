@@ -1,11 +1,11 @@
 % This script demonstrates some of the additional features of the FCVAR
 %   software package:
-% 
+%
 %   - Forecasting
 %   - Bootstrap test of hypothesis on model coefficients
 %   - Bootstrap rank test
 %   - Simulation of fractionally cointegrated process
-% 
+%
 %  This script calls the estimates, option settings and data from
 %   replication_JNP2014.m, so that file should be run before the examples
 %   presented here.
@@ -21,11 +21,13 @@ modelF = m1r4;
 
 xf = FCVARforecast(x1, modelF, NumPeriods);
 
+model = m1r4;
+
 % Series including forecast.
-seriesF = [x1; xf]; 
+seriesF = [x1; xf];
 
 % Equilibrium relation including forecasts.
-equilF = seriesF*modelF.coeffs.betaHat; 
+equilF = seriesF*modelF.coeffs.betaHat;
 
 % Determine the size of the vertical line to delimit data and forecast
 %   values.
@@ -38,18 +40,18 @@ yMinEq = min(min(equilF));
 % Plot the results.
 figure
 subplot(2,1,1);
-plot(seriesF), 
+plot(seriesF),
 title('Series including forecast'), xlabel('t');
 line([T T], [yMinS yMaxS], 'Color','k');
 subplot(2,1,2);
-plot(equilF), 
+plot(equilF),
 title('Equilibrium relation including forecasts'), xlabel('t');
 line([T T], [yMinEq yMaxEq], 'Color','k');
 
 
 %% --------- BOOTSTRAP HYPOTHESIS TEST ---------- %
 
-% Test restriction that political variables do not enter the  
+% Test restriction that political variables do not enter the
 %   cointegrating relation(s).
 
 % Turn off plots for bootstrapping.
@@ -83,7 +85,7 @@ figure; plot(XI,F, XI, chi2pdf(XI,H.df))
 legend(['Bootstrap PDF with ', num2str(B), ' BS samples'],...
     ['Chi Squared with ', num2str(H.df),' df'])
 
-	
+
 %% --------- BOOTSTRAP RANK TEST ---------- %
 
 % Test rank 0 against rank 1

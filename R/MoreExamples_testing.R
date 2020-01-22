@@ -224,17 +224,6 @@ plot(equilF,
      col = 'black')
 
 
-# # Plot the results.
-# figure
-# subplot(2,1,1)
-# plot(seriesF), 
-# title('Series including forecast'), xlabel('t')
-# line([T T], [yMinS yMaxS], 'Color','k')
-# subplot(2,1,2)
-# plot(equilF), 
-# title('Equilibrium relation including forecasts'), xlabel('t')
-# line([T T], [yMinEq yMaxEq], 'Color','k')
-
 
 
 ################################################################################
@@ -257,10 +246,17 @@ optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 
 # Number of bootstrap samples to generate
 B <- 999
+B <- 9
 
 # Call to open the distributed processing (comment out if unavailable)
 # matlabpool ('open',4) # for versions 2013a and earlier.
 # parpool # for versions 2013b and later.
+
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+
 
 # [LRbs, H, mBS, mUNR] <- FCVARboot(x1, k, r, optRES, optUNR, B)
 FCVARboot_out <- FCVARboot(x1, k, r, optRES, optUNR, B)
@@ -299,6 +295,7 @@ r2 <- 1
 
 # Number of bootstrap samples to generate
 B <- 999
+B <- 9
 
 # [LR_Rnk, H_Rnk, mBSr1, mBSr2] <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B)
 
@@ -346,11 +343,24 @@ source('EstOptions.R')
 source('FCVAR_estn.R')
 source('FCVAR_lower.R')
 source('FCVAR_higher.R')
-
+x <- x1
 # Simulate data
 xSim <- FCVARsim(x1, modelF, T_sim)
 
 
+#--------------------------------------------------------------------------------
+# Testing version:
+#--------------------------------------------------------------------------------
+source('EstOptions.R')
+source('FCVAR_estn.R')
+source('FCVAR_lower.R')
+source('FCVAR_higher.R')
+
+x <- x1
+model <- m1r4
+# Simulate data
+xSim <- FCVARsim(x, model, T_sim)
+#--------------------------------------------------------------------------------
 
 
 #--------------------------------------------------------------------------------
