@@ -160,15 +160,26 @@ NumPeriods <- 12 # forecast horizon set to 12 months ahead.
 # Assign the model whose coefficients will be used for forecasting.
 modelF <- m1r4
 
+xf <- FCVARforecast(x1, modelF, NumPeriods)
+
+
+#--------------------------------------------------------------------------------
+# Testing version:
+#--------------------------------------------------------------------------------
 source('EstOptions.R')
 source('FCVAR_estn.R')
 source('FCVAR_lower.R')
 source('FCVAR_higher.R')
 
-xf <- FCVARforecast(x1, modelF, NumPeriods)
+x <- x1
+model <- m1r4
+xf <- FCVARforecast(x, model, NumPeriods)
+#--------------------------------------------------------------------------------
+
+
 
 # Series including forecast.
-seriesF <- cbind(x1, xf) 
+seriesF <- as.matrix(rbind(x1, xf) )
 
 # Equilibrium relation including forecasts.
 equilF <- seriesF %*% modelF$coeffs$betaHat 
@@ -185,6 +196,33 @@ yMaxS  <- max(seriesF)
 yMinS  <- min(seriesF)
 yMaxEq <- max(equilF)
 yMinEq <- min(equilF)
+
+# Plot the series and forecast.
+color_list <- rainbow(ncol(seriesF))
+col_num <- 1
+plot(seriesF[, col_num], 
+     main = 'Series, including Forecast', 
+     xlab = 'Time, t', 
+     ylab = 'Series',
+     ylim = c(yMinS, yMaxS),
+     type = 'l',
+     col = color_list[col_num])
+abline(v = T, col = 'black', lwd = 3)
+for (col_num in 2:ncol(seriesF)) {
+  lines(seriesF[, col_num],
+        col = color_list[col_num])
+}
+
+
+# Plot the equilibrium relation including forecasts.
+plot(equilF, 
+     main = 'Equilibrium Relation, including Forecast', 
+     xlab = 'Time, t', 
+     ylab = 'Equilibrium Relation',
+     ylim = c(yMinEq, yMaxEq),
+     type = 'l',
+     col = 'black')
+
 
 # # Plot the results.
 # figure

@@ -823,7 +823,7 @@ FCVARsim <- function(data, model, NumPeriods) {
     
     # Adjust by level parameter if present.
     if(opt$levelParam) {
-      y <- x - matrix(1, nrow = T, nol = 1) %*% cf$muHat
+      y <- x - matrix(1, nrow = T, ncol = 1) %*% cf$muHat
     } else {
       y <- x
     }
@@ -914,18 +914,26 @@ FCVARsimBS <- function(data, model, NumPeriods) {
   #--------------------------------------------------------------------------------
   
   x <- data 
-  p <- ncol(dat)
+  p <- ncol(data)
   opt <- model$options
   cf  <- model$coeffs
-  d <- cf.db[1]
-  b <- cf.db[2]
+  d <- cf$db[1]
+  b <- cf$db[2]
   T <- nrow(model$Residuals)
   
-  # Generate disturbance term for use in the bootstrap
+  # Generate disturbance term for use in the bootstrap.
+  
+  # print('ncol(model$Residuals) = ')
+  # print(ncol(model$Residuals))
+  # print('mean(model$Residuals) = ')
+  # print(mean(model$Residuals))
+  # print('colMeans(model$Residuals) = ')
+  # print(colMeans(model$Residuals))
+  # Duh!
   
   # Centre residuals
   res <- model$Residuals - 
-    matrix(1, nrow = nrow(model$Residuals), ncol= 1) %*% mean(model$Residuals)
+    matrix(1, nrow = nrow(model$Residuals), ncol = 1) %*% colMeans(model$Residuals)
   
   # Generate draws from Rademacher distribution for Wild bootstrap
   eRD <- - matrix(1, nrow = T, ncol = p) + 
@@ -945,7 +953,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
     
     
     # append x with zeros to simplify calculations
-    x <- rbind(x, mtrix(0, nrow = 1, ncol = p))
+    x <- rbind(x, matrix(0, nrow = 1, ncol = p))
     T <- nrow(x)
     
     # Adjust by level parameter if present
@@ -1027,15 +1035,17 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 
 
 
-FCVARforecast <- function(data, model, NumPeriods) {
+FCVARforecast <- function(x, model, NumPeriods) {
   
   
   #--------------------------------------------------------------------------------
   # Preliminary steps 
   #--------------------------------------------------------------------------------
   
-  x <- data 
-  p <- ncol(data)
+  # x <- x1
+  # x <- data 
+  # p <- ncol(data)
+  p <- ncol(x)
   opt <- model$options
   cf  <- model$coeffs
   d <- cf$db[1]
@@ -1049,12 +1059,13 @@ FCVARforecast <- function(data, model, NumPeriods) {
     
     
     # Append x with zeros to simplify calculations.
-    x <- cbind(x, matrix(0, nrow = 1, ncol = p))
+    # x <- rbind(x, matrix(0, nrow = 1, ncol = p))
+    x <- rbind(x, rep(0, p))
     T <- nrow(x)
     
     # Adjust by level parameter if present.
     if(opt$levelParam) {
-      y <- x - matrx(1, nrow = T, ncol = 1) %*% cf$muHat
+      y <- x - matrix(1, nrow = T, ncol = 1) %*% cf$muHat
     } else {
       y <- x
     }
@@ -1065,9 +1076,16 @@ FCVARforecast <- function(data, model, NumPeriods) {
     
     # Error correction term.
     if(!is.null(cf$alphaHat)) {
-      z <- z + FracDiff( Lbk(y, b, 1), d-b ) %*% t(cf.PiHat)
-      if(opt.rConstant) {
-        z <- z + FracDiff( Lbk(ones(T,1), b, 1), d - b ) %*% 
+      
+      # print('size(cf$PiHat) = ')
+      # print(size(cf$PiHat))
+      # print('size(FracDiff( Lbk(y, b, 1), d - b )) = ')
+      # print(size(FracDiff( Lbk(y, b, 1), d - b )))
+      
+      
+      z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
+      if(opt$rConstant) {
+        z <- z + FracDiff( Lbk(matrix(1, nrow = T, ncol = 1), b, 1), d - b ) %*% 
           cf$rhoHat %*% t(cf$alphaHat)
       }
       
@@ -1076,7 +1094,7 @@ FCVARforecast <- function(data, model, NumPeriods) {
     
     # Add unrestricted constant if present.
     if(opt$unrConstant) {
-      z <- z + matrix(1, nrow = T, ncol = 1) %*% t(cf.xiHat)
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% t(cf$xiHat)
     }
     
     
@@ -1094,7 +1112,7 @@ FCVARforecast <- function(data, model, NumPeriods) {
     
     
     # Append forecast to x matrix.
-    x <- cbind(x[1:(T-1),], z[T, ])
+    x <- rbind(x[1:(T-1),], z[T, ])
     
   }
   
@@ -1276,6 +1294,11 @@ FCVARbootRank <- function(x, k, opt, r1, r2, B) {
   mBS  <- FCVARestn(x, k, r1, opt)
   mUNR <- FCVARestn(x, k, r2, opt)
   
+  # Initialize H (a list containing LR test results, it is
+  #               identical to the output from HypoTest, with one addition,
+  #               namely H$pvBS which is the Bootstrap P-value)
+  H <- list(LRstat = NA, 
+            pvBS = NA)
   H$LRstat <- -2*(mBS$like - mUNR$like)
   
   for (j in 1:B) {
