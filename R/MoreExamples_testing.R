@@ -271,6 +271,35 @@ mUNR <- FCVARboot_out$mUNR
 # Compare the bootstrap distribution to chi-squared distribution
 #--------------------------------------------------------------------------------
 
+# Ispect histogram for troubleshooting.
+# hist(LRbs, 
+#      main = 'bootstrap density with chi-squared density')
+
+
+# Estimate kernel density
+LRbs_density <- density(LRbs)
+
+
+# Plot bootstrap density with chi-squared density
+plot(LRbs_density, 
+     main = c('Bootstrap Density with Chi-squared Density', 
+              sprintf('(%d bootstrap samples and %d d.f.)', 
+                      B, H$df)), 
+     xlab = 'Likelihood Ratio Statistic', 
+     lwd = 2, 
+     col = 'blue') 
+LR_range <- seq(min(LRbs_density$x), max(LRbs_density$x), by = 0.01)
+lines(LR_range,
+      dchisq(LR_range, df = H$df), 
+      col = 'red', 
+      lwd = 2)
+legend('topright', 
+       c('Bootstrap', 'Chi-squared'), 
+       # pch = 16, 
+       fill = c('blue','red'))
+
+
+
 # Estimate kernel density
 # [F,XI]=ksdensity(LRbs)
 

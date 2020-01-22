@@ -974,8 +974,15 @@ FCVARsimBS <- function(data, model, NumPeriods) {
     # print('cf$PiHat = ')
     # print(cf$PiHat)
     
+    # print('!is.null(cf$alphaHat) = ')
+    # print(!is.null(cf$alphaHat))
+    # print('!is.na(cf$alphaHat) = ')
+    # print(!is.na(cf$alphaHat))
+    # print('!is.na(cf$alphaHat[1]) = ')
+    # print(!is.na(cf$alphaHat[1]))
+    
     # Error correction term
-    if( !is.null(cf$alphaHat) & !is.na(cf$alphaHat)) {
+    if( !is.null(cf$alphaHat) && !is.na(cf$alphaHat[1])) {
       z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
       if(opt$rConstant) {
         z <- z + FracDiff( Lbk(matrix(1, nrow = T, ncol = 1), b, 1), d - b ) %*% 
@@ -1205,7 +1212,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
     # (1) generate bootstrap DGP under the null
     xBS <- FCVARsimBS(data, mBS, T)
     # append initial values to bootstrap sample
-    BSs <- cbind(data, xBS)
+    BSs <- rbind(data, xBS)
     
     # (2) estimate unrestricted model
     mUNRbs <-  FCVARestn(BSs, k, r, optUNR)
