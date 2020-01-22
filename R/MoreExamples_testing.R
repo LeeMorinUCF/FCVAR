@@ -339,11 +339,7 @@ cat(printf('P-value: \t %1.3f\n', rankTestStats$pv[1]))
 # Number of periods to simulate
 T_sim <- 100
 
-source('EstOptions.R')
-source('FCVAR_estn.R')
-source('FCVAR_lower.R')
-source('FCVAR_higher.R')
-x <- x1
+
 # Simulate data
 xSim <- FCVARsim(x1, modelF, T_sim)
 
@@ -367,11 +363,31 @@ xSim <- FCVARsim(x, model, T_sim)
 # Plot the simulated series
 #--------------------------------------------------------------------------------
 
-# figure
 # plot(xSim)
 # legend('Support', 'Unemployment', 'Interest rate')
 
+yMaxS  <- max(xSim)
+yMinS  <- min(xSim)
 
+# Plot the series and forecast.
+color_list <- rainbow(ncol(xSim))
+col_num <- 1
+plot(xSim[, col_num], 
+     main = 'Series, including Forecast', 
+     xlab = 'Time, t', 
+     ylab = 'Series',
+     ylim = c(yMinS, yMaxS),
+     type = 'l',
+     col = color_list[col_num])
+abline(v = T, col = 'black', lwd = 3)
+for (col_num in 2:ncol(seriesF)) {
+  lines(seriesF[, col_num],
+        col = color_list[col_num])
+}
+legend('topleft', 
+       c('Support', 'Unemployment', 'Interest Rate'), 
+       # pch = 16, 
+       fill = color_list)
 
 
 
