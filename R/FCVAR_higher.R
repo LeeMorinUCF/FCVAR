@@ -922,6 +922,9 @@ FCVARsimBS <- function(data, model, NumPeriods) {
   b <- cf$db[2]
   T <- nrow(model$Residuals)
   
+  # print('model = ')
+  # print(model)
+  
   # Generate disturbance term for use in the bootstrap.
   
   # print('ncol(model$Residuals) = ')
@@ -968,8 +971,11 @@ FCVARsimBS <- function(data, model, NumPeriods) {
     # Main term, take fractional lag
     z <- Lbk(y, d, 1)
     
+    # print('cf$PiHat = ')
+    # print(cf$PiHat)
+    
     # Error correction term
-    if(!is.null(cf$alphaHat)) {
+    if( !is.null(cf$alphaHat) & !is.na(cf$alphaHat)) {
       z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
       if(opt$rConstant) {
         z <- z + FracDiff( Lbk(matrix(1, nrow = T, ncol = 1), b, 1), d - b ) %*% 
@@ -1276,10 +1282,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 
 
 FCVARbootRank <- function(x, k, opt, r1, r2, B) {
-  
-  
-  
-  
+
   # Calculate length of sample to generate, adjusting for initial values
   T <- nrow(x) - opt$N
   
@@ -1304,15 +1307,21 @@ FCVARbootRank <- function(x, k, opt, r1, r2, B) {
   
   for (j in 1:B) {
     
+    print('j = ')
+    print(j)
     
     # Display iteration count every 100 Bootstraps
     if(round((j+1)/10) == (j+1)/10) {
       cat(sprintf('iteration: %1.0f\n', j))
     }
     
-    
+    # print('made it before mBS')
     # (1) generate bootstrap DGP under the null
     xBS <- FCVARsimBS(data, mBS, T)
+    
+    # Faiing on the previous line, with zero rank.
+    # print('made it after mBS')
+    
     # append initial values to bootstrap sample
     BSs <- rbind(data, xBS)
     

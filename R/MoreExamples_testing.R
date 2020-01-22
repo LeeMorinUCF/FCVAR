@@ -307,10 +307,10 @@ source('FCVAR_higher.R')
 
 FCVARbootRank_out <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B)
 
-LR_Rnk <- FCVARbootRank_out$LR_Rnk
-H_Rnk <- FCVARbootRank_out$H_Rnk
-mBSr1 <- FCVARbootRank_out$mBSr1
-mBSr2 <- FCVARbootRank_out$mBSr2
+LR_Rnk <- FCVARbootRank_out$LRbs
+H_Rnk <- FCVARbootRank_out$H
+mBSr1 <- FCVARbootRank_out$mBS
+mBSr2 <- FCVARbootRank_out$mUNR
 
 
 
@@ -318,9 +318,9 @@ mBSr2 <- FCVARbootRank_out$mBSr2
 # Compare to P-value based on asymptotic distribution
 #--------------------------------------------------------------------------------
 
-rankTestStats <- RankTests(x1, k, opt)
+rankTestStats <- RankTests(x1, k, DefaultOpt)
 
-cat(printf('P-value: \t %1.3f\n', rankTestStats$pv[1]))
+cat(sprintf('P-value: \t %1.3f\n', rankTestStats$pv[1]))
 
 # Close distributed processing (comment out if unavailable)
 # matlabpool close
