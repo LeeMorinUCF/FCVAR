@@ -64,6 +64,10 @@ pkgbuild::check_build_tools(debug = TRUE)
 # Have you ever seen the movie 'Inception'?
 
 
+
+devtools::session_info()
+
+
 # Also test Rcpp is installed correctly. 
 library(Rcpp)
 
