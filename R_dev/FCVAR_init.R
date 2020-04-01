@@ -46,6 +46,9 @@ has_devel()
 ##################################################
 
 fcvar_dir <- '~/Research/FCVAR/GitRepo/FCVAR'
+# Copied from explorer:
+# 'C:\Users\le279259\Documents\Research\FCVAR\GitRepo\FCVAR'
+fcvar_dir <- 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR'
 setwd(fcvar_dir)
 
 # Since folder already exists, use setup() instead of create().
@@ -57,6 +60,7 @@ setup(path = fcvar_dir)
 # There is a separate package for package setup. 
 library(usethis)
 usethis::setup(path = fcvar_dir)
+# Does not exist. See below with create_package().
 
 # Check that the name is available.
 install.packages('available')
@@ -81,5 +85,33 @@ available('FCVAR')
 
 # This means we are G2G. 
 
+# Ok now create the package.
 
-
+# New project 'FCVAR' is nested inside an existing project 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/', which is rarely a good idea.
+# Do you want to create anyway?
+#   
+#   1: Absolutely not
+# 2: No
+# 3: Yes
+# 
+# Selection: Y
+# Enter an item from the menu, or 0 to exit
+# Selection: Yes
+# check Setting active project to 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR'
+# check Creating 'R/'
+# check Writing 'DESCRIPTION'
+# Package: FCVAR
+# Title: What the Package Does (One Line, Title Case)
+# Version: 0.0.0.9000
+# Authors@R (parsed):
+#   * First Last <first.last@example.com> [aut, cre] (<https://orcid.org/YOUR-ORCID-ID>)
+# Description: What the package does (one paragraph).
+# License: What license it uses
+# Encoding: UTF-8
+# LazyData: true
+# check Writing 'NAMESPACE'
+# check Writing 'FCVAR.Rproj'
+# check Adding '.Rproj.user' to '.gitignore'
+# check Adding '^FCVAR\\.Rproj$', '^\\.Rproj\\.user$' to '.Rbuildignore'
+# check Opening 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR/' in new RStudio session
+# check Setting active project to '<no active project>'
