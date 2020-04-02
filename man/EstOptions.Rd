@@ -18,5 +18,9 @@ EstOptions()
 }
 \seealso{
 \code{updateRestrictions} to set and test estimation options for validity and compatibility.
+\code{FCVARestn} for use of these options in estimation.
+
+Other FCVAR option functions: 
+\code{\link{updateRestrictions}()}
 }
 \concept{FCVAR option functions}
