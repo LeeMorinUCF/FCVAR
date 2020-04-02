@@ -27,7 +27,7 @@ This function is called prior to estimation and
   \item Check that only one option for deterministics is chosen,
   \item Check that starting values have been specified correctly,
   \item Update \code{dbMin}, \code{dbMax}, based on user-specified options,
-  \item Check for appropriate dimensions and redundancies in the
+  \item Check for appropriate dimensions and redundancies in the restriction matrices \code{R_psi}, \code{R_Alpha} and \code{R_Beta}.
 }
 }
 \examples{
@@ -41,6 +41,7 @@ newOpt <- updateRestrictions(opt, p = 3, r = 1)
 validity of options.
 
 Other FCVAR option functions: 
-\code{\link{EstOptions}()}
+\code{\link{EstOptions}()},
+\code{\link{GetBounds}()}
 }
 \concept{FCVAR option functions}

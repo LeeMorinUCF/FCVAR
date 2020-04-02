@@ -204,8 +204,7 @@ EstOptions <- function() {
 #'   \item Check that only one option for deterministics is chosen,
 #'   \item Check that starting values have been specified correctly,
 #'   \item Update \code{dbMin}, \code{dbMax}, based on user-specified options,
-#'   \item Check for appropriate dimensions and redundancies in the
-# 		restriction matrices \code{R_psi}, \code{R_Alpha} and \code{R_Beta}.
+#'   \item Check for appropriate dimensions and redundancies in the restriction matrices \code{R_psi}, \code{R_Alpha} and \code{R_Beta}.
 #' }
 #'
 #' @param opt A list object that stores the chosen estimation options,
@@ -537,3 +536,155 @@ updateRestrictions <- function(opt, p, r) {
 }
 
 
+#' Obtain Bounds on FCVAR Parameters
+#'
+#' \code{GetBounds()} obtains bounds on fractional integration parameters in the FCVAR model.
+#'   This function obtains upper and lower bounds on \code{d}, \code{b} or on
+#'   \code{phi}, which is given by \code{db <- H*phi + h},
+#'   using the restrictions implied by \code{H} and \code{h}.
+#'
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return A list object \code{UB_LB_bounds} containing the upper (\code{UB}) and lower (\code{LB})  bounds on either \code{db} or \code{phi}.
+#' These vectors are either 1- or 2-dimensional depending on whether a restriction on \code{d} and \code{b} is imposed or not.
+#' @examples
+#' opt <- EstOptions()
+#' UB_LB_bounds <- GetBounds(opt)
+#' @family FCVAR option functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} calls this function at the start of each estimation to specify any bounds on fractional integration parameters.
+#'
+GetBounds <- function(opt) {
+
+
+  # print('Made it here in GetBounds!')
+  #
+  # print('opt$R_psi = ')
+  # print(opt$R_psi)
+  # print(is.null(opt$R_psi))
+
+  if(is.null(opt$R_psi)) {
+    # R_psi empty. Upper and lower bounds are the max and min values input
+    # by the user. Both different and same bounds are permitted for d, b.
+    # Maximum
+    UB <- opt$dbMax
+    # Minimum
+    LB <- opt$dbMin
+
+    # print('Made it to the null case in GetBounds!')
+    # print('LB, UB = ')
+    # print(LB)
+    # print(UB)
+
+  } else {
+
+
+
+    # This set of variables is defined for easy translation between
+    # phi (unrestricted parameter) and d,b (restricted parameters).
+    R <- opt$R_psi
+    s <- opt$r_psi
+    H <- null(R)
+
+
+    # print('Made it to the else case in GetBounds!')
+    # print('R * R^T = ')
+    # print(R %*% t(R))
+
+    h <- t(R) %*% solve(R %*% t(R)) %*% s
+
+
+    # print('H = ')
+    # print(H)
+    # print('h = ')
+    # print(h)
+    # print('nrow(R) = ')
+    # print(nrow(R))
+    # print('ncol(R) = ')
+    # print(ncol(R))
+    # print('size(R,1) = ')
+    # print(size(R,1))
+    # print('size(R,2) = ')
+    # print(size(R,2))
+
+    UB <- NULL
+    LB <- NULL
+
+    # If there are two restrictions imposed, both d and b are restricted
+    # and the upper and lower bounds are set to their restricted values.
+    if(nrow(R) == 2) {
+      UB <- t(h)
+      LB <- t(h)
+    }
+
+
+    # If there is 1 restriction, then there is 1 free parameter.
+    if(nrow(R) == 1) {
+
+
+      # print('Made it to the one-restriction case in GetBounds!')
+
+      # Calculate endpoints of the grid from dbMin and dbMax to free
+      # parameter phi. Note that since the null space can be either
+      # positive or negative, the following conditional statements are
+      # needed.
+      if(H[1] > 0) {
+        phiMin1 <- (opt$dbMin[1] - h[1]) / H[1]
+        phiMax1 <- (opt$dbMax[1] - h[1]) / H[1]
+      } else if(H[1] < 0) {
+        phiMin1 <- (opt$dbMax[1] - h[1]) / H[1]
+        phiMax1 <- (opt$dbMin[1] - h[1]) / H[1]
+      } else {
+        phiMin1 <- NA
+        phiMax1 <- NA
+      }
+
+      if(H[2] > 0) {
+        phiMin2 <- (opt$dbMin[2] - h[2]) / H[2]
+        phiMax2 <- (opt$dbMax[2] - h[2]) / H[2]
+      } else if(H[2] < 0) {
+        phiMin2 <- (opt$dbMax[2] - h[2]) / H[2]
+        phiMax2 <- (opt$dbMin[2] - h[2]) / H[2]
+      } else {
+        phiMin2 <- NA
+        phiMax2 <- NA
+      }
+
+
+      # Take into account the condition d>=b, if required.
+      if(opt$constrained) {
+        if (H[1] > H[2]) {
+          phiMin3 <- (h[2] - h[1])/(H[1] - H[2])
+          phiMax3 <- NA
+        }
+        else {
+          phiMax3 <- (h[2] - h[1])/(H[1] - H[2])
+          phiMin3 <- NA
+        }
+
+      }
+      else {
+        phiMin3 <- NA
+        phiMax3 <- NA
+      }
+
+
+      LB <- max(c(phiMin1, phiMin2, phiMin3), na.rm = TRUE)
+      UB <- min(c(phiMax1, phiMax2, phiMax3), na.rm = TRUE)
+
+
+
+    }
+
+  }
+
+  UB_LB_bounds <- list(UB = UB, LB = LB)
+
+
+  # print('LB, UB = ')
+  # print(UB_LB_bounds)
+  # print(LB)
+  # print(UB)
+
+  return(UB_LB_bounds)
+}

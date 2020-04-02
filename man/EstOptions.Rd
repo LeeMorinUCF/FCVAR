@@ -21,6 +21,7 @@ EstOptions()
 \code{FCVARestn} for use of these options in estimation.
 
 Other FCVAR option functions: 
+\code{\link{GetBounds}()},
 \code{\link{updateRestrictions}()}
 }
 \concept{FCVAR option functions}
