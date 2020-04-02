@@ -12,12 +12,11 @@ A list object \code{opt} that stores the default estimation options.
 \description{
 \code{EstOptions} defines the estimation options used in the FCVAR
   estimation procedure and the related programs.
-  Executing this function
 }
 \examples{
 EstOptions()
 }
 \seealso{
-\code{updateRestrictions} to set and test estimation options.
+\code{updateRestrictions} to set and test estimation options for validity and compatibility.
 }
 \concept{FCVAR option functions}

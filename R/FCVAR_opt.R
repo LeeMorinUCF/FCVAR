@@ -5,15 +5,12 @@
 #'
 #' \code{EstOptions} defines the estimation options used in the FCVAR
 #'   estimation procedure and the related programs.
-#'   Executing this function
-# 	to return an \code{opt} object stores the default properties defined below in that
-# 	variable.
 #'
 #' @return A list object \code{opt} that stores the default estimation options.
 #' @examples
 #' EstOptions()
 #' @family FCVAR option functions
-#' @seealso \code{updateRestrictions} to set and test estimation options.
+#' @seealso \code{updateRestrictions} to set and test estimation options for validity and compatibility.
 #' @export
 #'
 #'
