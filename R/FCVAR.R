@@ -1,7 +1,7 @@
 #' FCVAR: A package for estimating the Fractionally Cointegrated VAR model.
 #'
-#' The FCVAR package provides three categories of important functions:
-#' Estimation, Postestimation, Specificationand Auxilliary functions.
+#' The FCVAR package provides five categories of functions:
+#' Estimation, Options, Postestimation, Specification and Auxilliary functions.
 #'
 #' @section Estimation functions:
 #' The estimation functions include the main estimation function \code{FCVARestn}
@@ -12,9 +12,18 @@
 #'   \item{\code{Second_function}}{This is the second function}
 #' }
 #'
+#' @section Estimation options:
+#' These functions define, modify and test the user-specified options for estimation.
+#'     Options include settings for optimization and restrictions for testing hypotheses.
+#'   These include:
+#' \describe{
+#'   \item{\code{First_function}}{This is the first function}
+#'   \item{\code{Second_function}}{This is the second function}
+#' }
+#'
 #' @section Postestimation functions:
 #' The postestimation functions are used to display the results and test the
-#'   the goodness of fit of the estimated model.
+#'   goodness of fit of the estimated model.
 #'   These include:
 #' \describe{
 #'   \item{\code{First_function}}{This is the first function}

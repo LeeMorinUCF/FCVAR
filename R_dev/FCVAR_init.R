@@ -115,3 +115,19 @@ available('FCVAR')
 # check Adding '^FCVAR\\.Rproj$', '^\\.Rproj\\.user$' to '.Rbuildignore'
 # check Opening 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR/' in new RStudio session
 # check Setting active project to '<no active project>'
+
+
+
+##################################################
+# Create documantation
+
+##################################################
+
+# Next steps:
+# Edit field in the description
+# Create a function in the R folder.
+# Add roxygen comments before the function. 
+
+# Use roxygen to build documentation. 
+devtools::document()
+# Rinse and repeat. 
