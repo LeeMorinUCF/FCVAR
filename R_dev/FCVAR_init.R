@@ -131,3 +131,14 @@ available('FCVAR')
 # Use roxygen to build documentation. 
 devtools::document()
 # Rinse and repeat. 
+
+
+# Set some folders to be ignored by R build.
+devtools::use_build_ignore(c("stata", "R_dev", "MATLAB"))
+# Except that is deprecated too.
+usethis::use_build_ignore(c("stata", "R_dev", "MATLAB"))
+# check Setting active project to 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR'
+# check Adding '^stata$', '^R_dev$', '^MATLAB$' to '.Rbuildignore'
+
+
+

@@ -1,29 +1,31 @@
 Package: FCVAR
 Title: A package for estimating the Fractionally Cointegrated VAR model
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R: c(
     person(given = "Lealand",
            family = "Morin",
            role = c("aut", "cre"),
            email = "lealand.morin@ucf.edu",
-           comment = c(ORCID = "0000-0001-8539-1386"))
+           comment = c(ORCID = "0000-0001-8539-1386")), 
     person(given = "Morten",
            # middle = "Oregaard", 
            family = "Nielsen",
-           role = c("cre"),
+           role = c("aut"),
            email = "mon@queensu.ca",
-           comment = c(ORCID = "0000-0000-9999-9999"))
+           comment = c(ORCID = "0000-0000-9999-9999")), 
     person(given = "Michal",
            # middle = "Ksawery", 
            family = "Popiel",
-           role = c("cre"),
+           role = c("aut"),
            email = "Michal.Popiel@analysisgroup.com",
-           comment = c(ORCID = "0000-0000-9999-9999"))
+           comment = c(ORCID = "0000-0000-9999-9999")))
 Description: A package for estimating the Fractionally Cointegrated 
     Vector Autoregression (VAR) model. It includes functions for lag selection
     and cointegration rank selection and hypothesis testing. 
 Imports:
     pracma
+URL: https://github.com/LeeMorinUCF/FCVAR
+BugReports: https://github.com/LeeMorinUCF/FCVAR/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

@@ -1,2 +1,5 @@
 ^FCVAR\.Rproj$
 ^\.Rproj\.user$
+^stata$
+^R_dev$
+^MATLAB$
