@@ -33,7 +33,7 @@ LagSelect(x, kmax = 4, r = 3, order = 12, opt)
 \code{FCVARestn} is called repeatedly within this function
 for each candidate lag order.
 
-Other FCVAR estimation functions: 
-\code{\link{FCVARestn}()}
+Other FCVAR specification functions: 
+\code{\link{RankTests}()}
 }
-\concept{FCVAR estimation functions}
+\concept{FCVAR specification functions}

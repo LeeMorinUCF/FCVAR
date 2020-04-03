@@ -1,26 +1,6 @@
 
 
 
-################################################################################
-# Define function to select lag order.
-################################################################################
-#
-# function LagSelect(x, kmax, r, order, opt )
-# Written by Michal Popiel and Morten Nielsen (This version 3.31.2016)
-#
-# DESCRIPTION: This program takes a matrix of variables and performs lag
-# 	selection on it by using the likelihood ratio test. Output and test
-# 	results are printed to the screen.
-#
-# Input <- x     (matrix of variables to be included in the system)
-#         kmax  (maximum number of lags)
-#         r     (cointegration rank <- number of cointegrating vectors)
-#         order (order of serial correlation for white noise tests)
-#         opt   (object containing estimation options)
-# Output <- none (only output to screen)
-#
-################################################################################
-
 #' Select Lag Order
 #'
 #' \code{LagSelect} takes a matrix of variables and performs lag
@@ -37,8 +17,8 @@
 #' @examples
 #' opt <- EstOptions()
 #' x <- data(JNP2014)
-#'LagSelect(x, kmax = 4, r = 3, order = 12, opt)
-#' @family FCVAR estimation functions
+#' LagSelect(x, kmax = 4, r = 3, order = 12, opt)
+#' @family FCVAR specification functions
 #' @seealso \code{EstOptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate lag order.
@@ -185,4 +165,206 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
 
 }
+
+
+################################################################################
+# Define function to perform a sequence of likelihood ratio tests
+# 	for cointegrating rank.
+################################################################################
+#
+# function [ rankTestStats ] <- RankTests(x, k, opt)
+# Written by Michal Popiel and Morten Nielsen (This version 11.17.2014)
+# Based on Lee Morin & Morten Nielsen (June 5, 2013)
+#
+# DESCRIPTION: Performs a sequence of  likelihood ratio tests
+# 	for cointegrating rank.
+#
+# The results are printed to screen if the indicator print2screen is 1.
+#
+# input <- vector or matrix x of data.
+#       scalar k denoting lag length.
+#       opt (object containing estimation options)
+#
+# output <- rankTestStats structure with results from cointegrating rank
+#           tests, containing the following (p+1) vectors with ith element
+#           corresponding to rank <- i-1:
+#	dHat	(estimates of d)
+#	bHat	(estimate of b)
+#	LogL	(maximized log-likelihood)
+#	LRstat  (LR trace statistic for testing rank r against rank p)
+#	pv      (P-value of LR trace test, or "999" if P-value is not available)
+#
+################################################################################
+
+
+#' Test for Cointegrating Rank
+#'
+#' \code{RankTests} performs a sequence of  likelihood ratio tests
+# 	for cointegrating rank.
+#'
+#' @param x A matrix of variables to be included in the system.
+#' @param k The number of lags in the system.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return A list object \code{rankTestStats} containing the results
+#' from cointegrating rank tests, containing the following \code{(p+1)} vectors
+#' with \code{i}th element corresponding to \code{rank = i-1}:
+#' including the following parameters:
+#' \describe{
+#'   \item{\code{dHat}}{Estimates of \code{d}.}
+#'   \item{\code{bHat}}{Estimates of \code{b}.}
+#'   \item{\code{LogL}}{Maximized log-likelihood.}
+#'   \item{\code{LRstat}}{LR trace statistic for testing rank \code{r} against rank \code{p}.}
+#'   \item{\code{pv}}{The p-value of LR trace test, or "999" if p-value is not available.}
+#' }
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' RankTests(x, k = 2, opt)
+#' @family FCVAR specification functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} is called repeatedly within this function
+#' for each candidate cointegrating rank.
+#' @export
+#'
+RankTests <- function(x, k, opt) {
+
+  T <- nrow(x) - opt$N
+  p <- ncol(x)
+
+  # Store user specified options for printing to screen because it will be
+  # turned off while looping over ranks.
+  tempPrint2Screen <- opt$print2screen
+
+  # Create output storage to be filled.
+  bHat   <- matrix(0, nrow = p+1, ncol = 1)
+  dHat   <- matrix(0, nrow = p+1, ncol = 1)
+  LogL   <- matrix(0, nrow = p+1, ncol = 1)
+  LRstat <- matrix(0, nrow = p+1, ncol = 1)
+  pv     <- matrix(0, nrow = p+1, ncol = 1)
+
+  # Do not print FCVAR estimation for each rank in the loop.
+  opt$print2screen <- 0
+
+  # Do not plot roots of characteristic polynomial for each lag in the loop.
+  opt$plotRoots <- 0
+
+  # Do not calculate standard errors.
+  opt$CalcSE <- 0
+
+
+
+  # For calculation of P-values
+  if(opt$rConstant | opt$levelParam) {
+    consT <- 1
+  } else {
+    consT <- 0
+  }
+
+
+  # Estimate models for all ranks
+  for (r in 0 : p) {
+
+
+    cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
+
+    results <- FCVARestn(x, k, r, opt)
+
+    cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
+
+    dHat[r+1] <- results$coeffs$db[1]
+    bHat[r+1] <- results$coeffs$db[2]
+    LogL[r+1] <- results$like
+  }
+
+
+
+
+  # Calculate the LR statistics and P-values
+  for (r in 0 : p-1) {
+
+    LRstat[r+1] <-  - 2*( LogL[r+1] - LogL[p+1] )
+
+    p_val = NULL
+    # Get P-values, if
+    # (1) no deterministic terms, or
+    # (2) there is only restricted constant and d=b, or
+    # (3) there is only a level parameter and d=b.
+    if (FALSE & (
+      (!opt$rConstant & !opt$unrConstant & !opt$levelParam) |
+      (opt$rConstant  & !opt$unrConstant & opt$restrictDB) |
+      (opt$levelParam & !opt$unrConstant & opt$restrictDB) )  ) {
+
+      p_val <- get_pvalues(p-r, bHat[r+1], consT, LRstat[r+1], opt)
+
+    }
+
+    # If automatic calls to P-value program have not been installed or
+    # enabled, then p_val is empty. Set it to 999 so that it can have a
+    # value for storage in the rankTestStats matrix below.
+    if(is.null(p_val)) {
+      p_val <- 999
+    }
+
+    # Store P-values.
+    pv[r+1] <- p_val
+
+  }
+
+
+
+
+  # Restore settings.
+  opt$print2screen <- tempPrint2Screen
+
+  # Print the results to screen.
+  if (opt$print2screen) {
+
+    # create a variable for output strings
+    yesNo <- c('No','Yes')
+
+    cat(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('                         Likelihood Ratio Tests for Cointegrating Rank                               \n'))
+    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt$N))
+    cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T))
+    cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
+    cat(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
+    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('Rank \t  d  \t  b  \t Log-likelihood\t LR statistic\t P-value\n'))
+    for (i in 1:p) {
+      if (pv[i] != 999) {
+        cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t%13.3f\t%8.3f\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i], pv[i]))
+      }
+      else {
+        cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t%13.3f\t    ----\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i]))
+      }
+
+    }
+
+    cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t         ----\t    ----\n', i, dHat[i+1], bHat[i+1], LogL[i+1]))
+    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+
+
+  }
+
+
+
+
+
+
+  # Return list of rank test results.
+  rankTestStats <- list(
+    dHat   = dHat,
+    bHat   = bHat,
+    LogL   = LogL,
+    LRstat = LRstat,
+    pv     = pv
+  )
+
+
+
+  return(rankTestStats)
+}
+
 

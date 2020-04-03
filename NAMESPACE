@@ -3,4 +3,5 @@
 export(EstOptions)
 export(FCVARestn)
 export(LagSelect)
+export(RankTests)
 export(updateRestrictions)

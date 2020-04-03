@@ -48,8 +48,5 @@ FCVARestn(x,k = 3,r = 1,opt)
 \code{EstOptions} to set default estimation options.
 \code{FCVARestn} calls this function at the start of each estimation to verify
 validity of options.
-
-Other FCVAR estimation functions: 
-\code{\link{LagSelect}()}
 }
 \concept{FCVAR estimation functions}
