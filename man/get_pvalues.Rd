@@ -49,10 +49,11 @@ opt <- EstOptions()
 get_pvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
 }
 \references{
-James G. MacKinnon and Morten \\O rregaard Nielsen,
+James G. MacKinnon and Morten \enc{Ø}{O}rregaard Nielsen,
 "Numerical Distribution Functions of Fractional Unit Root and Cointegration Tests,"
 Journal of Applied Econometrics, Vol. 29, No. 1, 2014, pp.161-171.
-Johansen, S. and M. O. Nielsen (2012).
+
+Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
 "Likelihood inference for a fractionally cointegrated vector autore-gressive model,"
 Econometrica 80, pp.2667-2732.
 }
