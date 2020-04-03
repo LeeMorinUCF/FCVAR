@@ -41,6 +41,7 @@ RankTests(x, k = 2, opt)
 for each candidate cointegrating rank.
 
 Other FCVAR specification functions: 
+\code{\link{FCVARbootRank}()},
 \code{\link{LagSelect}()},
 \code{\link{get_pvalues}()}
 }

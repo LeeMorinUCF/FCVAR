@@ -59,10 +59,9 @@ Econometrica 80, pp.2667-2732.
 }
 \seealso{
 \code{EstOptions} to set default estimation options.
-\code{FCVARestn} is called repeatedly within this function
-for each candidate cointegrating rank.
 
 Other FCVAR specification functions: 
+\code{\link{FCVARbootRank}()},
 \code{\link{LagSelect}()},
 \code{\link{RankTests}()}
 }

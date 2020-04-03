@@ -370,8 +370,6 @@ RankTests <- function(x, k, opt) {
 #' get_pvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{EstOptions} to set default estimation options.
-#' \code{FCVARestn} is called repeatedly within this function
-#' for each candidate cointegrating rank.
 #' @export
 #'
 #' @references James G. MacKinnon and Morten \enc{Ø}{O}rregaard Nielsen,
@@ -429,5 +427,126 @@ get_pvalues <- function(q, b, consT, testStat, opt) {
   return(pv)
 }
 
+
+#' Distribution of LR Test Statistic for the Rank Test
+#'
+#' \code{FCVARbootRank} generates a distribution of a likelihood ratio
+#'  test statistic for the rank test using a Wild bootstrap,
+#'	following the method of Cavaliere, Rahbek, and Taylor (2010). It
+#'  takes the two ranks as inputs to estimate the model under the
+#'  null and the model under the alternative.
+#' @param x A matrix of variables to be included in the system.
+#' If \code{k>0}, actual data is used for initial values.
+#' @param k The number of lags in the system.
+#' @param r1 The cointegrating rank under the null hypothesis.
+#' @param r2 The cointegrating rank under the alternative hypothesis.
+#' @param B The number of bootstrap samples.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return A list object \code{FCVARbootRank_out} containing the test results,
+#' including the following parameters:
+#' \describe{
+#'   \item{\code{LRbs}}{A B x 1 vector of simulated likelihood ratio statistics.}
+#'   \item{\code{pv}}{An approximate p-value for LRstat based on the bootstrap distribution. }
+#'   \item{\code{H}}{A list containing LR test results, it is
+#'   identical to the output from \code{HypoTest}, with one addition,
+#'   namely \code{H$pvBS} which is the bootstrap p-value)}
+#'   \item{\code{mBS}}{Model estimates under the null hypothesis. }
+#'   \item{\code{mUNR}}{Model estimates under the alternative hypothesis. }
+#' }
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' FCVARbootRank_out <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
+#' @family FCVAR specification functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{HypoTest} for the format of a hypothesis test results.
+#' \code{FCVARestn} for the estimates from a rectricted and unrestricted model within a hypothesis test.
+#' @export
+#' @references Cavaliere, G., A. Rahbek, and A. M. R. Taylor (2010).
+#' "Testing for co-integration in vector autoregressions
+#' with non-stationary volatility," Journal of Econometrics 158, 7-24.
+#'
+FCVARbootRank <- function(x, k, opt, r1, r2, B) {
+
+  # Calculate length of sample to generate, adjusting for initial values
+  T <- nrow(x) - opt$N
+
+  # Use first k+1 observations for initial values
+  data <- x[1:(k+1), ]
+
+  LR <- matrix(0, nrow = B, ncol = 1)
+
+  # Turn off output and calculation of standard errors for faster computation
+  opt$print2screen <- 0
+  opt$print2screen <- 0
+
+  mBS  <- FCVARestn(x, k, r1, opt)
+  mUNR <- FCVARestn(x, k, r2, opt)
+
+  # Initialize H (a list containing LR test results, it is
+  #               identical to the output from HypoTest, with one addition,
+  #               namely H$pvBS which is the Bootstrap P-value)
+  H <- list(LRstat = NA,
+            pvBS = NA)
+  H$LRstat <- -2*(mBS$like - mUNR$like)
+
+  for (j in 1:B) {
+
+    print('j = ')
+    print(j)
+
+    # Display iteration count every 100 Bootstraps
+    if(round((j+1)/10) == (j+1)/10) {
+      cat(sprintf('iteration: %1.0f\n', j))
+    }
+
+    # print('made it before mBS')
+    # (1) generate bootstrap DGP under the null
+    xBS <- FCVARsimBS(data, mBS, T)
+
+    # Faiing on the previous line, with zero rank.
+    # print('made it after mBS')
+
+    # append initial values to bootstrap sample
+    BSs <- rbind(data, xBS)
+
+    # (2) estimate unrestricted model
+    mUNRbs <-  FCVARestn(BSs, k, r2, opt)
+
+    # (3) estimate restricted model (under the null)
+    mRES <-  FCVARestn(BSs, k, r1, opt)
+
+    # (4) calculate test statistic
+    LR[j] <- -2*(mRES$like - mUNRbs$like)
+
+
+  }
+
+
+  # Return sorted LR stats
+  LRbs <- LR[order(LR)]
+
+  # Calculate Bootstrap P-value (see ETM p.157 eq 4.62)
+  H$pvBS <- sum(LRbs > H$LRstat)/B
+
+  # Print output
+  cat(sprintf('Bootstrap results:'))
+  cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
+              mUNR$like, mBS$like))
+  cat(sprintf('Test results:\nLR statistic: \t %3.3f\nP-value (BS): \t %1.3f\n',
+              H$LRstat, H$pvBS))
+
+
+  # Return a list of bootstrap test results.
+  FCVARbootRank_out <- list(
+    LRbs = LRbs,
+    H = H,
+    mBS = mBS,
+    mUNR = mUNR
+  )
+
+  return(FCVARbootRank_out)
+}
 
 
