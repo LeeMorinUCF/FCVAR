@@ -17,8 +17,9 @@
 #'     Options include settings for optimization and restrictions for testing hypotheses.
 #'   These include:
 #' \describe{
-#'   \item{\code{First_function}}{This is the first function}
-#'   \item{\code{Second_function}}{This is the second function}
+#'   \item{\code{EstOptions}}{defines the estimation options used in the FCVAR
+#'   estimation procedure and the related programs.}
+#'   \item{\code{updateRestrictions}}{is used to set and test estimation options for validity and compatibility.}
 #' }
 #'
 #' @section Postestimation functions:
