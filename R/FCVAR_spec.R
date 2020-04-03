@@ -338,3 +338,96 @@ RankTests <- function(x, k, opt) {
 }
 
 
+#' Get p-values for Unit Roots and Cointegration
+#'
+#' Calculates p-values for tests of fractional unit roots and cointegration
+#' This function calls the program FDPVAL in the terminal and
+#' 	returns the p-value based on the user's inputs. The function's
+#' 	arguments must be converted to strings in order to interact with the
+#' 	terminal.
+#'
+#' @section Non-stationary Systems:
+#' For non-stationary systems \code{b >= 0.5}, use simulated P-values from
+#' MacKinnon and Nielsen (2014, Journal of Applied Econometrics)
+#' and the C++ program conversion by Jason Rhinelander.
+#' Note: fdpval is a separately installed program.
+#' For more information see: \url{https://github.com/jagerman/fracdist}
+#' For download see \url{https://github.com/jagerman/fracdist/releases}
+#'
+#' @section Stationary Systems:
+#' For stationary systems \code{b < 0.5}, use chi^2 with \code{(p-r)^2}
+#' degrees of freedom. See Johansen and Nielsen (2012, Econometrica).
+#'
+#' @param q Number of variables, minus the cointegrating rank.
+#' @param b Fractional integration parameter.
+#' @param const Boolean variable indicating whether or not there is a constant present.
+#' @param testStat Value of the test statistic.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return A scalar numeric \code{pv}, the p-value for the likelihood ratio test.
+#' @examples
+#' opt <- EstOptions()
+#' get_pvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
+#' @family FCVAR specification functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} is called repeatedly within this function
+#' for each candidate cointegrating rank.
+#' @export
+#'
+#' @references James G. MacKinnon and Morten \\O rregaard Nielsen,
+#' "Numerical Distribution Functions of Fractional Unit Root and Cointegration Tests,"
+#' Journal of Applied Econometrics, Vol. 29, No. 1, 2014, pp.161-171.
+#' Johansen, S. and M. O. Nielsen (2012).
+#' "Likelihood inference for a fractionally cointegrated vector autore-gressive model,"
+#' Econometrica 80, pp.2667-2732.
+#'
+get_pvalues <- function(q, b, consT, testStat, opt) {
+
+  print('b = ')
+  print(b)
+
+  if (b < 0.5) {
+    # Series are stationary so use chi^2 with (p-r)^2 df, see JN2012
+    pv <- 1 - chi2cdf(testStat, q^2)
+  } else {
+
+    # For non-stationary systems use simulated P-values from
+    # MacKinnon and Nielsen (2014, Journal of Applied Econometrics)
+    # and the C++ program conversion by Jason Rhinelander.
+
+    # Convert user input to system commands and
+    # translate arguments to strings
+    args <- sprintf('%g %g %g %g', q, b, consT, testStat)
+    # Combine path, program, and arguments
+    outCode <- sprintf('%s %s', opt$progLoc, args)
+
+    # Evaluate system command
+    # Note: fdpval is a separately installed program.
+    # For more information see: https://github.com/jagerman/fracdist
+    # For download see https://github.com/jagerman/fracdist/releases
+    # [ flag , pval] <- system([outCode])
+    fracdist_out <- 7
+    # Doesn't work on all platforms.
+    # Should replace with a wrapper for the fracdist code.
+
+    # Note: string is returned, so it needs to be converted
+    if(flag == 0) {
+
+      # check if program was executed without errors
+      # pv <- str2double(pval)
+      pv <- pval
+
+    } else {
+
+      # program failed
+      pv <- NULL
+
+    }
+
+  }
+
+  return(pv)
+}
+
+
+

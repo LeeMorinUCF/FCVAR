@@ -34,6 +34,7 @@ LagSelect(x, kmax = 4, r = 3, order = 12, opt)
 for each candidate lag order.
 
 Other FCVAR specification functions: 
-\code{\link{RankTests}()}
+\code{\link{RankTests}()},
+\code{\link{get_pvalues}()}
 }
 \concept{FCVAR specification functions}
