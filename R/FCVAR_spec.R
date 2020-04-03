@@ -167,36 +167,6 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 }
 
 
-################################################################################
-# Define function to perform a sequence of likelihood ratio tests
-# 	for cointegrating rank.
-################################################################################
-#
-# function [ rankTestStats ] <- RankTests(x, k, opt)
-# Written by Michal Popiel and Morten Nielsen (This version 11.17.2014)
-# Based on Lee Morin & Morten Nielsen (June 5, 2013)
-#
-# DESCRIPTION: Performs a sequence of  likelihood ratio tests
-# 	for cointegrating rank.
-#
-# The results are printed to screen if the indicator print2screen is 1.
-#
-# input <- vector or matrix x of data.
-#       scalar k denoting lag length.
-#       opt (object containing estimation options)
-#
-# output <- rankTestStats structure with results from cointegrating rank
-#           tests, containing the following (p+1) vectors with ith element
-#           corresponding to rank <- i-1:
-#	dHat	(estimates of d)
-#	bHat	(estimate of b)
-#	LogL	(maximized log-likelihood)
-#	LRstat  (LR trace statistic for testing rank r against rank p)
-#	pv      (P-value of LR trace test, or "999" if P-value is not available)
-#
-################################################################################
-
-
 #' Test for Cointegrating Rank
 #'
 #' \code{RankTests} performs a sequence of  likelihood ratio tests
