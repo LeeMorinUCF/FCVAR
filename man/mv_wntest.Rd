@@ -23,7 +23,7 @@ including the following parameters:
   \item{\code{LM}}{A 1xp vector of LM statistics for individual series.}
   \item{\code{pvLM}}{A 1xp vector of P-values for LM-test on individual series.}
   \item{\code{mvQ}}{A multivariate Q statistic.}
-  \item{\code{pvMVQ}}{A P-value for multivariate Q-statistic using \code{p^2*maxlag}
+  \item{\code{pvMVQ}}{A p-value for multivariate Q-statistic using \code{p^2*maxlag}
   degrees of freedom.}
 }
 }
@@ -49,5 +49,9 @@ mv_wntest(x = cumsum(rnorm(100)), maxlag = 10, printResults = 1)
 \code{EstOptions} to set default estimation options.
 \code{FCVARestn} produces the residuals intended for this test.
 \code{LagSelect} uses this test as part of the lag order selection process.
+
+Other FCVAR postestimation functions: 
+\code{\link{LMtest}()},
+\code{\link{Qtest}()}
 }
 \concept{FCVAR postestimation functions}
