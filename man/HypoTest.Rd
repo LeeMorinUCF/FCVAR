@@ -44,6 +44,8 @@ Use \code{EstOptions} to set default estimation options for each model,
 then set restrictions as needed before \code{FCVARestn}.
 
 Other FCVAR postestimation functions: 
+\code{\link{CharPolyRoots}()},
+\code{\link{FCVARboot}()},
 \code{\link{LMtest}()},
 \code{\link{Qtest}()},
 \code{\link{mv_wntest}()}

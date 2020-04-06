@@ -372,7 +372,6 @@ HypoTest <- function(modelUNR, modelR) {
 #'
 #' \code{FCVARforecast} calculates recursive forecasts with the FCVAR model.
 #'
-#' @paramdata A \eqn{T \times p} matrix of starting values for the simulated realizations.
 #' @param x A matrix of variables to be included in the system.
 #' The forecast will be calculated using these values as starting values.
 #' @param model A list of estimation results, just as if estimated from \code{FCVARest}.
@@ -482,8 +481,304 @@ FCVARforecast <- function(x, model, NumPeriods) {
 }
 
 
+#' Bootstrap Likelihood Ratio Test
+#'
+#' \code{FCVARboot} generates a distribution of a likelihood ratio
+#' test statistic using a Wild bootstrap, following the method of
+#' Boswijk, Cavaliere, Rahbek, and Taylor (2016). It takes two sets
+#' of options as inputs to estimate the model under the null and the
+#' unrestricted model.
+#'
+#' @param x A matrix of variables to be included in the system.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param optRES A list object that stores the chosen estimation options
+#'   for the restricted model, as generated from \code{EstOptions()},
+#'   with adjustments as necessary.
+#' @param optUNR A list object that stores the chosen estimation options
+#'   for the unrestricted model.
+#' @param B The number of bootstrap samples.
+#' @return A list object \code{FCVARboot_out} containing the estimation results,
+#' including the following parameters:
+#' \describe{
+#'   \item{\code{LRbs}}{A \eqn{B x 1} vector of simulated likelihood ratio statistics}
+#'   \item{\code{pv}}{An approximate p-value for the likelihood ratio statistic
+#'    based on the bootstrap distribution.}
+#'   \item{\code{H}}{A list containing the likelihood ratio test results.
+#'   It is identical to the output from \code{HypoTest}, with one addition,
+#'   namely \code{H$pvBS} which is the bootstrap p-value}
+#'   \item{\code{mBS}}{The model estimates under the null hypothesis.}
+#'   \item{\code{mUNR}}{The model estimates under the alternative hypothesis.}
+#' }
+#' @examples
+#' optUNR <- EstOptions()
+#' # Define estimation options for restricted model (null)
+#' optRES <- optUNR
+#' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+#' x <- data(JNP2014)
+#' FCVARboot_out <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
+#' @family FCVAR postestimation functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} is called to estimate the models under the null and alternative hypotheses.
+#' @references Boswijk, Cavaliere, Rahbek, and Taylor (2016)
+#' "Inference on co-integration parameters in heteroskedastic
+#' vector autoregressions," Journal of Econometrics 192, 64-85.
+#' @export
+#'
+FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 
 
+  # Calculate length of sample to generate, adjusting for initial values
+  T <- nrow(x) - optRES$N
+
+  # Use first k+1 observations for initial values
+  data <- x[1:(k+1), ]
+
+  LR <- matrix(0, nrow = B, ncol = 1)
+
+  # Turn off output and calculation of standard errors for faster computation
+  optUNR$print2screen <- 0
+  optRES$print2screen <- 0
+  optUNR$CalcSE <- 0
+  optRES$CalcSE <- 0
+
+  mBS  <- FCVARestn(x, k, r, optRES)
+  mUNR <- FCVARestn(x, k, r, optUNR)
+
+  cat(sprintf('\nHypothesis test to bootstrap:\n'))
+  # cat(H)
+  H <- HypoTest(mUNR, mBS)
+
+  # How often should the number of iterations be displayed
+  show_iters <- 10
+
+
+  for (j in 1:B) {
+
+
+    # Display iteration count every 100 Bootstraps
+    if(round((j+1)/show_iters) == (j+1)/show_iters) {
+      cat(sprintf('iteration: %1.0f\n', j))
+    }
+
+
+    # (1) generate bootstrap DGP under the null
+    xBS <- FCVARsimBS(data, mBS, T)
+    # append initial values to bootstrap sample
+    BSs <- rbind(data, xBS)
+
+    # (2) estimate unrestricted model
+    mUNRbs <-  FCVARestn(BSs, k, r, optUNR)
+
+    # (3) estimate restricted model (under the null)
+    mRES <-  FCVARestn(BSs, k, r, optRES)
+
+    # (4) calculate test statistic
+    LR[j] <- -2*(mRES$like - mUNRbs$like)
+
+
+  }
+
+
+  # Return sorted LR stats
+  LRbs <- LR[order(LR)]
+  # No need to sort if you count the extreme realizations ( but it looks pretty).
+
+  # Calculate Bootstrap P-value (see ETM p.157 eq 4.62)
+  H$pvBS <- sum(LRbs > H$LRstat)/B
+
+  # Print output
+  cat(sprintf('Bootstrap results:'))
+  cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
+              H$loglikUNR, H$loglikR))
+  cat(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
+              H$df, H$LRstat, H$pv))
+  cat(sprintf('P-value (BS): \t %1.3f\n', H$pvBS))
+
+
+  # Return a list of bootstrap test results.
+  FCVARboot_out <- list(
+    LRbs = LRbs,
+    H = H,
+    mBS = mBS,
+    mUNR = mUNR
+  )
+
+  return(FCVARboot_out)
+}
+
+
+
+#' Roots of the Characteristic Polynomial
+#'
+#' \code{CharPolyRoots} calculates the roots of the
+#' characteristic polynomial and plots them with the unit circle
+#' transformed for the fractional model, see Johansen (2008).
+#'
+#' @param coeffs A list of coefficients for the FCVAR model.
+#' An element of the list of estimation \code{results} output from \code{FCVARestn}.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param p The number of variables in the system.
+#' @return A complex vector \code{cPolyRoots} with the roots of the characteristic polynomial.
+#' @examples
+#' opt <- EstOptions()
+#' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+#' x <- data(JNP2014)
+#' results <- FCVARestn(x, k = 2,r = 1, opt)
+#' cPolyRoots <- CharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
+#' @family FCVAR postestimation functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} to estimate the model for which to calculate the roots
+#' of the characteristic polynomial.
+#' @note The roots are calculated from the companion form of the VAR,
+#' where the roots are given as the inverse eigenvalues of the
+#' coefficient matrix.
+#' @references Johansen, S. (2008). "A representation theory for a class of
+#' vector autoregressive models for fractional processes,"
+#' Econometric Theory 24, 651-676.
+
+
+################################################################################
+# Define function to calculate the roots of the characteristic polynomial
+################################################################################
+#
+# function cPolyRoots <- CharPolyRoots(coeffs, opt, k, r, p)
+# Written by Michal Popiel and Morten Nielsen (This version 12.07.2015)
+# Based on Lee Morin & Morten Nielsen (May 31, 2013)
+#
+# DESCRIPTION: CharPolyRoots calculates the roots of the
+#     characteristic polynomial and plots them with the unit circle
+#     transformed for the fractional model, see Johansen (2008).
+#
+# input <- coeffs (Matlab structure of coefficients
+#         opt (object containing the estimation options)
+#         k (number of lags)
+#         r (number of cointegrating vectors)
+#         p (number of variables in the system)
+#
+# output <- complex vector cPolyRoots with the roots of the characteristic polynomial.
+#
+# No dependencies.
+#
+# Note: The roots are calculated from the companion form of the VAR,
+#       where the roots are given as the inverse eigenvalues of the
+#       coefficient matrix.
+#
+################################################################################
+
+CharPolyRoots <- function(coeffs, opt, k, r, p) {
+
+
+  b <- coeffs$db[2]
+
+  # First construct the coefficient matrix for the companion form of the VAR.
+  PiStar <- diag(p)
+  if (r > 0) {
+    PiStar <- PiStar + coeffs$alphaHat %*% t(coeffs$betaHat)
+  }
+
+  # print('coeffs$GammaHat = ')
+  # print(coeffs$GammaHat)
+  # print('i = ')
+  # print(i)
+  # print('p = ')
+  # print(p)
+  # print('2:k = ')
+  # print(2:k)
+
+
+  if (k > 0) {
+    Gamma1 <- coeffs$GammaHat[ , 1 : p]
+    PiStar <- PiStar + Gamma1
+    if (k > 1) {
+      for (i in 2:k) {
+
+        Gammai <- coeffs$GammaHat[ , seq(((i-1)*p + 1), i*p)]
+        GammaiMinus1 <- coeffs$GammaHat[ , seq(((i-2)*p + 1), (i-1)*p)]
+
+        PiStar <- cbind(PiStar, (Gammai - GammaiMinus1))
+
+      }
+    }
+
+    Gammak <- coeffs$GammaHat[ , seq(((k-1)*p + 1), k*p)]
+    PiStar <- cbind(PiStar, ( - Gammak ))
+  }
+
+  # print('PiStar = ')
+  # print(PiStar)
+  # print('p = ')
+  # print(p)
+  # print('k = ')
+  # print(k)
+
+  # Pad with an identity for the transition of the lagged variables.
+  if (k > 0) {
+    PiStar <- rbind(PiStar,
+                    cbind(diag(p*k),
+                          matrix(0, nrow = p*k, ncol = p )))
+  }
+
+
+  # The roots are then the inverse eigenvalues of the matrix PiStar.
+  cPolyRoots <- 1 / eigen(PiStar)$values
+  cPolyRoots <- cPolyRoots[order(-Mod(cPolyRoots))]
+
+  # Generate graph depending on the indicator plotRoots.
+  if (opt$plotRoots) {
+    # Now calculate the line for the transformed unit circle.
+    # First do the negative half.
+    unitCircle <- seq( pi, 0, by = - 0.001)
+    psi <- - (pi - unitCircle)/2
+    unitCircleX <- cos( - unitCircle)
+    unitCircleY <- sin( - unitCircle)
+    transformedUnitCircleX <- (1 - (2*cos(psi))^b*cos(b*psi))
+    transformedUnitCircleY <- (    (2*cos(psi))^b*sin(b*psi))
+    # Then do the positive half.
+    unitCircle <- seq(0, pi, by = 0.001)
+    psi <- (pi - unitCircle)/2
+    unitCircleX <- c(unitCircleX, cos(unitCircle))
+    unitCircleY <- c(unitCircleY, sin(unitCircle))
+    transformedUnitCircleX <- c(transformedUnitCircleX, 1,
+                                (1 - (2*cos(psi))^b*cos(b*psi)))
+    transformedUnitCircleY <- c(transformedUnitCircleY, 0,
+                                (    (2*cos(psi))^b*sin(b*psi)))
+
+    # Plot the unit circle and its image under the mapping
+    # along with the roots of the characterisitc polynomial.
+
+    # Determine axes based on largest roots.
+    maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
+                        transformedUnitCircleY, unitCircleY) )
+    minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
+                        transformedUnitCircleY, unitCircleY) )
+    maxXYaxis <- max( maxXYaxis, -minXYaxis )
+
+    plot(transformedUnitCircleX,
+         transformedUnitCircleY,
+         main = c('Roots of the characteristic polynomial',
+                  'with the image of the unit circle'),
+         xlab = 'Real Part of Root',
+         ylab = 'Imaginary Part of Root',
+         xlim = 2*c(-maxXYaxis, maxXYaxis),
+         ylim = 2*c(-maxXYaxis, maxXYaxis),
+         type = 'l',
+         lwd = 3,
+         col = 'red')
+    lines(unitCircleX, unitCircleY, lwd = 3, col = 'black')
+    points(Re(cPolyRoots), Im(cPolyRoots),
+           pch = 16, col = 'blue')
+
+
+
+  }
+
+
+  return(cPolyRoots)
+}
 
 
 
