@@ -301,4 +301,70 @@ Qtest <- function(x, maxlag) {
   return(Qtest_out)
 }
 
+#' Test of Restrictions on FCVAR Model
+#'
+#' \code{HypoTest} performs a likelihood ratio test of the null
+#' 	hypothesis: "model is \code{modelR}" against the alternative hypothesis:
+#' 	"model is \code{modelUNR}".
+#'
+#' @param modelUNR A list of estimation results created for the unrestricted model.
+#' @param modelR A list of estimation results created for the restricted model.
+#' @return A list object \code{LRtest} containing the test results,
+#' including the following parameters:
+#' \describe{
+#'   \item{\code{loglikUNR}}{The log-likelihood for the unrestricted model.}
+#'   \item{\code{loglikR}}{The log-likelihood for the restricted model.}
+#'   \item{\code{df}}{The degrees of freedom for the test.}
+#'   \item{\code{LRstat}}{The likelihood ratio test statistic.}
+#'   \item{\code{p_LRtest}}{The p-value for the likelihood ratio test.}
+#' }
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' modelUNR <- FCVARestn(x,k = 2,r = 1, opt)
+#' opt1 <- opt
+#' # Test a hypothesis on the cointegrating vector.
+#' opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+#' modelR <- FCVARestn(x1, k, r, opt1)
+#' Hbeta <- HypoTest(modelUNR, modelR)
+#' @family FCVAR postestimation functions
+#' @seealso The test is calculated using the results of two calls to
+#' \code{FCVARestn}, under the restricted and unrestricted models.
+#' Use \code{EstOptions} to set default estimation options for each model,
+#' then set restrictions as needed before \code{FCVARestn}.
+#'
+
+HypoTest <- function(modelUNR, modelR) {
+
+
+  # Calculate the test statistic.
+  LR_test <- 2*(modelUNR$like - modelR$like)
+
+  # Calculate the degrees of freedom by taking the difference in free
+  # parameters between the unrestricted and restricted model.
+  df <- modelUNR$fp - modelR$fp
+
+  # Calculate the P-value for the test.
+  p_LRtest <- 1 - pchisq(LR_test, df)
+
+  # Print output.
+  cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
+              modelUNR$like, modelR$like))
+  cat(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
+              df,LR_test,p_LRtest))
+
+
+  # Return the test results in a list.
+  LRtest <- list(
+    loglikUNR = modelUNR$like,
+    loglikR   = modelR$like,
+    df        = df,
+    LRstat    = LR_test,
+    pv        = p_LRtest
+  )
+
+  return(LRtest)
+}
+
+
 

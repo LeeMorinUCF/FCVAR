@@ -38,6 +38,7 @@ from the estimation results of \code{FCVARestn}.
 An alternative test is the Ljung-Box Q-test in \code{Qtest}.
 
 Other FCVAR postestimation functions: 
+\code{\link{HypoTest}()},
 \code{\link{Qtest}()},
 \code{\link{mv_wntest}()}
 }

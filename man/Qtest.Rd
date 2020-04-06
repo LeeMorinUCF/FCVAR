@@ -21,7 +21,7 @@ including the following parameters:
 }
 }
 \description{
-\code{Qtest} performs a (Multivariate) Ljung-Box Q-test for serial correlation, see
+\code{Qtest} performs a (multivariate) Ljung-Box Q-test for serial correlation, see
 }
 \note{
 The LM test in \code{LMtest} is consistent for heteroskedastic series,
@@ -41,6 +41,7 @@ from the estimation results of \code{FCVARestn}.
 An alternative test is the Breusch-Godfrey Lagrange Multiplier Test in \code{LMtest}.
 
 Other FCVAR postestimation functions: 
+\code{\link{HypoTest}()},
 \code{\link{LMtest}()},
 \code{\link{mv_wntest}()}
 }
