@@ -332,6 +332,7 @@ Qtest <- function(x, maxlag) {
 #' \code{FCVARestn}, under the restricted and unrestricted models.
 #' Use \code{EstOptions} to set default estimation options for each model,
 #' then set restrictions as needed before \code{FCVARestn}.
+#' @export
 #'
 
 HypoTest <- function(modelUNR, modelR) {
@@ -365,6 +366,124 @@ HypoTest <- function(modelUNR, modelR) {
 
   return(LRtest)
 }
+
+
+#' Forecasts with the FCVAR Model
+#'
+#' \code{FCVARforecast} calculates recursive forecasts with the FCVAR model.
+#'
+#' @paramdata A \eqn{T \times p} matrix of starting values for the simulated realizations.
+#' @param x A matrix of variables to be included in the system.
+#' The forecast will be calculated using these values as starting values.
+#' @param model A list of estimation results, just as if estimated from \code{FCVARest}.
+#' The parameters in \code{model} can also be set or adjusted by assigning new values.
+#' @param NumPeriods The number of time periods in the simulation.
+#' @return A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' model <- FCVARestn(x,k = 3,r = 1,opt)
+#' xf <- FCVARforecast(data, model, NumPeriods = 100)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} for the specification of the \code{model}.
+#' \code{FCVARforecast} calls \code{FracDiff} and \code{Lbk} to calculate the forecast.
+#' @export
+#'
+FCVARforecast <- function(x, model, NumPeriods) {
+
+
+  #--------------------------------------------------------------------------------
+  # Preliminary steps
+  #--------------------------------------------------------------------------------
+
+  # x <- x1
+  # x <- data
+  # p <- ncol(data)
+  p <- ncol(x)
+  opt <- model$options
+  cf  <- model$coeffs
+  d <- cf$db[1]
+  b <- cf$db[2]
+
+  #--------------------------------------------------------------------------------
+  # Recursively generate forecasts
+  #--------------------------------------------------------------------------------
+
+  for (i in 1:NumPeriods) {
+
+
+    # Append x with zeros to simplify calculations.
+    # x <- rbind(x, matrix(0, nrow = 1, ncol = p))
+    x <- rbind(x, rep(0, p))
+    T <- nrow(x)
+
+    # Adjust by level parameter if present.
+    if(opt$levelParam) {
+      y <- x - matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+    } else {
+      y <- x
+    }
+
+
+    # Main term, take fractional lag.
+    z <- Lbk(y, d, 1)
+
+    # Error correction term.
+    if(!is.null(cf$alphaHat)) {
+
+      # print('size(cf$PiHat) = ')
+      # print(size(cf$PiHat))
+      # print('size(FracDiff( Lbk(y, b, 1), d - b )) = ')
+      # print(size(FracDiff( Lbk(y, b, 1), d - b )))
+
+
+      z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
+      if(opt$rConstant) {
+        z <- z + FracDiff( Lbk(matrix(1, nrow = T, ncol = 1), b, 1), d - b ) %*%
+          cf$rhoHat %*% t(cf$alphaHat)
+      }
+
+    }
+
+
+    # Add unrestricted constant if present.
+    if(opt$unrConstant) {
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% t(cf$xiHat)
+    }
+
+
+    # Add lags if present.
+    if(!is.null(cf$GammaHat)) {
+      k <- size(cf$GammaHat,2)/p
+      z <- z +  FracDiff(  Lbk( y , b, k)  , d) %*% t(cf$GammaHat)
+    }
+
+
+    # Adjust by level parameter if present.
+    if(opt$levelParam) {
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+    }
+
+
+    # Append forecast to x matrix.
+    x <- rbind(x[1:(T-1),], z[T, ])
+
+  }
+
+
+  #--------------------------------------------------------------------------------
+  # Return forecasts.
+  #--------------------------------------------------------------------------------
+
+  xf <- x[(nrow(data)+1):nrow(x), ]
+
+  return(xf)
+}
+
+
+
+
 
 
 
