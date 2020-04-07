@@ -33,7 +33,11 @@ xf <- FCVARforecast(data, model, NumPeriods = 100)
 \code{FCVARforecast} calls \code{FracDiff} and \code{Lbk} to calculate the forecast.
 
 Other FCVAR auxilliary functions: 
+\code{\link{FCVARlikeMu}()},
+\code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
-\code{\link{GetParams}()}
+\code{\link{FullFCVARlike}()},
+\code{\link{GetParams}()},
+\code{\link{LikeGrid}()}
 }
 \concept{FCVAR auxilliary functions}

@@ -56,6 +56,10 @@ vector autoregressive model," Econometrica 80, 2667-2732.
 
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
-\code{\link{FCVARsimBS}()}
+\code{\link{FCVARlikeMu}()},
+\code{\link{FCVARlike}()},
+\code{\link{FCVARsimBS}()},
+\code{\link{FullFCVARlike}()},
+\code{\link{LikeGrid}()}
 }
 \concept{FCVAR auxilliary functions}

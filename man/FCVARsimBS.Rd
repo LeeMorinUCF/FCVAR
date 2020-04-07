@@ -38,6 +38,10 @@ xBS <- FCVARsimBS(data, model, NumPeriods = 100)
 
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
-\code{\link{GetParams}()}
+\code{\link{FCVARlikeMu}()},
+\code{\link{FCVARlike}()},
+\code{\link{FullFCVARlike}()},
+\code{\link{GetParams}()},
+\code{\link{LikeGrid}()}
 }
 \concept{FCVAR auxilliary functions}

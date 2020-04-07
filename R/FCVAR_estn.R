@@ -30,7 +30,7 @@
 #' @examples
 #' opt <- EstOptions()
 #' x <- data(JNP2014)
-#' FCVARestn(x,k = 3,r = 1,opt)
+#' FCVARestn(x, k = 2, r = 1, opt)
 #' @family FCVAR estimation functions
 #' @seealso \code{EstOptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to verify
