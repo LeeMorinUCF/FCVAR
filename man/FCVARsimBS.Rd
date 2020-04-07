@@ -37,6 +37,7 @@ xBS <- FCVARsimBS(data, model, NumPeriods = 100)
 \code{FCVARestn} for the specification of the \code{model}.
 
 Other FCVAR auxilliary functions: 
-\code{\link{FCVARforecast}()}
+\code{\link{FCVARforecast}()},
+\code{\link{GetParams}()}
 }
 \concept{FCVAR auxilliary functions}
