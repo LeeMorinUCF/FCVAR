@@ -143,7 +143,7 @@ usethis::use_build_ignore(c("stata", "R_dev", "MATLAB"))
 
 
 # Generate a pdf manual once the documentatino is complete.
-# devtools::build_manual()
+devtools::build_manual()
 # Hmm ... looks like a package
 # Creating pdf output from LaTeX ...
 # Saving output to 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR_0.0.0.9000.pdf' ...
@@ -169,3 +169,10 @@ usethis::use_article("FCVAR")
 # check Writing 'vignettes/FCVAR.Rmd'
 # dot Modify 'vignettes/FCVAR.Rmd'
 # check Adding '^vignettes/FCVAR\\.Rmd$' to '.Rbuildignore'
+
+# Underwhelming. Only creates a folder. 
+
+# Try to build:
+devtools::build_vignettes()
+# NULL
+# No actions that I can detect with git status.

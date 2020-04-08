@@ -41,6 +41,7 @@ Other FCVAR auxilliary functions:
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
+\code{\link{FreeParams}()},
 \code{\link{FullFCVARlike}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},

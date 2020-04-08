@@ -1444,6 +1444,96 @@ FracDiff <- function(x, d) {
 }
 
 
+#' Count the Number of Free Parameters
+#'
+#' \code{FreeParams} counts the number of free parameters based on
+#' 	the number of coefficients to estimate minus the total number of
+#' 	restrictions. When both \code{alpha} and \code{beta} are restricted,
+#' 	the rank condition is used to count the free parameters in those two variables.
+#'
+#' @param x A matrix of variables to be included in the system.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @param rankJ The rank of a conditioning matrix, as described in
+#' Boswijk & Doornik (2004, p.447), which is only used f there are
+#' restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.
+#' @return The number of free parameters \code{fp}.
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' fp <- FreeParams(x, k = 2, r = 1, opt, rankJ)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
+#' and use this in the calculation of the degrees of freedom
+#' for a variety of statistics.
+#' @references Boswijk, H. P. and J. A. Doornik (2004).
+#' "Identifying, estimating and testing restricted cointegrated systems:
+#' An overview," Statistica Neerlandica 58, 440-465.
+#' @export
+#'
+FreeParams <- function(k, r, p, opt, rankJ) {
+
+  # ---- First count the number of parameters -------- %
+  fDB <- 2 # updated by rDB below for the model d=b (1 fractional parameter)
+  fpA <- p*r # alpha
+  fpB <- p*r # beta
+  fpG <- p*p*k # Gamma
+  fpM <- p*opt$levelParam # mu
+  fpRrh <- r*opt$rConstant # restricted constant
+  fpUrh <- p*opt$unrConstant # unrestricted constant
+
+  numParams <- fDB + fpA + fpB + fpG + fpM + fpRrh + fpUrh
+
+  # ---- Next count the number of restrictions -------- %
+  rDB <- nrow(opt$R_psi)
+
+
+  if(isempty(opt$R_Beta) & isempty(opt$R_Alpha)) {
+    # If Alpha or Beta are unrestricted, only an identification restriction
+    #   is imposed
+    rB <- r*r # identification restrictions (eye(r))
+    numRest <- rDB + rB
+    # ------ Free parameters is the difference between the two ---- %
+    fp <- numParams - numRest
+  }
+  else {
+    # If there are restrictions imposed on beta or alpha, we can use the rank
+    #   condition calculated in the main estimation function to give us the
+    #   number of free parameters in alpha, beta, and the restricted constant
+    #   if it is being estimated:
+    fpAlphaBetaRhoR <- rankJ
+    fp <- fpAlphaBetaRhoR + (fDB + fpG + fpM + fpUrh) - rDB
+  }
+
+
+  return(fp)
+}
+
+
+
+
+################################################################################
+# Define function to count the number of free parameters
+################################################################################
+#
+# function [ fp ] <- FreeParams(k, r, p, opt, rankJ)
+# Written by Michal Popiel and Morten Nielsen (This version 05.22.2015)
+#
+# DESCRIPTION: This function counts the number of free parameters based on
+# 	the number of coefficients to estimate minus the total number of
+# 	restrictions. When both alpha and beta are restricted, the rank condition
+# 	is used to count the free parameters in those two variables.
+#
+# Input <- x (matrix of variables to be included in the system)
+#         k (number of lags)
+#         r (number of cointegrating vectors)
+#         opt (object containing the estimation options)
+# Output <- fp (number of free parameters)
+#
+################################################################################
 
 
 

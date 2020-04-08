@@ -1,8 +1,8 @@
 Package: FCVAR
 Title: A package for estimating the Fractionally Cointegrated VAR model
 Version: 0.0.0.9000
-Authors@R: c(
-    person(given = "Lealand",
+Authors@R: 
+  c(person(given = "Lealand",
            family = "Morin",
            role = c("aut", "cre"),
            email = "lealand.morin@ucf.edu",
