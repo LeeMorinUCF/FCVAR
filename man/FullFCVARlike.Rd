@@ -21,7 +21,7 @@ without the parameters \code{betaHat} and \code{rhoHat}.}
 generated from \code{EstOptions()}.}
 
 \item{betaHat}{A \eqn{p x r} matrix of cointegrating vectors.
-The \eqn{r x 1} vector \eqn{\betax_t} is the stationary cointegration relations.}
+The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
 
 \item{rhoHat}{A \eqn{p x 1} vector of restricted constatnts.}
 }
