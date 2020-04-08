@@ -59,6 +59,7 @@ to perform the transformation.
 
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
+\code{\link{FCVARhess}()},
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
@@ -68,6 +69,9 @@ Other FCVAR auxilliary functions:
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},
 \code{\link{Lbk}()},
-\code{\link{LikeGrid}()}
+\code{\link{LikeGrid}()},
+\code{\link{RstrctOptm_Switch}()},
+\code{\link{SEmat2vecU}()},
+\code{\link{SEvec2matU}()}
 }
 \concept{FCVAR auxilliary functions}

@@ -1237,7 +1237,7 @@ TransformData <- function(x, k, db, opt) {
 
 #' Calculate Residuals for the FCVAR Model
 #'
-#' \code{GetResiduals} calculate residuals for the FCVAR model
+#' \code{GetResiduals} calculates residuals for the FCVAR model
 #' from given parameter values.
 #'
 #' @param x A matrix of variables to be included in the system.
@@ -1457,13 +1457,13 @@ FracDiff <- function(x, d) {
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{EstOptions()}.
 #' @param rankJ The rank of a conditioning matrix, as described in
-#' Boswijk & Doornik (2004, p.447), which is only used f there are
+#' Boswijk & Doornik (2004, p.447), which is only used if there are
 #' restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.
 #' @return The number of free parameters \code{fp}.
 #' @examples
 #' opt <- EstOptions()
 #' x <- data(JNP2014)
-#' fp <- FreeParams(x, k = 2, r = 1, opt, rankJ)
+#' fp <- FreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{EstOptions} to set default estimation options.
 #' \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
@@ -1513,31 +1513,253 @@ FreeParams <- function(k, r, p, opt, rankJ) {
 }
 
 
+#' Calculate the Hessian Matrix
+#'
+#' \code{FCVARhess} calculates the Hessian matrix of the
+#' 	log-likelihood by taking numerical derivatives.
+#' 	It is used to calculate the standard errors of parameter estimates.
+#'
+#' @param x A matrix of variables to be included in the system.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param coeffs A list of coefficients of the FCVAR model.
+#' It is an element of the list \code{results} returned by \code{FCVARestn}.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return The \code{hessian} matrix  of second derivatives of the FCVAR
+#' log-likelihood function, calculated with the parameter estimates
+#' specified in \code{coeffs}.
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} to estimate the FCVAR model and calculate
+#' standard errors of the estimates.
+#' @export
+#'
+FCVARhess <- function(x, k, r, coeffs, opt) {
 
 
-################################################################################
-# Define function to count the number of free parameters
-################################################################################
-#
-# function [ fp ] <- FreeParams(k, r, p, opt, rankJ)
-# Written by Michal Popiel and Morten Nielsen (This version 05.22.2015)
-#
-# DESCRIPTION: This function counts the number of free parameters based on
-# 	the number of coefficients to estimate minus the total number of
-# 	restrictions. When both alpha and beta are restricted, the rank condition
-# 	is used to count the free parameters in those two variables.
-#
-# Input <- x (matrix of variables to be included in the system)
-#         k (number of lags)
-#         r (number of cointegrating vectors)
-#         opt (object containing the estimation options)
-# Output <- fp (number of free parameters)
-#
-################################################################################
+  # Set dimensions of matrices.
+  p <- ncol(x)
+
+  # rhoHat and betaHat are not used in the Hessian calculation.
+  rho <- coeffs$rhoHat
+  beta <- coeffs$betaHat
+
+  # Specify delta (increment for numerical derivatives).
+  delta <- 10^(-4)
+  # delta <- 10^(-8)
+
+  # Convert the parameters to vector form.
+  phi0 <- SEmat2vecU(coeffs, k, r, p, opt)
+
+  # Calculate vector of increments.
+  deltaPhi <- delta*matrix(1, nrow = nrow(phi0), ncol = ncol(phi0))
+
+  nPhi <- length(phi0)
+
+  # Initialize the Hessian matrix.
+  hessian <- matrix(0, nrow = nPhi, ncol = nPhi)
+
+  # The loops below evaluate the likelihood at second order incremental
+  #   shifts in the parameters.
+
+
+  for (i in 1:nPhi) {
+
+
+    for (j in 1:i) {
+
+
+      # positive shift in both parameters.
+      phi1 <- phi0 + deltaPhi*( (1:nPhi) == i ) + deltaPhi*( (1:nPhi) == j )
+      coeffsAdj <- SEvec2matU( phi1, k, r, p, opt )
+      # calculate likelihood
+      like1 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt )
+
+      # negative shift in first parameter, positive shift in second
+      # parameter. If same parameter, no shift.
+      phi2 <- phi0 - deltaPhi*( (1:nPhi) == i ) + deltaPhi*( (1:nPhi) == j )
+      coeffsAdj <- SEvec2matU( phi2, k, r, p, opt )
+      # calculate likelihood
+      like2 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
+
+      # positive shift in first parameter, negative shift in second
+      # parameter. If same parameter, no shift.
+      phi3 <- phi0 + deltaPhi*( (1:nPhi) == i ) - deltaPhi*( (1:nPhi) == j )
+      coeffsAdj <- SEvec2matU( phi3, k, r, p, opt )
+      # calculate likelihood
+      like3 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
+
+      # negative shift in both parameters.
+      phi4 <- phi0 - deltaPhi*( (1:nPhi) == i ) - deltaPhi*( (1:nPhi) == j )
+      coeffsAdj <- SEvec2matU( phi4, k, r, p, opt )
+      # calculate likelihood
+      like4 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
+
+      # The numerical approximation to the second derivative.
+      hessian[i,j] <- ( like1 - like2 - like3 + like4 )/4/deltaPhi[i]/deltaPhi[j]
+
+      # Hessian is symmetric.
+      hessian[j,i] <- hessian[i,j]
+
+
+    }
+
+  }
+
+  return(hessian)
+}
+
+
+#' Collect Parameters into a Vector
+#'
+#' \code{SEmat2vecU} transforms the model parameters in matrix
+#' 	form into a vector.
+#'
+#' @param coeffs A list of coefficients of the FCVAR model.
+#' It is an element of the list \code{results} returned by \code{FCVARestn}.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param p The number of variables in the system.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return A vector \code{param} of parameters in the FCVAR model.
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} to estimate the FCVAR model and calculate
+#' standard errors of the estimates.
+#' \code{SEmat2vecU} is called by \code{FCVARhess} to sort the parameters
+#' into a vector to calculate the Hessian matrix.
+#' \code{SEvec2matU} is the inverse of \code{SEmat2vecU}.
+#'
+SEmat2vecU <- function(coeffs, k, r, p , opt) {
+
+  # If restriction d=b is imposed, only adjust d.
+  if (opt$restrictDB) {
+    param <- coeffs$db[1]
+  }
+  else {
+    param <- coeffs$db
+  }
+
+
+  # Level parameter MuHat.
+  if (opt$levelParam) {
+    param <- cbind(param, matrix(coeffs$muHat, nrow = 1, ncol = p))
+  }
+
+
+  # Unrestricted constant.
+  if (opt$unrConstant) {
+    param <- cbind(param, matrix(coeffs$xiHat, nrow = 1, ncol = p))
+  }
+
+
+  # alphaHat
+  if (r > 0) {
+    param <- cbind(param, matrix( coeffs$alphaHat, nrow = 1, ncol = p*r ))
+  }
+
+
+  # GammaHat
+  if (k > 0) {
+    param <- cbind(param, matrix( coeffs$GammaHat, nrow = 1, ncol = p*p*k ))
+  }
+
+
+  return(param)
+}
 
 
 
+#' Extract Parameters from a Vector
+#'
+#' \code{SEvec2matU} transforms the vectorized model parameters
+#' 	into matrices.
+#'
+#' @param param A vector of parameters in the FCVAR model.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param p The number of variables in the system.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return \code{coeffs}, a list of coefficients of the FCVAR model.
+#' It has the same form as an element of the list \code{results}
+#' returned by \code{FCVARestn}.
+#'
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+#' coeffs <- SEvec2matU(param, k = 2, r = 1, p = 3, opt)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} to estimate the FCVAR model and calculate
+#' standard errors of the estimates.
+#' \code{SEmat2vecU} is called by \code{FCVARhess} to convert the parameters
+#' from a vector into the coefficients after calculating the Hessian matrix.
+#' \code{SEmat2vecU} is the inverse of \code{SEvec2matU}.
+#'
+SEvec2matU <- function(param, k, r, p, opt ) {
 
+  # Create list for output.
+  coeffs <- list(
+    db = NULL,
+    muHat = NULL,
+    xiHat = NULL,
+    alphaHat = NULL,
+    GammaHat = NULL
+  )
+
+  if (opt$restrictDB) {
+    coeffs$db <- matrix(c(param[1], param[1]), nrow = 1, ncol = 2)  # store d,b
+    param <- param[2:length(param)]				# drop d,b from param
+  } else {
+    coeffs$db <- param[1:2]
+    param <- param[3:length(param)]
+  }
+
+
+  if (opt$levelParam) {
+    coeffs$muHat <- param[1:p]
+    param <- param[(p+1):length(param)]
+  }
+
+
+  if (opt$unrConstant) {
+    coeffs$xiHat <- matrix(param[1:p], nrow = p, ncol = 1)
+    param <- param[(p+1):length(param)]
+  }
+
+
+  if (r > 0) {
+    coeffs$alphaHat <- matrix( param[1:p*r], nrow = p, ncol = r)
+    param <- param[(p*r+1):length(param)]
+  } else {
+    coeffs$alphaHat <- NULL
+  }
+
+
+  if (k > 0) {
+    coeffs$GammaHat <- matrix( param[1 : length(param)], nrow = p, ncol = p*k)
+  } else {
+    coeffs$GammaHat <- NULL
+  }
+
+
+  return(coeffs)
+}
 
 
 
@@ -1546,37 +1768,325 @@ FreeParams <- function(k, r, p, opt, rankJ) {
 #'
 #' \code{RstrctOptm_Switch} calculates restricted estimates of
 #' cointegration parameters and error variance in the FCVAR model.
-#' It uses a a switching algorithm to calculate the optimum.
+#' To calculate the optimum, it uses the switching algorithm
+#' of Boswijk and Doornik (2004, page 455) to optimize over free parameters
+#' \eqn{\psi} and \eqn{\phi} directly, combined with the line search proposed by
+#' Doornik (2016, working paper). We translate between  \eqn{(\psi, \phi)} and
+#' \eqn{(\alpha, \beta)} using the relation of \eqn{R_\alpha vec(\alpha) = 0} and
+#' \eqn{A\psi = vec(\alpha')}, and \eqn{R_\beta vec(\beta) = r_\beta} and
+#' \eqn{H\phi + h = vec(\beta)}. Note the transposes.
 #'
+#' @param beta0 The unrestricted estimate of \code{beta},
+#' a \eqn{p x r} matrix of cointegrating vectors
+#' returned from \code{FCVARestn} or \code{GetParams}.
+#' @param S00 A matrix of product moments,
+#' calculated from the output of \code{TransformData} in \code{GetParams}.
+#' @param S01 A matrix of product moments,
+#' calculated from the output of \code{TransformData} in \code{GetParams}.
+#' @param S11 A matrix of product moments,
+#' calculated from the output of \code{TransformData} in \code{GetParams}.
+#' @param T The number of observations in the sample.
+#' @param p The number of variables in the system.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
 #'
+#'#' @return A list object \code{switched_mats} containing the restricted estimates,
+#' including the following parameters:
+#' \describe{
+#'   \item{\code{betaStar}}{A \eqn{p x r} matrix of cointegrating vectors.
+#'       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
+#'   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
+#'   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
+#' }
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,
+#' which in turn calls \code{RstrctOptm_Switch} if there are restrictions
+#' imposed on \code{alpha} or \code{beta}.
+#' @references Boswijk, H. P. and J. A. Doornik (2004).
+#' "Identifying, estimating and testing restricted cointegrated systems:
+#' An overview," Statistica Neerlandica 58, 440-465.
+#' @references Doornik, J. A. (2018).
+#' "Accelerated estimation of switching algorithms: the cointegrated
+#' VAR model and other applications,"
+#' Forthcoming in Scandinavian Journal of Statistics.
+#'
+RstrctOptm_Switch <- function(beta0, S00, S01, S11, T, p, opt) {
 
 
-################################################################################
-# Define function to calculate restricted estimates with a switching algorithm.
-################################################################################
-#
-# function [betaStar, alphaHat, OmegaHat]
-#                   <- RstrctOptm_Switch(beta0, S00, S01, S11, T, p, opt)
-# Written by Michal Popiel and Morten Nielsen (This version 03.29.2016)
-#
-# DESCRIPTION: This function is imposes the switching algorithm of Boswijk
-#   and Doornik (2004, page 455) to optimize over free parameters psi
-#   and phi directly, combined with the line search proposed by
-#	Doornik (2016, working paper). We translate between  (psi, phi) and
-#	(alpha, beta) using the relation of R_Alpha*vec(alpha) <- 0 and
-#	A*psi <- vec(alpha'), and R_Beta*vec(beta) <- r_beta and
-#	H*phi+h <- vec(beta). Note the transposes.
-#
-# Input <- beta0 (unrestricted estimate of beta)
-#         S00, S01, S11 (product moments)
-#         T (number of observations)
-#         p (number of variables)
-#         opt (object containing the estimation options)
-# Output <- betaStar (estimate of betaStar)
-#          alphaHat (estimate of alpha)
-#          OmegaHat (estimate of Omega)
-#
-################################################################################
+  r  <- ncol(beta0)
+  p1 <- p + opt$rConstant
+
+  # Restrictions on beta.
+  if(is.null(opt$R_Beta)) {
+    H <- diag(p1*r)
+    h <- matrix(0, nrow = p1*r, ncol = 1)
+  } else {
+    H <- null(opt$R_Beta)
+    h <- t(opt$R_Beta) %*%
+      solve(opt$R_Beta %*% t(opt$R_Beta)) %*% opt$r_Beta
+  }
+
+
+  # Restrictions on alpha.
+  #   We use the commutation matrix K_pr to transform vec(A) into vec(A'),
+  #   see Magnus & Neudecker (1988, p. 47, eqn (1)).
+  Ip  <- diag(p)
+  Kpr <- matrix(kron(Ip, diag(r)), nrow = p*r, ncol = p*r)
+  if(is.null(opt$R_Alpha)) {
+    A <- Kpr %*% diag(p*r)
+  } else {
+    A <- null(opt$R_Alpha %*% solve(Kpr))
+  }
+
+
+  # Least squares estimator of Pi, used in calculations below.
+  PiLS <- t((S01 %*% solve(S11)))
+  vecPiLS <- matrix(PiLS, nrow = length(PiLS), ncol = 1)
+
+
+
+
+
+  # Starting values for switching algorithm.
+  betaStar <- beta0
+  alphaHat <-  S01 %*% beta0 %*% solve(t(beta0) %*% S11 %*% beta0)
+  OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) -
+    alphaHat %*% t(betaStar) %*% t(S01) +
+    alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+
+  # Algorithm specifications.
+  iters   <- opt$UncFminOptions$MaxFunEvals
+  Tol     <- opt$UncFminOptions$TolFun
+  conv    <- 0
+  i       <- 0
+
+  # Tolerance for entering the line search epsilon_s in Doornik's paper.
+  TolSearch <- 0.01
+
+  # Line search parameters.
+  lambda <- c(1, 1.2, 2, 4, 8)
+  nS <- length(lambda)
+  likeSearch <- matrix(NA, nrow = nS, ncol = 1)
+  OmegaSearch <- array(0, dim = c(p, p,nS))
+
+  # print('vecPiLS = ')
+  # print(vecPiLS)
+  # print('alphaHat = ')
+  # print(alphaHat)
+  # print('kron(alphaHat, diag(p1)) = ')
+  # print(kron(alphaHat, diag(p1)))
+  # print('h = ')
+  # print(h)
+  # print('kron(alphaHat, diag(p1)) %*% h = ')
+  # print(kron(alphaHat, diag(p1)) %*% h)
+  #
+
+
+
+  # Get candidate values for entering the switching algorithm.
+  vecPhi1 <- solve(t(H) %*%
+                     kron(t(alphaHat) %*% solve(OmegaHat) %*% alphaHat, S11) %*%
+                     H) %*%
+    t(H) %*% (kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*%
+    (vecPiLS - kron(alphaHat, diag(p1)) %*% h)
+
+  # Translate vecPhi to betaStar.
+  vecB <- H %*% vecPhi1 + h
+  betaStar <- matrix(vecB, nrow = p1, ncol = r)
+
+  # Candidate value of vecPsi.
+  vecPsi1 <- solve(t(A) %*%
+                     kron(solve(OmegaHat), t(betaStar) %*% S11 %*% betaStar) %*%
+                     A) %*%
+    t(A) %*% (kron(solve(OmegaHat), t(betaStar) %*% S11)) %*% vecPiLS
+
+  # Translate vecPsi to alphaHat.
+  vecA <- A %*% vecPsi1 # This is vec(alpha')
+  alphaHat <- matrix(solve(Kpr) %*% vecA, nrow = p, ncol = r)
+
+  # Candidate values of piHat and OmegaHat.
+  piHat1 <- alphaHat %*% t(betaStar)
+  OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) -
+    alphaHat %*% t(betaStar) %*% t(S01) +
+    alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+
+
+
+
+
+  # Calculate the likelihood.
+  like1 <- - log(det(OmegaHat))
+
+  while(i<=iters && !conv) {
+
+    # Update values for convergence criteria.
+    piHat0  <- piHat1
+    like0   <- like1
+
+    if(i == 1) {
+      # Initialize candidate values.
+      vecPhi0_c <- vecPhi1
+      vecPsi0_c <- vecPsi1
+    }
+
+
+    #  ---- alpha update step ---- %
+    # Update vecPsi.
+    vecPsi1 <- solve(t(A) %*% kron(solve(OmegaHat), t(betaStar) %*%
+                                     S11 %*% betaStar) %*% A) %*%
+      t(A) %*% (kron(solve(OmegaHat), t(betaStar) %*% S11)) %*% vecPiLS
+
+    # Translate vecPsi to alphaHat.
+    vecA <- A %*% vecPsi1 # This is vec(alpha')
+    alphaHat <- matrix(solve(Kpr) %*% vecA, nrow = p, ncol = r)
+
+    #  ---- omega update step ---- %
+    # Update OmegaHat.
+    OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) -
+      alphaHat %*% t(betaStar) %*% t(S01) +
+      alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+
+    #  ---- beta update step ---- %
+
+    # Update vecPhi.
+    vecPhi1 <- solve(t(H) %*%
+                       kron(t(alphaHat) %*% inv(OmegaHat) %*% alphaHat, S11) %*%
+                       H) %*%
+      t(H) %*% (kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*%
+      (vecPiLS - kron(alphaHat, diag(p1)) %*% h)
+
+    # Translate vecPhi to betaStar.
+    vecB <- H %*% vecPhi1 + h
+    betaStar <- matrix(vecB, nrow = p1, ncol = r)
+
+    #  ---- pi and likelihood update  ---- %
+    # Update estimate of piHat.
+    piHat1 <- alphaHat %*% t(betaStar)
+
+    # Update OmegaHat with new alpha and new beta.
+    OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) -
+      alphaHat %*% t(betaStar) %*% t(S01) +
+      alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+
+
+
+
+    # Calculate the likelihood.
+    like1 <- - log(det(OmegaHat))
+
+    if(i > 0) {
+
+
+      # Calculate relative change in likelihood
+      likeChange <- (like1 - like0) / (1 + abs(like0))
+
+
+
+      # Check relative change and enter line search if below tolerance.
+      if(likeChange < TolSearch && opt$LineSearch) {
+
+
+        # Calculate changes in parameters.
+        deltaPhi <- vecPhi1 - vecPhi0_c
+        deltaPsi <- vecPsi1 - vecPsi0_c
+
+        # Initialize parameter bins
+        vecPhi2 <- matrix(NA, nrow = length(vecPhi1), ncol = nS)
+        vecPsi2 <- matrix(NA, nrow = length(vecPsi1), ncol = nS)
+
+        # Values already calculated for lambda = 1.
+        vecPhi2[ ,1]       <- vecPhi1
+        vecPsi2[ ,1]       <- vecPsi1
+        likeSearch[1]      <- like1
+        OmegaSearch[ , ,1] <- OmegaHat
+
+
+
+        for (iL in 2:nS) {
+
+          # New candidates for parameters based on line search.
+          vecPhi2[ , iL] <- vecPhi0_c + lambda[iL]*deltaPhi
+          vecPsi2[ , iL] <- vecPsi0_c + lambda[iL]*deltaPsi
+
+          # Translate to alpha and beta
+          vecA <- A %*% vecPsi2[ , iL]
+          alphaHat <- matrix(solve(Kpr) %*% vecA, nrow = p, ncol = r)
+          vecB <- H %*% vecPhi2[ , iL] + h
+          betaStar <- matrix(vecB, nrow = p1, ncol = r)
+
+          # Calculate and store OmegaHat
+          OmegaSearch[ , , iL] <- S00 -
+            S01 %*% betaStar %*% t(alphaHat) -
+
+            alphaHat %*% t(betaStar) %*% t(S01) +
+            alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
+
+          # Calculate and store log-likelihood
+          likeSearch[iL] <- - log(det(OmegaSearch[ , , iL]))
+
+        }
+
+
+
+
+        # Update max likelihood and OmegaHat based on line search.
+        # [ iSearch ] <- find(likeSearch == max(max(likeSearch)))
+        iSearch <- which(likeSearch == max(likeSearch), arr.ind = TRUE)
+
+        # If there are identical likelihoods, choose smallest
+        # increment
+        iSearch  <- min(iSearch)
+        like1    <- likeSearch[iSearch]
+        OmegaHat <- OmegaSearch[ , , iSearch]
+        # Save old candidate parameter vectors for next iteration.
+        vecPhi0_c  <- vecPhi1
+        vecPsi0_c  <- vecPsi1
+
+        # Update new candidate parameter vectors.
+        vecPhi1  <- vecPhi2[ ,iSearch]
+        vecPsi1  <- vecPsi2[ ,iSearch]
+        # Update coefficients.
+        vecA     <- A %*% vecPsi1
+        alphaHat <- matrix(solve(Kpr) %*% vecA, nrow = p, ncol = r)
+        vecB     <- H %*% vecPhi1 + h
+        betaStar <- matrix(vecB, nrow = p1, ncol = r)
+        # Update estimate of piHat.
+        piHat1 <- alphaHat %*% t(betaStar)
+
+
+      }
+
+
+      # Calculate relative change in likelihood
+      likeChange <- (like1 - like0) / (1 + abs(like0))
+
+      # Calculate relative change in coefficients.
+      piChange   <- max(abs(piHat1 - piHat0) / (1 + abs(piHat0)) )
+
+      # Check convergence.
+      if(abs(likeChange) <= Tol && piChange <= sqrt(Tol)) {
+        conv <- 1
+      }
+
+
+    }
+
+    i <- i+1
+  }
+
+
+
+
+  # Return a list of parameters from the switching algorithm.
+  switched_mats <- list(
+    betaStar = betaStar,
+    alphaHat = alphaHat,
+    OmegaHat = OmegaHat
+  )
+
+  return(switched_mats)
+}
 
 
 

@@ -15,7 +15,7 @@ FreeParams(k, r, p, opt, rankJ)
 generated from \code{EstOptions()}.}
 
 \item{rankJ}{The rank of a conditioning matrix, as described in
-Boswijk & Doornik (2004, p.447), which is only used f there are
+Boswijk & Doornik (2004, p.447), which is only used if there are
 restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.}
 
 \item{x}{A matrix of variables to be included in the system.}
@@ -32,7 +32,7 @@ The number of free parameters \code{fp}.
 \examples{
 opt <- EstOptions()
 x <- data(JNP2014)
-fp <- FreeParams(x, k = 2, r = 1, opt, rankJ)
+fp <- FreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
 }
 \references{
 Boswijk, H. P. and J. A. Doornik (2004).
@@ -47,6 +47,7 @@ for a variety of statistics.
 
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
+\code{\link{FCVARhess}()},
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
@@ -56,6 +57,9 @@ Other FCVAR auxilliary functions:
 \code{\link{GetResiduals}()},
 \code{\link{Lbk}()},
 \code{\link{LikeGrid}()},
+\code{\link{RstrctOptm_Switch}()},
+\code{\link{SEmat2vecU}()},
+\code{\link{SEvec2matU}()},
 \code{\link{TransformData}()}
 }
 \concept{FCVAR auxilliary functions}
