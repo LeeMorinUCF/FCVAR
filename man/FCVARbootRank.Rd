@@ -57,8 +57,8 @@ with non-stationary volatility," Journal of Econometrics 158, 7-24.
 \code{FCVARestn} for the estimates from a rectricted and unrestricted model within a hypothesis test.
 
 Other FCVAR specification functions: 
+\code{\link{GetPvalues}()},
 \code{\link{LagSelect}()},
-\code{\link{RankTests}()},
-\code{\link{get_pvalues}()}
+\code{\link{RankTests}()}
 }
 \concept{FCVAR specification functions}

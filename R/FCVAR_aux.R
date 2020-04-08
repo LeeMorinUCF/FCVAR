@@ -1446,7 +1446,7 @@ FracDiff <- function(x, d) {
 
 #' Count the Number of Free Parameters
 #'
-#' \code{FreeParams} counts the number of free parameters based on
+#' \code{GetFreeParams} counts the number of free parameters based on
 #' 	the number of coefficients to estimate minus the total number of
 #' 	restrictions. When both \code{alpha} and \code{beta} are restricted,
 #' 	the rank condition is used to count the free parameters in those two variables.
@@ -1463,7 +1463,7 @@ FracDiff <- function(x, d) {
 #' @examples
 #' opt <- FCVARoptions()
 #' x <- data(JNP2014)
-#' fp <- FreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
+#' fp <- GetFreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
@@ -1474,7 +1474,7 @@ FracDiff <- function(x, d) {
 #' An overview," Statistica Neerlandica 58, 440-465.
 #' @export
 #'
-FreeParams <- function(k, r, p, opt, rankJ) {
+GetFreeParams <- function(k, r, p, opt, rankJ) {
 
   # ---- First count the number of parameters -------- %
   fDB <- 2 # updated by rDB below for the model d=b (1 fractional parameter)

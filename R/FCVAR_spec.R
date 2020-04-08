@@ -265,7 +265,7 @@ RankTests <- function(x, k, opt) {
       (opt$rConstant  & !opt$unrConstant & opt$restrictDB) |
       (opt$levelParam & !opt$unrConstant & opt$restrictDB) )  ) {
 
-      p_val <- get_pvalues(p-r, bHat[r+1], consT, LRstat[r+1], opt)
+      p_val <- GetPvalues(p-r, bHat[r+1], consT, LRstat[r+1], opt)
 
     }
 
@@ -367,7 +367,7 @@ RankTests <- function(x, k, opt) {
 #' @return A scalar numeric \code{pv}, the p-value for the likelihood ratio test.
 #' @examples
 #' opt <- FCVARoptions()
-#' get_pvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
+#' GetPvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' @export
@@ -379,7 +379,7 @@ RankTests <- function(x, k, opt) {
 #' "Likelihood inference for a fractionally cointegrated vector autore-gressive model,"
 #' Econometrica 80, pp.2667-2732.
 #'
-get_pvalues <- function(q, b, consT, testStat, opt) {
+GetPvalues <- function(q, b, consT, testStat, opt) {
 
   print('b = ')
   print(b)

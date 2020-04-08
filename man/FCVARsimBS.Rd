@@ -43,7 +43,7 @@ Other FCVAR auxilliary functions:
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
 \code{\link{FracDiff}()},
-\code{\link{FreeParams}()},
+\code{\link{GetFreeParams}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},
 \code{\link{Lbk}()},

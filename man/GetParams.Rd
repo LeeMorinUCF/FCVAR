@@ -62,7 +62,7 @@ Other FCVAR auxilliary functions:
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FracDiff}()},
-\code{\link{FreeParams}()},
+\code{\link{GetFreeParams}()},
 \code{\link{GetResiduals}()},
 \code{\link{Lbk}()},
 \code{\link{LikeGrid}()},

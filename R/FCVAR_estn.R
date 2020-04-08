@@ -508,7 +508,7 @@ FCVARestn <- function(x,k,r,opt) {
 
   # Compute the number of free parameters in addition to those in alpha
   #   and beta.
-  fp <- FreeParams(k, r, p, opt, rankJ)
+  fp <- GetFreeParams(k, r, p, opt, rankJ)
   # Store the result.
   results$fp <- fp
 
