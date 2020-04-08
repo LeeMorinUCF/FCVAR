@@ -166,7 +166,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 #'   \item{\code{db}}{The orders of fractional integration (taken directly from the input).}
 #'   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
 #'   \item{\code{betaHat}}{A \eqn{p x r} matrix of cointegrating vectors.
-#'       The \eqn{r x 1} vector \eqn{\betax_t} is the stationary cointegration relations.}
+#'       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
 #'   \item{\code{rhoHat}}{A \eqn{p x 1} vector of restricted constatnts.}
 #'   \item{\code{piHat}}{A \eqn{p x p} matrix \eqn{\Pi = \alpha \beta'} of long-run levels.}
 #'   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
@@ -1098,7 +1098,7 @@ FCVARlike <- function(params, x, k, r, opt) {
 #' It is an element of the list \code{results} returned by \code{FCVARestn},
 #' without the parameters \code{betaHat} and \code{rhoHat}.
 #' @param betaHat A \eqn{p x r} matrix of cointegrating vectors.
-#' The \eqn{r x 1} vector \eqn{\betax_t} is the stationary cointegration relations.
+#' The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.
 #' @param rhoHat A \eqn{p x 1} vector of restricted constatnts.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{EstOptions()}.
