@@ -57,7 +57,11 @@ Other FCVAR auxilliary functions:
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
+\code{\link{FracDiff}()},
 \code{\link{FullFCVARlike}()},
-\code{\link{GetParams}()}
+\code{\link{GetParams}()},
+\code{\link{GetResiduals}()},
+\code{\link{Lbk}()},
+\code{\link{TransformData}()}
 }
 \concept{FCVAR auxilliary functions}

@@ -1137,8 +1137,356 @@ FullFCVARlike <- function(x, k, r, coeffs, beta, rho, opt) {
 }
 
 
+#' Transform Data for Regression
+#'
+#' \code{TransformData} transforms the raw data by fractional differencing.
+#' The output is in the format required for regression and
+#' reduced rank regression.
+#'
+#' @param x A matrix of variables to be included in the system.
+#' @param k The number of lags in the system.
+#' @param db The orders of fractional integration.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return A list object \code{Z_array} containing the transformed data,
+#' including the following parameters:
+#' \describe{
+#'   \item{\code{Z0}}{A matrix of data calculated by fractionally differencing
+#'   \code{x} at differencing order \code{d}.}
+#'   \item{\code{Z1}}{The matrix \code{x} (augmented with a vector of ones
+#'   if the model includes a restricted constant term), which is then lagged and stacked
+#'   and fractionally differenced (with order \eqn{d-b}).}
+#'   \item{\code{Z2}}{The matrix \code{x} lagged and stacked
+#'   and fractionally differenced (with order \code{d}).}
+#'   \item{\code{Z3}}{A column of ones if model includes an
+#'   unrestricted constant term, otherwise \code{NULL}.}
+#' }
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' Z_array <- TransformData(x, k = 2, db = c(1, 1), opt)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
+#' to estimate the FCVAR model.
+#' \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
+#' to perform the transformation.
+#' @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
+#' "Likelihood inference for a fractionally cointegrated
+#' vector autoregressive model," Econometrica 80, 2667-2732.
+#' @references Johansen, S. (1995). "Likelihood-Based Inference
+#' in Cointegrated Vector Autoregressive Models,"
+#' New York: Oxford University Press.
+#' @export
+#'
+TransformData <- function(x, k, db, opt) {
 
 
+  # print(summary(x))
+
+  # Number of initial values and sample size.
+  N <- opt$N
+  T <- nrow(x) - N
+
+  # Extract parameters from input.
+  d <- db[1]
+  b <- db[2]
+
+  # Transform data as required.
+  Z0 <- FracDiff(x, d)
+
+  Z1 <- x
+  # Add a column with ones if model includes a restricted constant term.
+  if(opt$rConstant) {
+    Z1 <- cbind(x, matrix(1, nrow = N+T, ncol = 1))
+  }
+
+  Z1 <- FracDiff(  Lbk( Z1 , b, 1)  ,  d - b )
+
+  Z2 <- FracDiff(  Lbk( x , b, k)  , d)
+
+  # Z3 contains the unrestricted deterministics
+  Z3 <- NULL
+  # # Add a column with ones if model includes a unrestricted constant term.
+  if(opt$unrConstant) {
+    Z3 <- matrix(1, nrow = T, ncol = 1)
+  }
+
+
+  # Trim off initial values.
+  Z0 <- Z0[(N+1):nrow(Z0), ]
+  Z1 <- Z1[(N+1):nrow(Z1), ]
+  if(k > 0) {
+    Z2 <- Z2[(N+1):nrow(Z2), ]
+  }
+
+
+
+
+  # Return all arrays together as a list.
+  Z_array <- list(
+    Z0 = Z0,
+    Z1 = Z1,
+    Z2 = Z2,
+    Z3 = Z3
+  )
+
+  return(Z_array)
+}
+
+
+#' Calculate Residuals for the FCVAR Model
+#'
+#' \code{GetResiduals} calculate residuals for the FCVAR model
+#' from given parameter values.
+#'
+#' @param x A matrix of variables to be included in the system.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param coeffs A list of coefficients of the FCVAR model.
+#' It is an element of the list \code{results} returned by \code{FCVARestn}.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{EstOptions()}.
+#' @return A matrix \code{epsilon} of residuals from FCVAR model estimation
+#' calculated with the parameter estimates specified in \code{coeffs}.
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} to estimate the FCVAR model.
+#' @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
+#' "Likelihood inference for a fractionally cointegrated
+#' vector autoregressive model," Econometrica 80, 2667-2732.
+#' @export
+#'
+GetResiduals <- function(x, k, r, coeffs, opt) {
+
+
+  # If level parameter is included, the data must be shifted before
+  #   calculating the residuals:
+  if (opt$levelParam) {
+    T <- nrow(x)
+    y <- x - matrix(1, nrow = T, ncol = 1) %*% coeffs$muHat
+  } else {
+    y <- x
+  }
+
+  #--------------------------------------------------------------------------------
+  # Transform data
+  #--------------------------------------------------------------------------------
+  # [ Z0, Z1, Z2, Z3 ] <- TransformData(y, k, coeffs$db, opt)
+  Z_array <- TransformData(y, k, coeffs$db, opt)
+  Z0 <- Z_array$Z0
+  Z1 <- Z_array$Z1
+  Z2 <- Z_array$Z2
+  Z3 <- Z_array$Z3
+
+  #--------------------------------------------------------------------------------
+  # Calculate residuals
+  #--------------------------------------------------------------------------------
+  epsilon <- Z0
+
+  if (r > 0) {
+    epsilon <- epsilon -
+      Z1 %*% rbind(coeffs$betaHat, coeffs$rhoHat) %*% t(coeffs$alphaHat)
+  }
+
+
+  if (k > 0) {
+    epsilon <- epsilon - Z2 %*% t(coeffs$GammaHat)
+  }
+
+
+  if (opt$unrConstant) {
+    epsilon <- epsilon - Z3 %*% t(coeffs$xiHat)
+  }
+
+
+
+  return(epsilon)
+}
+
+
+#' Calculate Lag Polynomial in the Fractional Lag Operator
+#'
+#' \code{Lbk} calculates a lag polynomial in the fractional lag operator.
+#'
+#' @param x A matrix of variables to be included in the system.
+#' @param b The order of fractional differencing.
+#' @param k The number of lags in the system.
+#' @return A matrix \code{Lbkx} of the form \eqn{[ Lb^1 x, Lb^2 x, ..., Lb^k x]}
+#' where \eqn{Lb = 1 - (1-L)^b}.
+#' The output matrix has the same number of rows as \code{x}
+#' but \code{k} times as many columns.
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' Lbkx <- Lbk(x, b = 0.5, k = 2)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
+#' to estimate the FCVAR model.
+#' \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
+#' to perform the transformation.
+#' @export
+#'
+Lbk <- function(x, b, k) {
+
+  # print('summary(x) = ')
+  # print(summary(x))
+  # print('b = ')
+  # print(b)
+  # print('k = ')
+  # print(k)
+
+  p <- ncol(x)
+
+  # Initialize output matrix.
+  Lbkx <- NULL
+
+  # For i <- 1, set first column of Lbkx <- Lb^1 x.
+  if (k > 0) {
+    bx <- FracDiff(x, b)
+    Lbkx <- x - bx
+  }
+
+
+  if (k > 1) {
+    for (i in 2:k ) {
+      Lbkx <- cbind(Lbkx,
+                    ( Lbkx[ , (p*(i-2)+1) : ncol(Lbkx)] -
+                        FracDiff(Lbkx[ , (p*(i-2)+1) : ncol(Lbkx)], b) ))
+
+    }
+
+  }
+
+
+
+  return(Lbkx)
+}
+
+
+
+#' Fast Fractional Differencing
+#'
+#' \code{FracDiff} is a fractional differencing procedure based on the
+#' 	fast fractional difference algorithm of Jensen & Nielsen (2014).
+#'
+#' @param x A matrix of variables to be included in the system.
+#' @param d The order of fractional differencing.
+#' @return A vector or matrix \code{dx} equal to \eqn{(1-L)^d x}
+#' of the same dimensions as x.
+#' @examples
+#' opt <- EstOptions()
+#' x <- data(JNP2014)
+#' dx = FracDiff(x, d = 0.5)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{EstOptions} to set default estimation options.
+#' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
+#' to estimate the FCVAR model.
+#' \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
+#' to perform the transformation.
+#' @references Jensen, A. N. and M. \enc{Ø}{O}. Nielsen (2014).
+#' "A fast fractional difference algorithm,"
+#' Journal of Time Series Analysis 35, 428-436.
+#' @export
+#'
+FracDiff <- function(x, d) {
+
+
+  # print(summary(x))
+
+  if(is.null(x)) {
+    dx <- NULL
+  } else {
+
+
+    # T <- nrow(x)
+    p <- ncol(x)
+
+
+
+    iT <- nrow(x)
+    np2 <- nextn(2*iT - 1, 2)
+
+    k <- 1:(iT-1)
+    b <- c(1, cumprod((k - d - 1)/k))
+
+
+    # print('np2 = ')
+    # print(np2)
+    # print('iT = ')
+    # print(iT)
+    #
+    # print('c(...) = ')
+    # print(summary(c(x, rep(0, np2 - iT))))
+
+    dx <- matrix(0, nrow = iT, ncol = p)
+
+    for (i in 1:p) {
+
+
+      dxi <- fft(fft(c(b, rep(0, np2 - iT))) * fft(c(x[, i], rep(0, np2 - iT))), inverse = T) / np2
+
+      dx[, i] <- Re(dxi[1:iT])
+
+    }
+
+
+
+  }
+
+  return(dx)
+}
+
+
+
+
+
+
+
+
+
+
+#' Calculate Restricted Estimates for the FCVAR Model
+#'
+#' \code{RstrctOptm_Switch} calculates restricted estimates of
+#' cointegration parameters and error variance in the FCVAR model.
+#' It uses a a switching algorithm to calculate the optimum.
+#'
+#'
+
+
+################################################################################
+# Define function to calculate restricted estimates with a switching algorithm.
+################################################################################
+#
+# function [betaStar, alphaHat, OmegaHat]
+#                   <- RstrctOptm_Switch(beta0, S00, S01, S11, T, p, opt)
+# Written by Michal Popiel and Morten Nielsen (This version 03.29.2016)
+#
+# DESCRIPTION: This function is imposes the switching algorithm of Boswijk
+#   and Doornik (2004, page 455) to optimize over free parameters psi
+#   and phi directly, combined with the line search proposed by
+#	Doornik (2016, working paper). We translate between  (psi, phi) and
+#	(alpha, beta) using the relation of R_Alpha*vec(alpha) <- 0 and
+#	A*psi <- vec(alpha'), and R_Beta*vec(beta) <- r_beta and
+#	H*phi+h <- vec(beta). Note the transposes.
+#
+# Input <- beta0 (unrestricted estimate of beta)
+#         S00, S01, S11 (product moments)
+#         T (number of observations)
+#         p (number of variables)
+#         opt (object containing the estimation options)
+# Output <- betaStar (estimate of betaStar)
+#          alphaHat (estimate of alpha)
+#          OmegaHat (estimate of Omega)
+#
+################################################################################
 
 
 
