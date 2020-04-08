@@ -38,8 +38,8 @@ from the estimation results of \code{FCVARestn}.
 An alternative test is the Ljung-Box Q-test in \code{Qtest}.
 
 Other FCVAR postestimation functions: 
-\code{\link{CharPolyRoots}()},
 \code{\link{FCVARboot}()},
+\code{\link{GetCharPolyRoots}()},
 \code{\link{HypoTest}()},
 \code{\link{Qtest}()},
 \code{\link{mv_wntest}()}

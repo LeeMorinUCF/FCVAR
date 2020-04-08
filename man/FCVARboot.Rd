@@ -61,7 +61,7 @@ vector autoregressions," Journal of Econometrics 192, 64-85.
 \code{FCVARestn} is called to estimate the models under the null and alternative hypotheses.
 
 Other FCVAR postestimation functions: 
-\code{\link{CharPolyRoots}()},
+\code{\link{GetCharPolyRoots}()},
 \code{\link{HypoTest}()},
 \code{\link{LMtest}()},
 \code{\link{Qtest}()},

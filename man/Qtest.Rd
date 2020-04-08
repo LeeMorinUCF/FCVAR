@@ -41,8 +41,8 @@ from the estimation results of \code{FCVARestn}.
 An alternative test is the Breusch-Godfrey Lagrange Multiplier Test in \code{LMtest}.
 
 Other FCVAR postestimation functions: 
-\code{\link{CharPolyRoots}()},
 \code{\link{FCVARboot}()},
+\code{\link{GetCharPolyRoots}()},
 \code{\link{HypoTest}()},
 \code{\link{LMtest}()},
 \code{\link{mv_wntest}()}

@@ -699,7 +699,7 @@ FCVARestn <- function(x,k,r,opt) {
   # OBTAIN ROOTS OF CHARACTERISTIC POLYNOMIAL
   #--------------------------------------------------------------------------------
 
-  cPolyRoots <- CharPolyRoots(results$coeffs, opt, k, r, p)
+  cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k, r, p)
   results$cPolyRoots <- cPolyRoots
 
 

@@ -51,8 +51,8 @@ mv_wntest(x = cumsum(rnorm(100)), maxlag = 10, printResults = 1)
 \code{LagSelect} uses this test as part of the lag order selection process.
 
 Other FCVAR postestimation functions: 
-\code{\link{CharPolyRoots}()},
 \code{\link{FCVARboot}()},
+\code{\link{GetCharPolyRoots}()},
 \code{\link{HypoTest}()},
 \code{\link{LMtest}()},
 \code{\link{Qtest}()}

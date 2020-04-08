@@ -611,7 +611,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 
 #' Roots of the Characteristic Polynomial
 #'
-#' \code{CharPolyRoots} calculates the roots of the
+#' \code{GetCharPolyRoots} calculates the roots of the
 #' characteristic polynomial and plots them with the unit circle
 #' transformed for the fractional model, see Johansen (2008).
 #'
@@ -628,7 +628,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x, k = 2,r = 1, opt)
-#' cPolyRoots <- CharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
+#' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
 #' @family FCVAR postestimation functions
 #' @seealso \code{EstOptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the model for which to calculate the roots
@@ -645,11 +645,11 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 # Define function to calculate the roots of the characteristic polynomial
 ################################################################################
 #
-# function cPolyRoots <- CharPolyRoots(coeffs, opt, k, r, p)
+# function cPolyRoots <- GetCharPolyRoots(coeffs, opt, k, r, p)
 # Written by Michal Popiel and Morten Nielsen (This version 12.07.2015)
 # Based on Lee Morin & Morten Nielsen (May 31, 2013)
 #
-# DESCRIPTION: CharPolyRoots calculates the roots of the
+# DESCRIPTION: GetCharPolyRoots calculates the roots of the
 #     characteristic polynomial and plots them with the unit circle
 #     transformed for the fractional model, see Johansen (2008).
 #
@@ -669,7 +669,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #
 ################################################################################
 
-CharPolyRoots <- function(coeffs, opt, k, r, p) {
+GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 
 
   b <- coeffs$db[2]
