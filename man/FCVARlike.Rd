@@ -39,11 +39,11 @@ like <- FCVARlike(x, params = c(1, 1), , k = 2, r = 1, opt)
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
 \code{\link{FCVARhess}()},
+\code{\link{FCVARlikeFull}()},
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FracDiff}()},
 \code{\link{FreeParams}()},
-\code{\link{FullFCVARlike}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},
 \code{\link{Lbk}()},

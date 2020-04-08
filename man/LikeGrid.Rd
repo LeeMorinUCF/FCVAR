@@ -55,12 +55,12 @@ autoregressive model," Journal of Econometrics 158, 51-66.
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
 \code{\link{FCVARhess}()},
+\code{\link{FCVARlikeFull}()},
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FracDiff}()},
 \code{\link{FreeParams}()},
-\code{\link{FullFCVARlike}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},
 \code{\link{Lbk}()},

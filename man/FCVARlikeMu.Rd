@@ -43,11 +43,11 @@ parameter values.
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
 \code{\link{FCVARhess}()},
+\code{\link{FCVARlikeFull}()},
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FracDiff}()},
 \code{\link{FreeParams}()},
-\code{\link{FullFCVARlike}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},
 \code{\link{Lbk}()},

@@ -1086,7 +1086,7 @@ FCVARlike <- function(params, x, k, r, opt) {
 
 #' Likelihood Function for the FCVAR Model
 #'
-#' \code{FullFCVARlike} calculates the likelihood for the constrained FCVAR model
+#' \code{FCVARlikeFull} calculates the likelihood for the constrained FCVAR model
 #' for a given set of parameter values.
 #' This function takes the full set of coefficients from a call
 #' to \code{FCVARestn} and returns the log-likelihood given \code{d} and \code{b}.
@@ -1108,13 +1108,13 @@ FCVARlike <- function(params, x, k, r, opt) {
 #' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' like <- FullFCVARlike(x, k = 2, r = 1, coeffs = results$coeffs,
+#' like <- FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
 #' beta = coeffs$betaHat, rho = coeffs$rhoHat, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
 #'
-FullFCVARlike <- function(x, k, r, coeffs, beta, rho, opt) {
+FCVARlikeFull <- function(x, k, r, coeffs, beta, rho, opt) {
 
 
   # Add betaHat and rhoHat to the coefficients to get residuals because they
@@ -1579,27 +1579,27 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
       phi1 <- phi0 + deltaPhi*( (1:nPhi) == i ) + deltaPhi*( (1:nPhi) == j )
       coeffsAdj <- SEvec2matU( phi1, k, r, p, opt )
       # calculate likelihood
-      like1 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt )
+      like1 <- FCVARlikeFull(x, k, r, coeffsAdj, beta, rho, opt )
 
       # negative shift in first parameter, positive shift in second
       # parameter. If same parameter, no shift.
       phi2 <- phi0 - deltaPhi*( (1:nPhi) == i ) + deltaPhi*( (1:nPhi) == j )
       coeffsAdj <- SEvec2matU( phi2, k, r, p, opt )
       # calculate likelihood
-      like2 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
+      like2 <- FCVARlikeFull(x, k, r, coeffsAdj, beta, rho, opt)
 
       # positive shift in first parameter, negative shift in second
       # parameter. If same parameter, no shift.
       phi3 <- phi0 + deltaPhi*( (1:nPhi) == i ) - deltaPhi*( (1:nPhi) == j )
       coeffsAdj <- SEvec2matU( phi3, k, r, p, opt )
       # calculate likelihood
-      like3 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
+      like3 <- FCVARlikeFull(x, k, r, coeffsAdj, beta, rho, opt)
 
       # negative shift in both parameters.
       phi4 <- phi0 - deltaPhi*( (1:nPhi) == i ) - deltaPhi*( (1:nPhi) == j )
       coeffsAdj <- SEvec2matU( phi4, k, r, p, opt )
       # calculate likelihood
-      like4 <- FullFCVARlike(x, k, r, coeffsAdj, beta, rho, opt)
+      like4 <- FCVARlikeFull(x, k, r, coeffsAdj, beta, rho, opt)
 
       # The numerical approximation to the second derivative.
       hessian[i,j] <- ( like1 - like2 - like3 + like4 )/4/deltaPhi[i]/deltaPhi[j]
