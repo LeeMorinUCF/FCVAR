@@ -16,7 +16,7 @@ LagSelect(x, kmax, r, order, opt)
 \item{order}{The order of serial correlation for white noise tests.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \description{
 \code{LagSelect} takes a matrix of variables and performs lag
@@ -24,12 +24,12 @@ generated from \code{EstOptions()}.}
 	results are printed to the screen.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 LagSelect(x, kmax = 4, r = 3, order = 12, opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} is called repeatedly within this function
 for each candidate lag order.
 

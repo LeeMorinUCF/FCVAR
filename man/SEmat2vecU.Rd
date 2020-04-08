@@ -17,7 +17,7 @@ It is an element of the list \code{results} returned by \code{FCVARestn}.}
 \item{p}{The number of variables in the system.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A vector \code{param} of parameters in the FCVAR model.
@@ -27,13 +27,13 @@ A vector \code{param} of parameters in the FCVAR model.
 	form into a vector.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 results <- FCVARestn(x, k = 2, r = 1, opt)
 param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} to estimate the FCVAR model and calculate
 standard errors of the estimates.
 \code{SEmat2vecU} is called by \code{FCVARhess} to sort the parameters

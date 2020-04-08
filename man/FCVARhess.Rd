@@ -17,7 +17,7 @@ FCVARhess(x, k, r, coeffs, opt)
 It is an element of the list \code{results} returned by \code{FCVARestn}.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 The \code{hessian} matrix  of second derivatives of the FCVAR
@@ -30,13 +30,13 @@ specified in \code{coeffs}.
 	It is used to calculate the standard errors of parameter estimates.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 results <- FCVARestn(x, k = 2, r = 1, opt)
 hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} to estimate the FCVAR model and calculate
 standard errors of the estimates.
 

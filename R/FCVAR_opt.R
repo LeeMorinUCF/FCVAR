@@ -3,18 +3,18 @@
 
 #' Default Estimation Options
 #'
-#' \code{EstOptions} defines the estimation options used in the FCVAR
+#' \code{FCVARoptions} defines the estimation options used in the FCVAR
 #'   estimation procedure and the related programs.
 #'
 #' @return A list object \code{opt} that stores the default estimation options.
 #' @examples
-#' EstOptions()
+#' FCVARoptions()
 #' @family FCVAR option functions
 #' @seealso \code{updateRestrictions} to set and test estimation options for validity and compatibility.
 #' \code{FCVARestn} for use of these options in estimation.
 #' @export
 #'
-EstOptions <- function() {
+FCVARoptions <- function() {
 
   opt <- list(
 
@@ -208,17 +208,17 @@ EstOptions <- function() {
 #' }
 #'
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @param p The number of variables in the system.
 #' @param r The cointegrating rank.
 #' @return A list object \code{newOpt} that stores the chosen estimation options,
 #' with appropriate updates based on user-defined options.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' opt$gridSearch <- 0 # Skip grid search in optimization.
 #' newOpt <- updateRestrictions(opt, p = 3, r = 1)
 #' @family FCVAR option functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to verify
 #' validity of options.
 #' @export
@@ -544,14 +544,14 @@ updateRestrictions <- function(opt, p, r) {
 #'   using the restrictions implied by \code{H} and \code{h}.
 #'
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A list object \code{UB_LB_bounds} containing the upper (\code{UB}) and lower (\code{LB})  bounds on either \code{db} or \code{phi}.
 #' These vectors are either 1- or 2-dimensional depending on whether a restriction on \code{d} and \code{b} is imposed or not.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' UB_LB_bounds <- GetBounds(opt)
 #' @family FCVAR option functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to specify any bounds on fractional integration parameters.
 #'
 GetBounds <- function(opt) {

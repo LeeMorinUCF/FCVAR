@@ -8,7 +8,7 @@ GetBounds(opt)
 }
 \arguments{
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A list object \code{UB_LB_bounds} containing the upper (\code{UB}) and lower (\code{LB})  bounds on either \code{db} or \code{phi}.
@@ -21,15 +21,15 @@ These vectors are either 1- or 2-dimensional depending on whether a restriction 
   using the restrictions implied by \code{H} and \code{h}.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 UB_LB_bounds <- GetBounds(opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls this function at the start of each estimation to specify any bounds on fractional integration parameters.
 
 Other FCVAR option functions: 
-\code{\link{EstOptions}()},
+\code{\link{FCVARoptions}()},
 \code{\link{updateRestrictions}()}
 }
 \concept{FCVAR option functions}

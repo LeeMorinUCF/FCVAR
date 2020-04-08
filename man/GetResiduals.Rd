@@ -17,7 +17,7 @@ GetResiduals(x, k, r, coeffs, opt)
 It is an element of the list \code{results} returned by \code{FCVARestn}.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A matrix \code{epsilon} of residuals from FCVAR model estimation
@@ -28,7 +28,7 @@ calculated with the parameter estimates specified in \code{coeffs}.
 from given parameter values.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 results <- FCVARestn(x, k = 2, r = 1, opt)
 epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
@@ -39,7 +39,7 @@ Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
 vector autoregressive model," Econometrica 80, 2667-2732.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} to estimate the FCVAR model.
 
 Other FCVAR auxilliary functions: 

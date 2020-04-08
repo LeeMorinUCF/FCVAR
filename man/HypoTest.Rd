@@ -28,7 +28,7 @@ including the following parameters:
 	"model is \code{modelUNR}".
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 modelUNR <- FCVARestn(x,k = 2,r = 1, opt)
 opt1 <- opt
@@ -40,7 +40,7 @@ Hbeta <- HypoTest(modelUNR, modelR)
 \seealso{
 The test is calculated using the results of two calls to
 \code{FCVARestn}, under the restricted and unrestricted models.
-Use \code{EstOptions} to set default estimation options for each model,
+Use \code{FCVARoptions} to set default estimation options for each model,
 then set restrictions as needed before \code{FCVARestn}.
 
 Other FCVAR postestimation functions: 

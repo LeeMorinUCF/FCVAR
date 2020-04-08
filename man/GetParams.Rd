@@ -16,7 +16,7 @@ GetParams(x, k, r, db, opt)
 \item{db}{The orders of fractional integration.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A list object \code{estimates} containing the estimates,
@@ -41,7 +41,7 @@ the estimates of \code{Alpha}, \code{Beta}, \code{Rho}, \code{Pi},
 \code{Gamma}, and \code{Omega}, using the notation in Johansen and Nielsen (2012).
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 estimates <- GetParams(x, k = 2, r = 1, db = c(1, 1), opt)
 }
@@ -51,7 +51,7 @@ Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
 vector autoregressive model," Econometrica 80, 2667-2732.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model.
 
 Other FCVAR auxilliary functions: 

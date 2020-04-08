@@ -17,7 +17,7 @@ FCVARlike(params, x, k, r, opt)
 \item{r}{The cointegrating rank.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A number \code{like}, the log-likelihood evaluated at the
@@ -29,12 +29,12 @@ for a given set of parameter values. This function adjusts the variables with th
 if present, and returns the log-likelihood given \code{d} and \code{b}.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 like <- FCVARlike(x, params = c(1, 1), , k = 2, r = 1, opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},

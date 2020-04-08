@@ -22,13 +22,13 @@ A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
 \code{FCVARforecast} calculates recursive forecasts with the FCVAR model.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 model <- FCVARestn(x,k = 3,r = 1,opt)
 xf <- FCVARforecast(data, model, NumPeriods = 100)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} for the specification of the \code{model}.
 \code{FCVARforecast} calls \code{FracDiff} and \code{Lbk} to calculate the forecast.
 

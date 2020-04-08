@@ -12,7 +12,7 @@ RankTests(x, k, opt)
 \item{k}{The number of lags in the system.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A list object \code{rankTestStats} containing the results
@@ -31,12 +31,12 @@ including the following parameters:
 \code{RankTests} performs a sequence of  likelihood ratio tests
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 RankTests(x, k = 2, opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} is called repeatedly within this function
 for each candidate cointegrating rank.
 

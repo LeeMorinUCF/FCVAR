@@ -12,14 +12,14 @@
 #' @param r The cointegrating rank.
 #' @param order The order of serial correlation for white noise tests.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return NULL
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' LagSelect(x, kmax = 4, r = 3, order = 12, opt)
 #' @family FCVAR specification functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate lag order.
 #' @export
@@ -175,7 +175,7 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A list object \code{rankTestStats} containing the results
 #' from cointegrating rank tests, containing the following \code{(p+1)} vectors
 #' with \code{i}th element corresponding to \code{rank = i-1}:
@@ -188,11 +188,11 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 #'   \item{\code{pv}}{The p-value of LR trace test, or "999" if p-value is not available.}
 #' }
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' RankTests(x, k = 2, opt)
 #' @family FCVAR specification functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate cointegrating rank.
 #' @export
@@ -363,13 +363,13 @@ RankTests <- function(x, k, opt) {
 #' @param const Boolean variable indicating whether or not there is a constant present.
 #' @param testStat Value of the test statistic.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A scalar numeric \code{pv}, the p-value for the likelihood ratio test.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' get_pvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
 #' @family FCVAR specification functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' @export
 #'
 #' @references James G. MacKinnon and Morten \enc{Ø}{O}rregaard Nielsen,
@@ -442,7 +442,7 @@ get_pvalues <- function(q, b, consT, testStat, opt) {
 #' @param r2 The cointegrating rank under the alternative hypothesis.
 #' @param B The number of bootstrap samples.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A list object \code{FCVARbootRank_out} containing the test results,
 #' including the following parameters:
 #' \describe{
@@ -455,11 +455,11 @@ get_pvalues <- function(q, b, consT, testStat, opt) {
 #'   \item{\code{mUNR}}{Model estimates under the alternative hypothesis. }
 #' }
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' FCVARbootRank_out <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 #' @family FCVAR specification functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{HypoTest} for the format of a hypothesis test results.
 #' \code{FCVARestn} for the estimates from a rectricted and unrestricted model within a hypothesis test.
 #' @export

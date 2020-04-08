@@ -18,7 +18,7 @@ It is an element of the list \code{results} returned by \code{FCVARestn},
 without the parameters \code{betaHat} and \code{rhoHat}.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 
 \item{betaHat}{A \eqn{p x r} matrix of cointegrating vectors.
 The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
@@ -36,14 +36,14 @@ This function takes the full set of coefficients from a call
 to \code{FCVARestn} and returns the log-likelihood given \code{d} and \code{b}.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 results <- FCVARestn(x, k = 2, r = 1, opt)
 like <- FullFCVARlike(x, k = 2, r = 1, coeffs = results$coeffs,
 beta = coeffs$betaHat, rho = coeffs$rhoHat, opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
 
 Other FCVAR auxilliary functions: 

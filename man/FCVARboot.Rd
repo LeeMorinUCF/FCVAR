@@ -14,7 +14,7 @@ FCVARboot(x, k, r, optRES, optUNR, B)
 \item{r}{The cointegrating rank.}
 
 \item{optRES}{A list object that stores the chosen estimation options
-for the restricted model, as generated from \code{EstOptions()},
+for the restricted model, as generated from \code{FCVARoptions()},
 with adjustments as necessary.}
 
 \item{optUNR}{A list object that stores the chosen estimation options
@@ -44,7 +44,7 @@ of options as inputs to estimate the model under the null and the
 unrestricted model.
 }
 \examples{
-optUNR <- EstOptions()
+optUNR <- FCVARoptions()
 # Define estimation options for restricted model (null)
 optRES <- optUNR
 optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
@@ -57,7 +57,7 @@ Boswijk, Cavaliere, Rahbek, and Taylor (2016)
 vector autoregressions," Journal of Econometrics 192, 64-85.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} is called to estimate the models under the null and alternative hypotheses.
 
 Other FCVAR postestimation functions: 

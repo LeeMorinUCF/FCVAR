@@ -26,14 +26,14 @@ residuals specified under the \code{model} input and have a
 positive or negative sign with equal probability (the Rademacher distribution).
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 model <- FCVARestn(x,k = 3,r = 1,opt)
 data <- x[1:10, ]
 xBS <- FCVARsimBS(data, model, NumPeriods = 100)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} for the specification of the \code{model}.
 
 Other FCVAR auxilliary functions: 

@@ -23,12 +23,12 @@ but \code{k} times as many columns.
 \code{Lbk} calculates a lag polynomial in the fractional lag operator.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 Lbkx <- Lbk(x, b = 0.5, k = 2)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 to estimate the FCVAR model.
 \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}

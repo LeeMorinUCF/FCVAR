@@ -25,7 +25,7 @@ These functions define, modify and test the user-specified options for estimatio
     Options include settings for optimization and restrictions for testing hypotheses.
   These include:
 \describe{
-  \item{\code{EstOptions}}{defines the estimation options used in the FCVAR
+  \item{\code{FCVARoptions}}{defines the estimation options used in the FCVAR
   estimation procedure and the related programs.}
   \item{\code{updateRestrictions}}{is used to set and test estimation options for validity and compatibility.}
 }

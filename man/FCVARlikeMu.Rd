@@ -18,7 +18,7 @@ FCVARlikeMu(mu, y, db, k, r, opt)
 \item{r}{The cointegrating rank.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A number \code{like}, the log-likelihood evaluated at the
@@ -31,12 +31,12 @@ function to numerically optimize over the level parameter for given values of
 the fractional parameters.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 like <- FCVARlikeMu(y = x, db = c(1, 1), mu = mean(x), k = 2, r = 1, opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 The \code{LikeGrid} calls this function to perform a grid search over the
 parameter values.
 

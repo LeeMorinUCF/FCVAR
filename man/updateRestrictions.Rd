@@ -8,7 +8,7 @@ updateRestrictions(opt, p, r)
 }
 \arguments{
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 
 \item{p}{The number of variables in the system.}
 
@@ -31,17 +31,17 @@ This function is called prior to estimation and
 }
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 opt$gridSearch <- 0 # Skip grid search in optimization.
 newOpt <- updateRestrictions(opt, p = 3, r = 1)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls this function at the start of each estimation to verify
 validity of options.
 
 Other FCVAR option functions: 
-\code{\link{EstOptions}()},
+\code{\link{FCVARoptions}()},
 \code{\link{GetBounds}()}
 }
 \concept{FCVAR option functions}

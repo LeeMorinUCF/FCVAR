@@ -36,7 +36,7 @@ for a sequence of lag lengths.
 The LM test should be consistent for heteroskedastic series, Q-test is not.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 results <- FCVARestn(x,k = 3,r = 1, opt)
 mv_wntest(x = results$Residuals, maxlag = 12, printResults = 1)
@@ -46,7 +46,7 @@ mv_wntest(x = rnorm(100), maxlag = 10, printResults = 1)
 mv_wntest(x = cumsum(rnorm(100)), maxlag = 10, printResults = 1)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} produces the residuals intended for this test.
 \code{LagSelect} uses this test as part of the lag order selection process.
 

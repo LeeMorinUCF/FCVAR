@@ -13,7 +13,7 @@ If \code{k>0}, actual data is used for initial values.}
 \item{k}{The number of lags in the system.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 
 \item{r1}{The cointegrating rank under the null hypothesis.}
 
@@ -42,7 +42,7 @@ following the method of Cavaliere, Rahbek, and Taylor (2010). It
  null and the model under the alternative.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 FCVARbootRank_out <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 }
@@ -52,7 +52,7 @@ Cavaliere, G., A. Rahbek, and A. M. R. Taylor (2010).
 with non-stationary volatility," Journal of Econometrics 158, 7-24.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{HypoTest} for the format of a hypothesis test results.
 \code{FCVARestn} for the estimates from a rectricted and unrestricted model within a hypothesis test.
 

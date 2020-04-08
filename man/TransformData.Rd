@@ -14,7 +14,7 @@ TransformData(x, k, db, opt)
 \item{db}{The orders of fractional integration.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A list object \code{Z_array} containing the transformed data,
@@ -37,7 +37,7 @@ The output is in the format required for regression and
 reduced rank regression.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 Z_array <- TransformData(x, k = 2, db = c(1, 1), opt)
 }
@@ -51,7 +51,7 @@ in Cointegrated Vector Autoregressive Models,"
 New York: Oxford University Press.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 to estimate the FCVAR model.
 \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}

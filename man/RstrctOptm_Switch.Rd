@@ -25,7 +25,7 @@ calculated from the output of \code{TransformData} in \code{GetParams}.}
 \item{p}{The number of variables in the system.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.
+generated from \code{FCVARoptions()}.
 
 #' @return A list object \code{switched_mats} containing the restricted estimates,
 including the following parameters:
@@ -58,7 +58,7 @@ VAR model and other applications,"
 Forthcoming in Scandinavian Journal of Statistics.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,
 which in turn calls \code{RstrctOptm_Switch} if there are restrictions
 imposed on \code{alpha} or \code{beta}.

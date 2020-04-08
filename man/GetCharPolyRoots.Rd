@@ -11,7 +11,7 @@ GetCharPolyRoots(coeffs, opt, k, r, p)
 An element of the list of estimation \code{results} output from \code{FCVARestn}.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 
 \item{k}{The number of lags in the system.}
 
@@ -33,7 +33,7 @@ where the roots are given as the inverse eigenvalues of the
 coefficient matrix.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 x <- data(JNP2014)
 results <- FCVARestn(x, k = 2,r = 1, opt)
@@ -45,7 +45,7 @@ vector autoregressive models for fractional processes,"
 Econometric Theory 24, 651-676.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} to estimate the model for which to calculate the roots
 of the characteristic polynomial.
 

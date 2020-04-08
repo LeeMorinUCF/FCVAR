@@ -12,7 +12,7 @@ FreeParams(k, r, p, opt, rankJ)
 \item{r}{The cointegrating rank.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 
 \item{rankJ}{The rank of a conditioning matrix, as described in
 Boswijk & Doornik (2004, p.447), which is only used if there are
@@ -30,7 +30,7 @@ The number of free parameters \code{fp}.
 	the rank condition is used to count the free parameters in those two variables.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 fp <- FreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
 }
@@ -40,7 +40,7 @@ Boswijk, H. P. and J. A. Doornik (2004).
 An overview," Statistica Neerlandica 58, 440-465.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
 and use this in the calculation of the degrees of freedom
 for a variety of statistics.

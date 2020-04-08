@@ -12,7 +12,7 @@
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A list object \code{results} containing the estimation results,
 #' including the following parameters:
 #' \describe{
@@ -28,11 +28,11 @@
 #'   \item{\code{cPolyRoots}}{Roots of characteristic polynomial.}
 #' }
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' FCVARestn(x, k = 2, r = 1, opt)
 #' @family FCVAR estimation functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to verify
 #' validity of options.
 #' @export

@@ -14,7 +14,7 @@ get_pvalues(q, b, consT, testStat, opt)
 \item{testStat}{Value of the test statistic.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 
 \item{const}{Boolean variable indicating whether or not there is a constant present.}
 }
@@ -45,7 +45,7 @@ degrees of freedom. See Johansen and Nielsen (2012, Econometrica).
 }
 
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 get_pvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
 }
 \references{
@@ -58,7 +58,7 @@ Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
 Econometrica 80, pp.2667-2732.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},

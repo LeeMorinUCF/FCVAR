@@ -16,7 +16,7 @@ SEvec2matU(param, k, r, p, opt)
 \item{p}{The number of variables in the system.}
 
 \item{opt}{A list object that stores the chosen estimation options,
-generated from \code{EstOptions()}.}
+generated from \code{FCVARoptions()}.}
 }
 \value{
 \code{coeffs}, a list of coefficients of the FCVAR model.
@@ -28,14 +28,14 @@ returned by \code{FCVARestn}.
 	into matrices.
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 results <- FCVARestn(x, k = 2, r = 1, opt)
 param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
 coeffs <- SEvec2matU(param, k = 2, r = 1, p = 3, opt)
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} to estimate the FCVAR model and calculate
 standard errors of the estimates.
 \code{SEmat2vecU} is called by \code{FCVARhess} to convert the parameters

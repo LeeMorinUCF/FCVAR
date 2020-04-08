@@ -23,7 +23,7 @@
 #'   degrees of freedom.}
 #' }
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x,k = 3,r = 1, opt)
 #' mv_wntest(x = results$Residuals, maxlag = 12, printResults = 1)
@@ -32,7 +32,7 @@
 #'
 #' mv_wntest(x = cumsum(rnorm(100)), maxlag = 10, printResults = 1)
 #' @family FCVAR postestimation functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.
 #' \code{LagSelect} uses this test as part of the lag order selection process.
 #' @note
@@ -319,7 +319,7 @@ Qtest <- function(x, maxlag) {
 #'   \item{\code{p_LRtest}}{The p-value for the likelihood ratio test.}
 #' }
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' modelUNR <- FCVARestn(x,k = 2,r = 1, opt)
 #' opt1 <- opt
@@ -330,7 +330,7 @@ Qtest <- function(x, maxlag) {
 #' @family FCVAR postestimation functions
 #' @seealso The test is calculated using the results of two calls to
 #' \code{FCVARestn}, under the restricted and unrestricted models.
-#' Use \code{EstOptions} to set default estimation options for each model,
+#' Use \code{FCVARoptions} to set default estimation options for each model,
 #' then set restrictions as needed before \code{FCVARestn}.
 #' @export
 #'
@@ -379,12 +379,12 @@ HypoTest <- function(modelUNR, modelR) {
 #' @param NumPeriods The number of time periods in the simulation.
 #' @return A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' model <- FCVARestn(x,k = 3,r = 1,opt)
 #' xf <- FCVARforecast(data, model, NumPeriods = 100)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
 #' \code{FCVARforecast} calls \code{FracDiff} and \code{Lbk} to calculate the forecast.
 #' @export
@@ -493,7 +493,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param optRES A list object that stores the chosen estimation options
-#'   for the restricted model, as generated from \code{EstOptions()},
+#'   for the restricted model, as generated from \code{FCVARoptions()},
 #'   with adjustments as necessary.
 #' @param optUNR A list object that stores the chosen estimation options
 #'   for the unrestricted model.
@@ -511,14 +511,14 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #'   \item{\code{mUNR}}{The model estimates under the alternative hypothesis.}
 #' }
 #' @examples
-#' optUNR <- EstOptions()
+#' optUNR <- FCVARoptions()
 #' # Define estimation options for restricted model (null)
 #' optRES <- optUNR
 #' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 #' x <- data(JNP2014)
 #' FCVARboot_out <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 #' @family FCVAR postestimation functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called to estimate the models under the null and alternative hypotheses.
 #' @references Boswijk, Cavaliere, Rahbek, and Taylor (2016)
 #' "Inference on co-integration parameters in heteroskedastic
@@ -618,19 +618,19 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' @param coeffs A list of coefficients for the FCVAR model.
 #' An element of the list of estimation \code{results} output from \code{FCVARestn}.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
 #' @return A complex vector \code{cPolyRoots} with the roots of the characteristic polynomial.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x, k = 2,r = 1, opt)
 #' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
 #' @family FCVAR postestimation functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the model for which to calculate the roots
 #' of the characteristic polynomial.
 #' @note The roots are calculated from the companion form of the VAR,

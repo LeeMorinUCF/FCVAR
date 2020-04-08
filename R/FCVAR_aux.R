@@ -13,13 +13,13 @@
 #' @param NumPeriods The number of time periods in the simulation.
 #' @return A \code{NumPeriods} \eqn{\times p} matrix \code{xBS} of simulated bootstrap values.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' model <- FCVARestn(x,k = 3,r = 1,opt)
 #' data <- x[1:10, ]
 #' xBS <- FCVARsimBS(data, model, NumPeriods = 100)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
 #' @export
 #'
@@ -159,7 +159,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 #' @param r The cointegrating rank.
 #' @param db The orders of fractional integration.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A list object \code{estimates} containing the estimates,
 #' including the following parameters:
 #' \describe{
@@ -174,11 +174,11 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 #'   of autoregressive coefficients. }
 #' }
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' estimates <- GetParams(x, k = 2, r = 1, db = c(1, 1), opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model.
 #' @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
 #' "Likelihood inference for a fractionally cointegrated
@@ -485,16 +485,16 @@ GetParams <- function(x, k, r, db, opt) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A vector \code{params} of \code{d} and \code{b}
 #' (and \code{mu} if level parameter is selected)
 #' corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' params <- LikeGrid(x, k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' @note If \code{opt$LocalMax == 0}, \code{LikeGrid} returns the parameter values
 #'       corresponding to the global maximum of the likelihood on the grid.
 #'       If \code{opt$LocalMax == 1}, \code{LikeGrid} returns the parameter values for the
@@ -948,15 +948,15 @@ LikeGrid <- function(x, k, r, opt) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A number \code{like}, the log-likelihood evaluated at the
 #' specified parameter values.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' like <- FCVARlikeMu(y = x, db = c(1, 1), mu = mean(x), k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' The \code{LikeGrid} calls this function to perform a grid search over the
 #' parameter values.
 #'
@@ -994,15 +994,15 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A number \code{like}, the log-likelihood evaluated at the
 #' specified parameter values.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' like <- FCVARlike(x, params = c(1, 1), , k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #'
 FCVARlike <- function(params, x, k, r, opt) {
 
@@ -1101,17 +1101,17 @@ FCVARlike <- function(params, x, k, r, opt) {
 #' The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.
 #' @param rhoHat A \eqn{p x 1} vector of restricted constatnts.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A number \code{like}, the log-likelihood evaluated at the
 #' specified parameter values.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' like <- FullFCVARlike(x, k = 2, r = 1, coeffs = results$coeffs,
 #' beta = coeffs$betaHat, rho = coeffs$rhoHat, opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
 #'
 FullFCVARlike <- function(x, k, r, coeffs, beta, rho, opt) {
@@ -1147,7 +1147,7 @@ FullFCVARlike <- function(x, k, r, coeffs, beta, rho, opt) {
 #' @param k The number of lags in the system.
 #' @param db The orders of fractional integration.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A list object \code{Z_array} containing the transformed data,
 #' including the following parameters:
 #' \describe{
@@ -1162,11 +1162,11 @@ FullFCVARlike <- function(x, k, r, coeffs, beta, rho, opt) {
 #'   unrestricted constant term, otherwise \code{NULL}.}
 #' }
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' Z_array <- TransformData(x, k = 2, db = c(1, 1), opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 #' to estimate the FCVAR model.
 #' \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
@@ -1246,16 +1246,16 @@ TransformData <- function(x, k, db, opt) {
 #' @param coeffs A list of coefficients of the FCVAR model.
 #' It is an element of the list \code{results} returned by \code{FCVARestn}.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A matrix \code{epsilon} of residuals from FCVAR model estimation
 #' calculated with the parameter estimates specified in \code{coeffs}.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the FCVAR model.
 #' @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
 #' "Likelihood inference for a fractionally cointegrated
@@ -1322,11 +1322,11 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
 #' The output matrix has the same number of rows as \code{x}
 #' but \code{k} times as many columns.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' Lbkx <- Lbk(x, b = 0.5, k = 2)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 #' to estimate the FCVAR model.
 #' \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
@@ -1381,11 +1381,11 @@ Lbk <- function(x, b, k) {
 #' @return A vector or matrix \code{dx} equal to \eqn{(1-L)^d x}
 #' of the same dimensions as x.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' dx = FracDiff(x, d = 0.5)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 #' to estimate the FCVAR model.
 #' \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
@@ -1455,17 +1455,17 @@ FracDiff <- function(x, d) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @param rankJ The rank of a conditioning matrix, as described in
 #' Boswijk & Doornik (2004, p.447), which is only used if there are
 #' restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.
 #' @return The number of free parameters \code{fp}.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' fp <- FreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
 #' and use this in the calculation of the degrees of freedom
 #' for a variety of statistics.
@@ -1525,17 +1525,17 @@ FreeParams <- function(k, r, p, opt, rankJ) {
 #' @param coeffs A list of coefficients of the FCVAR model.
 #' It is an element of the list \code{results} returned by \code{FCVARestn}.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return The \code{hessian} matrix  of second derivatives of the FCVAR
 #' log-likelihood function, calculated with the parameter estimates
 #' specified in \code{coeffs}.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the FCVAR model and calculate
 #' standard errors of the estimates.
 #' @export
@@ -1627,15 +1627,15 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return A vector \code{param} of parameters in the FCVAR model.
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the FCVAR model and calculate
 #' standard errors of the estimates.
 #' \code{SEmat2vecU} is called by \code{FCVARhess} to sort the parameters
@@ -1692,19 +1692,19 @@ SEmat2vecU <- function(coeffs, k, r, p , opt) {
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #' @return \code{coeffs}, a list of coefficients of the FCVAR model.
 #' It has the same form as an element of the list \code{results}
 #' returned by \code{FCVARestn}.
 #'
 #' @examples
-#' opt <- EstOptions()
+#' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
 #' coeffs <- SEvec2matU(param, k = 2, r = 1, p = 3, opt)
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the FCVAR model and calculate
 #' standard errors of the estimates.
 #' \code{SEmat2vecU} is called by \code{FCVARhess} to convert the parameters
@@ -1788,7 +1788,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #' @param T The number of observations in the sample.
 #' @param p The number of variables in the system.
 #' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{EstOptions()}.
+#' generated from \code{FCVARoptions()}.
 #'
 #'#' @return A list object \code{switched_mats} containing the restricted estimates,
 #' including the following parameters:
@@ -1799,7 +1799,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #'   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
 #' }
 #' @family FCVAR auxilliary functions
-#' @seealso \code{EstOptions} to set default estimation options.
+#' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,
 #' which in turn calls \code{RstrctOptm_Switch} if there are restrictions
 #' imposed on \code{alpha} or \code{beta}.

@@ -20,7 +20,7 @@ of the same dimensions as x.
 	fast fractional difference algorithm of Jensen & Nielsen (2014).
 }
 \examples{
-opt <- EstOptions()
+opt <- FCVARoptions()
 x <- data(JNP2014)
 dx = FracDiff(x, d = 0.5)
 }
@@ -30,7 +30,7 @@ Jensen, A. N. and M. \enc{Ø}{O}. Nielsen (2014).
 Journal of Time Series Analysis 35, 428-436.
 }
 \seealso{
-\code{EstOptions} to set default estimation options.
+\code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 to estimate the FCVAR model.
 \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
