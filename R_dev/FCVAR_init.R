@@ -142,3 +142,19 @@ usethis::use_build_ignore(c("stata", "R_dev", "MATLAB"))
 
 
 
+# Generate a pdf manual once the documentatino is complete.
+# devtools::build_manual()
+# Hmm ... looks like a package
+# Creating pdf output from LaTeX ...
+# Saving output to 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR_0.0.0.9000.pdf' ...
+# Done
+
+
+# Generate a sketch of a vignette.
+usethis::use_vignette("FCVAR")
+# check Setting active project to 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR'
+# check Adding 'rmarkdown' to Suggests field in DESCRIPTION
+# check Writing 'vignettes/FCVAR.Rmd'
+# check Modify 'vignettes/FCVAR.Rmd'
+
+
