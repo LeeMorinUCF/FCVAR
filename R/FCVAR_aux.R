@@ -329,8 +329,8 @@ GetParams <- function(x, k, r, db, opt) {
 
 
       # [ betaStar, alphaHat, OmegaHat ]...
-      # <- RstrctOptm_Switch(betaStar, S00, S01, S11, T, p, opt)
-      switched_mats <- RstrctOptm_Switch(betaStar, S00, S01, S11, T, p, opt)
+      # <- GetRestrictedParams(betaStar, S00, S01, S11, T, p, opt)
+      switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, T, p, opt)
       betaStar <- switched_mats$betaStar
       alphaHat <- switched_mats$alphaHat
       OmegaHat <- switched_mats$OmegaHat
@@ -472,7 +472,7 @@ GetParams <- function(x, k, r, db, opt) {
 
 #' Grid Search over Likelihood Values
 #'
-#' \code{LikeGrid} calculates the likelihood function
+#' \code{LikeGridSearch} calculates the likelihood function
 #' on a grid of candidate parameter values.
 #' This function evaluates the likelihood over a grid of values
 #' 	for \code{c(d,b)} (or \code{phi}).
@@ -492,12 +492,12 @@ GetParams <- function(x, k, r, db, opt) {
 #' @examples
 #' opt <- FCVARoptions()
 #' x <- data(JNP2014)
-#' params <- LikeGrid(x, k = 2, r = 1, opt)
+#' params <- LikeGridSearch(x, k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' @note If \code{opt$LocalMax == 0}, \code{LikeGrid} returns the parameter values
+#' @note If \code{opt$LocalMax == 0}, \code{LikeGridSearch} returns the parameter values
 #'       corresponding to the global maximum of the likelihood on the grid.
-#'       If \code{opt$LocalMax == 1}, \code{LikeGrid} returns the parameter values for the
+#'       If \code{opt$LocalMax == 1}, \code{LikeGridSearch} returns the parameter values for the
 #'       local maximum corresponding to the highest value of \code{b}. This
 #'       alleviates the identification problem mentioned in Johansen and
 #'       Nielsen (2010, section 2.3).
@@ -505,7 +505,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' "Likelihood inference for a nonstationary fractional
 #' autoregressive model," Journal of Econometrics 158, 51-66.
 #'
-LikeGrid <- function(x, k, r, opt) {
+LikeGridSearch <- function(x, k, r, opt) {
 
 
 
@@ -707,7 +707,7 @@ LikeGrid <- function(x, k, r, opt) {
   }
 
   # # Save the workspace at this point.
-  # save.image(file = 'LikeGridData1.RData')
+  # save.image(file = 'LikeGridSearchData1.RData')
   #
   # # Testing: Analyze the like grid
   # nrow(like)
@@ -938,7 +938,7 @@ LikeGrid <- function(x, k, r, opt) {
 #' Likelihood Function for the Unconstrained FCVAR Model
 #'
 #' \code{FCVARlikeMu} calculates the likelihood for the unconstrained FCVAR model
-#' for a given set of parameter values. It is used by the \code{LikeGrid}
+#' for a given set of parameter values. It is used by the \code{LikeGridSearch}
 #' function to numerically optimize over the level parameter for given values of
 #' the fractional parameters.
 #'
@@ -957,7 +957,7 @@ LikeGrid <- function(x, k, r, opt) {
 #' like <- FCVARlikeMu(y = x, db = c(1, 1), mu = mean(x), k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' The \code{LikeGrid} calls this function to perform a grid search over the
+#' The \code{LikeGridSearch} calls this function to perform a grid search over the
 #' parameter values.
 #'
 FCVARlikeMu <- function(mu, y, db, k, r, opt) {
@@ -1766,7 +1766,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 
 #' Calculate Restricted Estimates for the FCVAR Model
 #'
-#' \code{RstrctOptm_Switch} calculates restricted estimates of
+#' \code{GetRestrictedParams} calculates restricted estimates of
 #' cointegration parameters and error variance in the FCVAR model.
 #' To calculate the optimum, it uses the switching algorithm
 #' of Boswijk and Doornik (2004, page 455) to optimize over free parameters
@@ -1801,7 +1801,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,
-#' which in turn calls \code{RstrctOptm_Switch} if there are restrictions
+#' which in turn calls \code{GetRestrictedParams} if there are restrictions
 #' imposed on \code{alpha} or \code{beta}.
 #' @references Boswijk, H. P. and J. A. Doornik (2004).
 #' "Identifying, estimating and testing restricted cointegrated systems:
@@ -1811,7 +1811,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #' VAR model and other applications,"
 #' Forthcoming in Scandinavian Journal of Statistics.
 #'
-RstrctOptm_Switch <- function(beta0, S00, S01, S11, T, p, opt) {
+GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
 
 
   r  <- ncol(beta0)

@@ -53,9 +53,9 @@ Other FCVAR auxilliary functions:
 \code{\link{GetFreeParams}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},
+\code{\link{GetRestrictedParams}()},
 \code{\link{Lbk}()},
-\code{\link{LikeGrid}()},
-\code{\link{RstrctOptm_Switch}()},
+\code{\link{LikeGridSearch}()},
 \code{\link{SEmat2vecU}()},
 \code{\link{TransformData}()}
 }

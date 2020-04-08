@@ -26,7 +26,7 @@ specified parameter values.
 }
 \description{
 \code{FCVARlikeMu} calculates the likelihood for the unconstrained FCVAR model
-for a given set of parameter values. It is used by the \code{LikeGrid}
+for a given set of parameter values. It is used by the \code{LikeGridSearch}
 function to numerically optimize over the level parameter for given values of
 the fractional parameters.
 }
@@ -37,7 +37,7 @@ like <- FCVARlikeMu(y = x, db = c(1, 1), mu = mean(x), k = 2, r = 1, opt)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
-The \code{LikeGrid} calls this function to perform a grid search over the
+The \code{LikeGridSearch} calls this function to perform a grid search over the
 parameter values.
 
 Other FCVAR auxilliary functions: 
@@ -50,9 +50,9 @@ Other FCVAR auxilliary functions:
 \code{\link{GetFreeParams}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},
+\code{\link{GetRestrictedParams}()},
 \code{\link{Lbk}()},
-\code{\link{LikeGrid}()},
-\code{\link{RstrctOptm_Switch}()},
+\code{\link{LikeGridSearch}()},
 \code{\link{SEmat2vecU}()},
 \code{\link{SEvec2matU}()},
 \code{\link{TransformData}()}

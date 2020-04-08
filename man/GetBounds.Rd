@@ -29,7 +29,7 @@ UB_LB_bounds <- GetBounds(opt)
 \code{FCVARestn} calls this function at the start of each estimation to specify any bounds on fractional integration parameters.
 
 Other FCVAR option functions: 
-\code{\link{FCVARoptions}()},
-\code{\link{updateRestrictions}()}
+\code{\link{FCVARoptionUpdates}()},
+\code{\link{FCVARoptions}()}
 }
 \concept{FCVAR option functions}

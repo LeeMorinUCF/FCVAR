@@ -10,7 +10,7 @@
 #' @examples
 #' FCVARoptions()
 #' @family FCVAR option functions
-#' @seealso \code{updateRestrictions} to set and test estimation options for validity and compatibility.
+#' @seealso \code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.
 #' \code{FCVARestn} for use of these options in estimation.
 #' @export
 #'
@@ -94,7 +94,7 @@ FCVARoptions <- function() {
 
     # Upper and lower bounds for parameters d and b.
     # Note: these options are set automatically in the
-    # updateRestrictions function below based on inputs of 'dbMax',
+    # FCVARoptionUpdates function below based on inputs of 'dbMax',
     # and 'dbMin'.
     UB_db = NULL,
     LB_db = NULL,
@@ -194,7 +194,7 @@ FCVARoptions <- function() {
 }
 
 
-#' Update FCVAR Restrictions
+#' Update Estimation Options for FCVAR Restrictions
 #'
 #' A function to set and test estimation options for validity and compatibility.
 #' This function is called prior to estimation and
@@ -216,14 +216,14 @@ FCVARoptions <- function() {
 #' @examples
 #' opt <- FCVARoptions()
 #' opt$gridSearch <- 0 # Skip grid search in optimization.
-#' newOpt <- updateRestrictions(opt, p = 3, r = 1)
+#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
 #' @family FCVAR option functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to verify
 #' validity of options.
 #' @export
 #'
-updateRestrictions <- function(opt, p, r) {
+FCVARoptionUpdates <- function(opt, p, r) {
 
   #--------------------------------------------------------------------------------
   # Deterministics

@@ -46,7 +46,7 @@ FCVARestn <- function(x,k,r,opt) {
   p <- ncol(x)         # number of variables
 
   # Update options based on initial user input.
-  opt <- updateRestrictions(opt, p, r)
+  opt <- FCVARoptionUpdates(opt, p, r)
 
   # print('opt$print2screen = ')
   # print(opt$print2screen)
@@ -74,7 +74,7 @@ FCVARestn <- function(x,k,r,opt) {
                 k,r))
     cat(sprintf('This computation can be slow.\n'))
     cat(sprintf('Set opt$gridSearch <- 0 to skip it.\n'))
-    opt$db0 <- LikeGrid(x, k, r, opt)
+    opt$db0 <- LikeGridSearch(x, k, r, opt)
 
     # print('opt$db0 = ')
     # print(opt$db0)

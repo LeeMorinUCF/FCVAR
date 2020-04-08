@@ -3,7 +3,7 @@
 \docType{package}
 \name{FCVAR}
 \alias{FCVAR}
-\title{FCVAR: A package for estimating the Fractionally Cointegrated VAR model.}
+\title{A package for estimating the Fractionally Cointegrated VAR model.}
 \description{
 The FCVAR package provides five categories of functions:
 Estimation, Options, Postestimation, Specification and Auxilliary functions.
@@ -27,7 +27,7 @@ These functions define, modify and test the user-specified options for estimatio
 \describe{
   \item{\code{FCVARoptions}}{defines the estimation options used in the FCVAR
   estimation procedure and the related programs.}
-  \item{\code{updateRestrictions}}{is used to set and test estimation options for validity and compatibility.}
+  \item{\code{FCVARoptionUpdates}}{is used to set and test estimation options for validity and compatibility.}
 }
 }
 

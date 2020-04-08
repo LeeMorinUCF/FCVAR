@@ -17,11 +17,11 @@ A list object \code{opt} that stores the default estimation options.
 FCVARoptions()
 }
 \seealso{
-\code{updateRestrictions} to set and test estimation options for validity and compatibility.
+\code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.
 \code{FCVARestn} for use of these options in estimation.
 
 Other FCVAR option functions: 
-\code{\link{GetBounds}()},
-\code{\link{updateRestrictions}()}
+\code{\link{FCVARoptionUpdates}()},
+\code{\link{GetBounds}()}
 }
 \concept{FCVAR option functions}
