@@ -33,7 +33,7 @@ LMtest(x = rnorm(100), q = 10)
 LMtest(x = cumsum(rnorm(100)), q = 10)
 }
 \seealso{
-\code{mv_wntest} calls this function to test residuals
+\code{MVWNtest} calls this function to test residuals
 from the estimation results of \code{FCVARestn}.
 An alternative test is the Ljung-Box Q-test in \code{Qtest}.
 
@@ -41,7 +41,7 @@ Other FCVAR postestimation functions:
 \code{\link{FCVARboot}()},
 \code{\link{GetCharPolyRoots}()},
 \code{\link{HypoTest}()},
-\code{\link{Qtest}()},
-\code{\link{mv_wntest}()}
+\code{\link{MVWNtest}()},
+\code{\link{Qtest}()}
 }
 \concept{FCVAR postestimation functions}

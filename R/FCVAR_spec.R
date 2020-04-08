@@ -91,12 +91,12 @@ LagSelect <- function(x, kmax, r, order, opt ) {
     bic[k+1]    <- -2*loglik[k+1] + results$fp*log(T - opt$N)
 
     # ----- White noise tests ---------%
-    mv_wntest_out <- mv_wntest(results$Residuals, order, printWN)
-    # [ ~, pvWNQ(k+1,:), ~, pvWNLM(k+1,:), ~, pvMVq(k+1,:) ]  <- mv_wntest(...)
-    # Need to make sense of this after writing mv_wntest. Check.
-    pvWNQ[k+1, ] <- mv_wntest_out$pvQ
-    pvWNLM[k+1, ] <- mv_wntest_out$pvLM
-    pvMVq[k+1, ] <- mv_wntest_out$pvMVQ
+    MVWNtest_out <- MVWNtest(results$Residuals, order, printWN)
+    # [ ~, pvWNQ(k+1,:), ~, pvWNLM(k+1,:), ~, pvMVq(k+1,:) ]  <- MVWNtest(...)
+    # Need to make sense of this after writing MVWNtest. Check.
+    pvWNQ[k+1, ] <- MVWNtest_out$pvQ
+    pvWNLM[k+1, ] <- MVWNtest_out$pvLM
+    pvMVq[k+1, ] <- MVWNtest_out$pvMVQ
 
 
     # ----- LR test of lag <- k vs lag <- k-1 -----%

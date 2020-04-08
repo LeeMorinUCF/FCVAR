@@ -36,7 +36,7 @@ Qtest(x = cumsum(rnorm(100)), maxlag = 10)
 H. Luetkepohl (2005) "New Introduction to Multiple Time Series Analysis," Springer, Berlin.
 }
 \seealso{
-\code{mv_wntest} calls this function to test residuals
+\code{MVWNtest} calls this function to test residuals
 from the estimation results of \code{FCVARestn}.
 An alternative test is the Breusch-Godfrey Lagrange Multiplier Test in \code{LMtest}.
 
@@ -45,6 +45,6 @@ Other FCVAR postestimation functions:
 \code{\link{GetCharPolyRoots}()},
 \code{\link{HypoTest}()},
 \code{\link{LMtest}()},
-\code{\link{mv_wntest}()}
+\code{\link{MVWNtest}()}
 }
 \concept{FCVAR postestimation functions}

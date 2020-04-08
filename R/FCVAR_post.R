@@ -3,7 +3,7 @@
 
 #' Multivariate White Noise Tests
 #'
-#' \code{mv_wntest} performs multivariate tests for white noise.
+#' \code{MVWNtest} performs multivariate tests for white noise.
 #' It performs both the Ljung-Box Q-test and the LM-test on individual series
 #' for a sequence of lag lengths.
 #'
@@ -11,7 +11,7 @@
 #' typically model residuals.
 #' @param maxlag The number of lags for serial correlation tests.
 #' @param printResults An indicator to print results to screen.
-#' @return A list object \code{mv_wntest_out} containing the test results,
+#' @return A list object \code{MVWNtest_out} containing the test results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{Q}}{A 1xp vector of Q statistics for individual series.}
@@ -26,11 +26,11 @@
 #' opt <- FCVARoptions()
 #' x <- data(JNP2014)
 #' results <- FCVARestn(x,k = 3,r = 1, opt)
-#' mv_wntest(x = results$Residuals, maxlag = 12, printResults = 1)
+#' MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 #'
-#' mv_wntest(x = rnorm(100), maxlag = 10, printResults = 1)
+#' MVWNtest(x = rnorm(100), maxlag = 10, printResults = 1)
 #'
-#' mv_wntest(x = cumsum(rnorm(100)), maxlag = 10, printResults = 1)
+#' MVWNtest(x = cumsum(rnorm(100)), maxlag = 10, printResults = 1)
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.
@@ -38,7 +38,7 @@
 #' @note
 #' The LM test should be consistent for heteroskedastic series, Q-test is not.
 #'
-mv_wntest <- function(x, maxlag, printResults) {
+MVWNtest <- function(x, maxlag, printResults) {
 
   T <- nrow(x)
   p <- ncol(x)
@@ -91,7 +91,7 @@ mv_wntest <- function(x, maxlag, printResults) {
 
 
   # Output a list of results.
-  mv_wntest_out <- list(
+  MVWNtest_out <- list(
     Q = Q,
     pvQ = pvQ,
     LM = LM,
@@ -100,7 +100,7 @@ mv_wntest <- function(x, maxlag, printResults) {
     pvMVQ = pvMVQ
   )
 
-  return(mv_wntest_out)
+  return(MVWNtest_out)
 }
 
 
@@ -123,7 +123,7 @@ mv_wntest <- function(x, maxlag, printResults) {
 #'
 #' LMtest(x = cumsum(rnorm(100)), q = 10)
 #' @family FCVAR postestimation functions
-#' @seealso \code{mv_wntest} calls this function to test residuals
+#' @seealso \code{MVWNtest} calls this function to test residuals
 #' from the estimation results of \code{FCVARestn}.
 #' An alternative test is the Ljung-Box Q-test in \code{Qtest}.
 #' @note
@@ -234,7 +234,7 @@ LMtest <- function(x,q) {
 #'
 #' Qtest(x = cumsum(rnorm(100)), maxlag = 10)
 #' @family FCVAR postestimation functions
-#' @seealso \code{mv_wntest} calls this function to test residuals
+#' @seealso \code{MVWNtest} calls this function to test residuals
 #' from the estimation results of \code{FCVARestn}.
 #' An alternative test is the Breusch-Godfrey Lagrange Multiplier Test in \code{LMtest}.
 #' @note
