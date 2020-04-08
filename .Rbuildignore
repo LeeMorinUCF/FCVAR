@@ -3,3 +3,4 @@
 ^stata$
 ^R_dev$
 ^MATLAB$
+^vignettes/FCVAR\.Rmd$

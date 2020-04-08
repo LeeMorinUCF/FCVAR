@@ -155,6 +155,17 @@ usethis::use_vignette("FCVAR")
 # check Setting active project to 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR'
 # check Adding 'rmarkdown' to Suggests field in DESCRIPTION
 # check Writing 'vignettes/FCVAR.Rmd'
-# check Modify 'vignettes/FCVAR.Rmd'
+# dot Modify 'vignettes/FCVAR.Rmd'
 
-
+# Generate a sketch of an article.
+usethis::use_article("FCVAR")
+# Overwrite pre-existing file 'vignettes/FCVAR.Rmd'?
+#   
+#   1: Yeah
+# 2: Negative
+# 3: Not now
+# 
+# Selection: 1
+# check Writing 'vignettes/FCVAR.Rmd'
+# dot Modify 'vignettes/FCVAR.Rmd'
+# check Adding '^vignettes/FCVAR\\.Rmd$' to '.Rbuildignore'
