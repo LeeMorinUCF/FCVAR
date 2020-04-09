@@ -19,6 +19,17 @@ of the same dimensions as x.
 \code{FracDiff} is a fractional differencing procedure based on the
 	fast fractional difference algorithm of Jensen & Nielsen (2014).
 }
+\note{
+This function differs from the \code{diffseries} function
+in the \code{fracdiff} package, in that the \code{diffseries}
+function demeans the series first.
+In particular, the function calls \code{FCVAR::FracDiff(x - mean(x), d = 0.5)}
+and \code{fracdiff::diffseries(x, d = 0.5)} return the same values.
+(NOTE TO US: We should probably reconsider our naming choice for this function,
+since the \code{fracdiff} function in the \code{fracdiff} package
+actually estimates the ARFIMA model. Not an ideal choice of name
+on their side but they came first.)
+}
 \examples{
 opt <- FCVARoptions()
 x <- data(JNP2014)

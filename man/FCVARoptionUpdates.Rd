@@ -40,8 +40,9 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
 \code{FCVARestn} calls this function at the start of each estimation to verify
 validity of options.
 
-Other FCVAR option functions: 
+Other FCVAR estimation functions: 
+\code{\link{FCVARestn}()},
 \code{\link{FCVARoptions}()},
 \code{\link{GetBounds}()}
 }
-\concept{FCVAR option functions}
+\concept{FCVAR estimation functions}

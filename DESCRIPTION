@@ -20,8 +20,8 @@ Authors@R:
            email = "Michal.Popiel@analysisgroup.com",
            comment = c(ORCID = "0000-0000-9999-9999")))
 Description: A package for estimating the Fractionally Cointegrated 
-    Vector Autoregression (VAR) model. It includes functions for lag selection
-    and cointegration rank selection and hypothesis testing. 
+    Vector Autoregression (VAR) model. It includes functions for lag selection,
+    cointegration rank selection and hypothesis testing. 
 Imports:
     pracma
 URL: https://github.com/LeeMorinUCF/FCVAR

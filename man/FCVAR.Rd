@@ -5,40 +5,38 @@
 \alias{FCVAR}
 \title{A package for estimating the Fractionally Cointegrated VAR model.}
 \description{
-The FCVAR package provides five categories of functions:
-Estimation, Options, Postestimation, Specification and Auxilliary functions.
+The FCVAR package estimates the Fractionally Cointegrated
+Vector Autoregression (VAR) model. It includes functions for lag selection,
+cointegration rank selection and hypothesis testing.
+}
+\details{
+Functions in the FCVAR package are divided into four categories:
+Estimation, Postestimation, Specification and Auxilliary functions.
 }
 \section{Estimation functions}{
 
-The estimation functions include the main estimation function \code{FCVARestn}
-  and associated functions to display estimation results.
-  These include:
-\describe{
-  \item{\code{First_function}}{This is the first function}
-  \item{\code{Second_function}}{This is the second function}
-}
-}
-
-\section{Estimation options}{
-
-These functions define, modify and test the user-specified options for estimation.
-    Options include settings for optimization and restrictions for testing hypotheses.
-  These include:
-\describe{
-  \item{\code{FCVARoptions}}{defines the estimation options used in the FCVAR
-  estimation procedure and the related programs.}
-  \item{\code{FCVARoptionUpdates}}{is used to set and test estimation options for validity and compatibility.}
-}
+The estimation functions include the primary estimation function \code{FCVARestn}
+and associated functions to set estimation options and display results.
+Some of these functions define, modify and test the user-specified options for estimation.
+\code{FCVARoptions} defines the default estimation options used in the FCVAR
+estimation procedure and the related programs.
+The user can then revise the options such as the settings for optimization and
+restrictions for testing hypotheses.
+After making these changes, \code{FCVARoptionUpdates} is used to set and test
+estimation options for validity and compatibility.
 }
 
 \section{Postestimation functions}{
 
-The postestimation functions are used to display the results and test the
-  goodness of fit of the estimated model.
+The postestimation functions are used to display summary statistics,
+test hypotheses and test the goodness of fit of the estimated model.
   These include:
 \describe{
-  \item{\code{First_function}}{This is the first function}
-  \item{\code{Second_function}}{This is the second function}
+  \item{\code{HypoTest}}{for a likelihood ratio test of a restricted
+  vs. an unrestricted model}
+  \item{\code{FCVARboot}}{for generating a distribution of a likelihood ratio
+  test statistic}
+  \item{\code{FCVARforecast}}{for calculating recursive forecasts with the FCVAR model}
 }
 }
 
@@ -48,20 +46,24 @@ The specification functions are used to estimate a series of models in order
   to make model specfication decisions.
   These include:
 \describe{
-  \item{\code{First_function}}{This is the first function}
-  \item{\code{Second_function}}{This is the second function}
+  \item{\code{LagSelect}}{for selection of the lag order}
+  \item{\code{RankTests}}{for choosing the cointegrating rank}
+  \item{\code{FCVARbootRank}}{for generating a distribution of a likelihood ratio
+ test statistic for the rank test}
 }
 }
 
 \section{Auxilliary functions}{
 
 The auxilliary functions are used to perform intermediate calculations
-  for the estimation function.
-  Most of these functions are designed for use only within the estimation function.
-  Selected functions for external usage include:
+  for estimation.
+  These functions are mainly designed for use only within the estimation function.
+  Some exceptions include:
 \describe{
-  \item{\code{First_function}}{This is the first function}
-  \item{\code{Second_function}}{This is the second function}
+  \item{\code{FracDiff}}{for fractionally differencing a multivariate series}
+  \item{\code{GetResiduals}}{for calculating residuals for the FCVAR model}
+  \item{\code{FCVARsimBS}}{for generating bootstrap samples from the FCVAR model}
+  \item{\code{LikeGridSearch}}{for performing a grid-search optimization with the FCVAR likelihood function}
 }
 }
 
@@ -71,5 +73,6 @@ Several datasets are included as examples of the model building process.
   These include \code{JNP2014} and \code{BDP1997}.
   Sample model builds with hypothesis tests are found in the example scripts
   \code{JNPexample} and \code{BDPexample}.
+  See the document \code{future_JSS_article} for details.
 }
 

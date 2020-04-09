@@ -9,7 +9,7 @@
 #' @return A list object \code{opt} that stores the default estimation options.
 #' @examples
 #' FCVARoptions()
-#' @family FCVAR option functions
+#' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.
 #' \code{FCVARestn} for use of these options in estimation.
 #' @export
@@ -217,7 +217,7 @@ FCVARoptions <- function() {
 #' opt <- FCVARoptions()
 #' opt$gridSearch <- 0 # Skip grid search in optimization.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
-#' @family FCVAR option functions
+#' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to verify
 #' validity of options.
@@ -550,7 +550,7 @@ FCVARoptionUpdates <- function(opt, p, r) {
 #' @examples
 #' opt <- FCVARoptions()
 #' UB_LB_bounds <- GetBounds(opt)
-#' @family FCVAR option functions
+#' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to specify any bounds on fractional integration parameters.
 #'

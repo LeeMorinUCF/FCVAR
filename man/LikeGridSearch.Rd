@@ -22,7 +22,8 @@ A vector \code{params} of \code{d} and \code{b}
 corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.
 }
 \description{
-\code{LikeGridSearch} calculates the likelihood function
+\code{LikeGridSearch} performs a grid-search optimization
+by calculating the likelihood function
 on a grid of candidate parameter values.
 This function evaluates the likelihood over a grid of values
 	for \code{c(d,b)} (or \code{phi}).

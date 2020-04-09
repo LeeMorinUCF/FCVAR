@@ -20,8 +20,9 @@ FCVARoptions()
 \code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.
 \code{FCVARestn} for use of these options in estimation.
 
-Other FCVAR option functions: 
+Other FCVAR estimation functions: 
+\code{\link{FCVARestn}()},
 \code{\link{FCVARoptionUpdates}()},
 \code{\link{GetBounds}()}
 }
-\concept{FCVAR option functions}
+\concept{FCVAR estimation functions}

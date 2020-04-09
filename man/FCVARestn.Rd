@@ -48,5 +48,10 @@ FCVARestn(x, k = 2, r = 1, opt)
 \code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls this function at the start of each estimation to verify
 validity of options.
+
+Other FCVAR estimation functions: 
+\code{\link{FCVARoptionUpdates}()},
+\code{\link{FCVARoptions}()},
+\code{\link{GetBounds}()}
 }
 \concept{FCVAR estimation functions}
