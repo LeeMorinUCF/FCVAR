@@ -109,7 +109,6 @@ LagSelect(x1, kmax, p, order, opt)
 ################################################################################
 
 k <- 2
-
 rankTestStats <- RankTests(x1, k, opt)
 
 

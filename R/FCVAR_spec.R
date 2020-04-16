@@ -322,27 +322,27 @@ RankTests <- function(x, k, opt) {
     # create a variable for output strings
     yesNo <- c('No','Yes')
 
-    cat(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
-    cat(sprintf('                         Likelihood Ratio Tests for Cointegrating Rank                               \n'))
-    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('\n--------------------------------------------------------------------------------\n'))
+    cat(sprintf('             Likelihood Ratio Tests for Cointegrating Rank                               \n'))
+    cat(sprintf('--------------------------------------------------------------------------------\n'))
     cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt$N))
     cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T))
     cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
     cat(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
-    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
-    cat(sprintf('Rank \t  d  \t  b  \t Log-likelihood\t LR statistic\t P-value\n'))
+    cat(sprintf('--------------------------------------------------------------------------------\n'))
+    cat(sprintf('Rank     d      b     Log-likelihood   LR statistic   P-value\n'))
     for (i in 1:p) {
       if (pv[i] != 999) {
-        cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t%13.3f\t%8.3f\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i], pv[i]))
+        cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f  %8.3f\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i], pv[i]))
       }
       else {
-        cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t%13.3f\t    ----\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i]))
+        cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f      ----\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i]))
       }
 
     }
 
-    cat(sprintf('%2.0f   \t%5.3f\t%5.3f\t%15.3f\t         ----\t    ----\n', i, dHat[i+1], bHat[i+1], LogL[i+1]))
-    cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+    cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f           ----      ----\n', i, dHat[i+1], bHat[i+1], LogL[i+1]))
+    cat(sprintf('--------------------------------------------------------------------------------\n'))
 
 
   }
