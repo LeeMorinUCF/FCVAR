@@ -45,7 +45,8 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 
   # Shouldn't this be done here, too?
   # Update options based on initial user input.
-  opt <- FCVARoptionUpdates(opt, p, r)
+  # opt <- FCVARoptionUpdates(opt, p, r)
+  # Maybe not, because it is already done in FCVARestn.
 
 
   #--------------------------------------------------------------------------------
