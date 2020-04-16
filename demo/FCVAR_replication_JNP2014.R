@@ -117,14 +117,12 @@ rankTestStats <- RankTests(x1, k, opt)
 ################################################################################
 
 k <- 2
-
 r <- 1
-
 opt1 <- DefaultOpt
 opt1$gridSearch <- 0
 
 
-m1 <- FCVARestn(x1, k, r, opt1) # This model is now in the structure m1.
+m1 <- FCVARestn(x1, k, r, opt1)
 
 mv_wntest_m1 <- mv_wntest(m1$Residuals, order, printWNtest)
 
