@@ -1,0 +1,17 @@
+citHeader("To cite package ‘FCVAR’ in publications use:")
+
+citEntry(entry = "Manual",
+    title = "The Fractionally Cointegrated Vector Autoregression Model in R",
+    author = "Lealand Morin and Morten \\O. Nielsen and Michal K. Popiel",
+    year = "2020",
+    note = "R package version 0.0.0.9000",
+    url = "https://github.com/LeeMorinUCF/FCVAR",
+
+  textVersion  =
+  paste("Lealand Morin, Morten \\O. Nielsen and Michal K. Popiel (2020).",
+        "The Fractionally Cointegrated Vector Autoregression Model in R.",
+        "R package version 0.0.0.9000.",
+        "URL https://github.com/LeeMorinUCF/FCVAR.")
+)
+
+
