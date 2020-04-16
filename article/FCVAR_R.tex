@@ -96,8 +96,9 @@ both the implemented \emph{methods} and the \emph{software} into the respective
 relevant literature. For the latter both competing and complementary software
 should be discussed (within the same software environment and beyond), bringing
 out relative (dis)advantages. All software mentioned should be properly
-\verb|\cite{}|d. (See also Appendix~\ref{app:bibtex} for more details on
-\textsc{Bib}{\TeX}.)
+\verb|\cite{}|d. 
+% (See also Appendix~\ref{app:bibtex} for more details on
+% \textsc{Bib}{\TeX}.)
 %
 %For writing about software JSS requires authors to use the markup
 %\verb|\proglang{}| (programming languages and large programmable systems),
@@ -112,13 +113,48 @@ The fractionally cointegrated vector autoregression model is an excellent model.
 
 
 
+
+
+% This \proglang{R} packages is based on the \proglang{Matlab} package \pkg{FCVARmodel.m}
+% with documentation in \cite{Nielsen2016} and \cite{Nielsen2013}. 
+
+Let's stick to a description with words here. 
+We'll get into the ugly details in the next section. 
+For now, talk about CVAR as a tool for testing equilibrium relationships. 
+Then the fractional part is to accommodate a potenially long-lived deviation from equilibrium. 
+
+\subsection{R packages for estimating the CVAR model}
+
+
 In \proglang{R} \citep{R}, contegration is performed by the \fct{function1} and \fct{function2} in the \pkg{pscl}
 package \citep{Jackman:2015}. 
 
+\subsection{R packages for fractional integration}
 
-This \proglang{R} packages is based on the \proglang{Matlab} package \pkg{FCVARmodel.m}
-with documentation in \cite{Nielsen2016} and \cite{Nielsen2013}. 
 
+In \proglang{R} \citep{R}, models involving fractional integration are estimated by the \fct{function1} and \fct{function2} in the \pkg{pscl}
+package \citep{Jackman:2015}. 
+
+\subsection{The  Matlab program}
+
+This \proglang{R} package is based on a companion package \pkg{FCVARmodel.m}, written in \proglang{Matlab}. 
+The \proglang{Matlab} package is documented in \cite{Nielsen2016} and \cite{Nielsen2013}. 
+The Matlab program can be downloaded from the first author's website at Queen's University:
+% 
+\begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
+\end{center}
+% 
+\noindent It is freely available for non-commercial, academic use. 
+% For a (nearly) complete change log, please see Appendix \ref{sec version} of \cite{Nielsen2016}.
+% 
+% \subsubsection{Using the Matlab program}
+% 
+The use of this program requires a functioning installation of Matlab. Any recent version should work.  
+(more precisely: which version? And this should go at the end)
+
+Unzip the contents of the zip file into any directory that you plan to use as the working directory of the program.
+
+\subsection{Roadmap}
 
 The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes the functioning of the main program, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:illustrations} describes another example program, which demonstrates some additional functionality of the software. Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
 % Section \ref{sec programs} describes how each of the major program files work (each in a separate subsection). 
@@ -482,19 +518,31 @@ The first step is importing the data. Executing the code
 % in Listing~\ref{data}, 
 shown below, assigns the data from the file \verb|data_JNP2014.csv| to a matrix called \verb|data|. 
 
+\begin{leftbar}
+Better to use names of variables for clarity. 
+Are we actually using these matrices? 
+Maybe we don't need numbers. 
+I think we only \verb|x1|, so we should just call it \verb|x|.
+Finally, the actual command for a user will be from a data folder in the package. 
+\end{leftbar}
+\begin{Code}
+R> data <- read.csv('data_JNP2014.csv')
+R> x1 <- data[, c("lib", "ir_can", "un_can")]
+\end{Code}
+
 %\lstset{firstnumber=last}
 %\begin{lstlisting}[frame=single,caption={Importing data}, label = data]
 %\begin{CodeChunk} 
 %\begin{CodeInput}
-\begin{Code}
-R> data <- read.csv('data_JNP2014.csv')
-R> x1 <- data(, c(1, 3, 5)) # Better to use names of variables for clarity. 
-R> x2 <- data(, [2 3 5]) # And then remove the comments. 
-R> x3 <- data(, [1 2 3 5])
-R> x4 <- data(, [1 3 4 5 6])
-R> x5 <- data(, [2 3 4 5 6])
-R> x6 <- data(, [1 2 3 4 5 6])
-\end{Code}
+%\begin{Code}
+%R> data <- read.csv('data_JNP2014.csv')
+%R> x1 <- data(, c(1, 3, 5)) 
+%R> x2 <- data(, [2 3 5]) 
+%R> x3 <- data(, [1 2 3 5])
+%R> x4 <- data(, [1 3 4 5 6])
+%R> x5 <- data(, [2 3 4 5 6])
+%R> x6 <- data(, [1 2 3 4 5 6])
+%\end{Code}
 %\end{CodeInput}
 %\end{CodeChunk}
 %\end{lstlisting}
@@ -536,51 +584,67 @@ We could say that ``the rest of the options are described in the package documen
 
 %\begin{lstlisting}[frame=single,caption={Choosing estimation options}, label = intl2]
 \begin{Code}
-opt <- FCVARoptions; % Define variable to store Estimation Options (object).
-opt.dbMin        = [0.01 0.01]; % lower bound for d,b.
-opt.dbMax        = [2.00 2.00]; % upper bound for d,b.
-opt.unrConstant  = 0; % include an unrestricted constant? 1 = yes, 0 = no.
-opt.rConstant    = 0; % include a restricted constant? 1 = yes, 0 = no.
-opt.levelParam   = 1; % include level parameter? 1 = yes, 0 = no.
-opt.constrained  = 0; % impose restriction dbMax >= d >= b >= dbMin ? 
-                      % 1 = yes, 0 = no.
-opt.restrictDB   = 1; % impose restriction d=b ? 1 = yes, 0 = no.
-opt.db0          = [.8 .8]; % set starting values for optimization algorithm.
-opt.N            = 0; % number of initial values to condition upon.
-opt.print2screen = 1; % print output.
-opt.printRoots   = 1; % print roots of characteristic polynomial.
-opt.plotRoots    = 1; % plot roots of characteristic polynomial.
-opt.gridSearch   = 1; % For more accurate estimation, perform the grid search.
-					  % This will make estimation take longer.
-opt.plotLike     = 0; % Plot the likelihood (if gridSearch = 1).
-opt.progress 	 = 0; % Show grid search progress indicator waitbar.
-opt.updateTime   = 5; % How often progress is updated (seconds).
+opt <- EstOptions() # Define variable to store Estimation Options (object).
 
-% Linux example:
-opt.progLoc = '"/usr/bin/fdpval"';  % location path with program name 
-                                    % of fracdist program, if installed
-                                    % Note: use both single (outside) and double 
-                                    % quotes (inside). This is especially important 
-                                    % if path name has spaces.
-DefaultOpt = opt; % Store the options for restoring them in between hypothesis tests.
+opt$dbMin        <- c(0.01, 0.01) # lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
+opt$unrConstant  <- 0 # include an unrestricted constant? 1 <- yes, 0 <- no.
+opt$rConstant    <- 0 # include a restricted constant? 1 <- yes, 0 <- no.
+opt$levelParam   <- 1 # include level parameter? 1 <- yes, 0 <- no.
+opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
+opt$db0          <- c(0.8, 0.8) # set starting values for optimization algorithm.
+opt$N            <- 0 # number of initial values to condition upon.
+opt$print2screen <- 1 # print output.
+opt$printRoots   <- 1 # do not print roots of characteristic polynomial.
+opt$plotRoots    <- 1 # do not plot roots of characteristic polynomial.
+opt$gridSearch   <- 1 # For more accurate estimation, perform the grid search.
+					  # This will make estimation take longer.
+opt$plotLike     <- 0 # Plot the likelihood (if gridSearch <- 1).
+opt$progress 	   <- 0 # Show grid search progress indicator waitbar.
+opt$updateTime   <- 0.5 # How often progress is updated (seconds).
+
+# Linux example:
+opt$progLoc <- '"/usr/bin/fdpval"'  # location path with program name
+                                    # of fracdist program, if installed
+                                    # Note: use both single (outside) and double
+                                    # quotes (inside). This is especially important
+                                    # if path name has spaces.
+# Windows example:
+# opt$progLoc <- '".\fdpval\fdpval"'  # program located in folder fdpval in current directory
+
+# There are many other options (see EstOptions.m for
+# everything else. These can be accessed/modified as in, for example:
+# opt$dbFminOptions$Algorithm <- 'interior-point'
+
+DefaultOpt <- opt # Store the options for restoring them in between hypothesis tests.
+
 \end{Code}
 %\end{lstlisting}
 
-The first line initializes the object \verb|opt| and assigns all of the default options set in \verb|EstOptions|. The user can see the full set of options by typing \verb|FCVARoptions| (or \verb|opt| after initialization) in the command line. % Listing~\ref{intl2} 
+The first line initializes the object \verb|opt| and assigns all of the default options set in \verb|FCVARoptions|. The user can see the full set of options by typing \verb|DefaultOpt| (or \verb|opt| after initialization) in the command line. % Listing~\ref{intl2} 
 The code block above 
 shows how to easily change any of the default options. Defining the program options in this way allows the user to create and store several option objects with different attributes. This can be very convenient when, for example, performing the same hypothesis tests on different data sets. 
 
-The set of available options can be broken into several categories: numerical optimization, model deterministics and restrictions, output, grid search, and $P$-values for the rank test. We recommend that only advanced users make changes to the numerical optimization options. Adding deterministics requires setting the variable corresponding to the type of deterministic component to 1. For instance, in the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. Output variables refer to either printing or plotting various information post-estimation and usually take values $1$ or $0$ (on or off). For example, if the user is not interested in the estimates of $\Gamma$, they can be suppressed by setting \verb|opt.printGammas = 0|.
+The set of available options can be broken into several categories: numerical optimization, model deterministics and restrictions, output, grid search, and $P$-values for the rank test. We recommend that only advanced users make changes to the numerical optimization options. Adding deterministics requires setting the variable corresponding to the type of deterministic component to 1. For instance, in the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. Output variables refer to either printing or plotting various information post-estimation and usually take values $1$ or $0$ (on or off). For example, if the user is not interested in the estimates of $\Gamma$, they can be suppressed by setting \verb|opt$printGammas <- 0|.
 
-The bounds on the parameter space for $d$ and $b$ are specified in \verb|opt.dbMin| and \verb|opt.dbMax|. In this example, these are both specified as 2-dimensional column vectors, in which case the first element specifies the bound on $d$ and the second element the bound on $b$. Alternatively, one can set \verb|opt.dbMin| and \verb|opt.dbMax| as scalars, which imposes the same bounds on $d$ and $b$. 
+The bounds on the parameter space for $d$ and $b$ are specified in \verb|opt$dbMin| and \verb|opt$dbMax|. In this example, these are both specified as 2-dimensional column vectors, in which case the first element specifies the bound on $d$ and the second element the bound on $b$. Alternatively, one can set \verb|opt$dbMin| and \verb|opt$dbMax| as scalars, which imposes the same bounds on $d$ and $b$. 
 
-An important feature in this package is the ability to pre-estimate by using a grid search. If the user selects this option, they can view progress by setting \verb|opt.progress| to $1$ (waitbar) or $2$ (output in command line). The minimum frequency of these updates is set by \verb|opt.updateTime|. The user also has the option (\verb|opt.plotLike|) to view a plot of the likelihood over $d$ and/or $b$ after the grid search completes. The output of the grid search is a preliminary estimate of the fractional parameters. These are used as starting values in the subsequent numerical optimization, and the bounds on $d$ and $b$ are set to these starting values plus/minus $0.1$ but still within the original \verb|dbMin| and \verb|dbMax| settings.
+An important feature in this package is the ability to pre-estimate by using a grid search. If the user selects this option, they can view progress by setting \verb|opt$progress| to $1$ (waitbar) or $2$ (output in command line). The minimum frequency of these updates is set by \verb|opt$updateTime|. The user also has the option (\verb|opt$plotLike|) to view a plot of the likelihood over $d$ and/or $b$ after the grid search completes. The output of the grid search is a preliminary estimate of the fractional parameters. These are used as starting values in the subsequent numerical optimization, and the bounds on $d$ and $b$ are set to these starting values plus/minus $0.1$ but still within the original \verb|dbMin| and \verb|dbMax| settings.
 
-As of v.1.4.0, the new option \verb|opt.LocalMax| allows more control over the grid search. If \verb|opt.LocalMax = 0|, the function \verb|LikeGrid.m| returns the parameter values corresponding to the global maximum of the likelihood on the grid. If \verb|opt.LocalMax = 1|, then \verb|LikeGrid.m| returns the parameter values for the local maximum corresponding to the highest value of $b$. This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014}. As of v.1.4.0, the default setting is \verb|opt.LocalMax = 1|.
+As of v.1.4.0, the new option \verb|opt$LocalMax| allows more control over the grid search. If \verb|opt$LocalMax <- 0|, the function \fct{FCVARlikeGrid} returns the parameter values corresponding to the global maximum of the likelihood on the grid. If \verb|opt$LocalMax <- 1|, then \fct{FCVARlikeGrid} returns the parameter values for the local maximum corresponding to the highest value of $b$. This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014}. As of v.1.4.0, the default setting is \verb|opt$LocalMax <- 1|.
 
-Another new option in v.1.4.0 is the addition of a line search to the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$. This is added via the option \verb|opt.LineSearch = 1| and is the default. See \citet[Section 2.2]{Doornik2016} for details.
+Another new option in v.1.4.0 is the addition of a line search to the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$. This is added via the option \verb|opt$LineSearch <- 1| and is the default. See \citet[Section 2.2]{Doornik2016} for details.
 
-In order to automatically obtain $P$-values for cointegration rank tests when $b>0.5$, the user needs to download and install the necessary program (see Section~\ref{sec obtaining}). The last option, \verb|opt.progLoc|, identifies the location of that program.
+\begin{leftbar}
+We might have to rewrite this to reflect our updated strategy for the $P$-values for cointegration rank tests. 
+Maybe it will be as simple as calling the \pkg{Rcpp} package. 
+\end{leftbar}
+
+In order to automatically obtain $P$-values for cointegration rank tests when $b>0.5$, the user needs to download and install the necessary program 
+% (see Section~\ref{sec obtaining}). 
+(see Section~\ref{sec:fdpval}). 
+The last option, \verb|opt$progLoc|, identifies the location of that program.
 
 After all options have been set, the last line 
 % in Listing~\ref{intl2} 
@@ -1201,7 +1265,7 @@ As an example of when this feature can be useful, consider model $\mathscr{H}_{\
 
 
 
-\section{Additional examples: MoreExamples.m}
+\section[Additional examples: MoreExamples.R]{Additional examples: \code{MoreExamples.R}}
 \label{sec:examples}
 
 To show some additional functionality of the FCVAR software package, this section contains several other examples, which are based on \cite{JNP2014}, but are not part of that paper.
@@ -1209,66 +1273,63 @@ To show some additional functionality of the FCVAR software package, this sectio
 \subsection{Forecasting}
 \label{sec:forecasting}
 
-Listing~\ref{forecast} performs recursive one-step ahead forecasts for each of the variables as well as the equilibrium relation. 
-
+% Listing~\ref{forecast} 
+This code block 
+performs recursive one-step ahead forecasts for each of the variables as well as the equilibrium relation. 
+%
 %\begin{lstlisting}[frame=single,caption={Forecasting}, label = forecast]
-\begin{Code}
 %% --------- FORECAST ---------- %
-
-% Forecast from the final restricted model.
-NumPeriods = 12; % forecast horizon set to 12 months ahead.
-
-% Assign the model whose coefficients will be used for forecasting.
-modelF = m1r4;
-
-xf = FCVARforecast(x1, modelF, NumPeriods);
-
-% Series including forecast.
-seriesF = [x1; xf]; 
-
-% Equilibrium relation including forecasts.
-equilF = seriesF*modelF.coeffs.betaHat; 
-
-% Determine the size of the vertical line to delimit data and forecast
-%   values.
-T = size(x1,1);
-yMaxS  = max(max(seriesF));
-yMinS  = min(min(seriesF));
-yMaxEq = max(max(equilF));
-yMinEq = min(min(equilF));
-
-% Plot the results.
-figure
-subplot(2,1,1);
-plot(seriesF), 
-title('Series including forecast'), xlabel('t');
-line([T T], [yMinS yMaxS], 'Color','k');
-subplot(2,1,2);
-plot(equilF), 
-title('Equilibrium relation including forecasts'), xlabel('t');
-line([T T], [yMinEq yMaxEq], 'Color','k');
+%
+\begin{Code}
+R> NumPeriods <- 12
+R> modelF <- m1r4
+R> xf <- FCVARforecast(x1, modelF, NumPeriods)
+R> seriesF <- rbind(x1, xf) 
+R> equilF <- seriesF %*% modelF$coeffs$betaHat
 \end{Code}
+%
+%% Determine the size of the vertical line to delimit data and forecast
+%%   values.
+%T = size(x1,1);
+%yMaxS  = max(max(seriesF));
+%yMinS  = min(min(seriesF));
+%yMaxEq = max(max(equilF));
+%yMinEq = min(min(equilF));
+%
+%% Plot the results.
+%figure
+%subplot(2,1,1);
+%plot(seriesF), 
+%title('Series including forecast'), xlabel('t');
+%line([T T], [yMinS yMaxS], 'Color','k');
+%subplot(2,1,2);
+%plot(equilF), 
+%title('Equilibrium relation including forecasts'), xlabel('t');
+%line([T T], [yMinEq yMaxEq], 'Color','k');
 %\end{lstlisting}
+%
+The user specifies the forecast horizon (\verb|NumPeriods|) as well as the model (in this case, \verb|modelF <- m1r4|). These two inputs, along with the data, are used in the call to the function \fct{FCVARforecast}. This function returns \verb|xf|, a \verb|NumPeriods| by $p$ matrix of forecasted values of $X$, 
+which are forecasted to take place after \verb|x1|. 
+% This code section also plots the original series and the equilibrium relation $X\hat{\beta}$  along with the forecasts. These plots are shown in Figure~\ref{fig:forecast}.
+Figure~\ref{fig:forecast} plots the original series and the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
 
-The user specifies the forecast horizon (\verb|NumPeriods|) as well as the model (in this case, \verb|modelF = m1r1|). These two inputs, along with the data, are used in the call to the function \verb|FCVARforecast.m|. This function returns \verb|xf|, a \verb|NumPeriods| by $p$ matrix of forecasted values of $X$. This code section also plots the original series and the equilibrium relation along with the forecasts. These plots are shown in Figure~\ref{fig:forecast}.
-
-The forecasts can be printed to screen by typing \verb|xf| in the command window. For this example, the forecast yields the following output:
-\begin{verbatim}
-xf =
-
-   -0.143651232445609   5.857045691984009  -2.636093400885282
-   -0.084880236401301   5.959876423543075  -2.654427734412809
-   -0.025317647188555   6.110372247993035  -2.673504395263888
-    0.023637193159649   6.291703833118448  -2.692354312615941
-    0.065948385719753   6.495095415827381  -2.710793696483187
-    0.101480482760750   6.712274724017515  -2.728550463910498
-    0.131038772676406   6.937036380068601  -2.745463810349039
-    0.155108028894535   7.164423215402036  -2.761407736878001
-    0.174198620780072   7.390568568007144  -2.776296703046935
-    0.188773441631705   7.612444943293763  -2.790074682226306
-    0.199275426254352   7.827704702527144  -2.802710965769232
-    0.206124920473081   8.034550676278421  -2.814195673339702
-\end{verbatim}
+%The forecasts can be printed to screen by typing \verb|xf| in the command window. For this example, the forecast yields the following output:
+%\begin{verbatim}
+%xf =
+%
+%   -0.143651232445609   5.857045691984009  -2.636093400885282
+%   -0.084880236401301   5.959876423543075  -2.654427734412809
+%   -0.025317647188555   6.110372247993035  -2.673504395263888
+%    0.023637193159649   6.291703833118448  -2.692354312615941
+%    0.065948385719753   6.495095415827381  -2.710793696483187
+%    0.101480482760750   6.712274724017515  -2.728550463910498
+%    0.131038772676406   6.937036380068601  -2.745463810349039
+%    0.155108028894535   7.164423215402036  -2.761407736878001
+%    0.174198620780072   7.390568568007144  -2.776296703046935
+%    0.188773441631705   7.612444943293763  -2.790074682226306
+%    0.199275426254352   7.827704702527144  -2.802710965769232
+%    0.206124920473081   8.034550676278421  -2.814195673339702
+%\end{verbatim}
 
 \begin{figure}[H]
   \centering
@@ -1281,49 +1342,36 @@ xf =
 \subsection{Bootstrap hypothesis test}
 \label{sec:bootstr-hypoth-test}
 
-Listing~\ref{BSh} demonstrates the use of the wild bootstrap for hypothesis tests on the parameters, as developed by \cite{Boswijk2013} for the CVAR model. The user specifies two sets of options corresponding to two different nested models, and the function \verb|FCVARboot.m| returns the results of the wild bootstrap. The wild bootstrap is programmed to perform under parallel processing. If the user has the capability to use multiple processors, then computation time can be greatly reduced. If not, the function can still be performed, but the bootstrap iterations will appear out of order since the loop is coded using \verb|parfor| instead of \verb|for|.
+% Listing~\ref{BSh} 
+This code block
+demonstrates the use of the wild bootstrap for hypothesis tests on the parameters, as developed by \cite{Boswijk2013} for the CVAR model. 
+The function \fct{FCVARboot} returns the results of the wild bootstrap. 
+The user specifies two sets of options corresponding to two different nested models, the restricted model with \verb|optRES| and the unrestricted model with \verb|optUNR|. 
+This particlar example tests the restriction that political variables do not enter the cointegrating relation(s).
+
+% The wild bootstrap is programmed to perform under parallel processing. If the user has the capability to use multiple processors, then computation time can be greatly reduced. 
+% If not, the function can still be performed, but the bootstrap iterations will appear out of order since the loop is coded using \verb|parfor| instead of \verb|for|. 
+
 
 %\begin{lstlisting}[frame=single,caption={Bootstrap hypothesis test}, label = BSh]
-\begin{Code}
 %% --------- BOOTSTRAP HYPOTHESIS TEST ---------- %
-
-% Test restriction that political variables do not enter the  
-%   cointegrating relation(s).
-
-% Turn off plots for bootstrapping.
-DefaultOpt.plotRoots = 0;
-
-% Define estimation options for unrestricted model (alternative)
-optUNR = DefaultOpt;
-
-% Define estimation options for restricted model (null)
-optRES = DefaultOpt;
-optRES.R_Beta = [1 0 0];
-
-% Number of bootstrap samples to generate
-B = 999;
-
-% Call to open the distributed processing (comment out if unavailable)
-% matlabpool ('open',4); % for versions 2013a and earlier.
-% parpool; % for versions 2013b and later.
-
-[LRbs, H, mBS, mUNR] = FCVARboot(x1, k, r, optRES, optUNR, B);
-
-
-%% Compare the bootstrap distribution to chi-squared distribution
-
-% Estimate kernel density
-[F,XI]=ksdensity(LRbs);
-
-% Plot bootstrap density with chi-squared density
-figure; plot(XI,F, XI, chi2pdf(XI,H.df))
-
-legend(['Bootstrap PDF with ', num2str(B), ' BS samples'],...
-    ['Chi Squared with ', num2str(H.df),' df'])
+\begin{Code}
+R> DefaultOpt$plotRoots <- 0
+R> optUNR <- DefaultOpt
+R> optRES <- DefaultOpt
+R> optRES.R_Beta <- c(1, 0, 0)
+R> FCVARboot_out <- FCVARboot(x1, k, r, optRES, optUNR, B = 999)
+R> LRbs_density <- ksdensity(FCVARboot_out$LRbs)
 \end{Code}
+
+%% Plot bootstrap density with chi-squared density
+%figure; plot(XI,F, XI, chi2pdf(XI,H.df))
+%
+%legend(['Bootstrap PDF with ', num2str(B), ' BS samples'],...
+%    ['Chi Squared with ', num2str(H.df),' df'])
 %\end{lstlisting}
 
-An example output 
+An example of the output is
 \begin{verbatim}
 Bootstrap results:
 Unrestricted log-likelihood: 451.174
@@ -1334,7 +1382,10 @@ P-value: 	      0.000
 P-value (BS): 	 0.014
 \end{verbatim}
 
-The user might also be interested in comparing the bootstrap likelihood ratio test statistic distribution to the asymptotic one. The second part of Listing~\ref{BSh} performs this comparison by producing a plot of the two distributions, shown in Figure~\ref{fig:BS}.
+The user might also be interested in comparing the bootstrap likelihood ratio test statistic distribution to the asymptotic one, a $\chi$-squared distribution with \verb|H.df| degrees of freedom. 
+% The second part of Listing~\ref{BSh} performs this comparison by producing 
+These objects can be used to produce 
+a plot of the two distributions, shown in Figure~\ref{fig:BS}.
 
 \begin{figure}[tbh]
   \centering
@@ -1347,24 +1398,21 @@ The user might also be interested in comparing the bootstrap likelihood ratio te
 \subsection{Bootstrap rank test}
 \label{sec:bootstrap-rank-test}
 
-Listing~\ref{BSr} shows how to perform a wild bootstrap rank test, following the methodology of \cite{Cavaliere2010} for the CVAR model. This procedure works in much the same way as the bootstrap hypothesis test described in Section~\ref{sec:bootstr-hypoth-test}. The difference is that, instead of providing two sets of estimation options, the user specifies two different ranks for comparison.
+% Listing~\ref{BSr}
+This code block
+shows how to perform a wild bootstrap rank test, following the methodology of \cite{Cavaliere2010} for the CVAR model. This procedure works in much the same way as the bootstrap hypothesis test described in Section~\ref{sec:bootstr-hypoth-test}. The difference is that, instead of providing two sets of estimation options, the user specifies two different ranks for comparison.
 
 %\begin{lstlisting}[frame=single,caption={Bootstrap rank test}, label = BSr]
-\begin{Code}
 %% --------- BOOTSTRAP RANK TEST ---------- %
-
 % Test rank 0 against rank 1
-r1 = 0;
-r2 = 1;
-
-[LR_Rnk, H_Rnk, mBSr1, mBSr2] = FCVARbootRank(x1, k, DefaultOpt, r1, r2, B);
-
-% Compare to P-value based on asymptotic distribution
-fprintf('P-value: \t %1.3f\n', rankTestStats.pv(1));
-
-% Close distributed processing (comment out if unavailable)
-% matlabpool close;
+\begin{Code}
+R> r1 <- 0
+R> r2 <- 1
+R> FCVARbootRank_out <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B = 999)
+R> cat(sprintf('P-value: \t %1.3f\n', rankTestStats$pv[1]))
 \end{Code}
+% Compare to P-value based on asymptotic distribution
+% fprintf('P-value: \t %1.3f\n', rankTestStats.pv(1));
 %\end{lstlisting}
 
 The results are printed as
@@ -1377,33 +1425,31 @@ LR statistic: 	 22.268
 P-value (BS): 	 0.033
 P-value: 	 0.043
 \end{verbatim}
+in which the last $P$-value is printed to compare the bootstrap $P$-value to that based on the asymptotic distribution. 
 
 \subsection{Simulation}
 \label{sec:simulation}
 
-Finally, Listing~\ref{simFCVAR} shows how to simulate an FCVAR model for a given set of parameters. The user provides data for starting values and a Matlab structure containing model parameters for simulation as well as the number of periods to simulate. The simulated data is generated using Gaussian errors.
+Finally, 
+% Listing~\ref{simFCVAR} 
+this example
+shows how to simulate an FCVAR model for a given set of parameters. The user provides data for starting values and a list containing model parameters for simulation as well as the number of periods to simulate. The simulated data are generated using Gaussian errors.
 
 %\begin{lstlisting}[frame=single,caption={Simulation}, label = simFCVAR]
-\begin{Code}
 %% --------- SIMULATION ---------- %
-
-% Simulate the final restricted model, the same one used for forecasting
-%   above.
-
-% Number of periods to simulate
-T_sim = 100;
-
-% Simulate data
-xSim = FCVARsim(x1, modelF, T_sim);
-
-% Plot the results
-figure;
-plot(xSim)
-legend('Support', 'Unemployment', 'Interest rate')
+\begin{Code}
+R> T_sim <- 100
+R> xSim <- FCVARsim(x1, modelF, T_sim)
 \end{Code}
+% Plot the results
+%figure;
+%plot(xSim)
+%legend('Support', 'Unemployment', 'Interest rate')
 %\end{lstlisting}
 
-For the example above, the generated data is shown in Figure~\ref{fig:sim}.
+For the example above, 
+using the same data as for the forecasting example above, 
+the generated data is shown in Figure~\ref{fig:sim}.
 
 \begin{figure}[tbh]
   \centering
@@ -1424,25 +1470,9 @@ For the example above, the generated data is shown in Figure~\ref{fig:sim}.
 \section{Extensions} \label{sec:extensions}
 
 
-\subsection{The Matlab program}
-
-\subsubsection{Obtaining the Matlab program}
-
-The Matlab program can be downloaded from the first author's website at Queen's University:
-
-\begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
-\end{center}
-
-\noindent It is freely available for non-commercial, academic use. For a (nearly) complete change log, please see Appendix \ref{sec version} of \cite{Nielsen2016}.
-
-\subsubsection{Using the Matlab program}
-
-The use of this program requires a functioning installation of Matlab. Any recent version should work. Unzip the contents of the zip file into any directory which will be the working directory of the program.
-
-The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec main} describes the functioning of the main program, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes another example program, which demonstrates some additional functionality of the software. Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. Section \ref{sec programs} describes how each of the major program files work (each in a separate subsection). The Appendix contains a version change log.
 
 
-\subsection{Extension for $P$-values}
+\subsection{Extension for $P$-values} \label{sec:fdpval}
 
 
 Although the Matlab program can run standalone, one of the functions, \verb|RankTests.m|, makes an external system call to a separately installed program, \verb|fdpval|. This external program is the C++ implementation of a Fortran program used to obtain simulated $P$-values from \cite{mackinnon2014numerical}. If the user would like $P$-values for the cointegration rank tests to be automatically calculated, we recommend obtaining this companion program, which is made available by Jason Rhinelander and can be downloaded from: 

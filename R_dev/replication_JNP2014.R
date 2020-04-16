@@ -1,23 +1,23 @@
 ################################################################################
-# 
+#
 # Example of FCVAR analysis
-# 
-# 
+#
+#
 # Lee Morin, Ph.D.
 # Assistant Professor
 # Department of Economics
 # College of Business Administration
 # University of Central Florida
-# 
+#
 # January 10, 2020
-# 
+#
 ################################################################################
-# 
+#
 # This code replicates Table 4: FCVAR results for Model 1, in
 # Maggie E.C. Jones, Morten \Orregaard Nielsen & Michal Ksawery Popiel (2014).
 #   "A fractionally cointegrated VAR analysis of economic voting and political support,"
 #   Canadian Journal of Economics.
-# 
+#
 ################################################################################
 
 
@@ -34,12 +34,12 @@ rm(list = ls(all = TRUE))
 ################################################################################
 
 # Set working directory.
-wd_path <- '~/Research/FCVAR/GitRepo/FCVAR/R'
+wd_path <- '~/Research/FCVAR/GitRepo/FCVAR/R_dev'
 setwd(wd_path)
 
 # Load library containing Estimation Options required for estimation.
 source('EstOptions.R')
-# Contains a single function EstOptions() with default options. 
+# Contains a single function EstOptions() with default options.
 
 # Load library with Main Estimation Function for FCVAR
 source('FCVAR_estn.R')
@@ -51,7 +51,7 @@ source('FCVAR_lower.R')
 source('FCVAR_higher.R')
 
 # Load fracdiff library for testing.
-library(fracdiff)
+# library(fracdiff)
 
 
 ################################################################################
@@ -63,11 +63,19 @@ data <- read.csv('data_JNP2014.csv')
 
 # data for each model.
 x1 <- data[, c(1, 3, 5)]
-x2 <- data[, c(2, 3, 5)]
-x3 <- data[, c(1, 2, 3, 5)]
-x4 <- data[, c(1, 3, 4, 5, 6)]
-x5 <- data[, c(2, 3, 4, 5, 6)]
-x6 <- data[, c(1, 2, 3, 4, 5, 6)]
+# x2 <- data[, c(2, 3, 5)]
+# x3 <- data[, c(1, 2, 3, 5)]
+# x4 <- data[, c(1, 3, 4, 5, 6)]
+# x5 <- data[, c(2, 3, 4, 5, 6)]
+# x6 <- data[, c(1, 2, 3, 4, 5, 6)]
+
+# Rewrite with column names.
+colnames(data)
+# [1] "lib"    "pc"     "ir_can" "ir_us"  "un_can" "un_us"
+# x1 is the only one used.
+colnames(data)[c(1, 3, 5)]
+x1 <- data[, c("lib", "ir_can", "un_can")]
+
 
 
 ################################################################################
@@ -123,10 +131,10 @@ startProg <- Sys.time() # start timer
 
 
 ################################################################################
-# LAG SELECTION 
+# LAG SELECTION
 ################################################################################
 
-opt$gridSearch <- 0 # Life is too short. 
+opt$gridSearch <- 0 # Life is too short.
 LagSelect(x1, kmax, p, order, opt)
 
 
@@ -238,7 +246,7 @@ Halpha2 <- HypoTest(m1, m1r4) 	# Test the null of m1r4 against the alternative m
 opt1 <- DefaultOpt
 opt1$gridSearch <- 0
 opt1$R_Alpha <- matrix(c(0, 0, 1), nrow = 1, ncol = 3)
-k<-2 
+k<-2
 r <-1
 
 m1r5 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r5.
@@ -251,7 +259,7 @@ Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m
 
 
 #--------------------------------------------------------------------------------
-# RESTRICTED MODEL OUTPUT 
+# RESTRICTED MODEL OUTPUT
 #   - print normalized beta and alpha for model m1r4.
 #--------------------------------------------------------------------------------
 
