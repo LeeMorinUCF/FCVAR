@@ -754,7 +754,7 @@ With the rank and lag selected, the user can now move to the next code section.
 %R> r <- 1
 %R> opt1 <- DefaultOpt
 %R> m1 <- FCVARestn(x1, k, r, opt1)
-%R> MVWNtest(m1$residuals, order, printWNtest)
+%R> MVWNtest(m1$Residuals, order, printWNtest)
 %\end{CodeInput}
 %\end{CodeChunk} 
 %\end{lstlisting}
@@ -903,17 +903,17 @@ are shown below. For each residual both the Q- and LM-test statistics and their 
 
 \begin{CodeChunk} 
 \begin{CodeInput}
-R> MVWNtest(m1$residuals, order, printWNtest)
+R> MVWNtest_m1 <- MVWNtest(m1$Residuals, order, printWNtest)
 \end{CodeInput}
 \begin{CodeOutput}
        White Noise Test Results (lag = 12)
 ---------------------------------------------
 Variable |       Q  P-val |      LM  P-val  |
 ---------------------------------------------
-Multivar |  97.868  0.747 |     ----  ----  |
-Var1     |   9.301  0.677 |  11.238  0.509  |
-Var2     |  14.443  0.273 |   8.566  0.739  |
-Var3     |  10.596  0.564 |  12.269  0.424  |
+Multivar |  97.879  0.747 |     ----  ----  |
+Var1     |   9.300  0.677 |  11.238  0.509  |
+Var2     |  14.450  0.273 |   8.568  0.739  |
+Var3     |  10.591  0.564 |  12.265  0.425  |
 ---------------------------------------------
 \end{CodeOutput}
 \end{CodeChunk} 
@@ -952,7 +952,7 @@ Furthermore, the estimation was performed with the grid search and the plot opti
   \includegraphics[scale = .6, keepaspectratio=true]{Figures/m1_likelihood.png}
 \end{figure}
 
-The complete results for the unrestricted model are stored in the list \verb|m1| and can be accessed anytime. For instance, if the user would like to perform a more careful analysis of the residuals they are stored in \verb|m1$residuals|.
+The complete results for the unrestricted model are stored in the list \verb|m1| and can be accessed anytime. For instance, if the user would like to perform a more careful analysis of the residuals they are stored in \verb|m1$Residuals|.
 
 \subsection{Hypothesis testing}
 \label{subsec hypo}
@@ -966,12 +966,11 @@ shown below.
 %% --------- IMPOSE RESTRICTIONS AND TEST THEM ---------- %
 %\begin{lstlisting}[frame=single,caption={Hypothesis $\mathscr{H}_d^1$}, label = Hdb1]
 \begin{Code}
-R> DefaultOpt$gridSearch <- 0
 R> opt1 <- DefaultOpt
-R> opt1$R_psi <- c(1, 0)
+R> opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 R> opt1$r_psi <- 1
 R> m1r1 <- FCVARestn(x1, k, r, opt1)
-R> MVWNtest(m1r1$residuals, order, printWNtest)
+R> MVWNtest_m1r1 <- MVWNtest(m1r1$Residuals, order, printWNtest)
 R> Hdb <- HypoTest(m1, m1r1)
 \end{Code}
 %\end{lstlisting}
@@ -997,9 +996,9 @@ The next hypothesis of interest is $\mathscr{H}_{\beta}^1$, which is a zero rest
 %\begin{lstlisting}[frame=single,caption={Hypothesis $\mathscr{H}_{\beta}^1$}, label = Hb1]
 \begin{Code}
 R> opt1 <- DefaultOpt
-R> opt1$R_Beta <- c(1, 0, 0)
+R> opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 R> m1r2 <- FCVARestn(x1, k, r, opt1)
-R> MVWNtest(m1r2$residuals, order, printWNtest)
+R> MVWNtest_m1r2 <- MVWNtest(m1r2$Residuals, order, printWNtest)
 R> Hbeta1 <- HypoTest(m1, m1r2)
 \end{Code}
 %\end{lstlisting}
@@ -1024,7 +1023,7 @@ In this case, we test restriction that political variable is long-run exogenous.
 R> opt1 <- DefaultOpt
 R> opt1$R_Alpha <- c(1, 0, 0)
 R> m1r3 <- FCVARestn(x1, k, r, opt1)
-R> MVWNtest(m1r3$residuals, order, printWNtest)
+R> MVWNtest(m1r3$Residuals, order, printWNtest)
 R> Halpha1 = HypoTest(m1, m1r3)
 \end{Code}
 %\end{lstlisting}
@@ -1054,7 +1053,7 @@ The hypothesis $\mathscr{H}_{\alpha}^2$ tests that the interest-rate is long-run
 R> opt1 <- DefaultOpt
 R> opt1$R_Alpha <- c(0, 1, 0)
 R> m1r4 <- FCVARestn(x1, k, r, opt1)
-R> MVWNtest(m1r4$residuals, order, printWNtest)
+R> MVWNtest(m1r4$Residuals, order, printWNtest)
 R> Halpha2 <- HypoTest(m1, m1r4)
 \end{CodeInput}
 \begin{CodeOutput}
@@ -1076,7 +1075,7 @@ R> opt1 <- DefaultOpt
 R> opt1$R_Alpha <- c(0, 0, 1)
 R> k <- 2; r <- 1
 R> m1r5 <- FCVARestn(x1, k, r, opt1)
-R> MVWNtest(m1r5$residuals, order, printWNtest)
+R> MVWNtest(m1r5$Residuals, order, printWNtest)
 R> Halpha3 <- HypoTest(m1, m1r5)
 \end{CodeInput}
 \begin{CodeOutput}

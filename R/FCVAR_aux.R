@@ -1842,7 +1842,7 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
   #   We use the commutation matrix K_pr to transform vec(A) into vec(A'),
   #   see Magnus & Neudecker (1988, p. 47, eqn (1)).
   Ip  <- diag(p)
-  Kpr <- matrix(kron(Ip, diag(r)), nrow = p*r, ncol = p*r)
+  Kpr <- matrix(pracma::kron(Ip, diag(r)), nrow = p*r, ncol = p*r)
   if(is.null(opt$R_Alpha)) {
     A <- Kpr %*% diag(p*r)
   } else {
@@ -1884,22 +1884,22 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
   # print(vecPiLS)
   # print('alphaHat = ')
   # print(alphaHat)
-  # print('kron(alphaHat, diag(p1)) = ')
-  # print(kron(alphaHat, diag(p1)))
+  # print('pracma::kron(alphaHat, diag(p1)) = ')
+  # print(pracma::kron(alphaHat, diag(p1)))
   # print('h = ')
   # print(h)
-  # print('kron(alphaHat, diag(p1)) %*% h = ')
-  # print(kron(alphaHat, diag(p1)) %*% h)
+  # print('pracma::kron(alphaHat, diag(p1)) %*% h = ')
+  # print(pracma::kron(alphaHat, diag(p1)) %*% h)
   #
 
 
 
   # Get candidate values for entering the switching algorithm.
   vecPhi1 <- solve(t(H) %*%
-                     kron(t(alphaHat) %*% solve(OmegaHat) %*% alphaHat, S11) %*%
+                     pracma::kron(t(alphaHat) %*% solve(OmegaHat) %*% alphaHat, S11) %*%
                      H) %*%
-    t(H) %*% (kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*%
-    (vecPiLS - kron(alphaHat, diag(p1)) %*% h)
+    t(H) %*% (pracma::kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*%
+    (vecPiLS - pracma::kron(alphaHat, diag(p1)) %*% h)
 
   # Translate vecPhi to betaStar.
   vecB <- H %*% vecPhi1 + h
@@ -1907,9 +1907,9 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
 
   # Candidate value of vecPsi.
   vecPsi1 <- solve(t(A) %*%
-                     kron(solve(OmegaHat), t(betaStar) %*% S11 %*% betaStar) %*%
+                     pracma::kron(solve(OmegaHat), t(betaStar) %*% S11 %*% betaStar) %*%
                      A) %*%
-    t(A) %*% (kron(solve(OmegaHat), t(betaStar) %*% S11)) %*% vecPiLS
+    t(A) %*% (pracma::kron(solve(OmegaHat), t(betaStar) %*% S11)) %*% vecPiLS
 
   # Translate vecPsi to alphaHat.
   vecA <- A %*% vecPsi1 # This is vec(alpha')
@@ -1943,9 +1943,9 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
 
     #  ---- alpha update step ---- %
     # Update vecPsi.
-    vecPsi1 <- solve(t(A) %*% kron(solve(OmegaHat), t(betaStar) %*%
+    vecPsi1 <- solve(t(A) %*% pracma::kron(solve(OmegaHat), t(betaStar) %*%
                                      S11 %*% betaStar) %*% A) %*%
-      t(A) %*% (kron(solve(OmegaHat), t(betaStar) %*% S11)) %*% vecPiLS
+      t(A) %*% (pracma::kron(solve(OmegaHat), t(betaStar) %*% S11)) %*% vecPiLS
 
     # Translate vecPsi to alphaHat.
     vecA <- A %*% vecPsi1 # This is vec(alpha')
@@ -1961,10 +1961,10 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
 
     # Update vecPhi.
     vecPhi1 <- solve(t(H) %*%
-                       kron(t(alphaHat) %*% inv(OmegaHat) %*% alphaHat, S11) %*%
+                       pracma::kron(t(alphaHat) %*% solve(OmegaHat) %*% alphaHat, S11) %*%
                        H) %*%
-      t(H) %*% (kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*%
-      (vecPiLS - kron(alphaHat, diag(p1)) %*% h)
+      t(H) %*% (pracma::kron(t(alphaHat) %*% solve(OmegaHat), S11)) %*%
+      (vecPiLS - pracma::kron(alphaHat, diag(p1)) %*% h)
 
     # Translate vecPhi to betaStar.
     vecB <- H %*% vecPhi1 + h

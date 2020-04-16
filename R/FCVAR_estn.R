@@ -431,7 +431,7 @@ FCVARestn <- function(x,k,r,opt) {
     if(is.null(opt$R_Beta)) {
       H_beta <- diag(p1*r)
     } else {
-      H_beta <- null(opt$R_Beta)
+      H_beta <- pracma::null(opt$R_Beta)
     }
 
 

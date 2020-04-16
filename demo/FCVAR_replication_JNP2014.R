@@ -124,7 +124,7 @@ opt1$gridSearch <- 0
 
 m1 <- FCVARestn(x1, k, r, opt1)
 
-mv_wntest_m1 <- mv_wntest(m1$Residuals, order, printWNtest)
+MVWNtest_m1 <- MVWNtest(m1$Residuals, order, printWNtest)
 
 
 ################################################################################
@@ -136,20 +136,20 @@ DefaultOpt$gridSearch <- 0	# turn off grid search for restricted models
 
 
 #--------------------------------------------------------------------------------
-# Test restriction that d<-b<-1.
+# Test restriction that d = b = 1.
 #--------------------------------------------------------------------------------
 
 opt1 <- DefaultOpt
 opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt1$r_psi <- 1
 
-m1r1 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r1.
+m1r1 <- FCVARestn(x1, k, r, opt1)
 
 
-mv_wntest_m1r1 <- mv_wntest(m1r1$Residuals, order, printWNtest)
+MVWNtest_m1r1 <- MVWNtest(m1r1$Residuals, order, printWNtest)
 
-Hdb <- HypoTest(m1, m1r1) 	# Test the null of m1r1 against the alternative m1 and
-# store the results in the structure Hdb.
+# Test the null of m1r1 against the alternative m1.
+Hdb <- HypoTest(m1, m1r1)
 
 
 #--------------------------------------------------------------------------------
@@ -159,13 +159,12 @@ Hdb <- HypoTest(m1, m1r1) 	# Test the null of m1r1 against the alternative m1 an
 opt1 <- DefaultOpt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 
-m1r2 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r2.
+m1r2 <- FCVARestn(x1, k, r, opt1)
 
+MVWNtest_m1r2 <- MVWNtest(m1r2$Residuals, order, printWNtest)
 
-mv_wntest_m1r2 <- mv_wntest(m1r2$Residuals, order, printWNtest)
-
-Hbeta1 <- HypoTest(m1, m1r2) 	# Test the null of m1r2 against the alternative m1 and
-# store the results in the structure Hbeta1.
+# Test the null of m1r2 against the alternative m1.
+Hbeta1 <- HypoTest(m1, m1r2)
 
 
 #--------------------------------------------------------------------------------

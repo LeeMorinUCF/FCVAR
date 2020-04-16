@@ -351,7 +351,7 @@ HypoTest <- function(modelUNR, modelR) {
   # Print output.
   cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
               modelUNR$like, modelR$like))
-  cat(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
+  cat(sprintf('Test results (df = %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
               df,LR_test,p_LRtest))
 
 
