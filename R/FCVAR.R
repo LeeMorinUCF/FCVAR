@@ -63,3 +63,22 @@
 #' @docType package
 #' @name FCVAR
 NULL
+
+
+#' Aggregate support for Canadian political parties.
+#'
+#' A dataset containing the aggregate support for Canadian political
+#' parties and economic indicators from Canada and the United States.
+#'
+#' @format A data frame with 316 rows and 6 variables:
+#' \describe{
+#'   \item{lib}{aggregate support for the Liberal party}
+#'   \item{pc}{aggregate support for the Conservative party}
+#'   \item{ir_can}{Canadian 3-month T-bill rates}
+#'   \item{ir_us}{US 3-month T-bill rates}
+#'   \item{un_can}{Canadian unemployment rate}
+#'   \item{un_us}{US unemployment rate}
+#' }
+#' @source \url{https://sites.google.com/view/mortennielsen/software}
+"votingJNP2014"
+

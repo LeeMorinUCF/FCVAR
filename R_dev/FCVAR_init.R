@@ -208,11 +208,16 @@ usethis::use_data(votingJNP2014, votingJNP2014)
 
 # You should also make sure that the data has been optimally compressed:
 # Run 
-tools::checkRdaFiles() 
+tools::checkRdaFiles('data/votingJNP2014.rda') 
+# size ASCII compress version
+# data/votingJNP2014.rda 9233 FALSE    bzip2       2
 # to determine the best compression for each file.
+# So, the best compression is 'bzip2', which is the default, so we're good.
+# The file is already quite small.
 
+# Otherwise: 
 # Re-run 
-usethis::use_data() 
+usethis::use_data(votingJNP2014, votingJNP2014, compress = 'whatever') 
 # with compress set to that optimal value. 
 # If you've lost the code for recreating the files, you can use 
 tools::resaveRdaFiles() 
