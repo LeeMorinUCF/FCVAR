@@ -1,6 +1,6 @@
 ##################################################
 # 
-# aggregress Scratchpad
+# FCVAR Initialization Scratchpad
 # 
 # Lealand Morin, Ph.D.
 # Assistant Professor
@@ -8,7 +8,7 @@
 # College of Business Administration
 # University of Central Florida
 # 
-# February 15, 2019
+# March 30, 2020
 # 
 ##################################################
 # 
