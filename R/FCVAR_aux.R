@@ -545,7 +545,7 @@ LikeGridSearch <- function(x, k, r, opt) {
     #   phi (unrestricted parameter) and d,b (restricted parameters).
     R <- opt$R_psi
     s <- opt$r_psi
-    H <- null(R)
+    H <- pracma::null(R)
     h <- t(R) %*% solve(R %*% t(R)) %*% s
   }
 
@@ -1020,7 +1020,7 @@ FCVARlike <- function(params, x, k, r, opt) {
   #  so translate from phi to (d,b), otherwise, take parameters as
   #  given.
   if(nrow(opt$R_psi) == 1) {
-    H <- null(opt$R_psi)
+    H <- pracma::null(opt$R_psi)
     h <- t(opt$R_psi) %*% solve(opt$R_psi %*% t(opt$R_psi)) %*% opt$r_psi
     db <- H*params[1] + h
     d <- db[1]
@@ -1501,7 +1501,7 @@ GetFreeParams <- function(k, r, p, opt, rankJ) {
   rDB <- nrow(opt$R_psi)
 
 
-  if(isempty(opt$R_Beta) & isempty(opt$R_Alpha)) {
+  if(is.null(opt$R_Beta) & is.null(opt$R_Alpha)) {
     # If Alpha or Beta are unrestricted, only an identification restriction
     #   is imposed
     rB <- r*r # identification restrictions (eye(r))
@@ -1832,7 +1832,7 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
     H <- diag(p1*r)
     h <- matrix(0, nrow = p1*r, ncol = 1)
   } else {
-    H <- null(opt$R_Beta)
+    H <- pracma::null(opt$R_Beta)
     h <- t(opt$R_Beta) %*%
       solve(opt$R_Beta %*% t(opt$R_Beta)) %*% opt$r_Beta
   }
@@ -1846,7 +1846,7 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
   if(is.null(opt$R_Alpha)) {
     A <- Kpr %*% diag(p*r)
   } else {
-    A <- null(opt$R_Alpha %*% solve(Kpr))
+    A <- pracma::null(opt$R_Alpha %*% solve(Kpr))
   }
 
 

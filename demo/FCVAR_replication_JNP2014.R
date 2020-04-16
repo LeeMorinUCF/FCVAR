@@ -27,10 +27,10 @@
 ################################################################################
 
 
-data <- read.csv('data_JNP2014.csv')
+# data <- read.csv('data_JNP2014.csv')
 
 # data for each model.
-x1 <- data[, c(1, 3, 5)]
+# x1 <- data[, c(1, 3, 5)]
 # x2 <- data[, c(2, 3, 5)]
 # x3 <- data[, c(1, 2, 3, 5)]
 # x4 <- data[, c(1, 3, 4, 5, 6)]
@@ -38,11 +38,12 @@ x1 <- data[, c(1, 3, 5)]
 # x6 <- data[, c(1, 2, 3, 4, 5, 6)]
 
 # Rewrite with column names.
-colnames(data)
+colnames(votingJNP2014)
 # [1] "lib"    "pc"     "ir_can" "ir_us"  "un_can" "un_us"
-# x1 is the only one used.
-colnames(data)[c(1, 3, 5)]
-x1 <- data[, c("lib", "ir_can", "un_can")]
+# x1 is the only dataset used in the demo with the following variables:
+colnames(votingJNP2014)[c(1, 3, 5)]
+# [1] "lib"    "ir_can" "un_can"
+x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 
 
 
@@ -59,7 +60,7 @@ printWNtest      <- 1    # to print results of white noise tests post-estimation
 # Choosing estimation options
 #--------------------------------------------------------------------------------
 
-opt <- EstOptions() # Define variable to store Estimation Options (object).
+opt <- FCVARoptions() # Define variable to store Estimation Options (object).
 
 opt$dbMin        <- c(0.01, 0.01) # lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
@@ -93,9 +94,6 @@ opt$progLoc <- '"/usr/bin/fdpval"'  # location path with program name
 # opt$dbFminOptions$Algorithm <- 'interior-point'
 
 DefaultOpt <- opt # Store the options for restoring them in between hypothesis tests.
-
-# startProg <- tic() # start timer
-startProg <- Sys.time() # start timer
 
 
 ################################################################################
@@ -248,12 +246,6 @@ print(betaHatR)
 print('alphaHatR = ')
 print(alphaHatR)
 
-
-################################################################################
-
-endProg <- Sys.time() # stop timer
-print('Total computation time from start to end:')
-print(endProg - startProg) # report elapsed time
 
 ################################################################################
 # End

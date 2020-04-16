@@ -171,13 +171,13 @@ LMtest <- function(x,q) {
 
   # cat(sprintf('e is %d by %d', nrow(e), ncol(e)))
   # cat(sprintf('z is %d by %d', nrow(z), ncol(z)))
-  # kron_test <- kron(matrix(1, 1, q), e)
+  # kron_test <- pracma::kron(matrix(1, 1, q), e)
   # cat(sprintf('kron_test is %d by %d', nrow(kron_test), ncol(kron_test)))
 
 
   # s <- z[,1:q] * repmat(e,1,q)
   # Translate this properly:
-  s <- z[,1:q,  drop = FALSE] * kron(matrix(1, 1, q), e)
+  s <- z[,1:q,  drop = FALSE] * pracma::kron(matrix(1, 1, q), e)
 
   # cat(sprintf('s is %d by %d', nrow(s), ncol(s)))
 
@@ -186,7 +186,7 @@ LMtest <- function(x,q) {
   # print('sbar = ')
   # print(sbar)
 
-  kron_sbar <- kron(matrix(1, nrow(s)), sbar)
+  kron_sbar <- pracma::kron(matrix(1, nrow(s)), sbar)
 
   # print(head(kron_sbar))
   # print(tail(kron_sbar))

@@ -584,7 +584,7 @@ GetBounds <- function(opt) {
     # phi (unrestricted parameter) and d,b (restricted parameters).
     R <- opt$R_psi
     s <- opt$r_psi
-    H <- null(R)
+    H <- pracma::null(R)
 
 
     # print('Made it to the else case in GetBounds!')

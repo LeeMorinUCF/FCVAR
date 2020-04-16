@@ -133,7 +133,7 @@ FCVARestn <- function(x,k,r,opt) {
 
   if(nrow(Rpsi) == 1) {
 
-    H_psi <- null(Rpsi)
+    H_psi <- pracma::null(Rpsi)
 
     # Need to back out phi from given db0
     # startVals <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(startVals[1:2])

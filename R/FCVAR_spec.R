@@ -122,18 +122,21 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   # create a variable for output strings
   yesNo <- c('No','Yes') # Ironic order, No?
 
-  cat(sprintf('\n-----------------------------------------------------------------------------------------------------\n'))
+  cat(sprintf('\n--------------------------------------------------------------------------------\n'))
   cat(sprintf('                        Lag Selection Results \n'))
-  cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T))
   cat(sprintf('Order for WN tests:   %6.0f     Number of observations for estimation:  %6.0f \n', order, T-opt$N))
   cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N )   )
-  cat(sprintf('Unrestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
-  cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
-  cat(sprintf('k  r    d    b      LogL     LR    pv    AIC       BIC     pmvQ'))
-  for (i in 1:p) {
-    cat(sprintf(' pQ%1.0f  pLM%1.0f', i,i))
-  }
+  cat(sprintf('Unrestricted constant:%6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+  cat(sprintf('Parameter Estimates and Information Criteria:\n'))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+  # cat(sprintf(' k  r    d    b      LogL     LR    pv    AIC       BIC     pmvQ'))
+  cat(sprintf(' k  r    d    b      LogL     LR    pv    AIC       BIC'))
+  # for (i in 1:p) {
+  #   cat(sprintf(' pQ%1.0f  pLM%1.0f', i,i))
+  # }
 
 
   cat(sprintf('\n'))
@@ -150,20 +153,45 @@ LagSelect <- function(x, kmax, r, order, opt ) {
     # Print BIC information criteria and add asterisk if min value
     cat(sprintf(' %8.2f', bic[k+1]))
     if(k+1 == i_bic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
-    # Print multivariate white noise test P-values
-    cat(sprintf(' %4.2f', pvMVq[k+1, ]))
-    # Print the individual series white noise test P-values
-    for (i in 1:p) {
-      cat(sprintf(' %4.2f %4.2f', pvWNQ[k+1,i], pvWNLM[k+1,i]))
-    }
+
+    # # Print multivariate white noise test P-values
+    # cat(sprintf(' %4.2f', pvMVq[k+1, ]))
+    # # Print the individual series white noise test P-values
+    # for (i in 1:p) {
+    #   cat(sprintf(' %4.2f %4.2f', pvWNQ[k+1,i], pvWNLM[k+1,i]))
+    # }
 
 
     cat(sprintf('\n'))
 
   }
 
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+  cat(sprintf('Tests for Serial Correlation of Residuals: \n'))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
 
-  cat(sprintf('-----------------------------------------------------------------------------------------------------\n'))
+  cat(sprintf(' k   pmvQ'))
+  for (i in 1:p) {
+    cat(sprintf('  pQ%1.0f   pLM%1.0f', i,i))
+  }
+
+  cat(sprintf('\n'))
+  for (k in seq(kmax, 0, by = -1) ) {
+
+    cat(sprintf('%2.0f ', k))
+
+    # Print multivariate white noise test P-values
+    cat(sprintf('  %4.2f', pvMVq[k+1, ]))
+    # Print the individual series white noise test P-values
+    for (i in 1:p) {
+      cat(sprintf('  %4.2f  %4.2f', pvWNQ[k+1,i], pvWNLM[k+1,i]))
+    }
+
+    cat(sprintf('\n'))
+
+  }
+
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
 
 }
 
