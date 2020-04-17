@@ -444,7 +444,7 @@ FCVARestn <- function(x,k,r,opt) {
     if(is.null(opt$R_Alpha)) {
       A <- Kpr %*% diag(p*r)
     } else {
-      A <- null(opt$R_Alpha %*% solve(Kpr))
+      A <- pracma::null(opt$R_Alpha %*% solve(Kpr))
     }
 
 

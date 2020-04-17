@@ -175,13 +175,12 @@ opt1 <- DefaultOpt
 opt1$R_Alpha <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 opt1$gridSearch <- 0
 
-m1r3 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r3.
+m1r3 <- FCVARestn(x1, k, r, opt1)
 
+MVWNtest_m1r3 <- MVWNtest(m1r3$Residuals, order, printWNtest)
 
-mv_wntest_m1r3 <- mv_wntest(m1r3$Residuals, order, printWNtest)
-
-Halpha1 <- HypoTest(m1, m1r3) 	# Test the null of m1r3 against the alternative m1 and
-# store the results in the structure Halpha1.
+# Test the null of m1r3 against the alternative m1
+Halpha1 <- HypoTest(m1, m1r3)
 
 
 #--------------------------------------------------------------------------------
@@ -192,13 +191,12 @@ opt1 <- DefaultOpt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 opt1$gridSearch <- 0
 
-m1r4 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r4.
+m1r4 <- FCVARestn(x1, k, r, opt1)
 
+MVWNtest_m1r4 <- MVWNtest(m1r4$Residuals, order, printWNtest)
 
-mv_wntest_m1r4 <- mv_wntest(m1r4$Residuals, order, printWNtest)
-
-Halpha2 <- HypoTest(m1, m1r4) 	# Test the null of m1r4 against the alternative m1 and
-# store the results in the structure Halpha2.
+# Test the null of m1r4 against the alternative m1.
+Halpha2 <- HypoTest(m1, m1r4)
 
 
 #--------------------------------------------------------------------------------
@@ -208,16 +206,13 @@ Halpha2 <- HypoTest(m1, m1r4) 	# Test the null of m1r4 against the alternative m
 opt1 <- DefaultOpt
 opt1$gridSearch <- 0
 opt1$R_Alpha <- matrix(c(0, 0, 1), nrow = 1, ncol = 3)
-k<-2
-r <-1
 
-m1r5 <- FCVARestn(x1, k, r, opt1) # This restricted model is now in the structure m1r5.
+m1r5 <- FCVARestn(x1, k, r, opt1)
 
+MVWNtest_m1r5 <- MVWNtest(m1r5$Residuals, order, printWNtest)
 
-mv_wntest_m1r5 <- mv_wntest(m1r5$Residuals, order, printWNtest)
-
-Halpha3 <- HypoTest(m1, m1r5) 	# Test the null of m1r5 against the alternative m1 and
-# store the results in the structure Halpha3.
+# Test the null of m1r5 against the alternative m1.
+Halpha3 <- HypoTest(m1, m1r5)
 
 
 #--------------------------------------------------------------------------------
