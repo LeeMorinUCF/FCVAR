@@ -183,7 +183,52 @@ Qtest(x = matrix(RW), maxlag = 10)
 
 
 
+# HypoTest(modelUNR, modelR)
 
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+m1 <- FCVARestn(x, k = 2, r = 1, opt)
+opt1 <- opt
+opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
+opt1$r_psi <- 1
+m1r1 <- FCVARestn(x1, k, r, opt1)
+Hdb <- HypoTest(modelUNR = m1, modelR = m1r1)
+
+opt1 <- opt
+opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+m1r2 <- FCVARestn(x1, k, r, opt1)
+Hbeta1 <- HypoTest(m1, m1r2)
+
+opt1 <- opt
+opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+m1r4 <- FCVARestn(x1, k, r, opt1)
+Halpha2 <- HypoTest(m1, m1r4)
+
+
+# FCVARforecast(x, model, NumPeriods)
+
+# TODO: Test this and choose example.
+
+
+# FCVARboot(x, k, r, optRES, optUNR, B)
+
+# TODO: Test this and choose example.
+
+
+# GetCharPolyRoots(coeffs, opt, k, r, p)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+results <- FCVARestn(x, k = 2, r = 1, opt)
+cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
 
 
 ################################################################################
