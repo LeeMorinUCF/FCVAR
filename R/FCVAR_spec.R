@@ -16,7 +16,7 @@
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' LagSelect(x, kmax = 4, r = 3, order = 12, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -218,7 +218,7 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 #' }
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' RankTests(x, k = 2, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -485,7 +485,7 @@ GetPvalues <- function(q, b, consT, testStat, opt) {
 #' }
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' FCVARbootRank_out <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.

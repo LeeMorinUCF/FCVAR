@@ -29,7 +29,7 @@
 #' }
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' FCVARestn(x, k = 2, r = 1, opt)
 #' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.

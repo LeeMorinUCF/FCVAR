@@ -14,7 +14,7 @@
 #' @return A \code{NumPeriods} \eqn{\times p} matrix \code{xBS} of simulated bootstrap values.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' model <- FCVARestn(x,k = 3,r = 1,opt)
 #' data <- x[1:10, ]
 #' xBS <- FCVARsimBS(data, model, NumPeriods = 100)
@@ -175,7 +175,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 #' }
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' estimates <- GetParams(x, k = 2, r = 1, db = c(1, 1), opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -492,7 +492,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' params <- LikeGridSearch(x, k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -954,7 +954,7 @@ LikeGridSearch <- function(x, k, r, opt) {
 #' specified parameter values.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' like <- FCVARlikeMu(y = x, db = c(1, 1), mu = mean(x), k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -1000,7 +1000,7 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 #' specified parameter values.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' like <- FCVARlike(x, params = c(1, 1), , k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -1107,7 +1107,7 @@ FCVARlike <- function(params, x, k, r, opt) {
 #' specified parameter values.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' like <- FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
 #' beta = coeffs$betaHat, rho = coeffs$rhoHat, opt)
@@ -1164,7 +1164,7 @@ FCVARlikeFull <- function(x, k, r, coeffs, beta, rho, opt) {
 #' }
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' Z_array <- TransformData(x, k = 2, db = c(1, 1), opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -1252,7 +1252,7 @@ TransformData <- function(x, k, db, opt) {
 #' calculated with the parameter estimates specified in \code{coeffs}.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
 #' @family FCVAR auxilliary functions
@@ -1324,7 +1324,7 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
 #' but \code{k} times as many columns.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' Lbkx <- Lbk(x, b = 0.5, k = 2)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -1383,7 +1383,7 @@ Lbk <- function(x, b, k) {
 #' of the same dimensions as x.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' dx = FracDiff(x, d = 0.5)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -1472,7 +1472,7 @@ FracDiff <- function(x, d) {
 #' @return The number of free parameters \code{fp}.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' fp <- GetFreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -1541,7 +1541,7 @@ GetFreeParams <- function(k, r, p, opt, rankJ) {
 #' specified in \code{coeffs}.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
 #' @family FCVAR auxilliary functions
@@ -1641,7 +1641,7 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 #' @return A vector \code{param} of parameters in the FCVAR model.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
 #' @family FCVAR auxilliary functions
@@ -1709,7 +1709,7 @@ SEmat2vecU <- function(coeffs, k, r, p , opt) {
 #'
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
 #' coeffs <- SEvec2matU(param, k = 2, r = 1, p = 3, opt)

@@ -24,7 +24,7 @@
 #' }
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x,k = 3,r = 1, opt)
 #' MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 #'
@@ -320,7 +320,7 @@ Qtest <- function(x, maxlag) {
 #' }
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' modelUNR <- FCVARestn(x,k = 2,r = 1, opt)
 #' opt1 <- opt
 #' # Test a hypothesis on the cointegrating vector.
@@ -380,7 +380,7 @@ HypoTest <- function(modelUNR, modelR) {
 #' @return A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
 #' @examples
 #' opt <- FCVARoptions()
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' model <- FCVARestn(x,k = 3,r = 1,opt)
 #' xf <- FCVARforecast(data, model, NumPeriods = 100)
 #' @family FCVAR auxilliary functions
@@ -515,7 +515,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #' # Define estimation options for restricted model (null)
 #' optRES <- optUNR
 #' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' FCVARboot_out <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -626,7 +626,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' @examples
 #' opt <- FCVARoptions()
 #' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-#' x <- data(JNP2014)
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2,r = 1, opt)
 #' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
 #' @family FCVAR postestimation functions

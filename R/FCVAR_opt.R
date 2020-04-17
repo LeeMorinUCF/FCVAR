@@ -8,7 +8,7 @@
 #'
 #' @return A list object \code{opt} that stores the default estimation options.
 #' @examples
-#' FCVARoptions()
+#' opt <- FCVARoptions()
 #' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.
 #' \code{FCVARestn} for use of these options in estimation.
