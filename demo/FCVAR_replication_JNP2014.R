@@ -100,7 +100,7 @@ DefaultOpt <- opt # Store the options for restoring them in between hypothesis t
 # LAG SELECTION
 ################################################################################
 
-opt$gridSearch <- 0 # Life is too short.
+opt$gridSearch <- 0
 LagSelect(x1, kmax, p, order, opt)
 
 

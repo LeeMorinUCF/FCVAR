@@ -21,7 +21,7 @@
 
 
 ################################################################################
-# Estimation
+# Estimation Functions
 ################################################################################
 
 # FCVARoptions
@@ -31,7 +31,10 @@ opt <- FCVARoptions()
 # FCVARoptionUpdates(opt, p, r)
 
 opt <- FCVARoptions()
-opt$gridSearch <- 0 # Skip grid search in optimization.
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
 
 # GetBounds(opt)
@@ -39,10 +42,62 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
 opt <- FCVARoptions()
 UB_LB_bounds <- GetBounds(opt)
 
+opt <- FCVARoptions()
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+UB_LB_bounds <- GetBounds(opt)
+
 
 # FCVARestn(x,k,r,opt)
 
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+results <- FCVARestn(x, k = 2, r = 1, opt)
+
+
+
+################################################################################
+# Specification Functions
+################################################################################
+
+
+# LagSelect(x, kmax, r, order, opt )
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+
+# RankTests(x, k, opt)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+rankTestStats <- RankTests(x, k = 2, opt)
+
+
+
+
+
+################################################################################
+# Postestimation Functions
+################################################################################
+
+
+
+################################################################################
+# Auxilliary Functions
+################################################################################
 
 
 

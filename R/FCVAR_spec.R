@@ -16,8 +16,13 @@
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search.
+#' opt$dbMin        <- c(0.01, 0.01) # lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
+#' opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' LagSelect(x, kmax = 4, r = 3, order = 12, opt)
+#' LagSelect(x, kmax = 3, r = 3, order = 12, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
@@ -218,8 +223,13 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 #' }
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search.
+#' opt$dbMin        <- c(0.01, 0.01) # lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
+#' opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' RankTests(x, k = 2, opt)
+#' rankTestStats <- RankTests(x, k = 2, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
