@@ -753,12 +753,12 @@ FCVARestn <- function(x,k,r,opt) {
     cat(sprintf('--------------------------------------------------------------------------------\n'))
     cat(sprintf(    '    Fractional parameters:                                                                             \n'))
     cat(sprintf('--------------------------------------------------------------------------------\n'))
-    cat(sprintf(    '    Coefficient              \t Estimate              \t  Standard error \n'))
+    cat(sprintf(    '    Coefficient               Estimate                Standard error \n'))
     cat(sprintf('--------------------------------------------------------------------------------\n'))
-    cat(sprintf(    '         d                   \t %8.3f              \t     %8.3f                \n', results$coeffs$db[1], results$SE$db[1]))
+    cat(sprintf(    '         d                    %8.3f                   %8.3f                \n', results$coeffs$db[1], results$SE$db[1]))
 
     if (!opt$restrictDB) {
-      cat(sprintf('         b                   \t %8.3f              \t     %8.3f                \n', results$coeffs$db[2], results$SE$db[2]))
+      cat(sprintf('         b                    %8.3f                   %8.3f                \n', results$coeffs$db[2], results$SE$db[2]))
     }
 
     cat(sprintf('--------------------------------------------------------------------------------\n'))
