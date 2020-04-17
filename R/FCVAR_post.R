@@ -24,13 +24,19 @@
 #' }
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x,k = 3,r = 1, opt)
-#' MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 #'
-#' MVWNtest(x = rnorm(100), maxlag = 10, printResults = 1)
-#'
-#' MVWNtest(x = cumsum(rnorm(100)), maxlag = 10, printResults = 1)
+#' set.seed(27)
+#' WN <- rnorm(100)
+#' RW <- cumsum(rnorm(100))
+#' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+#' MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.
@@ -119,9 +125,24 @@ MVWNtest <- function(x, maxlag, printResults) {
 #'   \item{\code{pv}}{The p-value for LM-test on individual series.}
 #' }
 #' @examples
-#' LMtest(x = rnorm(100), q = 10)
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+#' LMtest(x = matrix(results$Residuals[, 1]), q = 12)
+#' LMtest(x = results$Residuals[,2, drop = FALSE], q = 12)
 #'
-#' LMtest(x = cumsum(rnorm(100)), q = 10)
+#' set.seed(27)
+#' WN <- rnorm(100)
+#' RW <- cumsum(rnorm(100))
+#' LMtest(x = matrix(WN), q = 10)
+#' LMtest(x = matrix(RW), q = 10)
+#' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+#' MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 #' @family FCVAR postestimation functions
 #' @seealso \code{MVWNtest} calls this function to test residuals
 #' from the estimation results of \code{FCVARestn}.
@@ -230,9 +251,25 @@ LMtest <- function(x,q) {
 #'   \item{\code{pv}}{A 1xp vector of P-values for Q-test on individual series.}
 #' }
 #' @examples
-#' Qtest(x = rnorm(100), maxlag = 10)
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+#' Qtest(x = results$Residuals, maxlag = 12)
+#' Qtest(x = matrix(results$Residuals[, 1]), maxlag = 12)
+#' Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
 #'
-#' Qtest(x = cumsum(rnorm(100)), maxlag = 10)
+#' set.seed(27)
+#' WN <- rnorm(100)
+#' RW <- cumsum(rnorm(100))
+#' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+#' Qtest(x = MVWN_x, maxlag = 10)
+#' Qtest(x = matrix(WN), maxlag = 10)
+#' Qtest(x = matrix(RW), maxlag = 10)
 #' @family FCVAR postestimation functions
 #' @seealso \code{MVWNtest} calls this function to test residuals
 #' from the estimation results of \code{FCVARestn}.

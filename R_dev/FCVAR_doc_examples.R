@@ -117,6 +117,74 @@ FCVARbootRank_out <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 ################################################################################
 
 
+# MVWNtest(x, maxlag, printResults)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+results <- FCVARestn(x, k = 2, r = 1, opt)
+MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+
+set.seed(27)
+WN <- rnorm(100)
+RW <- cumsum(rnorm(100))
+MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+
+
+# LMtest(x,q)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+results <- FCVARestn(x, k = 2, r = 1, opt)
+MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+LMtest(x = matrix(results$Residuals[, 1]), q = 12)
+LMtest(x = results$Residuals[,2, drop = FALSE], q = 12)
+
+set.seed(27)
+WN <- rnorm(100)
+RW <- cumsum(rnorm(100))
+LMtest(x = matrix(WN), q = 10)
+LMtest(x = matrix(RW), q = 10)
+MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+
+
+
+
+# Qtest(x,q)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+results <- FCVARestn(x, k = 2, r = 1, opt)
+MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+Qtest(x = results$Residuals, maxlag = 12)
+Qtest(x = matrix(results$Residuals[, 1]), maxlag = 12)
+Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
+
+set.seed(27)
+WN <- rnorm(100)
+RW <- cumsum(rnorm(100))
+MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+Qtest(x = MVWN_x, maxlag = 10)
+Qtest(x = matrix(WN), maxlag = 10)
+Qtest(x = matrix(RW), maxlag = 10)
+
+
+
+
+
 
 ################################################################################
 # Auxilliary Functions
