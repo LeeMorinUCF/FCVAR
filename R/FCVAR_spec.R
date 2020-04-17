@@ -16,11 +16,10 @@
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search.
-#' opt$dbMin        <- c(0.01, 0.01) # lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
-#' opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' LagSelect(x, kmax = 3, r = 3, order = 12, opt)
 #' @family FCVAR specification functions
@@ -223,11 +222,10 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 #' }
 #' @examples
 #' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search.
-#' opt$dbMin        <- c(0.01, 0.01) # lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
-#' opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' rankTestStats <- RankTests(x, k = 2, opt)
 #' @family FCVAR specification functions
@@ -406,7 +404,10 @@ RankTests <- function(x, k, opt) {
 #' @return A scalar numeric \code{pv}, the p-value for the likelihood ratio test.
 #' @examples
 #' opt <- FCVARoptions()
-#' GetPvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
+#' pv <- GetPvalues(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
+#'
+#' opt <- FCVARoptions()
+#' pv <- GetPvalues(q = 1, b = 0.75, consT = 0, testStat = 3.84, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' @export
@@ -495,6 +496,10 @@ GetPvalues <- function(q, b, consT, testStat, opt) {
 #' }
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' FCVARbootRank_out <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 #' @family FCVAR specification functions
