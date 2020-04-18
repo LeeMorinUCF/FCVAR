@@ -1000,8 +1000,13 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 #' specified parameter values.
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' like <- FCVARlike(x, params = c(1, 1), , k = 2, r = 1, opt)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' FCVARlike(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #'
@@ -1019,7 +1024,7 @@ FCVARlike <- function(params, x, k, r, opt) {
   # If there is one linear restriction imposed, optimization is over phi,
   #  so translate from phi to (d,b), otherwise, take parameters as
   #  given.
-  if(nrow(opt$R_psi) == 1) {
+  if(!is.null((opt$R_psi)) && nrow(opt$R_psi) == 1) {
     H <- pracma::null(opt$R_psi)
     h <- t(opt$R_psi) %*% solve(opt$R_psi %*% t(opt$R_psi)) %*% opt$r_psi
     db <- H*params[1] + h
@@ -1041,6 +1046,20 @@ FCVARlike <- function(params, x, k, r, opt) {
 
   # Modify the data by a mu level.
   if (opt$levelParam) {
+
+    # print('class(params) = ')
+    # print(class(params))
+    # print('class(mu) = ')
+    # print(class(mu))
+    #
+    # print('mu = ')
+    # print(mu)
+    # print('diag(mu) = ')
+    # print(diag(mu))
+    #
+    #
+    # print('T = ')
+    # print(T)
     y <- x - matrix(1, nrow = T, ncol = p) %*% diag(mu)
   } else {
     y <- x
@@ -1107,10 +1126,14 @@ FCVARlike <- function(params, x, k, r, opt) {
 #' specified parameter values.
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' like <- FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
-#' beta = coeffs$betaHat, rho = coeffs$rhoHat, opt)
+#' FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
+#'               beta = results$coeffs$betaHat, rho = results$coeffs$rhoHat, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
@@ -1162,10 +1185,14 @@ FCVARlikeFull <- function(x, k, r, coeffs, beta, rho, opt) {
 #'   \item{\code{Z3}}{A column of ones if model includes an
 #'   unrestricted constant term, otherwise \code{NULL}.}
 #' }
-#' @examples
-#' opt <- FCVARoptions()
+#' @examplesopt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' Z_array <- TransformData(x, k = 2, db = c(1, 1), opt)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' Z_array <- TransformData(x, k = 2, db = results$coeffs$db, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
@@ -1252,6 +1279,10 @@ TransformData <- function(x, k, db, opt) {
 #' calculated with the parameter estimates specified in \code{coeffs}.
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
@@ -1324,8 +1355,13 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
 #' but \code{k} times as many columns.
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' Lbkx <- Lbk(x, b = 0.5, k = 2)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' Lbkx <- Lbk(x, b = results$coeffs$db[2], k = 2)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
@@ -1382,9 +1418,13 @@ Lbk <- function(x, b, k) {
 #' @return A vector or matrix \code{dx} equal to \eqn{(1-L)^d x}
 #' of the same dimensions as x.
 #' @examples
-#' opt <- FCVARoptions()
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' dx = FracDiff(x, d = 0.5)
+#' set.seed(42)
+#' WN <- matrix(rnorm(200), nrow = 100, ncol = 2)
+#' MVWNtest_out <- MVWNtest(x = WN, maxlag = 10, printResults = 1)
+#' x <- FracDiff(x = WN, d = - 0.5)
+#' MVWNtest_out <- MVWNtest(x = x, maxlag = 10, printResults = 1)
+#' WN_x_d <- FracDiff(x, d = 0.5)
+#' MVWNtest_out <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
@@ -1470,10 +1510,29 @@ FracDiff <- function(x, d) {
 #' Boswijk & Doornik (2004, p.447), which is only used if there are
 #' restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.
 #' @return The number of free parameters \code{fp}.
-#' @examples
+#' @examplesopt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = NULL)
+#'
 #' opt <- FCVARoptions()
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' fp <- GetFreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
+#'
+#' opt <- FCVARoptions()
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' opt$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
@@ -1539,8 +1598,11 @@ GetFreeParams <- function(k, r, p, opt, rankJ) {
 #' @return The \code{hessian} matrix  of second derivatives of the FCVAR
 #' log-likelihood function, calculated with the parameter estimates
 #' specified in \code{coeffs}.
-#' @examples
-#' opt <- FCVARoptions()
+#' @examplesopt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
@@ -1641,16 +1703,27 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 #' @return A vector \code{param} of parameters in the FCVAR model.
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+#' params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+#' coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+#'
+#' params <- matrix(seq(25))
+#' coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+#' params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the FCVAR model and calculate
 #' standard errors of the estimates.
 #' \code{SEmat2vecU} is called by \code{FCVARhess} to sort the parameters
 #' into a vector to calculate the Hessian matrix.
-#' \code{SEvec2matU} is the inverse of \code{SEmat2vecU}.
+#' \code{SEvec2matU} is a near inverse of \code{SEmat2vecU},
+#' in the sense that \code{SEvec2matU} obtains only a
+#' subset of the parameters in \code{results$coeffs}.
 #'
 SEmat2vecU <- function(coeffs, k, r, p , opt) {
 
@@ -1709,17 +1782,27 @@ SEmat2vecU <- function(coeffs, k, r, p , opt) {
 #'
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
-#' coeffs <- SEvec2matU(param, k = 2, r = 1, p = 3, opt)
+#' params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+#' coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+#'
+#' params <- matrix(seq(25))
+#' coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+#' params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the FCVAR model and calculate
 #' standard errors of the estimates.
 #' \code{SEmat2vecU} is called by \code{FCVARhess} to convert the parameters
 #' from a vector into the coefficients after calculating the Hessian matrix.
-#' \code{SEmat2vecU} is the inverse of \code{SEvec2matU}.
+#' \code{SEmat2vecU} is a near inverse of \code{SEvec2matU},
+#' in the sense that \code{SEvec2matU} obtains only a
+#' subset of the parameters in \code{results$coeffs}.
 #'
 SEvec2matU <- function(param, k, r, p, opt ) {
 
@@ -1808,6 +1891,25 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #'   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
 #'   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
 #' }
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+#' opt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' betaStar <- matrix(c(-0.95335616, -0.07345676, -0.29277318), nrow = 3)
+#' S00 <- matrix(c(0.0302086527,  0.001308664,  0.0008200923,
+#'                 0.0013086640,  0.821417610, -0.1104617893,
+#'                 0.0008200923, -0.110461789,  0.0272861128), nrow = 3)
+#' S01 <- matrix(c(-0.0047314320, -0.04488533,  0.006336798,
+#'                 0.0026708007,  0.17463884, -0.069006455,
+#'                 -0.0003414163, -0.07110324,  0.022830494), nrow = 3, byrow = TRUE)
+#' S11 <- matrix(c( 0.061355941,  -0.4109969,  -0.007468716,
+#'                  -0.410996895,  70.6110313, -15.865097810,
+#'                  -0.007468716, -15.8650978,   3.992435799), nrow = 3)
+#' switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, T = 316, p = 3, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,

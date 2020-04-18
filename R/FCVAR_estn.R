@@ -278,8 +278,18 @@ FCVARestn <- function(x,k,r,opt) {
     }
 
 
+
     # Obtain concentrated parameter estimates.
     estimates <- GetParams(y, k, r, dbTemp, opt)
+
+
+    # # Test GetParams()
+    # print('summary(y) = ')
+    # print(summary(y))
+    # print('dbTemp = ')
+    # print(dbTemp)
+    # print('estimates = ')
+    # print(estimates)
 
     # Storing the estimates in a global structure here allows us to skip a
     #   call to GetParams after optimization to recover the coefficient
