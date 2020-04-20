@@ -62,6 +62,7 @@ Other FCVAR postestimation functions:
 \code{\link{GetCharPolyRoots}()},
 \code{\link{LMtest}()},
 \code{\link{MVWNtest}()},
-\code{\link{Qtest}()}
+\code{\link{Qtest}()},
+\code{\link{print.MVWNtest}()}
 }
 \concept{FCVAR postestimation functions}

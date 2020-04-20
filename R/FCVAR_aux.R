@@ -1421,11 +1421,11 @@ Lbk <- function(x, b, k) {
 #' @examples
 #' set.seed(42)
 #' WN <- matrix(rnorm(200), nrow = 100, ncol = 2)
-#' MVWNtest_out <- MVWNtest(x = WN, maxlag = 10, printResults = 1)
+#' MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)
 #' x <- FracDiff(x = WN, d = - 0.5)
-#' MVWNtest_out <- MVWNtest(x = x, maxlag = 10, printResults = 1)
+#' MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)
 #' WN_x_d <- FracDiff(x, d = 0.5)
-#' MVWNtest_out <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)
+#' MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}

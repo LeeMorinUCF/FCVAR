@@ -35,7 +35,7 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
-MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 Qtest(x = results$Residuals, maxlag = 12)
 Qtest(x = matrix(results$Residuals[, 1]), maxlag = 12)
 Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
@@ -61,6 +61,7 @@ Other FCVAR postestimation functions:
 \code{\link{GetCharPolyRoots}()},
 \code{\link{HypoTest}()},
 \code{\link{LMtest}()},
-\code{\link{MVWNtest}()}
+\code{\link{MVWNtest}()},
+\code{\link{print.MVWNtest}()}
 }
 \concept{FCVAR postestimation functions}

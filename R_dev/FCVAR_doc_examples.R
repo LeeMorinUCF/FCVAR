@@ -151,13 +151,35 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
-MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 
 set.seed(27)
 WN <- rnorm(100)
 RW <- cumsum(rnorm(100))
 MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
-MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+
+
+# print.MVWNtest(stats, maxlag)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+results <- FCVARestn(x, k = 2, r = 1, opt)
+MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
+
+set.seed(27)
+WN <- rnorm(100)
+RW <- cumsum(rnorm(100))
+MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
+
+
 
 
 # LMtest(x,q)
@@ -169,7 +191,7 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
-MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 LMtest(x = matrix(results$Residuals[, 1]), q = 12)
 LMtest(x = results$Residuals[,2, drop = FALSE], q = 12)
 
@@ -179,7 +201,7 @@ RW <- cumsum(rnorm(100))
 LMtest(x = matrix(WN), q = 10)
 LMtest(x = matrix(RW), q = 10)
 MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
-MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 
 
 
@@ -193,7 +215,7 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
-MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 Qtest(x = results$Residuals, maxlag = 12)
 Qtest(x = matrix(results$Residuals[, 1]), maxlag = 12)
 Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
@@ -382,11 +404,11 @@ Lbkx <- Lbk(x, b = results$coeffs$db[2], k = 2)
 
 set.seed(42)
 WN <- matrix(rnorm(200), nrow = 100, ncol = 2)
-MVWNtest_out <- MVWNtest(x = WN, maxlag = 10, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)
 x <- FracDiff(x = WN, d = - 0.5)
-MVWNtest_out <- MVWNtest(x = x, maxlag = 10, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)
 WN_x_d <- FracDiff(x, d = 0.5)
-MVWNtest_out <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)
+MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)
 
 
 # GetFreeParams(k, r, p, opt, rankJ)

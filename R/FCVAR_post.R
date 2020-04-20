@@ -6,12 +6,13 @@
 #' \code{MVWNtest} performs multivariate tests for white noise.
 #' It performs both the Ljung-Box Q-test and the LM-test on individual series
 #' for a sequence of lag lengths.
+#' \code{print.MVWNtest} prints these statistics to screen.
 #'
 #' @param x A matrix of variables to be included in the system,
 #' typically model residuals.
 #' @param maxlag The number of lags for serial correlation tests.
 #' @param printResults An indicator to print results to screen.
-#' @return A list object \code{MVWNtest_out} containing the test results,
+#' @return A list object \code{MVWNtest_stats} containing the test results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{Q}}{A 1xp vector of Q statistics for individual series.}
@@ -30,17 +31,18 @@
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+#' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 #'
 #' set.seed(27)
 #' WN <- rnorm(100)
 #' RW <- cumsum(rnorm(100))
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
-#' MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+#' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.
 #' \code{LagSelect} uses this test as part of the lag order selection process.
+#' \code{print.MVWNtest} prints the output of \code{MVWNtest} to screen.
 #' @note
 #' The LM test should be consistent for heteroskedastic series, Q-test is not.
 #'
@@ -80,24 +82,8 @@ MVWNtest <- function(x, maxlag, printResults) {
   pvMVQ <- Qtest_out$pv
 
 
-  # Print output
-  if (printResults) {
-    cat(sprintf('\n       White Noise Test Results (lag = %g)\n', maxlag))
-    cat(sprintf('---------------------------------------------\n'))
-    cat(sprintf('Variable |       Q  P-val |      LM  P-val  |\n'))
-    cat(sprintf('---------------------------------------------\n'))
-    cat(sprintf('Multivar | %7.3f  %4.3f |     ----  ----  |\n', mvQ, pvMVQ))
-    for (i in 1:p) {
-      cat(sprintf('Var%g     | %7.3f  %4.3f | %7.3f  %4.3f  |\n',
-                  i, Q[i], pvQ[i], LM[i], pvLM[i] ))
-    }
-
-    cat(sprintf('---------------------------------------------\n'))
-  }
-
-
   # Output a list of results.
-  MVWNtest_out <- list(
+  MVWNtest_stats <- list(
     Q = Q,
     pvQ = pvQ,
     LM = LM,
@@ -106,7 +92,70 @@ MVWNtest <- function(x, maxlag, printResults) {
     pvMVQ = pvMVQ
   )
 
-  return(MVWNtest_out)
+  # Print output
+  if (printResults) {
+
+    print.MVWNtest(stats = MVWNtest_stats, maxlag)
+
+  }
+
+
+  return(MVWNtest_stats)
+}
+
+
+#' Print Statistics for Multivariate White Noise Tests
+#'
+#' \code{print.MVWNtest} prints the statistics from \code{MVWNtest} to screen.
+#' \code{MVWNtest} performs multivariate tests for white noise.
+#' It performs both the Ljung-Box Q-test and the LM-test on individual series
+#' for a sequence of lag lengths.
+#'
+#' @param stats A list object \code{MVWNtest_stats} containing the results
+#' from multivariate tests for white noise
+#' It is the output of \code{MVWNtest}.
+#' @param maxlag The number of lags for serial correlation tests.
+#' @return NULL
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+#' print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
+#'
+#' set.seed(27)
+#' WN <- rnorm(100)
+#' RW <- cumsum(rnorm(100))
+#' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+#' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+#' print.MVWNtest(stats = MVWNtest_stats, maxlag = 10)
+#' @family FCVAR postestimation functions
+#' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{FCVARestn} produces the residuals intended for this test.
+#' \code{LagSelect} uses this test as part of the lag order selection process.
+#' \code{print.MVWNtest} prints the output of \code{MVWNtest} to screen.
+#' @note
+#' The LM test should be consistent for heteroskedastic series, Q-test is not.
+#'
+print.MVWNtest <- function(stats, maxlag) {
+
+
+  cat(sprintf('\n       White Noise Test Results (lag = %g)\n', maxlag))
+  cat(sprintf('---------------------------------------------\n'))
+  cat(sprintf('Variable |       Q  P-val |      LM  P-val  |\n'))
+  cat(sprintf('---------------------------------------------\n'))
+  cat(sprintf('Multivar | %7.3f  %4.3f |     ----  ----  |\n', stats$mvQ, stats$pvMVQ))
+  for (i in 1:p) {
+    cat(sprintf('Var%g     | %7.3f  %4.3f | %7.3f  %4.3f  |\n',
+                i, stats$Q[i], stats$pvQ[i], stats$LM[i], stats$pvLM[i] ))
+  }
+
+  cat(sprintf('---------------------------------------------\n'))
+
 }
 
 
@@ -132,7 +181,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+#' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 #' LMtest(x = matrix(results$Residuals[, 1]), q = 12)
 #' LMtest(x = results$Residuals[,2, drop = FALSE], q = 12)
 #'
@@ -142,7 +191,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' LMtest(x = matrix(WN), q = 10)
 #' LMtest(x = matrix(RW), q = 10)
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
-#' MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+#' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 #' @family FCVAR postestimation functions
 #' @seealso \code{MVWNtest} calls this function to test residuals
 #' from the estimation results of \code{FCVARestn}.
@@ -258,7 +307,7 @@ LMtest <- function(x,q) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+#' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 #' Qtest(x = results$Residuals, maxlag = 12)
 #' Qtest(x = matrix(results$Residuals[, 1]), maxlag = 12)
 #' Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
