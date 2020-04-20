@@ -317,6 +317,7 @@ print.LagSelect <- function(stats, kmax, r, p, T, order, opt) {
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate cointegrating rank.
+#' \code{print.RankTests} prints the output of \code{RankTests} to screen.
 #' @export
 #'
 RankTests <- function(x, k, opt) {
@@ -405,46 +406,6 @@ RankTests <- function(x, k, opt) {
 
 
 
-
-  # Restore settings.
-  opt$print2screen <- tempPrint2Screen
-
-  # Print the results to screen.
-  if (opt$print2screen) {
-
-    # create a variable for output strings
-    yesNo <- c('No','Yes')
-
-    cat(sprintf('\n--------------------------------------------------------------------------------\n'))
-    cat(sprintf('             Likelihood Ratio Tests for Cointegrating Rank                               \n'))
-    cat(sprintf('--------------------------------------------------------------------------------\n'))
-    cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt$N))
-    cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T))
-    cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
-    cat(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
-    cat(sprintf('--------------------------------------------------------------------------------\n'))
-    cat(sprintf('Rank     d      b     Log-likelihood   LR statistic   P-value\n'))
-    for (i in 1:p) {
-      if (pv[i] != 999) {
-        cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f  %8.3f\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i], pv[i]))
-      }
-      else {
-        cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f      ----\n', i-1, dHat[i], bHat[i], LogL[i], LRstat[i]))
-      }
-
-    }
-
-    cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f           ----      ----\n', i, dHat[i+1], bHat[i+1], LogL[i+1]))
-    cat(sprintf('--------------------------------------------------------------------------------\n'))
-
-
-  }
-
-
-
-
-
-
   # Return list of rank test results.
   rankTestStats <- list(
     dHat   = dHat,
@@ -455,8 +416,84 @@ RankTests <- function(x, k, opt) {
   )
 
 
+  # Restore settings.
+  opt$print2screen <- tempPrint2Screen
+
+  # Print the results to screen.
+  if (opt$print2screen) {
+
+    print.RankTests(stats = rankTestStats, k, p, T, opt)
+
+  }
 
   return(rankTestStats)
+}
+
+
+#' Print Statistics from Tests for Cointegrating Rank
+#'
+#' \code{print.RankTests} prints the table of statistics from
+#' the output of \code{RankTests}.
+#' \code{RankTests} performs a sequence of  likelihood ratio tests
+# 	for cointegrating rank.
+#'
+#' @param stats A list object \code{rankTestStats} containing the results
+#' from repeated estimation of the FCVAR model with different
+#' cointegrating ranks. It is the output of \code{RankTests}.
+#' @param k The number of lags in the system.
+#' @param p The number of variables in the system.
+#' @param T The sample size.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{FCVARoptions()}.
+#' @return NULL
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' rankTestStats <- RankTests(x, k = 2, opt)
+#' print.RankTests(stats = rankTestStats, k = 2, p = ncol(x), T = nrow(x), opt)
+#' @family FCVAR specification functions
+#' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{FCVARestn} is called repeatedly within this function
+#' for each candidate cointegrating rank.
+#' \code{print.RankTests} prints the output of \code{RankTests} to screen.
+#' @export
+#'
+print.RankTests <- function(stats, k, p, T, opt) {
+
+
+  # create a variable for output strings
+  yesNo <- c('No','Yes')
+
+  cat(sprintf('\n--------------------------------------------------------------------------------\n'))
+  cat(sprintf('             Likelihood Ratio Tests for Cointegrating Rank                               \n'))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt$N))
+  cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T))
+  cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
+  cat(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+  cat(sprintf('Rank     d      b     Log-likelihood   LR statistic   P-value\n'))
+  for (i in 1:p) {
+    if (stats$pv[i] != 999) {
+      cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f  %8.3f\n',
+                  i-1, stats$dHat[i], stats$bHat[i], stats$LogL[i], stats$LRstat[i], stats$pv[i]))
+    }
+    else {
+      cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f      ----\n',
+                  i-1, stats$dHat[i], stats$bHat[i], stats$LogL[i], stats$LRstat[i]))
+    }
+
+  }
+
+  cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f           ----      ----\n',
+              i, stats$dHat[i+1], stats$bHat[i+1], stats$LogL[i+1]))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+
+
 }
 
 

@@ -65,6 +65,7 @@ Other FCVAR specification functions:
 \code{\link{FCVARbootRank}()},
 \code{\link{GetPvalues}()},
 \code{\link{RankTests}()},
-\code{\link{print.LagSelect}()}
+\code{\link{print.LagSelect}()},
+\code{\link{print.RankTests}()}
 }
 \concept{FCVAR specification functions}

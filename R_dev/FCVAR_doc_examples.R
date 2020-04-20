@@ -99,6 +99,18 @@ x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 rankTestStats <- RankTests(x, k = 2, opt)
 
 
+# print.RankTests <- function(stats, k, p, T, opt)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+rankTestStats <- RankTests(x, k = 2, opt)
+print.RankTests(stats = rankTestStats, k = 2, p = ncol(x), T = nrow(x), opt)
+
+
 # GetPvalues(q, b, consT, testStat, opt)
 
 # TODO: Make this work.

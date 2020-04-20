@@ -113,6 +113,7 @@ print.LagSelect(stats = LagSelectStats, kmax, r = p, p, T = nrow(x1), order, opt
 
 k <- 2
 rankTestStats <- RankTests(x1, k, opt)
+print.RankTests(stats = rankTestStats, k = 2, p = ncol(x1), T = nrow(x1), opt)
 
 
 ################################################################################

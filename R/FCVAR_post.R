@@ -674,7 +674,8 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
 #' @return A complex vector \code{cPolyRoots} with the roots of the characteristic polynomial.
-#' @examplesopt <- FCVARoptions()
+#' @examples
+#' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
