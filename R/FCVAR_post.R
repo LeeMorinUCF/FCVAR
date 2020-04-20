@@ -909,10 +909,10 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 #'
 plot.GetCharPolyRoots <- function(cPolyRoots, b, file = NULL, file_ext = NULL) {
 
-  print('cPolyRoots = ')
-  print(cPolyRoots)
-  print('b = ')
-  print(b)
+  # print('cPolyRoots = ')
+  # print(cPolyRoots)
+  # print('b = ')
+  # print(b)
 
   # Now calculate the line for the transformed unit circle.
   # First do the negative half.

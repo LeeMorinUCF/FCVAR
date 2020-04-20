@@ -23,6 +23,7 @@ opt <- FCVARoptions()
 Other FCVAR estimation functions: 
 \code{\link{FCVARestn}()},
 \code{\link{FCVARoptionUpdates}()},
-\code{\link{GetBounds}()}
+\code{\link{GetBounds}()},
+\code{\link{print.FCVARestn}()}
 }
 \concept{FCVAR estimation functions}

@@ -36,6 +36,7 @@ UB_LB_bounds <- GetBounds(opt)
 Other FCVAR estimation functions: 
 \code{\link{FCVARestn}()},
 \code{\link{FCVARoptionUpdates}()},
-\code{\link{FCVARoptions}()}
+\code{\link{FCVARoptions}()},
+\code{\link{print.FCVARestn}()}
 }
 \concept{FCVAR estimation functions}

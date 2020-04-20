@@ -102,8 +102,8 @@ DefaultOpt <- opt # Store the options for restoring them in between hypothesis t
 ################################################################################
 
 opt$gridSearch <- 0
-LagSelectStats <- LagSelect(x1, kmax, r = p, order, opt)
-print.LagSelect(stats = LagSelectStats, kmax, r = p, p, T = nrow(x1), order, opt)
+# LagSelectStats <- LagSelect(x1, kmax, r = p, order, opt)
+# print.LagSelect(stats = LagSelectStats, kmax, r = p, p, T = nrow(x1), order, opt)
 
 
 
@@ -112,8 +112,8 @@ print.LagSelect(stats = LagSelectStats, kmax, r = p, p, T = nrow(x1), order, opt
 ################################################################################
 
 k <- 2
-rankTestStats <- RankTests(x1, k, opt)
-print.RankTests(stats = rankTestStats, k = 2, p = ncol(x1), T = nrow(x1), opt)
+# rankTestStats <- RankTests(x1, k, opt)
+# print.RankTests(stats = rankTestStats, k = 2, p = ncol(x1), T = nrow(x1), opt)
 
 
 ################################################################################

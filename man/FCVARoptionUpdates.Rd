@@ -46,6 +46,7 @@ validity of options.
 Other FCVAR estimation functions: 
 \code{\link{FCVARestn}()},
 \code{\link{FCVARoptions}()},
-\code{\link{GetBounds}()}
+\code{\link{GetBounds}()},
+\code{\link{print.FCVARestn}()}
 }
 \concept{FCVAR estimation functions}

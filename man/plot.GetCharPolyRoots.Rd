@@ -10,6 +10,8 @@
 \item{cPolyRoots}{A vector of the roots of the characteristic polynomial.
 An element of the list of estimation \code{results} output from \code{FCVARestn}.}
 
+\item{b}{The order of fractional integration.}
+
 \item{file}{A string path and file name in which to plot a figure.
 Renders to the plot window if running in RStudio if NULL.}
 
