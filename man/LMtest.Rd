@@ -58,6 +58,8 @@ Other FCVAR postestimation functions:
 \code{\link{HypoTest}()},
 \code{\link{MVWNtest}()},
 \code{\link{Qtest}()},
+\code{\link{plot.GetCharPolyRoots}()},
+\code{\link{print.GetCharPolyRoots}()},
 \code{\link{print.MVWNtest}()}
 }
 \concept{FCVAR postestimation functions}

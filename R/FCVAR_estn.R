@@ -987,17 +987,11 @@ FCVARestn <- function(x,k,r,opt) {
 
   # Print roots of characteristic polynomial if required.
   if (opt$print2screen & opt$printRoots) {
-    cat(sprintf('--------------------------------------------------------------------------------\n'))
-    cat(sprintf(  '    Roots of the characteristic polynomial                                                           \n'))
-    cat(sprintf('--------------------------------------------------------------------------------\n'))
-    cat(sprintf(  '    Number     Real part    Imaginary part       Modulus                                             \n'))
-    cat(sprintf('--------------------------------------------------------------------------------\n'))
-    for (j in 1:length(cPolyRoots)) {
-      cat(sprintf( '      %2.0f       %8.3f       %8.3f         %8.3f                                        \n',
-                   j, Re(cPolyRoots[j]), Im(cPolyRoots[j]), Mod(cPolyRoots[j]) ))
-    }
 
-    cat(sprintf('--------------------------------------------------------------------------------\n'))
+    print.GetCharPolyRoots(cPolyRoots)
+
+    plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])
+
   }
 
 
@@ -1021,12 +1015,6 @@ FCVARestn <- function(x,k,r,opt) {
 
     cat(sprintf('--------------------------------------------------------------------------------\n\n'))
   }
-
-
-
-
-
-
 
 
   return(results)

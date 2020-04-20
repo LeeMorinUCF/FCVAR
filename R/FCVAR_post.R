@@ -714,6 +714,8 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' \code{GetCharPolyRoots} calculates the roots of the
 #' characteristic polynomial and plots them with the unit circle
 #' transformed for the fractional model, see Johansen (2008).
+#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{GetCharPolyRoots} to screen.
 #'
 #' @param coeffs A list of coefficients for the FCVAR model.
 #' An element of the list of estimation \code{results} output from \code{FCVARestn}.
@@ -736,6 +738,8 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the model for which to calculate the roots
 #' of the characteristic polynomial.
+#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{GetCharPolyRoots} to screen.
 #' @note The roots are calculated from the companion form of the VAR,
 #' where the roots are given as the inverse eigenvalues of the
 #' coefficient matrix.
@@ -802,50 +806,8 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 
   # Generate graph depending on the indicator plotRoots.
   if (opt$plotRoots) {
-    # Now calculate the line for the transformed unit circle.
-    # First do the negative half.
-    unitCircle <- seq( pi, 0, by = - 0.001)
-    psi <- - (pi - unitCircle)/2
-    unitCircleX <- cos( - unitCircle)
-    unitCircleY <- sin( - unitCircle)
-    transformedUnitCircleX <- (1 - (2*cos(psi))^b*cos(b*psi))
-    transformedUnitCircleY <- (    (2*cos(psi))^b*sin(b*psi))
-    # Then do the positive half.
-    unitCircle <- seq(0, pi, by = 0.001)
-    psi <- (pi - unitCircle)/2
-    unitCircleX <- c(unitCircleX, cos(unitCircle))
-    unitCircleY <- c(unitCircleY, sin(unitCircle))
-    transformedUnitCircleX <- c(transformedUnitCircleX, 1,
-                                (1 - (2*cos(psi))^b*cos(b*psi)))
-    transformedUnitCircleY <- c(transformedUnitCircleY, 0,
-                                (    (2*cos(psi))^b*sin(b*psi)))
 
-    # Plot the unit circle and its image under the mapping
-    # along with the roots of the characterisitc polynomial.
-
-    # Determine axes based on largest roots.
-    maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
-                        transformedUnitCircleY, unitCircleY) )
-    minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
-                        transformedUnitCircleY, unitCircleY) )
-    maxXYaxis <- max( maxXYaxis, -minXYaxis )
-
-    plot(transformedUnitCircleX,
-         transformedUnitCircleY,
-         main = c('Roots of the characteristic polynomial',
-                  'with the image of the unit circle'),
-         xlab = 'Real Part of Root',
-         ylab = 'Imaginary Part of Root',
-         xlim = 2*c(-maxXYaxis, maxXYaxis),
-         ylim = 2*c(-maxXYaxis, maxXYaxis),
-         type = 'l',
-         lwd = 3,
-         col = 'red')
-    lines(unitCircleX, unitCircleY, lwd = 3, col = 'black')
-    points(Re(cPolyRoots), Im(cPolyRoots),
-           pch = 16, col = 'blue')
-
-
+    plot.GetCharPolyRoots(cPolyRoots, b, file = NULL, file_ext = NULL)
 
   }
 
@@ -854,4 +816,163 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 }
 
 
+#' Print Roots of the Characteristic Polynomial
+#'
+#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{GetCharPolyRoots} to screen.
+#' \code{GetCharPolyRoots} calculates the roots of the
+#' characteristic polynomial and plots them with the unit circle
+#' transformed for the fractional model, see Johansen (2008).
+#'
+#' @param cPolyRoots A vector of the roots of the characteristic polynomial.
+#' An element of the list of estimation \code{results} output from \code{FCVARestn}.
+#' @return NULL
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
+#' print.GetCharPolyRoots(cPolyRoots)
+#' plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])
+#' @family FCVAR postestimation functions
+#' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{FCVARestn} to estimate the model for which to calculate the roots
+#' of the characteristic polynomial.
+#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{GetCharPolyRoots} to screen.
+#' @note The roots are calculated from the companion form of the VAR,
+#' where the roots are given as the inverse eigenvalues of the
+#' coefficient matrix.
+#' @references Johansen, S. (2008). "A representation theory for a class of
+#' vector autoregressive models for fractional processes,"
+#' Econometric Theory 24, 651-676.
+#'
+print.GetCharPolyRoots <- function(cPolyRoots) {
+
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+  cat(sprintf(  '    Roots of the characteristic polynomial                                                           \n'))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+  cat(sprintf(  '    Number     Real part    Imaginary part       Modulus                                             \n'))
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+  for (j in 1:length(cPolyRoots)) {
+    cat(sprintf( '      %2.0f       %8.3f       %8.3f         %8.3f                                        \n',
+                 j, Re(cPolyRoots[j]), Im(cPolyRoots[j]), Mod(cPolyRoots[j]) ))
+  }
+
+  cat(sprintf('--------------------------------------------------------------------------------\n'))
+
+}
+
+#' Plot Roots of the Characteristic Polynomial
+#'
+#' \code{plot.GetCharPolyRoots} plots the output of
+#' \code{GetCharPolyRoots} to screen or to a file.
+#' \code{GetCharPolyRoots} calculates the roots of the
+#' characteristic polynomial and plots them with the unit circle
+#' transformed for the fractional model, see Johansen (2008).
+#'
+#' @param cPolyRoots A vector of the roots of the characteristic polynomial.
+#' An element of the list of estimation \code{results} output from \code{FCVARestn}.
+#' @param b The order of fractional integration.
+#' @param file A string path and file name in which to plot a figure.
+#' Renders to the plot window if running in RStudio if NULL.
+#' @param file_ext A string file extension to indicate the graphich format.
+#' Either png or pdf are currently supported.
+#' @return NULL
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
+#' print.GetCharPolyRoots(cPolyRoots)
+#' plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])
+#' @family FCVAR postestimation functions
+#' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{FCVARestn} to estimate the model for which to calculate the roots
+#' of the characteristic polynomial.
+#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{GetCharPolyRoots} to screen.
+#' @note The roots are calculated from the companion form of the VAR,
+#' where the roots are given as the inverse eigenvalues of the
+#' coefficient matrix.
+#' @references Johansen, S. (2008). "A representation theory for a class of
+#' vector autoregressive models for fractional processes,"
+#' Econometric Theory 24, 651-676.
+#'
+plot.GetCharPolyRoots <- function(cPolyRoots, b, file = NULL, file_ext = NULL) {
+
+  print('cPolyRoots = ')
+  print(cPolyRoots)
+  print('b = ')
+  print(b)
+
+  # Now calculate the line for the transformed unit circle.
+  # First do the negative half.
+  unitCircle <- seq( pi, 0, by = - 0.001)
+  psi <- - (pi - unitCircle)/2
+  unitCircleX <- cos( - unitCircle)
+  unitCircleY <- sin( - unitCircle)
+  transformedUnitCircleX <- (1 - (2*cos(psi))^b*cos(b*psi))
+  transformedUnitCircleY <- (    (2*cos(psi))^b*sin(b*psi))
+  # Then do the positive half.
+  unitCircle <- seq(0, pi, by = 0.001)
+  psi <- (pi - unitCircle)/2
+  unitCircleX <- c(unitCircleX, cos(unitCircle))
+  unitCircleY <- c(unitCircleY, sin(unitCircle))
+  transformedUnitCircleX <- c(transformedUnitCircleX, 1,
+                              (1 - (2*cos(psi))^b*cos(b*psi)))
+  transformedUnitCircleY <- c(transformedUnitCircleY, 0,
+                              (    (2*cos(psi))^b*sin(b*psi)))
+
+  # Plot the unit circle and its image under the mapping
+  # along with the roots of the characterisitc polynomial.
+
+  # Determine axes based on largest roots.
+  maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
+                      transformedUnitCircleY, unitCircleY) )
+  minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
+                      transformedUnitCircleY, unitCircleY) )
+  maxXYaxis <- max( maxXYaxis, -minXYaxis )
+
+  # Open file, if required.
+  if (!is.null(file)) {
+    if(file_ext == 'pdf') {
+      pdf(file)
+    } else if(file_ext == 'png') {
+      png(file)
+    } else {
+      stop('Error: Graphics device not supported. Try pdf or png.')
+    }
+
+  }
+
+  plot(transformedUnitCircleX,
+       transformedUnitCircleY,
+       main = c('Roots of the characteristic polynomial',
+                'with the image of the unit circle'),
+       xlab = 'Real Part of Root',
+       ylab = 'Imaginary Part of Root',
+       xlim = 2*c(-maxXYaxis, maxXYaxis),
+       ylim = 2*c(-maxXYaxis, maxXYaxis),
+       type = 'l',
+       lwd = 3,
+       col = 'red')
+  lines(unitCircleX, unitCircleY, lwd = 3, col = 'black')
+  points(Re(cPolyRoots), Im(cPolyRoots),
+         pch = 16, col = 'blue')
+
+  # Close graphics device, if any.
+  if (!is.null(file)) {
+    dev.off()
+  }
+
+}
 
