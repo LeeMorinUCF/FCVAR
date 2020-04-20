@@ -23,6 +23,11 @@ These vectors are either 1- or 2-dimensional depending on whether a restriction 
 \examples{
 opt <- FCVARoptions()
 UB_LB_bounds <- GetBounds(opt)
+
+opt <- FCVARoptions()
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+UB_LB_bounds <- GetBounds(opt)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.

@@ -14,7 +14,7 @@ A list object \code{opt} that stores the default estimation options.
   estimation procedure and the related programs.
 }
 \examples{
-FCVARoptions()
+opt <- FCVARoptions()
 }
 \seealso{
 \code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.

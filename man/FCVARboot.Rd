@@ -48,7 +48,7 @@ optUNR <- FCVARoptions()
 # Define estimation options for restricted model (null)
 optRES <- optUNR
 optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-x <- data(JNP2014)
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 FCVARboot_out <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 }
 \references{

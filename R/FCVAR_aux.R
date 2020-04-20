@@ -1185,7 +1185,8 @@ FCVARlikeFull <- function(x, k, r, coeffs, beta, rho, opt) {
 #'   \item{\code{Z3}}{A column of ones if model includes an
 #'   unrestricted constant term, otherwise \code{NULL}.}
 #' }
-#' @examplesopt <- FCVARoptions()
+#' @examples
+#' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
@@ -1510,8 +1511,9 @@ FracDiff <- function(x, d) {
 #' Boswijk & Doornik (2004, p.447), which is only used if there are
 #' restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.
 #' @return The number of free parameters \code{fp}.
-#' @examplesopt <- FCVARoptions()
-# opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -1598,7 +1600,8 @@ GetFreeParams <- function(k, r, p, opt, rankJ) {
 #' @return The \code{hessian} matrix  of second derivatives of the FCVAR
 #' log-likelihood function, calculated with the parameter estimates
 #' specified in \code{coeffs}.
-#' @examplesopt <- FCVARoptions()
+#' @examples
+#' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.

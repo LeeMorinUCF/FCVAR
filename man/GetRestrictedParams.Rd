@@ -47,6 +47,26 @@ Doornik (2016, working paper). We translate between  \eqn{(\psi, \phi)} and
 \eqn{A\psi = vec(\alpha')}, and \eqn{R_\beta vec(\beta) = r_\beta} and
 \eqn{H\phi + h = vec(\beta)}. Note the transposes.
 }
+\examples{
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+opt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+betaStar <- matrix(c(-0.95335616, -0.07345676, -0.29277318), nrow = 3)
+S00 <- matrix(c(0.0302086527,  0.001308664,  0.0008200923,
+                0.0013086640,  0.821417610, -0.1104617893,
+                0.0008200923, -0.110461789,  0.0272861128), nrow = 3)
+S01 <- matrix(c(-0.0047314320, -0.04488533,  0.006336798,
+                0.0026708007,  0.17463884, -0.069006455,
+                -0.0003414163, -0.07110324,  0.022830494), nrow = 3, byrow = TRUE)
+S11 <- matrix(c( 0.061355941,  -0.4109969,  -0.007468716,
+                 -0.410996895,  70.6110313, -15.865097810,
+                 -0.007468716, -15.8650978,   3.992435799), nrow = 3)
+switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, T = 316, p = 3, opt)
+}
 \references{
 Boswijk, H. P. and J. A. Doornik (2004).
 "Identifying, estimating and testing restricted cointegrated systems:

@@ -27,7 +27,7 @@ positive or negative sign with equal probability (the Rademacher distribution).
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 model <- FCVARestn(x,k = 3,r = 1,opt)
 data <- x[1:10, ]
 xBS <- FCVARsimBS(data, model, NumPeriods = 100)

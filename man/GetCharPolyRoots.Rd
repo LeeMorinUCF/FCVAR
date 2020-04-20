@@ -32,13 +32,6 @@ The roots are calculated from the companion form of the VAR,
 where the roots are given as the inverse eigenvalues of the
 coefficient matrix.
 }
-\examples{
-opt <- FCVARoptions()
-optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-x <- data(JNP2014)
-results <- FCVARestn(x, k = 2,r = 1, opt)
-cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-}
 \references{
 Johansen, S. (2008). "A representation theory for a class of
 vector autoregressive models for fractional processes,"

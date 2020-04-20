@@ -42,7 +42,7 @@ the estimates of \code{Alpha}, \code{Beta}, \code{Rho}, \code{Pi},
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 estimates <- GetParams(x, k = 2, r = 1, db = c(1, 1), opt)
 }
 \references{

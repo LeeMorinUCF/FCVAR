@@ -11,12 +11,35 @@ LagSelect(x, kmax, r, order, opt)
 
 \item{kmax}{The maximum number of lags in the system.}
 
-\item{r}{The cointegrating rank.}
+\item{r}{The cointegrating rank.This is often set equal to \code{p},
+the number of variables in the system, since it is better to overspecify
+than underspecify the model.}
 
 \item{order}{The order of serial correlation for white noise tests.}
 
 \item{opt}{A list object that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
+}
+\value{
+A list object \code{LagSelectStats} containing the results
+from repeated estimation of the FCVAR model with different orders
+of the autoregressive lag length.
+Note that row \code{j} of each of the vectors in \code{LagSelectStats}
+contains the associated results for lag length \code{j+1}
+\code{LagSelectStats} includes the following parameters:
+\describe{
+  \item{\code{D}}{A (\code{kmax} + 1) x 2 vector of estimates of d and b.}
+  \item{\code{loglik}}{A (\code{kmax} + 1) x 1 vector of log-likelihood values.}
+  \item{\code{LRtest}}{A (\code{kmax} + 1) x 1 vector of likelihood ratio test statistics for tests of significance of Gamma_{j+1}}
+  \item{\code{pvLRtest}}{A (\code{kmax} + 1) x 1 vector of P-values for the likelihood ratio tests of significance of Gamma_{j+1}}
+  \item{\code{i_aic}}{The lag corresponding to the minimum value of the Akaike information criteria.}
+  \item{\code{aic}}{A (\code{kmax} + 1) x 1 vector of values of the Akaike information criterion.}
+  \item{\code{i_bic}}{The lag corresponding to the minimum value of the Bayesian information criteria.}
+  \item{\code{bic}}{A (\code{kmax} + 1) x 1 vector of values of the Bayesian information criterion.}
+  \item{\code{pvMVq}}{A scalar P-value for the Q-test for multivariate residual white noise.}
+  \item{\code{pvWNQ}}{A (\code{kmax} + 1) x 1 vector of P-values for the Q-tests for univariate residual white noise.}
+  \item{\code{pvWNLM}}{A (\code{kmax} + 1) x 1 vector of P-values for the LM-tests for univariate residual white noise.}
+}
 }
 \description{
 \code{LagSelect} takes a matrix of variables and performs lag
@@ -25,17 +48,23 @@ generated from \code{FCVARoptions()}.}
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
-LagSelect(x, kmax = 4, r = 3, order = 12, opt)
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} is called repeatedly within this function
 for each candidate lag order.
+\code{print.LagSelect} prints the output of \code{LagSelect} to screen.
 
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},
 \code{\link{GetPvalues}()},
-\code{\link{RankTests}()}
+\code{\link{RankTests}()},
+\code{\link{print.LagSelect}()}
 }
 \concept{FCVAR specification functions}

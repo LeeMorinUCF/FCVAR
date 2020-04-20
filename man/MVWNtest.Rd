@@ -37,13 +37,19 @@ The LM test should be consistent for heteroskedastic series, Q-test is not.
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
-results <- FCVARestn(x,k = 3,r = 1, opt)
-MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+results <- FCVARestn(x, k = 2, r = 1, opt)
+MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 
-MVWNtest(x = rnorm(100), maxlag = 10, printResults = 1)
-
-MVWNtest(x = cumsum(rnorm(100)), maxlag = 10, printResults = 1)
+set.seed(27)
+WN <- rnorm(100)
+RW <- cumsum(rnorm(100))
+MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+MVWNtest_out <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.

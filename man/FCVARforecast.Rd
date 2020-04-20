@@ -23,7 +23,7 @@ A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 model <- FCVARestn(x,k = 3,r = 1,opt)
 xf <- FCVARforecast(data, model, NumPeriods = 100)
 }

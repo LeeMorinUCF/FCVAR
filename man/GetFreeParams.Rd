@@ -31,8 +31,28 @@ The number of free parameters \code{fp}.
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
-fp <- GetFreeParams(x, k = 2, r = 1, opt, rankJ = some_number)
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = NULL)
+
+opt <- FCVARoptions()
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
+
+opt <- FCVARoptions()
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+opt$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
 }
 \references{
 Boswijk, H. P. and J. A. Doornik (2004).

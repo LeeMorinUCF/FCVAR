@@ -32,8 +32,12 @@ including the following parameters:
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
-RankTests(x, k = 2, opt)
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+rankTestStats <- RankTests(x, k = 2, opt)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
@@ -43,6 +47,7 @@ for each candidate cointegrating rank.
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},
 \code{\link{GetPvalues}()},
-\code{\link{LagSelect}()}
+\code{\link{LagSelect}()},
+\code{\link{print.LagSelect}()}
 }
 \concept{FCVAR specification functions}

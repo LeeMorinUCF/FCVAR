@@ -37,10 +37,14 @@ to \code{FCVARestn} and returns the log-likelihood given \code{d} and \code{b}.
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
-like <- FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
-beta = coeffs$betaHat, rho = coeffs$rhoHat, opt)
+FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
+              beta = results$coeffs$betaHat, rho = results$coeffs$rhoHat, opt)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.

@@ -28,9 +28,18 @@ A vector \code{param} of parameters in the FCVAR model.
 }
 \examples{
 opt <- FCVARoptions()
-x <- data(JNP2014)
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
-param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+
+params <- matrix(seq(25))
+coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
@@ -38,7 +47,9 @@ param <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
 standard errors of the estimates.
 \code{SEmat2vecU} is called by \code{FCVARhess} to sort the parameters
 into a vector to calculate the Hessian matrix.
-\code{SEvec2matU} is the inverse of \code{SEmat2vecU}.
+\code{SEvec2matU} is a near inverse of \code{SEmat2vecU},
+in the sense that \code{SEvec2matU} obtains only a
+subset of the parameters in \code{results$coeffs}.
 
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},

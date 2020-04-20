@@ -28,9 +28,25 @@ The LM test in \code{LMtest} is consistent for heteroskedastic series,
 while the Q-test is not.
 }
 \examples{
-Qtest(x = rnorm(100), maxlag = 10)
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+results <- FCVARestn(x, k = 2, r = 1, opt)
+MVWNtest_out <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+Qtest(x = results$Residuals, maxlag = 12)
+Qtest(x = matrix(results$Residuals[, 1]), maxlag = 12)
+Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
 
-Qtest(x = cumsum(rnorm(100)), maxlag = 10)
+set.seed(27)
+WN <- rnorm(100)
+RW <- cumsum(rnorm(100))
+MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+Qtest(x = MVWN_x, maxlag = 10)
+Qtest(x = matrix(WN), maxlag = 10)
+Qtest(x = matrix(RW), maxlag = 10)
 }
 \references{
 H. Luetkepohl (2005) "New Introduction to Multiple Time Series Analysis," Springer, Berlin.

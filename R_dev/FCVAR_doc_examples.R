@@ -73,7 +73,20 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+
+
+# print.LagSelect(stats, kmax, r, p, order, opt)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+print.LagSelect(stats = LagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
+
 
 # RankTests(x, k, opt)
 

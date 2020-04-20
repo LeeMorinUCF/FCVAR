@@ -46,7 +46,10 @@ degrees of freedom. See Johansen and Nielsen (2012, Econometrica).
 
 \examples{
 opt <- FCVARoptions()
-GetPvalues <- function(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
+pv <- GetPvalues(q = 1, b = 0.4, consT = 0, testStat = 3.84, opt)
+
+opt <- FCVARoptions()
+pv <- GetPvalues(q = 1, b = 0.75, consT = 0, testStat = 3.84, opt)
 }
 \references{
 James G. MacKinnon and Morten \enc{Ø}{O}rregaard Nielsen,
@@ -63,6 +66,7 @@ Econometrica 80, pp.2667-2732.
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},
 \code{\link{LagSelect}()},
-\code{\link{RankTests}()}
+\code{\link{RankTests}()},
+\code{\link{print.LagSelect}()}
 }
 \concept{FCVAR specification functions}

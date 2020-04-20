@@ -9,11 +9,31 @@
 #'
 #' @param x A matrix of variables to be included in the system.
 #' @param kmax The maximum number of lags in the system.
-#' @param r The cointegrating rank.
+#' @param r The cointegrating rank.This is often set equal to \code{p},
+#' the number of variables in the system, since it is better to overspecify
+#' than underspecify the model.
 #' @param order The order of serial correlation for white noise tests.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return NULL
+#' @return A list object \code{LagSelectStats} containing the results
+#' from repeated estimation of the FCVAR model with different orders
+#' of the autoregressive lag length.
+#' Note that row \code{j} of each of the vectors in \code{LagSelectStats}
+#' contains the associated results for lag length \code{j+1}
+#' \code{LagSelectStats} includes the following parameters:
+#' \describe{
+#'   \item{\code{D}}{A (\code{kmax} + 1) x 2 vector of estimates of d and b.}
+#'   \item{\code{loglik}}{A (\code{kmax} + 1) x 1 vector of log-likelihood values.}
+#'   \item{\code{LRtest}}{A (\code{kmax} + 1) x 1 vector of likelihood ratio test statistics for tests of significance of Gamma_{j+1}}
+#'   \item{\code{pvLRtest}}{A (\code{kmax} + 1) x 1 vector of P-values for the likelihood ratio tests of significance of Gamma_{j+1}}
+#'   \item{\code{i_aic}}{The lag corresponding to the minimum value of the Akaike information criteria.}
+#'   \item{\code{aic}}{A (\code{kmax} + 1) x 1 vector of values of the Akaike information criterion.}
+#'   \item{\code{i_bic}}{The lag corresponding to the minimum value of the Bayesian information criteria.}
+#'   \item{\code{bic}}{A (\code{kmax} + 1) x 1 vector of values of the Bayesian information criterion.}
+#'   \item{\code{pvMVq}}{A scalar P-value for the Q-test for multivariate residual white noise.}
+#'   \item{\code{pvWNQ}}{A (\code{kmax} + 1) x 1 vector of P-values for the Q-tests for univariate residual white noise.}
+#'   \item{\code{pvWNLM}}{A (\code{kmax} + 1) x 1 vector of P-values for the LM-tests for univariate residual white noise.}
+#' }
 #' @examples
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
@@ -21,11 +41,12 @@
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+#' LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate lag order.
+#' \code{print.LagSelect} prints the output of \code{LagSelect} to screen.
 #' @export
 #'
 LagSelect <- function(x, kmax, r, order, opt ) {
@@ -119,6 +140,70 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   i_aic <- which.min(aic)
   i_bic <- which.min(bic)
 
+
+  # Return list of lag selection statistics.
+  LagSelectStats <- list(
+    D = D,
+    loglik = loglik,
+    LRtest = LRtest,
+    pvLRtest = pvLRtest,
+    i_aic = i_aic,
+    aic = aic,
+    i_bic = i_bic,
+    bic = bic,
+    pvMVq = pvMVq,
+    pvWNQ = pvWNQ,
+    pvWNLM = pvWNLM
+  )
+
+  # Print output if required.
+  if (opt$print2screen) {
+    print.LagSelect(LagSelectStats, kmax, r = p, T, order, opt)
+  }
+
+  return(LagSelectStats)
+
+}
+
+#' Print Statistics from Lag Order Selection
+#'
+#' \code{print.LagSelect} prints the table of statistics from
+#' the output of \code{LagSelect}.
+#' \code{LagSelect} takes a matrix of variables and performs lag
+#' 	selection on it by using the likelihood ratio test.
+#'
+#' @param stats A list object \code{LagSelectStats} containing the results
+#' from repeated estimation of the FCVAR model with different orders
+#' of the autoregressive lag length. It is the output of \code{LagSelect}.
+#' @param kmax The maximum number of lags in the system.
+#' @param r The cointegrating rank. This is often set equal to \code{p},
+#' the number of variables in the system, since it is better to overspecify
+#' than underspecify the model.
+#' @param p The number of variables in the system.
+#' @param T The sample size.
+#' @param order The order of serial correlation for white noise tests.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{FCVARoptions()}.
+#' @return NULL
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+#' print.LagSelect(stats = LagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
+#' @family FCVAR specification functions
+#' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{FCVARestn} is called repeatedly within this function
+#' for each candidate lag order.
+#' \code{print.LagSelect} prints the output of \code{LagSelect} to screen.
+#' @export
+#'
+print.LagSelect <- function(stats, kmax, r, p, T, order, opt) {
+
+
   #--------------------------------------------------------------------------------
   # Print output
   #--------------------------------------------------------------------------------
@@ -150,13 +235,13 @@ LagSelect <- function(x, kmax, r, order, opt ) {
     #             k, r, D(k+1,:), loglik(k+1), LRtest(k+1),
     #           pvLRtest(k+1), aic(k+1), bic(k+1), pvMVq(k+1,:))
     cat(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f',
-                k, r, D[k+1, 1], D[k+1, 2], loglik[k+1], LRtest[k+1],
-                pvLRtest[k+1], aic[k+1]))
+                k, r, stats$D[k+1, 1], stats$D[k+1, 2], stats$loglik[k+1],
+                stats$LRtest[k+1], stats$pvLRtest[k+1], stats$aic[k+1]))
     # For AIC add asterisk if min value
-    if(k+1 == i_aic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
+    if(k+1 == stats$i_aic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
     # Print BIC information criteria and add asterisk if min value
-    cat(sprintf(' %8.2f', bic[k+1]))
-    if(k+1 == i_bic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
+    cat(sprintf(' %8.2f', stats$bic[k+1]))
+    if(k+1 == stats$i_bic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
 
     # # Print multivariate white noise test P-values
     # cat(sprintf(' %4.2f', pvMVq[k+1, ]))
@@ -185,10 +270,10 @@ LagSelect <- function(x, kmax, r, order, opt ) {
     cat(sprintf('%2.0f ', k))
 
     # Print multivariate white noise test P-values
-    cat(sprintf('  %4.2f', pvMVq[k+1, ]))
+    cat(sprintf('  %4.2f', stats$pvMVq[k+1, ]))
     # Print the individual series white noise test P-values
     for (i in 1:p) {
-      cat(sprintf('  %4.2f  %4.2f', pvWNQ[k+1,i], pvWNLM[k+1,i]))
+      cat(sprintf('  %4.2f  %4.2f', stats$pvWNQ[k+1,i], stats$pvWNLM[k+1,i]))
     }
 
     cat(sprintf('\n'))
