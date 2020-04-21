@@ -130,22 +130,7 @@ modelF <- m1r4
 xf <- FCVARforecast(x1, modelF, NumPeriods)
 
 
-#--------------------------------------------------------------------------------
-# Testing version:
-#--------------------------------------------------------------------------------
-source('EstOptions.R')
-source('FCVAR_estn.R')
-source('FCVAR_lower.R')
-source('FCVAR_higher.R')
-
-x <- x1
-model <- m1r4
-xf <- FCVARforecast(x, model, NumPeriods)
-#--------------------------------------------------------------------------------
-
-
-
-# Series including forecast.
+# Append forecast to series.
 seriesF <- as.matrix(rbind(x1, xf) )
 
 # Equilibrium relation including forecasts.
@@ -165,30 +150,50 @@ yMaxEq <- max(equilF)
 yMinEq <- min(equilF)
 
 # Plot the series and forecast.
+fig_ext <- 'png'
+out_file_path <- sprintf('R_dev/Figures/forecast_vars.%s', fig_ext)
 color_list <- rainbow(ncol(seriesF))
+label_list <- c('Liberal Support', 'CDN 3-mo T-Bill', 'CDN Unemp. Rate')
+lty_list <- c('solid', 'dashed', 'dot')
 col_num <- 1
+png(out_file_path)
 plot(seriesF[, col_num],
      main = 'Series, including Forecast',
      xlab = 'Time, t',
      ylab = 'Series',
      ylim = c(yMinS, yMaxS),
      type = 'l',
+     lwd = 3,
      col = color_list[col_num])
-abline(v = T, col = 'black', lwd = 3)
+abline(v = T, col = 'black', lwd = 3, lty = 'dashed')
 for (col_num in 2:ncol(seriesF)) {
   lines(seriesF[, col_num],
+        lwd = 3,
+        lty = col_num,
         col = color_list[col_num])
 }
+# Settings in GUI:
+# legend(197, 22.75, legend = label_list,
+#        col = color_list, lty = 1:3, cex = 0.65)
+# Settings in article:
+legend(150, 20, legend = label_list,
+       col = color_list, lty = 1:3, cex = 1.0)
+dev.off()
 
 
 # Plot the equilibrium relation including forecasts.
+out_file_path <- sprintf('R_dev/Figures/forecast_eqbm.%s', fig_ext)
+png(out_file_path)
 plot(equilF,
      main = 'Equilibrium Relation, including Forecast',
      xlab = 'Time, t',
      ylab = 'Equilibrium Relation',
      ylim = c(yMinEq, yMaxEq),
      type = 'l',
+     lwd = 3,
      col = 'black')
+abline(v = T, col = 'black', lwd = 3, lty = 'dashed')
+dev.off()
 
 
 

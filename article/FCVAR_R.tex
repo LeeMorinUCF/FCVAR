@@ -14,7 +14,7 @@
 \usepackage{float}   % used for better positioning of figures
 \usepackage{mathrsfs} % for script fonts
 \usepackage[FIGTOPCAP]{subfigure}     %FIGTOPCAP puts captions on top of subfigures
-
+% \usepackage{subfig}
 
 %% new custom commands
 \newcommand{\class}[1]{`\code{#1}'}
@@ -940,9 +940,9 @@ Furthermore, the estimation was performed with the grid search and the plot opti
 
 \begin{figure}[H]
   \centering
+  \includegraphics[scale = .6, keepaspectratio=true]{Figures/m1_likelihood.png}
   \caption{Plot of log-likelihood}
   \label{fig:m1_likelihood}
-  \includegraphics[scale = .6, keepaspectratio=true]{Figures/m1_likelihood.png}
 \end{figure}
 
 The complete results for the unrestricted model are stored in the list \verb|m1| and can be accessed anytime. For instance, if the user would like to perform a more careful analysis of the residuals they are stored in \verb|m1$Residuals|.
@@ -1325,7 +1325,8 @@ R> equilF <- seriesF %*% modelF$coeffs$betaHat
 The user specifies the forecast horizon (\verb|NumPeriods|) as well as the model (in this case, \verb|modelF <- m1r4|). These two inputs, along with the data, are used in the call to the function \fct{FCVARforecast}. This function returns \verb|xf|, a \verb|NumPeriods| by $p$ matrix of forecasted values of $X$, 
 which are forecasted to take place after \verb|x1|. 
 % This code section also plots the original series and the equilibrium relation $X\hat{\beta}$  along with the forecasts. These plots are shown in Figure~\ref{fig:forecast}.
-Figure~\ref{fig:forecast} plots the original series and the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
+% Figure~\ref{fig:forecast} plots the original series and the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
+Figure~\ref{fig:forecast_vars} plots the original series and Figure~\ref{fig:forecast_eqbm} plots the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
 
 %The forecasts can be printed to screen by typing \verb|xf| in the command window. For this example, the forecast yields the following output:
 %\begin{verbatim}
@@ -1345,12 +1346,28 @@ Figure~\ref{fig:forecast} plots the original series and the equilibrium relation
 %    0.206124920473081   8.034550676278421  -2.814195673339702
 %\end{verbatim}
 
+%\begin{figure}[H]
+%  \centering
+%  % \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast.png}
+%\subfigure{\includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_vars.png}}\\
+%\subfigure{\includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_eqbm.png}}
+%  \caption{Forecast of final model 12 steps ahead}
+%  \label{fig:forecast}
+%\end{figure}
+
+
 \begin{figure}[H]
   \centering
+  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_vars.png}
   \caption{Forecast of final model 12 steps ahead}
-  \label{fig:forecast}
-  % \includegraphics[scale = 1, keepaspectratio=true]{forecast.pdf}
-  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast.png}
+  \label{fig:forecast_vars}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_eqbm.png}
+  \caption{Forecast equilibrium relationship of final model 12 steps ahead}
+  \label{fig:forecast_eqbm}
 \end{figure}
 
 \subsection{Bootstrap hypothesis test}

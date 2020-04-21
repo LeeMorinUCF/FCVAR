@@ -480,9 +480,15 @@ HypoTest <- function(modelUNR, modelR) {
 #' @return A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' model <- FCVARestn(x,k = 3,r = 1,opt)
-#' xf <- FCVARforecast(data, model, NumPeriods = 100)
+#' opt1 <- opt
+#' opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+#' m1r4 <- FCVARestn(x1, k, r, opt1)
+#' xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
@@ -509,19 +515,21 @@ FCVARforecast <- function(x, model, NumPeriods) {
   # Recursively generate forecasts
   #--------------------------------------------------------------------------------
 
+  xf <- x
   for (i in 1:NumPeriods) {
 
 
     # Append x with zeros to simplify calculations.
     # x <- rbind(x, matrix(0, nrow = 1, ncol = p))
-    x <- rbind(x, rep(0, p))
-    T <- nrow(x)
+    # x <- rbind(x, rep(0, p))
+    xf <- rbind(xf, rep(0, p))
+    T <- nrow(xf)
 
     # Adjust by level parameter if present.
     if(opt$levelParam) {
-      y <- x - matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+      y <- xf - matrix(1, nrow = T, ncol = 1) %*% cf$muHat
     } else {
-      y <- x
+      y <- xf
     }
 
 
@@ -554,7 +562,8 @@ FCVARforecast <- function(x, model, NumPeriods) {
 
     # Add lags if present.
     if(!is.null(cf$GammaHat)) {
-      k <- size(cf$GammaHat,2)/p
+      # k <- size(cf$GammaHat,2)/p
+      k <- ncol(cf$GammaHat)/p
       z <- z +  FracDiff(  Lbk( y , b, k)  , d) %*% t(cf$GammaHat)
     }
 
@@ -566,7 +575,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 
 
     # Append forecast to x matrix.
-    x <- rbind(x[1:(T-1),], z[T, ])
+    xf <- rbind(xf[1:(T-1),], z[T, ])
 
   }
 
@@ -575,7 +584,8 @@ FCVARforecast <- function(x, model, NumPeriods) {
   # Return forecasts.
   #--------------------------------------------------------------------------------
 
-  xf <- x[(nrow(data)+1):nrow(x), ]
+  # Trim off original data to return forecasts only.
+  xf <- xf[(nrow(x)+1):nrow(xf), ]
 
   return(xf)
 }
