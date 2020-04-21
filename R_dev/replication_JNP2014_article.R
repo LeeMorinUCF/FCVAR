@@ -130,6 +130,15 @@ m1 <- FCVARestn(x1, k, r, opt1)
 
 MVWNtest_m1 <- MVWNtest(m1$Residuals, order, printWNtest)
 
+# Plot roots of characteristic polynomial for article.
+fig_ext <- 'png'
+out_file_path <- sprintf('R_dev/Figures/roots.%s', fig_ext)
+plot.GetCharPolyRoots(m1$cPolyRoots, b = m1$coeffs$db[2],
+                      file = out_file_path, file_ext = fig_ext,
+                      xlim = c(-3, 1.5), ylim = c(-2, 2), main = NULL)
+
+
+
 
 ################################################################################
 # IMPOSE RESTRICTIONS AND TEST THEM

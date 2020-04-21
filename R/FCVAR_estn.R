@@ -1049,7 +1049,8 @@ print.FCVARestn <- function(results, k, r, p, T, opt) {
 
     print.GetCharPolyRoots(cPolyRoots)
 
-    plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])
+    plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2],
+                          main = 'default')
 
   }
 

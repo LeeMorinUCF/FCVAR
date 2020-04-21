@@ -4,7 +4,15 @@
 \alias{plot.GetCharPolyRoots}
 \title{Plot Roots of the Characteristic Polynomial}
 \usage{
-\method{plot}{GetCharPolyRoots}(cPolyRoots, b, file = NULL, file_ext = NULL)
+\method{plot}{GetCharPolyRoots}(
+  cPolyRoots,
+  b,
+  file = NULL,
+  file_ext = NULL,
+  xlim = NULL,
+  ylim = NULL,
+  main = NULL
+)
 }
 \arguments{
 \item{cPolyRoots}{A vector of the roots of the characteristic polynomial.
@@ -17,6 +25,17 @@ Renders to the plot window if running in RStudio if NULL.}
 
 \item{file_ext}{A string file extension to indicate the graphich format.
 Either png or pdf are currently supported.}
+
+\item{xlim}{The coordinates for the horizontal limits of the axes, passed to \code{plot},
+otherwise set to double the maximum magnitude of points on the unit circle
+or the transformed unit circle.}
+
+\item{ylim}{The coordinates for the vertical limits of the axes, passed to \code{plot},
+otherwise set to double the maximum magnitude of points on the unit circle
+or the transformed unit circle.}
+
+\item{main}{The main title of the plot, passed to \code{plot}.
+If \code{main == 'default'}, a generic title is used.}
 }
 \description{
 \code{plot.GetCharPolyRoots} plots the output of

@@ -882,6 +882,14 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 #' Renders to the plot window if running in RStudio if NULL.
 #' @param file_ext A string file extension to indicate the graphich format.
 #' Either png or pdf are currently supported.
+#' @param xlim The coordinates for the horizontal limits of the axes, passed to \code{plot},
+#' otherwise set to double the maximum magnitude of points on the unit circle
+#' or the transformed unit circle.
+#' @param ylim The coordinates for the vertical limits of the axes, passed to \code{plot},
+#' otherwise set to double the maximum magnitude of points on the unit circle
+#' or the transformed unit circle.
+#' @param main The main title of the plot, passed to \code{plot}.
+#' If \code{main == 'default'}, a generic title is used.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -907,7 +915,9 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 #' vector autoregressive models for fractional processes,"
 #' Econometric Theory 24, 651-676.
 #'
-plot.GetCharPolyRoots <- function(cPolyRoots, b, file = NULL, file_ext = NULL) {
+plot.GetCharPolyRoots <- function(cPolyRoots, b,
+                                  file = NULL, file_ext = NULL,
+                                  xlim = NULL, ylim = NULL, main = NULL) {
 
   # print('cPolyRoots = ')
   # print(cPolyRoots)
@@ -935,12 +945,17 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b, file = NULL, file_ext = NULL) {
   # Plot the unit circle and its image under the mapping
   # along with the roots of the characterisitc polynomial.
 
-  # Determine axes based on largest roots.
-  maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
-                      transformedUnitCircleY, unitCircleY) )
-  minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
-                      transformedUnitCircleY, unitCircleY) )
-  maxXYaxis <- max( maxXYaxis, -minXYaxis )
+  # Determine axes based on largest roots, if not specified.
+  if (is.null(xlim) & is.null(ylim)) {
+    maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
+                        transformedUnitCircleY, unitCircleY) )
+    minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
+                        transformedUnitCircleY, unitCircleY) )
+    maxXYaxis <- max( maxXYaxis, -minXYaxis )
+
+    xlim <- 2*c(-maxXYaxis, maxXYaxis)
+    ylim <- 2*c(-maxXYaxis, maxXYaxis)
+  }
 
   # Open file, if required.
   if (!is.null(file)) {
@@ -954,14 +969,21 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b, file = NULL, file_ext = NULL) {
 
   }
 
+  if (!is.null(main)) {
+    if (main == 'default') {
+      main <- c('Roots of the characteristic polynomial',
+                'with the image of the unit circle')
+    }
+  }
+
+
   plot(transformedUnitCircleX,
        transformedUnitCircleY,
-       main = c('Roots of the characteristic polynomial',
-                'with the image of the unit circle'),
+       main = main,
        xlab = 'Real Part of Root',
        ylab = 'Imaginary Part of Root',
-       xlim = 2*c(-maxXYaxis, maxXYaxis),
-       ylim = 2*c(-maxXYaxis, maxXYaxis),
+       xlim = xlim,
+       ylim = ylim,
        type = 'l',
        lwd = 3,
        col = 'red')
