@@ -233,11 +233,6 @@ mUNR <- FCVARboot_stats$mUNR
 # Compare the bootstrap distribution to chi-squared distribution
 #--------------------------------------------------------------------------------
 
-# Ispect histogram for troubleshooting.
-# hist(LRbs,
-#      main = 'bootstrap density with chi-squared density')
-
-
 # Estimate kernel density
 LRbs_density <- density(LRbs)
 
@@ -268,17 +263,6 @@ legend('topleft',
 dev.off()
 
 
-# Estimate kernel density
-# [F,XI]=ksdensity(LRbs)
-
-# # Plot bootstrap density with chi-squared density
-# figure plot(XI,F, XI, chi2pdf(XI,H.df))
-#
-# legend(['Bootstrap PDF with ', num2str(B), ' BS samples'],...
-#        ['Chi Squared with ', num2str(H.df),' df'])
-
-
-
 
 
 ################################################################################
@@ -294,20 +278,12 @@ r2 <- 1
 B <- 999
 B <- 9
 
-# [LR_Rnk, H_Rnk, mBSr1, mBSr2] <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B)
+FCVARbootRank_stats <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B)
 
-
-source('EstOptions.R')
-source('FCVAR_estn.R')
-source('FCVAR_lower.R')
-source('FCVAR_higher.R')
-
-FCVARbootRank_out <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B)
-
-LR_Rnk <- FCVARbootRank_out$LRbs
-H_Rnk <- FCVARbootRank_out$H
-mBSr1 <- FCVARbootRank_out$mBS
-mBSr2 <- FCVARbootRank_out$mUNR
+LR_Rnk <- FCVARbootRank_stats$LRbs
+H_Rnk <- FCVARbootRank_stats$H
+mBSr1 <- FCVARbootRank_stats$mBS
+mBSr2 <- FCVARbootRank_stats$mUNR
 
 
 
