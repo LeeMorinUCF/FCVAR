@@ -608,7 +608,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #' @param optUNR A list object that stores the chosen estimation options
 #'   for the unrestricted model.
 #' @param B The number of bootstrap samples.
-#' @return A list object \code{FCVARboot_out} containing the estimation results,
+#' @return A list object \code{FCVARboot_stats} containing the estimation results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{LRbs}}{A \eqn{B x 1} vector of simulated likelihood ratio statistics}
@@ -621,12 +621,18 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #'   \item{\code{mUNR}}{The model estimates under the alternative hypothesis.}
 #' }
 #' @examples
-#' optUNR <- FCVARoptions()
-#' # Define estimation options for restricted model (null)
-#' optRES <- optUNR
-#' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' FCVARboot_out <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
+#' opt$plotRoots <- 0
+#' optUNR <- opt
+#' optRES <- opt
+#' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+#' set.seed(42)
+#' FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called to estimate the models under the null and alternative hypotheses.
@@ -707,14 +713,14 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 
 
   # Return a list of bootstrap test results.
-  FCVARboot_out <- list(
+  FCVARboot_stats <- list(
     LRbs = LRbs,
     H = H,
     mBS = mBS,
     mUNR = mUNR
   )
 
-  return(FCVARboot_out)
+  return(FCVARboot_stats)
 }
 
 

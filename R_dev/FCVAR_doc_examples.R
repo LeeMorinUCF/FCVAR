@@ -272,7 +272,18 @@ xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
 
 # FCVARboot(x, k, r, optRES, optUNR, B)
 
-# TODO: Test this and choose example.
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+opt$plotRoots <- 0
+optUNR <- opt
+optRES <- opt
+optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+set.seed(42)
+FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 
 
 # GetCharPolyRoots(coeffs, opt, k, r, p)

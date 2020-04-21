@@ -218,25 +218,15 @@ optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 
 # Number of bootstrap samples to generate
 B <- 999
-B <- 9
+B <- 99
 
-# Call to open the distributed processing (comment out if unavailable)
-# matlabpool ('open',4) # for versions 2013a and earlier.
-# parpool # for versions 2013b and later.
+set.seed(42)
+FCVARboot_stats <- FCVARboot(x1, k, r, optRES, optUNR, B)
 
-source('EstOptions.R')
-source('FCVAR_estn.R')
-source('FCVAR_lower.R')
-source('FCVAR_higher.R')
-
-
-# [LRbs, H, mBS, mUNR] <- FCVARboot(x1, k, r, optRES, optUNR, B)
-FCVARboot_out <- FCVARboot(x1, k, r, optRES, optUNR, B)
-
-LRbs <- FCVARboot_out$LRbs
-H <- FCVARboot_out$H
-mBS <- FCVARboot_out$mBS
-mUNR <- FCVARboot_out$mUNR
+LRbs <- FCVARboot_stats$LRbs
+H <- FCVARboot_stats$H
+mBS <- FCVARboot_stats$mBS
+mUNR <- FCVARboot_stats$mUNR
 
 
 #--------------------------------------------------------------------------------
@@ -252,24 +242,30 @@ mUNR <- FCVARboot_out$mUNR
 LRbs_density <- density(LRbs)
 
 
-# Plot bootstrap density with chi-squared density
+# Plot bootstrap density with chi-squared density.
+out_file_path <- sprintf('R_dev/Figures/LRdensity_bw045.%s', fig_ext)
+png(out_file_path)
 plot(LRbs_density,
      main = c('Bootstrap Density with Chi-squared Density',
               sprintf('(%d bootstrap samples and %d d.f.)',
                       B, H$df)),
      xlab = 'Likelihood Ratio Statistic',
-     lwd = 2,
+     lwd = 3,
      col = 'blue')
 LR_range <- seq(min(LRbs_density$x), max(LRbs_density$x), by = 0.01)
 lines(LR_range,
       dchisq(LR_range, df = H$df),
       col = 'red',
-      lwd = 2)
-legend('topright',
+      lwd = 3,
+      lty = 'dotted')
+legend('topleft',
        c('Bootstrap', 'Chi-squared'),
        # pch = 16,
-       fill = c('blue','red'))
-
+       col = c('blue','red'),
+       # fill = c('blue','red'),
+       cex = 1.0,
+       lty = c(1, 3))
+dev.off()
 
 
 # Estimate kernel density
