@@ -880,7 +880,7 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 #' @param b The order of fractional integration.
 #' @param file A string path and file name in which to plot a figure.
 #' Renders to the plot window if running in RStudio if NULL.
-#' @param file_ext A string file extension to indicate the graphich format.
+#' @param file_ext A string file extension to indicate the graphics format.
 #' Either png or pdf are currently supported.
 #' @param xlim The coordinates for the horizontal limits of the axes, passed to \code{plot},
 #' otherwise set to double the maximum magnitude of points on the unit circle
@@ -964,7 +964,7 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
     } else if(file_ext == 'png') {
       png(file)
     } else {
-      stop('Error: Graphics device not supported. Try pdf or png.')
+      stop('Error: Graphics format not supported. Try pdf or png.')
     }
 
   }

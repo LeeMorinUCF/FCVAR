@@ -23,7 +23,7 @@ An element of the list of estimation \code{results} output from \code{FCVARestn}
 \item{file}{A string path and file name in which to plot a figure.
 Renders to the plot window if running in RStudio if NULL.}
 
-\item{file_ext}{A string file extension to indicate the graphich format.
+\item{file_ext}{A string file extension to indicate the graphics format.
 Either png or pdf are currently supported.}
 
 \item{xlim}{The coordinates for the horizontal limits of the axes, passed to \code{plot},

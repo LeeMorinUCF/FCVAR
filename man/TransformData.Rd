@@ -77,6 +77,7 @@ Other FCVAR auxilliary functions:
 \code{\link{Lbk}()},
 \code{\link{LikeGridSearch}()},
 \code{\link{SEmat2vecU}()},
-\code{\link{SEvec2matU}()}
+\code{\link{SEvec2matU}()},
+\code{\link{plot.LikeGridSearch}()}
 }
 \concept{FCVAR auxilliary functions}

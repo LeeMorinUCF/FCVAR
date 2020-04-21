@@ -66,6 +66,7 @@ Other FCVAR auxilliary functions:
 \code{\link{Lbk}()},
 \code{\link{LikeGridSearch}()},
 \code{\link{SEvec2matU}()},
-\code{\link{TransformData}()}
+\code{\link{TransformData}()},
+\code{\link{plot.LikeGridSearch}()}
 }
 \concept{FCVAR auxilliary functions}

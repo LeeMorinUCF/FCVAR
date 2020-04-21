@@ -135,8 +135,21 @@ fig_ext <- 'png'
 out_file_path <- sprintf('R_dev/Figures/roots.%s', fig_ext)
 plot.GetCharPolyRoots(m1$cPolyRoots, b = m1$coeffs$db[2],
                       file = out_file_path, file_ext = fig_ext,
-                      xlim = c(-3, 1.5), ylim = c(-2, 2), main = NULL)
+                      xlim = c(-3, 1.5), ylim = c(-2, 2),
+                      main = 'default')
 
+
+
+# Plot output from grid search on likelihod function.
+out_file_path <- sprintf('R_dev/Figures/m1_likelihood.%s', fig_ext)
+
+opt$progress <- 2 # Show progress report on each value of b.
+newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
+plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt,
+                    file = out_file_path, file_ext = fig_ext,
+                    main = 'default')
 
 
 

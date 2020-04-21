@@ -470,7 +470,7 @@ GetParams <- function(x, k, r, db, opt) {
 }
 
 
-#' Grid Search over Likelihood Values
+#' Grid Search to Maximize Likelihood Function
 #'
 #' \code{LikeGridSearch} performs a grid-search optimization
 #' by calculating the likelihood function
@@ -481,21 +481,43 @@ GetParams <- function(x, k, r, db, opt) {
 #' 	starting values to give an approximation of the global max which can
 #' 	then be used as the starting value in the numerical optimization in
 #' 	\code{FCVARestn}.
+#' 	\code{print.LikeGridSearch} plots the likelihood function from \code{LikeGridSearch}.
 #'
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return A vector \code{params} of \code{d} and \code{b}
+#' @return A list object \code{likeGrid_params} containing the optimization results,
+#' including the following parameters:
+#' \describe{
+#'   \item{\code{params}}{A vector \code{params} of \code{d} and \code{b}
 #' (and \code{mu} if level parameter is selected)
-#' corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.
+#' corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.}
+#'   \item{\code{dbHatStar}}{A vector of \code{d} and \code{b}
+#'   corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}}
+#'   \item{\code{muHatStar}}{A vector of the optimal \code{mu} if level parameter is selected. }
+#'   \item{\code{Grid2d}}{An indicator for whether or not the optimization
+#'   is conducted over a 2-dimensional parameter space,
+#'   i.e. if there is no equality restriction on \code{d} and \code{b}.}
+#'   \item{\code{dGrid}}{A vector of the grid points in the parameter \code{d}.}
+#'   \item{\code{bGrid}}{A vector of the grid points in the parameter \code{b}.}
+#'   \item{\code{like}}{The maximum value of the likelihood function over the chosen grid.}
+#' }
+#'
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' params <- LikeGridSearch(x, k = 2, r = 1, opt)
+#' opt$progress <- 2 # Show progress report on each value of b.
+#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{print.LikeGridSearch} plots the likelihood function from \code{LikeGridSearch}.
 #' @note If \code{opt$LocalMax == 0}, \code{LikeGridSearch} returns the parameter values
 #'       corresponding to the global maximum of the likelihood on the grid.
 #'       If \code{opt$LocalMax == 1}, \code{LikeGridSearch} returns the parameter values for the
@@ -592,6 +614,7 @@ LikeGridSearch <- function(x, k, r, opt) {
   } else {
     # Only searching over one parameter.
     bGrid <-  seq(dbMin[1], dbMax[1], by = dbStep)
+    dGrid <-  NA
     nB    <- length(bGrid)
     nD    <- 1
     dStart   <- 1
@@ -822,8 +845,19 @@ LikeGridSearch <- function(x, k, r, opt) {
   # STORE THE PARAMETER VALUES
   #--------------------------------------------------------------------------------
 
+  # Output a list of values, including the previous vector \code{params}.
+  likeGrid_params <- list(
+    params = NA,
+    dbHatStar = dbHatStar,
+    muHatStar = NA,
+    Grid2d = Grid2d,
+    dGrid = dGrid,
+    bGrid = bGrid,
+    like = like
+  )
 
   params <- dbHatStar
+  likeGrid_params$params <- params
 
   # Add level parameter corresponding to max likelihood.
   if(opt$levelParam) {
@@ -857,6 +891,7 @@ LikeGridSearch <- function(x, k, r, opt) {
 
 
     muHatStar  <- mu[, indexB, indexD]
+    likeGrid_params$muHatStar <- muHatStar
 
 
     # print('cbind(params, muHatStar) = ')
@@ -870,6 +905,7 @@ LikeGridSearch <- function(x, k, r, opt) {
     # Vectors and matrices and arrays. Oh my!
 
 
+    likeGrid_params$params <- params
     # print('params = ')
     # print(params)
 
@@ -883,56 +919,133 @@ LikeGridSearch <- function(x, k, r, opt) {
 
   if (opt$plotLike) {
 
-    # cat(sprintf("Sorry, but I don't feel like plotting the likelihood function right now."))
-    # Oh, alright, I'll plot it anyway.
-
-    if(Grid2d) {
-      # 2-dimensional plot.
-
-      # Color palette (100 colors)
-      col.pal <- colorRampPalette(c("blue", "red"))
-      colors <- col.pal(100)
-      # height of facets
-      like.facet.center <- (like[-1, -1] + like[-1, -ncol(like)] + like[-nrow(like), -1] + like[-nrow(like), -ncol(like)])/4
-      # Range of the facet center on a 100-scale (number of colors)
-      like.facet.range <- cut(like.facet.center, 100)
-
-
-      persp(dGrid, bGrid,
-            like,
-            phi = 45, theta = 45,
-            xlab = 'd',
-            ylab = 'b',
-            main = c('Log-likelihood Function ',
-                     sprintf('Rank: %d, Lags: %d', r, k)),
-            # col = 'red',
-            col = colors[like.facet.range]
-      )
-
-    } else {
-      # 1-dimensional plot.
-      if (is.null(opt$R_psi)) {
-        like_x_label <- 'd=b'
-      } else {
-        like_x_label <- 'phi'
-      }
-
-      plot(bGrid, like,
-           main = c('Log-likelihood Function ',
-                    sprintf('Rank: %d, Lags: %d', r, k)),
-           ylab = 'log-likelihood',
-           xlab = like_x_label,
-           type = 'l',
-           col = 'blue',
-           lwd = 3)
-
-    }
+    plot.LikeGridSearch(likeGrid_params, k, r, opt, main = 'default')
 
   }
 
 
+  return(likeGrid_params)
+}
 
-  return(params)
+
+#' Plot the Likelihood Function for the FCVAR Model
+#'
+#' \code{print.LikeGridSearch} plots the likelihood function from \code{LikeGridSearch}.
+#' \code{LikeGridSearch} performs a grid-search optimization
+#' by calculating the likelihood function
+#' on a grid of candidate parameter values.
+#' This function evaluates the likelihood over a grid of values
+#' 	for \code{c(d,b)} (or \code{phi}).
+#' 	It can be used when parameter estimates are sensitive to
+#' 	starting values to give an approximation of the global max which can
+#' 	then be used as the starting value in the numerical optimization in
+#' 	\code{FCVARestn}.
+#'
+#' @param likeGrid_params A list output from \code{LikeGridSearch}.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{FCVARoptions()}.
+#' @param file A string path and file name in which to plot a figure.
+#' Renders to the plot window if running in RStudio if NULL.
+#' @param file_ext A string file extension to indicate the graphics format.
+#' Either png or pdf are currently supported.
+#' @param main The main title of the plot, passed to \code{plot}.
+#' If \code{main == 'default'}, a generic title is used.
+#' @return NULL
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' opt$progress <- 2 # Show progress report on each value of b.
+#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
+#' plot.LikeGridSearch(likeGrid_params, k, r, opt, main = 'default')
+#' @family FCVAR auxilliary functions
+#' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{print.LikeGridSearch} plots the likelihood function from \code{LikeGridSearch}.
+#'
+plot.LikeGridSearch <- function(likeGrid_params, k, r, opt,
+                                file = NULL, file_ext = NULL,
+                                main = NULL) {
+
+  # Extract parameters.
+  Grid2d <- likeGrid_params$Grid2d
+  like <- likeGrid_params$like
+  dGrid <- likeGrid_params$dGrid
+  bGrid <- likeGrid_params$bGrid
+
+
+
+  # Open file, if required.
+  if (!is.null(file)) {
+    if(file_ext == 'pdf') {
+      pdf(file)
+    } else if(file_ext == 'png') {
+      png(file)
+    } else {
+      stop('Error: Graphics format not supported. Try pdf or png.')
+    }
+
+  }
+
+  if (!is.null(main)) {
+    if (main == 'default') {
+      main <- c('Log-likelihood Function ',
+                sprintf('Rank: %d, Lags: %d', r, k))
+    }
+  }
+
+
+  # Plot likelihood depending on dimension of search.
+  if(Grid2d) {
+    # 2-dimensional plot.
+
+    # Color palette (100 colors)
+    col.pal <- colorRampPalette(c("blue", "red"))
+    colors <- col.pal(100)
+    # height of facets
+    like.facet.center <- (like[-1, -1] + like[-1, -ncol(like)] + like[-nrow(like), -1] + like[-nrow(like), -ncol(like)])/4
+    # Range of the facet center on a 100-scale (number of colors)
+    like.facet.range <- cut(like.facet.center, 100)
+
+
+    persp(dGrid, bGrid,
+          like,
+          phi = 45, theta = 45,
+          xlab = 'd',
+          ylab = 'b',
+          main = main,
+          # col = 'red',
+          col = colors[like.facet.range]
+    )
+
+  } else {
+    # 1-dimensional plot.
+    if (is.null(opt$R_psi)) {
+      like_x_label <- 'd=b'
+    } else {
+      like_x_label <- 'phi'
+    }
+
+    plot(bGrid, like,
+         main = main,
+         ylab = 'log-likelihood',
+         xlab = like_x_label,
+         type = 'l',
+         col = 'blue',
+         lwd = 3)
+
+  }
+
+  # Close graphics device, if any.
+  if (!is.null(file)) {
+    dev.off()
+  }
+
 }
 
 

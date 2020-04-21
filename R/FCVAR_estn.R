@@ -83,7 +83,9 @@ FCVARestn <- function(x, k, r, opt) {
                 k,r))
     cat(sprintf('This computation can be slow.\n'))
     cat(sprintf('Set opt$gridSearch <- 0 to skip it.\n'))
-    opt$db0 <- LikeGridSearch(x, k, r, opt)
+    # opt$db0 <- LikeGridSearch(x, k, r, opt)
+    likeGrid_params <- LikeGridSearch(x, k, r, opt)
+    opt$db0 <- likeGrid_params$params
 
     # print('opt$db0 = ')
     # print(opt$db0)
@@ -179,11 +181,12 @@ FCVARestn <- function(x, k, r, opt) {
     Rpsi <- NULL
     rpsi <- NULL
 
-
   } else {
 
     UB <- opt$UB_db
     LB <- opt$LB_db
+
+    H_psi <- NULL
 
   }
 
@@ -729,6 +732,7 @@ FCVARestn <- function(x, k, r, opt) {
 
   # print('opt$print2screen = ')
   # print(opt$print2screen)
+  # print('Made it here before H_psi')
 
   printVars <- list(
     H_psi = H_psi,
@@ -736,6 +740,9 @@ FCVARestn <- function(x, k, r, opt) {
     UB = UB
   )
   results$printVars <- printVars
+
+  # print('Made it here after H_psi assigned. ')
+
 
   if (opt$print2screen) {
 
