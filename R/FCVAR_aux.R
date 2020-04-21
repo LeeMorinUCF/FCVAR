@@ -1,4 +1,122 @@
 
+#' Draw Samples from the FCVAR Model
+#'
+#' \code{FCVARsim} simulates the FCVAR model as specified by
+#' input \code{model} and starting values specified by \code{data}.
+#' Errors are drawn from a Normal distribution.
+#' @param x A \eqn{N x p} matrix of \code{N} starting values for the simulated observations.
+#' @param model A list of estimation results, just as if estimated from \code{FCVARest}.
+#' The parameters in \code{model} can also be set or adjusted by assigning new values.
+#' @param NumPeriods The number of time periods in the simulation.
+#' @return A \code{NumPeriods} \eqn{x p} matrix \code{xBS} of simulated observations.
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' x_sim <- FCVARsim(x[1:10, ], results, NumPeriods = 100)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{FCVARestn} for the specification of the \code{model}.
+#' Use \code{FCVARsim} to draw a sample from the FCVAR model.
+#' For simulations intended for bootstrapping statistics, use \code{FCVARsimBS}.
+#' @export
+#'
+FCVARsim <- function(x, model, NumPeriods) {
+
+
+  #--------------------------------------------------------------------------------
+  # Preliminary definitions
+  #--------------------------------------------------------------------------------
+
+  # x <- data
+  # p <- ncol(data)
+  p <- ncol(x)
+  opt <- model$options
+  cf  <- model$coeffs
+  d <- cf$db[1]
+  b <- cf$db[2]
+
+  # Generate disturbance term
+  err <- matrix(rnorm(NumPeriods*p), nrow = NumPeriods, ncol = p)
+
+  #--------------------------------------------------------------------------------
+  # Recursively generate simulated data values
+  #--------------------------------------------------------------------------------
+
+  # Initialize simulation with starting values.
+  x_sim <- x
+  for (i in 1:NumPeriods) {
+
+
+    # Append x_sim with zeros to simplify calculations.
+    x_sim <- rbind(x_sim, rep(0, p))
+    T <- nrow(x_sim)
+
+    # Adjust by level parameter if present.
+    if(opt$levelParam) {
+      y <- x_sim - matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+    } else {
+      y <- x_sim
+    }
+
+
+    # Main term, take fractional lag.
+    z <- Lbk(y,d,1)
+
+    # Error correction term.
+    if (!is.null(cf$alphaHat)) {
+
+      z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
+
+      if (opt$rConstant) {
+        z <- z + FracDiff( Lbk(matrix(1, nrow = T, ncol = 1), b, 1), d - b ) %*%
+          cf$rhoHat %*% t(cf$alphaHat)
+      }
+
+    }
+
+
+    # Add unrestricted constant if present.
+    if(opt$unrConstant) {
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% t(cf$xiHat)
+    }
+
+
+    # Add lags if present.
+    if (!is.null(cf$GammaHat)) {
+      k <- ncol(cf$GammaHat)/p
+      z <- z +  FracDiff(  Lbk( y , b, k)  , d) %*% t(cf$GammaHat)
+    }
+
+
+    # Adjust by level parameter if present.
+    if (opt$levelParam) {
+      z <- z + matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+    }
+
+
+    # Add disturbance term
+    z[T,] <- z[T,] + err[i, ]
+
+    # Append to x_sim matrix.
+    x_sim <- rbind(x_sim[1:(T-1), ], z[T,])
+
+  }
+
+  #--------------------------------------------------------------------------------
+  # Return simulated data values, including (EXcluding?) initial values.
+  #--------------------------------------------------------------------------------
+
+  x_sim <- x_sim[(nrow(x)+1):nrow(x_sim), ]
+
+  return(x_sim)
+}
+
+
 #' Draw Bootstrap Samples from the FCVAR Model
 #'
 #' \code{FCVARsimBS} simulates the FCVAR model as specified by
@@ -7,20 +125,25 @@
 #' with a bootstrap error. The errors are sampled from the
 #' residuals specified under the \code{model} input and have a
 #' positive or negative sign with equal probability (the Rademacher distribution).
-#' @param data A \eqn{T \times p} matrix of starting values for the simulated realizations.
+#' @param data A \eqn{T x p} matrix of starting values for the simulated realizations.
 #' @param model A list of estimation results, just as if estimated from \code{FCVARest}.
 #' The parameters in \code{model} can also be set or adjusted by assigning new values.
 #' @param NumPeriods The number of time periods in the simulation.
-#' @return A \code{NumPeriods} \eqn{\times p} matrix \code{xBS} of simulated bootstrap values.
+#' @return A \code{NumPeriods} \eqn{x p} matrix \code{xBS} of simulated bootstrap values.
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' model <- FCVARestn(x,k = 3,r = 1,opt)
-#' data <- x[1:10, ]
-#' xBS <- FCVARsimBS(data, model, NumPeriods = 100)
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' xBS <- FCVARsimBS(x[1:10, ], results, NumPeriods = 100)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
+#' Use \code{FCVARsim} to draw a sample from the FCVAR model.
+#' For simulations intended for bootstrapping statistics, use \code{FCVARsimBS}.
 #' @export
 #'
 FCVARsimBS <- function(data, model, NumPeriods) {

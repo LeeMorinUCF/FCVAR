@@ -72,6 +72,7 @@ Other FCVAR auxilliary functions:
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
+\code{\link{FCVARsim}()},
 \code{\link{FracDiff}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},

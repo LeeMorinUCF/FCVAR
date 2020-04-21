@@ -314,64 +314,53 @@ T_sim <- 100
 
 
 # Simulate data
-xSim <- FCVARsim(x1, modelF, T_sim)
+set.seed(42)
+x_sim <- FCVARsim(x1, modelF, T_sim)
 
-
-#--------------------------------------------------------------------------------
-# Testing version:
-#--------------------------------------------------------------------------------
-source('EstOptions.R')
-source('FCVAR_estn.R')
-source('FCVAR_lower.R')
-source('FCVAR_higher.R')
-
-x <- x1
-model <- m1r4
-# Simulate data
-xSim <- FCVARsim(x, model, T_sim)
-#--------------------------------------------------------------------------------
 
 
 #--------------------------------------------------------------------------------
 # Plot the simulated series
 #--------------------------------------------------------------------------------
 
-# plot(xSim)
-# legend('Support', 'Unemployment', 'Interest rate')
-
-yMaxS  <- max(xSim)
-yMinS  <- min(xSim)
+yMaxS  <- max(x_sim)
+yMinS  <- min(x_sim)
 
 # Plot the series and forecast.
+out_file_path <- sprintf('R_dev/Figures/sim.%s', fig_ext)
+png(out_file_path)
 color_list <- rainbow(ncol(xSim))
 col_num <- 1
-plot(xSim[, col_num],
-     main = 'Series, including Forecast',
+plot(x_sim[, col_num],
+     main = 'Simulated Data',
      xlab = 'Time, t',
      ylab = 'Series',
      ylim = c(yMinS, yMaxS),
      type = 'l',
+     lwd = 3,
      col = color_list[col_num])
-abline(v = T, col = 'black', lwd = 3)
-for (col_num in 2:ncol(seriesF)) {
-  lines(seriesF[, col_num],
+# abline(v = T, col = 'black', lwd = 3)
+for (col_num in 2:ncol(x_sim)) {
+  lines(x_sim[, col_num],
+        lwd = 3,
+        lty = col_num,
         col = color_list[col_num])
 }
-legend('topleft',
-       c('Support', 'Unemployment', 'Interest Rate'),
-       # pch = 16,
-       fill = color_list)
+# Original:
+# legend('topleft',
+#        c('Support', 'Unemployment', 'Interest Rate'),
+#        # pch = 16,
+#        fill = color_list)
+# Settings in GUI:
+# legend(197, 22.75, legend = label_list,
+#        col = color_list, lty = 1:3, cex = 0.65)
+# Settings in article:
+legend('topleft', legend = label_list,
+       col = color_list, lty = 1:3, cex = 1.0)
+dev.off()
 
 
 
-
-
-
-################################################################################
-
-endProg <- Sys.time() # stop timer
-print('Total computation time from start to end:')
-print(endProg - startProg) # report elapsed time
 
 ################################################################################
 # End

@@ -7,7 +7,7 @@
 FCVARsimBS(data, model, NumPeriods)
 }
 \arguments{
-\item{data}{A \eqn{T \times p} matrix of starting values for the simulated realizations.}
+\item{data}{A \eqn{T x p} matrix of starting values for the simulated realizations.}
 
 \item{model}{A list of estimation results, just as if estimated from \code{FCVARest}.
 The parameters in \code{model} can also be set or adjusted by assigning new values.}
@@ -15,7 +15,7 @@ The parameters in \code{model} can also be set or adjusted by assigning new valu
 \item{NumPeriods}{The number of time periods in the simulation.}
 }
 \value{
-A \code{NumPeriods} \eqn{\times p} matrix \code{xBS} of simulated bootstrap values.
+A \code{NumPeriods} \eqn{x p} matrix \code{xBS} of simulated bootstrap values.
 }
 \description{
 \code{FCVARsimBS} simulates the FCVAR model as specified by
@@ -27,14 +27,19 @@ positive or negative sign with equal probability (the Rademacher distribution).
 }
 \examples{
 opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-model <- FCVARestn(x,k = 3,r = 1,opt)
-data <- x[1:10, ]
-xBS <- FCVARsimBS(data, model, NumPeriods = 100)
+results <- FCVARestn(x, k = 2, r = 1, opt)
+xBS <- FCVARsimBS(x[1:10, ], results, NumPeriods = 100)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} for the specification of the \code{model}.
+Use \code{FCVARsim} to draw a sample from the FCVAR model.
+For simulations intended for bootstrapping statistics, use \code{FCVARsimBS}.
 
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
@@ -42,6 +47,7 @@ Other FCVAR auxilliary functions:
 \code{\link{FCVARlikeFull}()},
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
+\code{\link{FCVARsim}()},
 \code{\link{FracDiff}()},
 \code{\link{GetFreeParams}()},
 \code{\link{GetParams}()},
