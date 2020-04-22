@@ -27,7 +27,7 @@
 # FCVARoptions
 
 opt <- FCVARoptions()
-# save(opt, list = c('opt'), file = 'tests/testthat/soln_estn/opt.RData')
+# save(opt, list = c('opt_soln'), file = 'tests/testthat/soln_estn/opt.RData')
 
 
 # FCVARoptionUpdates(opt, p, r)
@@ -81,6 +81,8 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+# save(LagSelectStats, list = c('LagSelectStats'), file = 'tests/testthat/soln_spec/LagSelectStats.RData')
+# capture.output(LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt), file = 'tests/testthat/soln_spec/LagSelectStats.txt')
 
 
 # print.LagSelect(stats, kmax, r, p, order, opt)
@@ -104,6 +106,8 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 rankTestStats <- RankTests(x, k = 2, opt)
+# save(rankTestStats, list = c('rankTestStats'), file = 'tests/testthat/soln_spec/rankTestStats.RData')
+# capture.output(rankTestStats <- RankTests(x, k = 2, opt), file = 'tests/testthat/soln_spec/rankTestStats.txt')
 
 
 # print.RankTests <- function(stats, k, p, T, opt)
@@ -139,7 +143,11 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 DefaultOpt$plotRoots <- 0
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+set.seed(42)
 FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
+# FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 5)
+# capture.output(FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 5), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.txt')
+# save(FCVARbootRank_stats, list = c('FCVARbootRank_stats'), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.RData')
 
 
 

@@ -60,6 +60,7 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   printWN <- 0
 
   # Do not print FCVAR estimation for each lag in the loop.
+  print2screen <- opt$print2screen
   opt$print2screen <- 0
 
   # Do not plot roots of characteristic polynomial for each lag in the loop.
@@ -156,9 +157,10 @@ LagSelect <- function(x, kmax, r, order, opt ) {
     pvWNLM = pvWNLM
   )
 
-  # Print output if required.
+  # Print output if required, restoring original settings.
+  opt$print2screen <- print2screen
   if (opt$print2screen) {
-    print.LagSelect(LagSelectStats, kmax, r = p, T, order, opt)
+    print.LagSelect(LagSelectStats, kmax, r, p, T, order, opt)
   }
 
   return(LagSelectStats)
@@ -624,6 +626,7 @@ GetPvalues <- function(q, b, consT, testStat, opt) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' DefaultOpt$plotRoots <- 0
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' set.seed(42)
 #' FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -645,8 +648,10 @@ FCVARbootRank <- function(x, k, opt, r1, r2, B) {
   LR <- matrix(0, nrow = B, ncol = 1)
 
   # Turn off output and calculation of standard errors for faster computation
+  print2screen <- opt$print2screen
   opt$print2screen <- 0
-  opt$print2screen <- 0
+  opt$CalcSE <- 0
+  opt$plotRoots <- 0
 
   mBS  <- FCVARestn(x, k, r1, opt)
   mUNR <- FCVARestn(x, k, r2, opt)
@@ -697,12 +702,15 @@ FCVARbootRank <- function(x, k, opt, r1, r2, B) {
   # Calculate Bootstrap P-value (see ETM p.157 eq 4.62)
   H$pvBS <- sum(LRbs > H$LRstat)/B
 
-  # Print output
-  cat(sprintf('Bootstrap results:'))
-  cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
-              mUNR$like, mBS$like))
-  cat(sprintf('Test results:\nLR statistic: \t %3.3f\nP-value (BS): \t %1.3f\n',
-              H$LRstat, H$pvBS))
+  # Print output, if required, after restoring settings.
+  opt$print2screen <- print2screen
+  if (opt$print2screen) {
+    cat(sprintf('Bootstrap results:'))
+    cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
+                mUNR$like, mBS$like))
+    cat(sprintf('Test results:\nLR statistic: \t %3.3f\nP-value (BS): \t %1.3f\n',
+                H$LRstat, H$pvBS))
+  }
 
 
   # Return a list of bootstrap test results.
