@@ -225,4 +225,11 @@ tools::resaveRdaFiles()
 
 
 
+# Testing
+usethis::use_testthat()
+# check Adding 'testthat' to Suggests field in DESCRIPTION
+# check Creating 'tests/testthat/'
+# check Writing 'tests/testthat.R'
+# dot Call `use_test()` to initialize a basic test file and open it for editing.
+
 

@@ -28,6 +28,10 @@
 
 opt <- FCVARoptions()
 
+# For testing:
+# save(opt, list = c('opt'), file = 'tests/testthat/soln_estn/opt.RData')
+
+
 # FCVARoptionUpdates(opt, p, r)
 
 opt <- FCVARoptions()
