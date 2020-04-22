@@ -27,8 +27,6 @@
 # FCVARoptions
 
 opt <- FCVARoptions()
-
-# For testing:
 # save(opt, list = c('opt'), file = 'tests/testthat/soln_estn/opt.RData')
 
 
@@ -40,16 +38,20 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
+# save(newOpt, list = c('newOpt'), file = 'tests/testthat/soln_estn/newOpt.RData')
+
 
 # GetBounds(opt)
 
 opt <- FCVARoptions()
 UB_LB_bounds <- GetBounds(opt)
+# save(UB_LB_bounds, list = c('UB_LB_bounds'), file = 'tests/testthat/soln_estn/UB_LB_bounds_def.RData')
 
 opt <- FCVARoptions()
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 UB_LB_bounds <- GetBounds(opt)
+# save(UB_LB_bounds, list = c('UB_LB_bounds'), file = 'tests/testthat/soln_estn/UB_LB_bounds_mod.RData')
 
 
 # FCVARestn(x,k,r,opt)
@@ -61,7 +63,8 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
-
+# save(results, list = c('results'), file = 'tests/testthat/soln_estn/results_m1.RData')
+# capture.output(results <- FCVARestn(x, k = 2, r = 1, opt), file = 'tests/testthat/soln_estn/results_m1.txt')
 
 
 ################################################################################
