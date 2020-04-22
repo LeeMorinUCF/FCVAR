@@ -1,0 +1,6 @@
+
+Unrestricted log-likelihood: 451.174
+Restricted log-likelihood:   444.395
+Test results (df = 1):
+LR statistic: 	 13.557
+P-value: 	 0.000

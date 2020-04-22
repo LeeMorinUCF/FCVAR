@@ -66,6 +66,31 @@ results <- FCVARestn(x, k = 2, r = 1, opt)
 # save(results, list = c('results'), file = 'tests/testthat/soln_estn/results_m1.RData')
 # capture.output(results <- FCVARestn(x, k = 2, r = 1, opt), file = 'tests/testthat/soln_estn/results_m1.txt')
 
+opt1 <- opt
+opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
+opt1$r_psi <- 1
+# m1r1 <- FCVARestn(x1, k, r, opt1)
+capture.output(m1r1 <- FCVARestn(x1, k, r, opt1),
+               file = 'tests/testthat/soln_estn/results_m1r1.txt')
+
+opt1 <- opt
+opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+# m1r2 <- FCVARestn(x1, k, r, opt1)
+capture.output(m1r2 <- FCVARestn(x1, k, r, opt1),
+               file = 'tests/testthat/soln_estn/results_m1r2.txt')
+
+opt1 <- opt
+opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+# m1r4 <- FCVARestn(x1, k, r, opt1)
+capture.output(m1r4 <- FCVARestn(x1, k, r, opt1),
+               file = 'tests/testthat/soln_estn/results_m1r4.txt')
+
+save(m1r1, m1r2, m1r4,
+     list = c('m1r1', 'm1r2', 'm1r4'),
+     file = 'tests/testthat/soln_estn/results_m1r124.RData')
+
+
+
 
 ################################################################################
 # Specification Functions
@@ -269,19 +294,15 @@ opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 m1r4 <- FCVARestn(x1, k, r, opt1)
 Halpha2 <- HypoTest(m1, m1r4)
 
-
-# FCVARforecast(x, model, NumPeriods)
-
-opt <- FCVARoptions()
-opt$gridSearch   <- 0 # Disable grid search in optimization.
-opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-opt1 <- opt
-opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-m1r4 <- FCVARestn(x1, k, r, opt1)
-xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
+# capture.output(Hdb <- HypoTest(modelUNR = m1, modelR = m1r1),
+#                file = 'tests/testthat/soln_post/HypoTest_Hdb.txt')
+# capture.output(Hbeta1 <- HypoTest(m1, m1r2),
+#                file = 'tests/testthat/soln_post/HypoTest_Hbeta1.txt')
+# capture.output(Halpha2 <- HypoTest(m1, m1r4),
+#                file = 'tests/testthat/soln_post/HypoTest_Halpha2.txt')
+# save(m1, m1r1, m1r2, m1r4, Hdb, Hbeta1, Halpha2,
+#      list = c('m1', 'm1r1', 'm1r2', 'm1r4', 'Hdb', 'Hbeta1', 'Halpha2'),
+#      file = 'tests/testthat/soln_post/HypoTest.RData')
 
 
 # FCVARboot(x, k, r, optRES, optUNR, B)
@@ -298,6 +319,26 @@ optRES <- opt
 optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 set.seed(42)
 FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
+# FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 5)
+# capture.output(FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 5),
+#                file = 'tests/testthat/soln_post/FCVARboot_stats.txt')
+# save(FCVARboot_stats, list = c('FCVARboot_stats'),
+#      file = 'tests/testthat/soln_post/FCVARboot_stats.RData')
+
+
+# FCVARforecast(x, model, NumPeriods)
+
+opt <- FCVARoptions()
+opt$gridSearch   <- 0 # Disable grid search in optimization.
+opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+opt1 <- opt
+opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+m1r4 <- FCVARestn(x1, k, r, opt1)
+xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
+# save(xf, m1r4, list = c('xf', 'm1r4'), file = 'tests/testthat/soln_post/xf.RData')
 
 
 # GetCharPolyRoots(coeffs, opt, k, r, p)
