@@ -218,7 +218,7 @@ optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 
 # Number of bootstrap samples to generate
 B <- 999
-B <- 99
+# B <- 99
 
 set.seed(42)
 FCVARboot_stats <- FCVARboot(x1, k, r, optRES, optUNR, B)
@@ -228,6 +228,10 @@ H <- FCVARboot_stats$H
 mBS <- FCVARboot_stats$mBS
 mUNR <- FCVARboot_stats$mUNR
 
+
+# Save results.
+out_file_name <- 'R_dev/FCVARboot.RData'
+save.image(file = out_file_name)
 
 #--------------------------------------------------------------------------------
 # Compare the bootstrap distribution to chi-squared distribution
@@ -245,6 +249,8 @@ plot(LRbs_density,
               sprintf('(%d bootstrap samples and %d d.f.)',
                       B, H$df)),
      xlab = 'Likelihood Ratio Statistic',
+     xlim = c(-20, 25),
+     ylim = c(0, 0.5),
      lwd = 3,
      col = 'blue')
 LR_range <- seq(min(LRbs_density$x), max(LRbs_density$x), by = 0.01)
@@ -276,8 +282,9 @@ r2 <- 1
 
 # Number of bootstrap samples to generate
 B <- 999
-B <- 9
+# B <- 9
 
+set.seed(42)
 FCVARbootRank_stats <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B)
 
 LR_Rnk <- FCVARbootRank_stats$LRbs
@@ -285,6 +292,10 @@ H_Rnk <- FCVARbootRank_stats$H
 mBSr1 <- FCVARbootRank_stats$mBS
 mBSr2 <- FCVARbootRank_stats$mUNR
 
+
+# Save results.
+out_file_name <- 'R_dev/FCVARbootRank.RData'
+save.image(file = out_file_name)
 
 
 #--------------------------------------------------------------------------------

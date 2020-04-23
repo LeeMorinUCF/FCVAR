@@ -115,25 +115,69 @@ The fractionally cointegrated vector autoregression model is an excellent model.
 
 
 
-% This \proglang{R} packages is based on the \proglang{Matlab} package \pkg{FCVARmodel.m}
-% with documentation in \cite{Nielsen2016} and \cite{Nielsen2013}. 
 
 Let's stick to a description with words here. 
 We'll get into the ugly details in the next section. 
 For now, talk about CVAR as a tool for testing equilibrium relationships. 
 Then the fractional part is to accommodate a potenially long-lived deviation from equilibrium. 
 
+% Examples of citations and references to functions and packages:
+% In \proglang{R} \citep{R}, models involving fractional integration are estimated by the \fct{function1} and \fct{function2} in the \pkg{pscl} package \citep{Jackman:2015}. 
+% This \proglang{R} packages is based on the \proglang{Matlab} package \pkg{FCVARmodel.m}
+% with documentation in \cite{Nielsen2016} and \cite{Nielsen2013}. 
+
 \subsection{R packages for estimating the CVAR model}
 
 
-In \proglang{R} \citep{R}, contegration is performed by the \fct{function1} and \fct{function2} in the \pkg{pscl}
-package \citep{Jackman:2015}. 
+In \proglang{R} \citep{R}, contegration analysis can be conducted using a variety of packages. 
+
+\begin{itemize} 
+	\item One such package is \pkg{aTSA} for \emph{Alternative Time Series Analysis} \citep{aTSA2015}. 
+	In this package, the \fct{coint.test} function performs Engle-Granger tests, as in \citet{EngleGranger1987},  for the null hypothesis that two or more time series, each of which is I(1), are not cointegrated. \\
+	-- This package is designed for bivariate analysis.
+	\item Another package following the \citet{EngleGranger1987} approach is the \pkg{egcm} package in \citep{egcm2017}. 
+	-- This package is also designed for bivariate analysis.
+	\item The \fct{po.test} from the \pkg{tseries} package \citet{tseries2019} implements the tests in \citet{PhillipsOuliaris1990}. 
+	\item Another option is the \pkg{cointReg} in \cite{cointReg2016}. 
+This implements three types of regressions designed for integrated variables\footnote{I will describe this later, if we decide to keep it in (the above and below are sufficient, in my view) but here is a quote from their description: ``These methods include the fully modified OLS (FM-OLS) approach of Phillips and Hansen (1990) <doi:10.2307/2297545>, the dynamic OLS (D-OLS) approach of Phillips and Loretan (1991) <doi:10.2307/2298004>, Saikkonen (1991) <doi:10.1017/S0266466600004217> and Stock and Watson (1993) <doi:10.2307/2951763> and the new estimation approach called integrated modified OLS (IM-OLS) of Vogelsang and Wagner (2014) <doi:10.1016/j.jeconom.2013.10.015>. The latter is based on an augmented partial sum (integration) transformation of the regression model''.}.
+	\item An option without the limitation to bivariate series is the \pkg{urca} package to perform unit root tests and cointegration analysis \citep{urca2016}\footnote{They also use the Danish data, so it would be worthwhile to include in the documentation an example with and without the restriction $d = b = 1$ to compare}. \\
+	-- They have the function \fct{ca.po} implementing the tests in \citet{PhillipsOuliaris1990}. \\
+	-- This package also follows the approach in \citet{Johansen1995} in the function \fct{ca.jo}. \\
+	-- Within this framework, there is a function \fct{cajo.test} to test restrictions in the CVAR model.
+	\item The \fct{VECM} function in the \pkg{tsDyn} package allows for the application of either the \citet{EngleGranger1987} or the \citet{Johansen1995} MLE method. \\
+	-- This package is designed primarily with nonlinear time series models in mind. 
+\end{itemize} 
+
+\subsection{Segue from CVAR to $I(d)$}
+
+These packages allow for only a discrete form of cointegration between the series. 
+For example, the series are all integrated, i.e. $I(1)$, and the residuals from a regression are stationary and $I(0)$. 
+The fractionally cointegrated VAR model allows for the posibility that variables can be integrated of order $d$ and cointegrated of order $d - b$, where $d$ and $b>0$ can be real numbers. 
+
+
+Analysis using the above packages typically involves a preliminary alanlysis of the form of non-stationarity of the variables, using a number of unit root tests, i.e. to test whether the series are $I(1)$. 
+With fractionally integrated variables, the first stage of the analysis is to determine the order of fractional integration, i.e. the parameter $d$. 
 
 \subsection{R packages for fractional integration}
 
+Stolen from \emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman 
+\verb|https://CRAN.R-project.org/view=TimeSeries|:
 
-In \proglang{R} \citep{R}, models involving fractional integration are estimated by the \fct{function1} and \fct{function2} in the \pkg{pscl}
-package \citep{Jackman:2015}. 
+``Some facilities for fractional differenced ARFIMA models are provided in the \pkg{fracdiff} package. The \pkg{arfima} package has more advanced and general facilities for ARFIMA and ARIMA models, including dynamic regression (transfer function) models. Additional methods for fitting and simulating non-stationary ARFIMA models are in \pkg{nsarfima}. \pkg{LongMemoryTS} provides a collection of functions for analysing long memory time series.''
+
+\begin{itemize} 
+	\item The \pkg{fracdiff} package (\cite{fracdiff2020}) includes functions for fitting $ARFIMA(p,d,q)$ models, including the step of estimating the long memory parameter $d$. The namesake function \fct{fracdiff} calculates the maximum likelihood estimators of the parameters of a fractionally-differenced $ARIMA(p,d,q)$ model. A few notable functions in this package estimate the long memory parameter $d$ within this model. 
+\footnote{Note that the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. Specifically, \code{all(fracdiff::diffseries(x, d) == FCVAR::FracDiff(x - mean(x), d))} returns \code{TRUE}.}
+	\item \pkg{arfima} \cite{arfima2018}
+	\item \pkg{nsarfima} \cite{nsarfima2019}
+	\item \pkg{LongMemoryTS}: It seems to me that this package (\cite{LongMemoryTS2019}) chains together several separate issues, such as, estimating the fractional integration parameter and then plugging that value into the rank test as if it were known. Another example is testing cointegration by estimating the fractional parameter from the residuals.  
+Morten, you have a lot of citations in this package. It implements Nielsen (JoE, 2010) with a given $d$, where apparently you recommend \code{d = 0.1}. It also implements Nielsen and Shimotsu (JoE, 2007) for rank estimation in fractionally cointegrated systems. Also: Hausman-type test for fractional cointegration (Robinson (2008)). Basically a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
+Ours is more (what's the word?) thorough, in that all the parameters are estimated jointly, aside from the rank and lag selection. It captures all of these in one maximum likelihood framework. 
+\end{itemize} 
+
+This package is closest to a cross between the Johansen cointegration model in \pkg{urca} and the fractionally differencing models in \pkg{a}. 
+
+
 
 \subsection{The  Matlab program}
 
@@ -156,7 +200,7 @@ Unzip the contents of the zip file into any directory that you plan to use as th
 
 \subsection{Roadmap}
 
-The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes the functioning of the main program, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:illustrations} describes another example program, which demonstrates some additional functionality of the software. Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
+The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes the functioning of the main program, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes another example program, which demonstrates some additional functionality of the software. Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
 % Section \ref{sec programs} describes how each of the major program files work (each in a separate subsection). 
 % The Appendix contains a version change log.
 
@@ -1390,9 +1434,10 @@ This particlar example tests the restriction that political variables do not ent
 R> DefaultOpt$plotRoots <- 0
 R> optUNR <- DefaultOpt
 R> optRES <- DefaultOpt
-R> optRES.R_Beta <- c(1, 0, 0)
-R> FCVARboot_out <- FCVARboot(x1, k, r, optRES, optUNR, B = 999)
-R> LRbs_density <- ksdensity(FCVARboot_out$LRbs)
+R> optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+R> set.seed(42)
+R> FCVARboot_stats <- FCVARboot(x1, k, r, optRES, optUNR, B = 999)
+R> LRbs_density <- density(FCVARboot_stats$LRbs)
 \end{Code}
 
 %% Plot bootstrap density with chi-squared density
@@ -1407,10 +1452,10 @@ An example of the output is
 Bootstrap results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   444.395
-Test results (df = 1):
+Test results (df <- 1):
 LR statistic: 	 13.557
-P-value: 	      0.000
-P-value (BS): 	 0.014
+P-value: 	 0.000
+P-value (BS): 	 0.021
 \end{verbatim}
 
 The user might also be interested in comparing the bootstrap likelihood ratio test statistic distribution to the asymptotic one, a $\chi$-squared distribution with \verb|H.df| degrees of freedom. 
@@ -1439,7 +1484,7 @@ shows how to perform a wild bootstrap rank test, following the methodology of \c
 \begin{Code}
 R> r1 <- 0
 R> r2 <- 1
-R> FCVARbootRank_out <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B = 999)
+R> FCVARbootRank_stats <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B = 999)
 R> cat(sprintf('P-value: \t %1.3f\n', rankTestStats$pv[1]))
 \end{Code}
 % Compare to P-value based on asymptotic distribution
@@ -1453,7 +1498,8 @@ Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   440.040
 Test results:
 LR statistic: 	 22.268
-P-value (BS): 	 0.033
+P-value (BS): 	 0.031
+# Need to modify program:
 P-value: 	 0.043
 \end{verbatim}
 in which the last $P$-value is printed to compare the bootstrap $P$-value to that based on the asymptotic distribution. 
