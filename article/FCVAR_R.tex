@@ -13,7 +13,8 @@
 \usepackage{amsfonts}
 \usepackage{float}   % used for better positioning of figures
 \usepackage{mathrsfs} % for script fonts
-\usepackage[FIGTOPCAP]{subfigure}     %FIGTOPCAP puts captions on top of subfigures
+% \usepackage[FIGTOPCAP]{subfigure}     %FIGTOPCAP puts captions on top of subfigures
+\usepackage{subfigure}     %FIGTOPCAP puts captions on top of subfigures
 % \usepackage{subfig}
 
 %% new custom commands
@@ -1577,6 +1578,11 @@ It can be either installed or downloaded in a compressed folder. It is important
 
 We also make use of the excellent \verb|extrema.m| and \verb|extrema2.m| functions, which are written by Carlos Adrián Vargas Aguilera and are freely available from the Mathworks website. For simplicity these are included in the Auxiliary subfolder.
 
+\begin{leftbar}
+The above functions are currently not used in the R package. 
+Can we provide a use case in which the functions correct a problem or improve efficiency in the optimization?
+\end{leftbar}
+
 These functions are used in \fct{LikeGrid.m}, which allows the user to pre-estimate to obtain starting values by using a grid search. There are four types of estimation that the grid search can perform. If $d$ and $b$ are completely unconstrained, the grid search is over two dimensions within the bounds specified by \verb|opt.dbMin| and \verb|opt.dbMax|. An example of the likelihood obtained in an unconstrained grid search is shown in Figure~\ref{fig:gridFree}. Next, if $d\ge b$ is imposed via \verb|opt.constrained = 1| (imposed in \cite{johansen2012likelihood} but relaxed in \cite{JN2018}) the computation can be cut in half. An example of this likelihood is shown in Figure~\ref{fig:gridConstrained}. If the restriction $d=b$ is imposed, then the grid search is one-dimensional as shown in Figure~\ref{fig:gridDB}. Finally, if a restriction is imposed on either $d$ or $b$ via $R_\psi$ and $r_\psi$ in \eqref{R psi}, then the grid search is also one-dimensional. An example of this situation is shown in Figure~\ref{fig:gridPhi}. Note that the $x$-axis is over the parameter $\phi$ and the fractional parameters are found from
 \begin{equation}
   \begin{bmatrix}
@@ -1587,27 +1593,32 @@ These functions are used in \fct{LikeGrid.m}, which allows the user to pre-estim
 \end{equation}
 where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi}^{\prime})^{-1} r_\psi$. The bounds on $\phi$ are derived from \verb|opt.dbMin| and \verb|opt.dbMax| in a similar way.
 
+% I have no idea why this wasn't as easy as it should have been:
 \begin{figure}[H]
-  \label{fig:LikeGrid}
   \centering
-  \caption{Grid search}
   \subfigure[Unconstrained]{
     \label{fig:gridFree}
-    \includegraphics[scale = 0.5, keepaspectratio=true]{Figures/grid3d.png}
+    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/grid3d.png}
+    \includegraphics[width = 200pt]{Figures/grid3d.png}
   } 
   \subfigure[$d\ge b$]{ 
     \label{fig:gridConstrained}
-    \includegraphics[scale = 0.5, keepaspectratio=true]{Figures/gridConst.png}
+    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridConst.png}
+    \includegraphics[width = 200pt]{Figures/gridConst.png}
   }
   \\
   \subfigure[$d = b$]{
     \label{fig:gridDB}
-    \includegraphics[scale = 0.5, keepaspectratio=true]{Figures/gridDB.png}
+    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridDB.png}
+    \includegraphics[width = 200pt]{Figures/gridDB.png}
   } 
   \subfigure[Restrictions imposed]{
     \label{fig:gridPhi}
-    \includegraphics[scale = 0.5, keepaspectratio=true]{Figures/gridPhi.png}
+    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridPhi.png}
+    \includegraphics[width = 200pt]{Figures/gridPhi.png}
   }
+  \caption{Grid search}
+  \label{fig:LikeGrid}
 \end{figure}
 
 

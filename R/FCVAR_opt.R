@@ -377,6 +377,8 @@ FCVARoptionUpdates <- function(opt, p, r) {
     # Check conformability:
     # opt$R_psi <- [opt$R_psi [1 -1]]
     # Stacking a matrix on a new row:
+    # Stacking because the equality restriction might be an additional
+    # restriction on d and b.
     opt$R_psi <- rbind(opt$R_psi, c(1, -1))
     opt$r_psi <- c(opt$r_psi, 0)
     # Alternative with matrix notation:

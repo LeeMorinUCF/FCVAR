@@ -1150,7 +1150,7 @@ plot.LikeGridSearch <- function(likeGrid_params, k, r, opt,
 
   } else {
     # 1-dimensional plot.
-    if (is.null(opt$R_psi)) {
+    if ((opt$R_psi[1] == 1) & (opt$R_psi[2] == -1) & (opt$r_psi[1] == 0)) {
       like_x_label <- 'd=b'
     } else {
       like_x_label <- 'phi'
