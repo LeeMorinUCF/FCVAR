@@ -126,26 +126,37 @@ Then the fractional part is to accommodate a potenially long-lived deviation fro
 % This \proglang{R} packages is based on the \proglang{Matlab} package \pkg{FCVARmodel.m}
 % with documentation in \cite{Nielsen2016} and \cite{Nielsen2013}. 
 
+An exhaustive listing of the R packages available for time series analysis were compiled in 
+\emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman, 
+available at \verb|https://CRAN.R-project.org/view=TimeSeries|). 
+
 \subsection{R packages for estimating the CVAR model}
 
 
 In \proglang{R} \citep{R}, contegration analysis can be conducted using a variety of packages. 
 
 \begin{itemize} 
+
 	\item One such package is \pkg{aTSA} for \emph{Alternative Time Series Analysis} \citep{aTSA2015}. 
 	In this package, the \fct{coint.test} function performs Engle-Granger tests, as in \citet{EngleGranger1987},  for the null hypothesis that two or more time series, each of which is I(1), are not cointegrated. \\
 	-- This package is designed for bivariate analysis.
+
 	\item Another package following the \citet{EngleGranger1987} approach is the \pkg{egcm} package in \citep{egcm2017}. 
 	-- This package is also designed for bivariate analysis.
+
 	\item The \fct{po.test} from the \pkg{tseries} package \citet{tseries2019} implements the tests in \citet{PhillipsOuliaris1990}. 
+
 	\item Another option is the \pkg{cointReg} in \cite{cointReg2016}. 
 This implements three types of regressions designed for integrated variables\footnote{I will describe this later, if we decide to keep it in (the above and below are sufficient, in my view) but here is a quote from their description: ``These methods include the fully modified OLS (FM-OLS) approach of Phillips and Hansen (1990) <doi:10.2307/2297545>, the dynamic OLS (D-OLS) approach of Phillips and Loretan (1991) <doi:10.2307/2298004>, Saikkonen (1991) <doi:10.1017/S0266466600004217> and Stock and Watson (1993) <doi:10.2307/2951763> and the new estimation approach called integrated modified OLS (IM-OLS) of Vogelsang and Wagner (2014) <doi:10.1016/j.jeconom.2013.10.015>. The latter is based on an augmented partial sum (integration) transformation of the regression model''.}.
+
 	\item An option without the limitation to bivariate series is the \pkg{urca} package to perform unit root tests and cointegration analysis \citep{urca2016}\footnote{They also use the Danish data, so it would be worthwhile to include in the documentation an example with and without the restriction $d = b = 1$ to compare}. \\
 	-- They have the function \fct{ca.po} implementing the tests in \citet{PhillipsOuliaris1990}. \\
 	-- This package also follows the approach in \citet{Johansen1995} in the function \fct{ca.jo}. \\
 	-- Within this framework, there is a function \fct{cajo.test} to test restrictions in the CVAR model.
+
 	\item The \fct{VECM} function in the \pkg{tsDyn} package allows for the application of either the \citet{EngleGranger1987} or the \citet{Johansen1995} MLE method. \\
 	-- This package is designed primarily with nonlinear time series models in mind. 
+
 \end{itemize} 
 
 \subsection{Segue from CVAR to $I(d)$}
@@ -160,22 +171,27 @@ With fractionally integrated variables, the first stage of the analysis is to de
 
 \subsection{R packages for fractional integration}
 
-Stolen from \emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman 
-\verb|https://CRAN.R-project.org/view=TimeSeries|:
+Quoted from \emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman, referenced above:
 
 ``Some facilities for fractional differenced ARFIMA models are provided in the \pkg{fracdiff} package. The \pkg{arfima} package has more advanced and general facilities for ARFIMA and ARIMA models, including dynamic regression (transfer function) models. Additional methods for fitting and simulating non-stationary ARFIMA models are in \pkg{nsarfima}. \pkg{LongMemoryTS} provides a collection of functions for analysing long memory time series.''
 
 \begin{itemize} 
+
 	\item The \pkg{fracdiff} package (\cite{fracdiff2020}) includes functions for fitting $ARFIMA(p,d,q)$ models, including the step of estimating the long memory parameter $d$. The namesake function \fct{fracdiff} calculates the maximum likelihood estimators of the parameters of a fractionally-differenced $ARIMA(p,d,q)$ model. A few notable functions in this package estimate the long memory parameter $d$ within this model. 
 \footnote{Note that the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. Specifically, \code{all(fracdiff::diffseries(x, d) == FCVAR::FracDiff(x - mean(x), d))} returns \code{TRUE}.}
-	\item \pkg{arfima} \cite{arfima2018}
-	\item \pkg{nsarfima} \cite{nsarfima2019}
-	\item \pkg{LongMemoryTS}: It seems to me that this package (\cite{LongMemoryTS2019}) chains together several separate issues, such as, estimating the fractional integration parameter and then plugging that value into the rank test as if it were known. Another example is testing cointegration by estimating the fractional parameter from the residuals.  
+
+	\item \pkg{arfima} \cite{arfima2018} fits a wider variety of arfima models. 
+
+	\item \pkg{nsarfima} \cite{nsarfima2019} is more innovative in terms of the types of optimization problems built on the $ARFIMA$ model, including both maximum likelihood (as in Beran (1995)) and minimum distance (as in Mayoral, L. (2007)) estimators. 
+
+	\item \pkg{LongMemoryTS} this model uses a wide variety of methods methods to investigate both cointegrating relationships and fractional integration. 
+However, it seems to me that this package (\cite{LongMemoryTS2019}) chains together several separate issues, such as, estimating the fractional integration parameter and then plugging that value into the rank test as if it were known. Another example is testing cointegration by estimating the fractional parameter from the residuals.  
 Morten, you have a lot of citations in this package. It implements Nielsen (JoE, 2010) with a given $d$, where apparently you recommend \code{d = 0.1}. It also implements Nielsen and Shimotsu (JoE, 2007) for rank estimation in fractionally cointegrated systems. Also: Hausman-type test for fractional cointegration (Robinson (2008)). Basically a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
 Ours is more (what's the word?) thorough, in that all the parameters are estimated jointly, aside from the rank and lag selection. It captures all of these in one maximum likelihood framework. 
+
 \end{itemize} 
 
-This package is closest to a cross between the Johansen cointegration model in \pkg{urca} and the fractionally differencing models in \pkg{a}. 
+This package is closest to a cross between the Johansen cointegration model in \pkg{urca} and the fractionally differencing models in \pkg{a}. In fact\footnote{Maybe we should add this example back, since we had it in the first version.}, the model estimated in the \pkg{urca} packages is the special case in which the fractional integration parameters $d$ and $b$ are both equal to one. 
 
 
 
@@ -183,7 +199,7 @@ This package is closest to a cross between the Johansen cointegration model in \
 
 This \proglang{R} package is based on a companion package \pkg{FCVARmodel.m}, written in \proglang{Matlab}. 
 The \proglang{Matlab} package is documented in \cite{Nielsen2016} and \cite{Nielsen2013}. 
-The Matlab program can be downloaded from the first author's website at Queen's University:
+The latest version of the package can be downloaded from the first author's website at Queen's University:
 % 
 \begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
 \end{center}
@@ -194,7 +210,7 @@ The Matlab program can be downloaded from the first author's website at Queen's 
 % \subsubsection{Using the Matlab program}
 % 
 The use of this program requires a functioning installation of Matlab. Any recent version should work.  
-(more precisely: which version? And this should go at the end)
+(more precisely: which version? And this part should go at the end)
 
 Unzip the contents of the zip file into any directory that you plan to use as the working directory of the program.
 
