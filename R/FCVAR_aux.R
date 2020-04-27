@@ -674,11 +674,13 @@ LikeGridSearch <- function(x, k, r, opt) {
   #   step size will be smaller if searching in only one dimension.
   if(is.null(opt$R_psi)) {
     Grid2d <- 1
-    dbStep <- 0.02
+    # dbStep <- 0.02
     # dbStep <- 0.2
+    dbStep <- opt$dbStep2D # Make this a variable in options.
   } else {
     Grid2d <- 0
-    dbStep <- 0.01
+    # dbStep <- 0.01
+    dbStep <- opt$dbStep1D
   }
 
 

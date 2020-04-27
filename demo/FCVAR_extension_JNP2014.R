@@ -20,6 +20,7 @@
 #   - Bootstrap test of hypothesis on model coefficients
 #   - Bootstrap rank test
 #   - Simulation of fractionally cointegrated process
+#   - Grid search for starting values to improve optimization
 #
 #  This script calls the estimates, option settings and data from
 #   FCVAR_replication_JNP2014.R, so that file should be run before the examples
@@ -369,6 +370,13 @@ for (col_num in 2:ncol(x_sim)) {
 legend('topleft', legend = label_list,
        col = color_list, lty = 1:3, cex = 1.0)
 dev.off()
+
+
+
+
+################################################################################
+# GRID SEARCH
+################################################################################
 
 
 

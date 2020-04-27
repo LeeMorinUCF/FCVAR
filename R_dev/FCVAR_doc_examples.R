@@ -455,6 +455,12 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction mat
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
 
+opt$constrained  <- 1 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+opt$restrictDB
+newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+
+
+
 
 # plot.LikeGridSearch(likeGrid_params, k, r, opt, file, file_ext, main)
 

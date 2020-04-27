@@ -146,6 +146,12 @@ FCVARoptions <- function() {
     # costly to perform but sometimes yields more accurate results.
     gridSearch = 1,
 
+    # Set the size of the increments in the grid in fractional parameters d and b.
+    # If linear constraints are imposed, the 1-dimensional value applies.
+    # For a search over both d and b, the 2-dimensional value applies.
+    dbStep1D = 0.01,
+    dbStep2D = 0.02,
+
     # plotLike makes the program plot the likelihood function over the
     # grid of (d,b) when the grid search is selected.
     plotLike = 1,
