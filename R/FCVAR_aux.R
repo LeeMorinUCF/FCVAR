@@ -785,7 +785,8 @@ LikeGridSearch <- function(x, k, r, opt) {
       # Start at the index that corresponds to the first value in the
       # grid for d that is >= b
       # dStart <-  find(dGrid>=b, 1)
-      dStart <- dGrid[dGrid >= b][1]
+      # dStart <- dGrid[dGrid >= b][1]
+      dStart <- which(dGrid >= b)[1]
     }
 
 
@@ -814,8 +815,12 @@ LikeGridSearch <- function(x, k, r, opt) {
         # <- fminunc(@( params ) -FCVARlikeMu(x, db, params, k, r, opt), ...
         #            StartVal, opt$UncFminOptions )
 
+        # print('Made it here!')
+
         min_out <- optim(StartVal,
                          function(params) {-FCVARlikeMu(params, x, db, k, r, opt)})
+
+        # print('Didnt make it here!')
 
         muHat <- min_out$par
         maxLike <- min_out$value
@@ -939,7 +944,7 @@ LikeGridSearch <- function(x, k, r, opt) {
   }
 
 
-  if(length(indexD)>1 | length(indexB)>1) {
+  if(length(indexD) > 1 | length(indexB) > 1) {
     # If maximum is not unique, take the index pair corresponding to
     # the highest value of b.
     if(Grid2d) {
@@ -1130,23 +1135,47 @@ plot.LikeGridSearch <- function(likeGrid_params, k, r, opt,
     # 2-dimensional plot.
 
     # Color palette (100 colors)
-    col.pal <- colorRampPalette(c("blue", "red"))
-    colors <- col.pal(100)
+    # col.pal <- colorRampPalette(c("blue", "red"))
+    # col.pal <- colorRampPalette(c("yellow", "red"))
+    # colors <- col.pal(100)
+    colors <- rainbow(100)
+    # colors <- heat.colors(100)
     # height of facets
-    like.facet.center <- (like[-1, -1] + like[-1, -ncol(like)] + like[-nrow(like), -1] + like[-nrow(like), -ncol(like)])/4
+    # like.facet.center <- (like[-1, -1] + like[-1, -ncol(like)] + like[-nrow(like), -1] + like[-nrow(like), -ncol(like)])/4
+    like2D <- t(like)
+    like.facet.center <- (like2D[-1, -1] + like2D[-1, -ncol(like2D)] + like2D[-nrow(like2D), -1] + like2D[-nrow(like2D), -ncol(like2D)])/4
+    # like.facet.center <- like2D
     # Range of the facet center on a 100-scale (number of colors)
     like.facet.range <- cut(like.facet.center, 100)
 
+    # Reduce the size of margins.
+    # par()$mar
+    # 5.1 4.1 4.1 2.1
+    # bottom, left, top and right margins respectively.
+    par(mar = c(1.1, 1.1, 2.1, 1.1))
+    # Reset after.
+    # par(mar = c(5.1, 4.1, 4.1, 2.1))
 
     persp(dGrid, bGrid,
-          like,
-          phi = 45, theta = 45,
+          # like,
+          like2D,
           xlab = 'd',
           ylab = 'b',
+          # zlab = 'Log-likelihood',
+          zlab = '',
           main = main,
-          # col = 'red',
+          # phi = 45, theta = 45,
+          phi = 45, theta = -55,
+          # r = sqrt(3), # The distance of the eyepoint from the centre of the plotting box.
+          r = 1.5,
+          # d = 1, # The strength of the perspective transformation.
+          d = 4.0,
+          xaxs = "i",
           col = colors[like.facet.range]
     )
+
+    # Reset the size of margins.
+    par(mar = c(5.1, 4.1, 4.1, 2.1))
 
   } else {
     # 1-dimensional plot.
@@ -1206,6 +1235,14 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
   x <- y - matrix(1, nrow = t, ncol = 1) %*% mu
 
   # print(summary(x))
+  # print('mu = ')
+  # print(mu)
+  # print('db = ')
+  # print(db)
+  # print('k = ')
+  # print(k)
+  # print('r = ')
+  # print(r)
 
   # Obtain concentrated parameter estimates.
   estimates <- GetParams(x, k, r, db, opt)
