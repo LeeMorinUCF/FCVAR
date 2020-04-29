@@ -62,6 +62,7 @@ HypoTest <- function(modelUNR, modelR) {
   p_LRtest <- 1 - pchisq(LR_test, df)
 
   # Print output.
+  cat(sprintf('Likelihood ratio test results:'))
   cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
               modelUNR$like, modelR$like))
   cat(sprintf('Test results (df = %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
@@ -162,9 +163,10 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
   for (j in 1:B) {
 
 
-    # Display iteration count every 100 Bootstraps
+    # Display replication count every show_iters Bootstraps
     if(round((j+1)/show_iters) == (j+1)/show_iters) {
-      cat(sprintf('iteration: %1.0f\n', j))
+      # cat(sprintf('iteration: %1.0f\n', j))
+      message(sprintf('Completed bootstrap replication %d of %d.', j, B))
     }
 
 
@@ -194,7 +196,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
   H$pvBS <- sum(LRbs > H$LRstat)/B
 
   # Print output
-  cat(sprintf('Bootstrap results:'))
+  cat(sprintf('Bootstrap likelihood ratio test results:'))
   cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
               H$loglikUNR, H$loglikR))
   cat(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
@@ -593,7 +595,7 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
     } else if(file_ext == 'png') {
       png(file)
     } else {
-      stop('Error: Graphics format not supported. Try pdf or png.')
+      stop('Graphics format not supported. Try pdf or png format.')
     }
 
   }

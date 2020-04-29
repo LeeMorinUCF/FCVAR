@@ -1,4 +1,4 @@
-
+Likelihood ratio test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   444.395
 Test results (df = 1):

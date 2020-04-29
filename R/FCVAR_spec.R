@@ -103,13 +103,15 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 
   for (k in 0:kmax) {
 
-    cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
+    # cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
+    message(sprintf('Estimating for k = %d and r = %d.', k, r))
 
     # ----- Estimation ---------#
     results <- FCVARestn(x, k, r, opt)
 
 
-    cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
+    # cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
+    message(sprintf('Finished Estimation for k = %d and r = %d.', k, r))
 
     # ----- Record relevant output ---------%
     loglik[k+1] <- results$like
@@ -361,11 +363,13 @@ RankTests <- function(x, k, opt) {
   for (r in 0 : p) {
 
 
-    cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
+    # cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
+    message(sprintf('Estimating for k = %d and r = %d.', k, r))
 
     results <- FCVARestn(x, k, r, opt)
 
-    cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
+    # cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
+    message(sprintf('Finished Estimation for k = %d and r = %d.', k, r))
 
     dHat[r+1] <- results$coeffs$db[1]
     bHat[r+1] <- results$coeffs$db[2]
@@ -399,6 +403,8 @@ RankTests <- function(x, k, opt) {
     # value for storage in the rankTestStats matrix below.
     if(is.null(p_val)) {
       p_val <- 999
+      # warning("P-values not calculated.\n",
+      #         "Refer to documentation to install software for computing P-values.")
     }
 
     # Store P-values.
@@ -663,14 +669,18 @@ FCVARbootRank <- function(x, k, opt, r1, r2, B) {
             pvBS = NA)
   H$LRstat <- -2*(mBS$like - mUNR$like)
 
+  # How often should the number of iterations be displayed
+  show_iters <- 10
+
   for (j in 1:B) {
 
-    print('j = ')
-    print(j)
+    # print('j = ')
+    # print(j)
 
-    # Display iteration count every 100 Bootstraps
-    if(round((j+1)/10) == (j+1)/10) {
-      cat(sprintf('iteration: %1.0f\n', j))
+    # Display replication count every show_iters Bootstraps
+    if(round((j+1)/show_iters) == (j+1)/show_iters) {
+      # cat(sprintf('iteration: %1.0f\n', j))
+      message(sprintf('Completed bootstrap replication %d of %d.', j, B))
     }
 
     # print('made it before mBS')
@@ -705,7 +715,7 @@ FCVARbootRank <- function(x, k, opt, r1, r2, B) {
   # Print output, if required, after restoring settings.
   opt$print2screen <- print2screen
   if (opt$print2screen) {
-    cat(sprintf('Bootstrap results:'))
+    cat(sprintf('Bootstrap rank test results:'))
     cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
                 mUNR$like, mBS$like))
     cat(sprintf('Test results:\nLR statistic: \t %3.3f\nP-value (BS): \t %1.3f\n',

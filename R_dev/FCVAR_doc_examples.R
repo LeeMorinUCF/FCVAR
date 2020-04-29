@@ -106,8 +106,8 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
-# save(LagSelectStats, list = c('LagSelectStats'), file = 'tests/testthat/soln_spec/LagSelectStats.RData')
 # capture.output(LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt), file = 'tests/testthat/soln_spec/LagSelectStats.txt')
+# save(LagSelectStats, list = c('LagSelectStats'), file = 'tests/testthat/soln_spec/LagSelectStats.RData')
 
 
 # print.LagSelect(stats, kmax, r, p, order, opt)
@@ -131,8 +131,8 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 rankTestStats <- RankTests(x, k = 2, opt)
-# save(rankTestStats, list = c('rankTestStats'), file = 'tests/testthat/soln_spec/rankTestStats.RData')
 # capture.output(rankTestStats <- RankTests(x, k = 2, opt), file = 'tests/testthat/soln_spec/rankTestStats.txt')
+# save(rankTestStats, list = c('rankTestStats'), file = 'tests/testthat/soln_spec/rankTestStats.RData')
 
 
 # print.RankTests <- function(stats, k, p, T, opt)

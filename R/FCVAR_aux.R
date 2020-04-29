@@ -820,8 +820,8 @@ LikeGridSearch <- function(x, k, r, opt) {
     b <- bGrid[iB]
 
     if (opt$progress == 2) {
-      cat(sprintf('Now estimating for iteration %d of %d: b = %f.\n ',
-                  iterCount, totIters, b))
+      message(sprintf('Now estimating for iteration %d of %d: b = %f.',
+                      iterCount, totIters, b))
     }
 
     # If d>=b (constrained) then search only over values of d that are
@@ -891,8 +891,8 @@ LikeGridSearch <- function(x, k, r, opt) {
                                 k, r, db[2],db[1], like[iB,iD] )
             # waitbar(iterCount/totIters,M_status_bar, SimNotes)
           } else {
-            cat(sprintf('Progress : %5.1f%%, b=%4.2f, d=%4.2f, like=%g\n',
-                        (iterCount/totIters)*100, db[2], db[1], like[iB,iD] ))
+            message(sprintf('Progress : %5.1f%%, b=%4.2f, d=%4.2f, like=%g.',
+                            (iterCount/totIters)*100, db[2], db[1], like[iB,iD] ))
           }
 
           # lastTic <- tic()
@@ -1006,7 +1006,8 @@ LikeGridSearch <- function(x, k, r, opt) {
 
     indexB <- indexB[length(indexB)]
     indexD <- indexD[length(indexD)]
-    cat(sprintf('\nWarning, grid search did not find a unique maximum of the log-likelihood function.\n')  )
+    # cat(sprintf('\nWarning, grid search did not find a unique maximum of the log-likelihood function.\n')  )
+    warning('Grid search did not find a unique maximum of the log-likelihood function.')
   }
 
   # Translate to d,b.
@@ -1163,7 +1164,7 @@ plot.LikeGridSearch <- function(likeGrid_params, k, r, opt,
     } else if(file_ext == 'png') {
       png(file)
     } else {
-      stop('Error: Graphics format not supported. Try pdf or png.')
+      stop('Graphics format not supported. Try pdf or png format.')
     }
 
   }
@@ -1226,7 +1227,7 @@ plot.LikeGridSearch <- function(likeGrid_params, k, r, opt,
   } else {
     # 1-dimensional plot.
     if ((opt$R_psi[1] == 1) & (opt$R_psi[2] == -1) & (opt$r_psi[1] == 0)) {
-      like_x_label <- 'd=b'
+      like_x_label <- 'd = b'
     } else {
       like_x_label <- 'phi'
     }

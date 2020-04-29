@@ -92,10 +92,13 @@ FCVARestn <- function(x, k, r, opt) {
   # Perform grid search and store results as starting values for
   #   numerical optimization below.
   if(opt$gridSearch) {
-    cat(sprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n',
-                k,r))
-    cat(sprintf('This computation can be slow.\n'))
-    cat(sprintf('Set opt$gridSearch <- 0 to skip it.\n'))
+    # cat(sprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n',
+    #             k,r))
+    # cat(sprintf('This computation can be slow.\n'))
+    # cat(sprintf('Set opt$gridSearch <- 0 to skip it.\n'))
+    message(sprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n', k,r),
+            "This computation can be slow.\n",
+            "Set opt$gridSearch <- 0 to skip it.")
     # opt$db0 <- LikeGridSearch(x, k, r, opt)
     likeGrid_params <- LikeGridSearch(x, k, r, opt)
     opt$db0 <- likeGrid_params$params
@@ -357,11 +360,11 @@ FCVARestn <- function(x, k, r, opt) {
     # Algorithm depends on whether there are inequality restrictions.
     if(!is.null(Cdb)) {
 
-      print('Imposing inequality restrictions on d and b. ')
-      print('Cdb = ')
-      print(Cdb)
-      print('cdb = ')
-      print(cdb)
+      # print('Imposing inequality restrictions on d and b. ')
+      # print('Cdb = ')
+      # print(Cdb)
+      # print('cdb = ')
+      # print(cdb)
 
       # This version uses inequality bounds:
       min_out <- constrOptim(startVals,
@@ -544,11 +547,15 @@ FCVARestn <- function(x, k, r, opt) {
   if (r > 0) {
 
     if(qr(results$coeffs$alphaHat)$rank < r) {
-      cat(sprintf('\nWarning: Alpha hat has rank less than r!\n'))
+      # cat(sprintf('\nWarning: Alpha hat has rank less than r!\n'))
+      warning("Estimated matrix alphaHat has rank less than r!",
+              "Consider modifying restrictions or estimating with reduced rank.")
     }
 
     if( qr(results$coeffs$betaHat)$rank < r) {
-      cat(sprintf('\nWarning: Beta hat has rank less than r!\n'))
+      # cat(sprintf('\nWarning: Beta hat has rank less than r!\n'))
+      warning("Estimated matrix betaHat has rank less than r!",
+              "Consider modifying restrictions or estimating with reduced rank.")
     }
 
   }

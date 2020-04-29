@@ -1049,6 +1049,7 @@ the restriction that $d=b$ is already imposed. Thus, the user needs to only impo
 Since the output of the estimated model and the white noise tests are similar to the previous example, we only show the output from the hypothesis test. 
 
 \begin{verbatim}
+Likelihood ratio test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   442.027
 Test results (df = 1):
@@ -1075,6 +1076,7 @@ Since the object \verb|opt1| has the restriction $d=b=1$ stored, the first step 
 Again, since the estimation output is similar to the first example, we only show the results of the hypothesis test here. With a $P$-value close to zero, this hypothesis is also strongly rejected.
 
 \begin{verbatim}
+Likelihood ratio test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   444.395
 Test results (df = 1):
@@ -1101,6 +1103,7 @@ Again we first reset \verb|opt1| to the default options to clear previously impo
 The hypothesis $\mathscr{H}_{\alpha}^1$ is tested in the exact same way as before, only now we are changing the variable $R_{\alpha}$ instead of $R_{\beta}$. The results are shown below and we can see that this hypothesis is also rejected.
 
 \begin{verbatim}
+Likelihood ratio test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   446.086
 Test results (df = 1):
@@ -1126,6 +1129,7 @@ R> MVWNtest_m1r4 <- MVWNtest(m1r4$Residuals, order, printWNtest)
 R> Halpha2 <- HypoTest(m1, m1r4)
 \end{CodeInput}
 \begin{CodeOutput}
+Likelihood ratio test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   450.857
 Test results (df = 1):
@@ -1148,6 +1152,7 @@ R> MVWNtest_m1r5 <- MVWNtest(m1r5$Residuals, order, printWNtest)
 R> Halpha3 <- HypoTest(m1, m1r5)
 \end{CodeInput}
 \begin{CodeOutput}
+Likelihood ratio test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   446.184
 Test results (df = 1):
@@ -1479,7 +1484,7 @@ R> LRbs_density <- density(FCVARboot_stats$LRbs)
 
 An example of the output is
 \begin{verbatim}
-Bootstrap results:
+Bootstrap likelihood ratio test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   444.395
 Test results (df <- 1):
@@ -1523,7 +1528,7 @@ R> cat(sprintf('P-value: \t %1.3f\n', rankTestStats$pv[1]))
 
 The results are printed as
 \begin{verbatim}
-Bootstrap results:
+Bootstrap rank test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   440.040
 Test results:
