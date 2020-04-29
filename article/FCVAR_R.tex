@@ -44,9 +44,19 @@
 \Shorttitle{FCVAR in \proglang{R}}
 
 %% - \Abstract{} almost as usual
+%% I figure that it is best to explain what this package does in plain English,  
+%% in case any normal people get past the title and want to know what this package does. 
 \Abstract{
   This article illustrates how to estimate 
-  the fractionally cointegrated vector autoregression model in \proglang{R}.
+  the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}. 
+  This model is used to detect equilibrium relationships between variables observed over time. 
+  The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are interated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
+  The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
+  This allows for the detection of relationships with deviations that correct more slowly. 
+  Existing software concentrates on either the CVAR alone, restricted to integer orders of integration, or 
+  on specific features of the variables, such as estimating the integration order or identifying whether a cointegrating relationship exists (not quite accurate: needs to be reworded before generalizing the gap in available software).
+  This software treats the time series as a sytem and estimates all parameters in a likelihood ratio framework and provides a flexible set of optins for conducting inference on many features of the cointegrating relationship. 
+
 }
 
 %% - \Keywords{} with LaTeX markup, at least one required
@@ -110,17 +120,18 @@ out relative (dis)advantages. All software mentioned should be properly
 %be employed. See the {\LaTeX} code for more details.
 \end{leftbar}
 
-The fractionally cointegrated vector autoregression model is an excellent model...
+% Intro 1.0: start with the abstract and add details. 
 
+This article illustrates how to estimate 
+  the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}. 
+  This model is used to detect equilibrium relationships between variables observed over time. 
+  The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are interated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
+  The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
+  This allows for the detection of relationships with deviations that correct more slowly. 
 
-
-
-
-
-Let's stick to a description with words here. 
-We'll get into the ugly details in the next section. 
-For now, talk about CVAR as a tool for testing equilibrium relationships. 
-Then the fractional part is to accommodate a potenially long-lived deviation from equilibrium. 
+%  Existing software concentrates on either the CVAR alone, restricted to integer orders of integration, or 
+%  on specific features of the variables, such as estimating the integration order or identifying whether a cointegrating relationship exists (not quite accurate: needs to be reworded before generalizing the gap in available software).
+%  This software treats the time series as a sytem and estimates all parameters in a likelihood ratio framework and provides a flexible set of optins for conducting inference on many features of the cointegrating relationship. 
 
 % Examples of citations and references to functions and packages:
 % In \proglang{R} \citep{R}, models involving fractional integration are estimated by the \fct{function1} and \fct{function2} in the \pkg{pscl} package \citep{Jackman:2015}. 
@@ -130,6 +141,8 @@ Then the fractional part is to accommodate a potenially long-lived deviation fro
 An exhaustive listing of the R packages available for time series analysis were compiled in 
 \emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman, 
 available at \verb|https://CRAN.R-project.org/view=TimeSeries|). 
+% 
+Among these, the packages most relevant to the FCVAR model are related to cointegration within vector error correction models or related to long memory, often under the $ARFIMA$ framework. 
 
 \subsection{R packages for estimating the CVAR model}
 
