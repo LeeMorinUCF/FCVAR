@@ -380,7 +380,7 @@ dev.off()
 
 # Restrict equality of fractional parameters.
 opt <- FCVARoptions()
-opt$dbStep1D     <- 0.01 # Coarser grid for plotting example.
+opt$dbStep1D     <- 0.01
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -401,7 +401,7 @@ plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt,
 
 # Linear restriction on fractional parameters.
 opt <- FCVARoptions()
-opt$dbStep1D     <- 0.01 # Coarser grid for plotting example.
+opt$dbStep1D     <- 0.01
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -427,18 +427,16 @@ plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt,
 # Constrained 2-dimensional optimization.
 # Impose restriction dbMax >= d >= b >= dbMin.
 opt <- FCVARoptions()
-opt$dbStep1D     <- 0.01 # Coarser grid for plotting example.
-opt$dbStep2D     <- 0.02 # Coarser grid for plotting example.
+opt$dbStep1D     <- 0.01
+opt$dbStep2D     <- 0.02
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 1 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
-# opt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-# likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
 # plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 # Output plot for article.
@@ -451,18 +449,16 @@ plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt,
 
 # Unconstrained 2-dimensional optimization.
 opt <- FCVARoptions()
-opt$dbStep1D     <- 0.01 # Coarser grid for plotting example.
-opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
+opt$dbStep1D     <- 0.01
+opt$dbStep2D     <- 0.2
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
-# opt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-# likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
 # plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 # Output plot for article.
