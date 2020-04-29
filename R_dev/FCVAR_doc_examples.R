@@ -69,25 +69,25 @@ results <- FCVARestn(x, k = 2, r = 1, opt)
 opt1 <- opt
 opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt1$r_psi <- 1
-# m1r1 <- FCVARestn(x1, k, r, opt1)
-capture.output(m1r1 <- FCVARestn(x1, k, r, opt1),
-               file = 'tests/testthat/soln_estn/results_m1r1.txt')
+m1r1 <- FCVARestn(x1, k, r, opt1)
+# capture.output(m1r1 <- FCVARestn(x1, k, r, opt1),
+#                file = 'tests/testthat/soln_estn/results_m1r1.txt')
 
 opt1 <- opt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-# m1r2 <- FCVARestn(x1, k, r, opt1)
-capture.output(m1r2 <- FCVARestn(x1, k, r, opt1),
-               file = 'tests/testthat/soln_estn/results_m1r2.txt')
+m1r2 <- FCVARestn(x1, k, r, opt1)
+# capture.output(m1r2 <- FCVARestn(x1, k, r, opt1),
+#                file = 'tests/testthat/soln_estn/results_m1r2.txt')
 
 opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-# m1r4 <- FCVARestn(x1, k, r, opt1)
-capture.output(m1r4 <- FCVARestn(x1, k, r, opt1),
-               file = 'tests/testthat/soln_estn/results_m1r4.txt')
+m1r4 <- FCVARestn(x1, k, r, opt1)
+# capture.output(m1r4 <- FCVARestn(x1, k, r, opt1),
+#                file = 'tests/testthat/soln_estn/results_m1r4.txt')
 
-save(m1r1, m1r2, m1r4,
-     list = c('m1r1', 'm1r2', 'm1r4'),
-     file = 'tests/testthat/soln_estn/results_m1r124.RData')
+# save(m1r1, m1r2, m1r4,
+#      list = c('m1r1', 'm1r2', 'm1r4'),
+#      file = 'tests/testthat/soln_estn/results_m1r124.RData')
 
 
 

@@ -59,6 +59,7 @@ Other FCVAR auxilliary functions:
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FCVARsim}()},
+\code{\link{GetEstimates}()},
 \code{\link{GetFreeParams}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},

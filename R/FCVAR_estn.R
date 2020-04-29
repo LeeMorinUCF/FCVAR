@@ -76,11 +76,11 @@ FCVARestn <- function(x, k, r, opt) {
   # Clear previous instances of coefficient estimates. This is done
   #   because estimatesTemp is a global structure that will not be cleared
   #   automatically if estimation is interrupted.
-  estimatesTEMP <- NULL
+  # estimatesTEMP <- NULL
 
   # Assign the value for the global variable estimatesTEMP.
   # Might adjust this later but it will work for now.
-  assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
+  # assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
 
   #--------------------------------------------------------------------------------
   # GRID SEARCH
@@ -327,7 +327,13 @@ FCVARestn <- function(x, k, r, opt) {
 
     # Assign the value for the global variable estimatesTEMP.
     # Might adjust this later but it will work for now.
-    assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
+    # assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
+
+
+    # Instead, obtain estimatesTEMP from a function:
+    # estimatesTEMP <- GetEstimates(params, x, k, r, opt)
+    # estimatesTEMP <- GetEstimates(y, k, r, dbTemp, opt)
+    # Note parameters are different in this case.
 
 
   } else {
@@ -399,6 +405,10 @@ FCVARestn <- function(x, k, r, opt) {
     # print('min_out = ')
     # print(min_out)
 
+
+    # Instead, obtain estimatesTEMP from a function:
+    estimatesTEMP <- GetEstimates(min_out$par, x, k, r, opt)
+
     maxLike <- min_out$value
   }
 
@@ -443,7 +453,11 @@ FCVARestn <- function(x, k, r, opt) {
   # print('estimatesTEMP = ')
   # print(estimatesTEMP)
 
-  estimatesTEMP <- get('estimatesTEMP', envir = .GlobalEnv)
+  # Cut this estimatesTEMP out first:
+  # estimatesTEMP <- get('estimatesTEMP', envir = .GlobalEnv)
+  # But need to replace it with
+  # estimates <- GetEstimates(params, x, k, r, opt)
+  # for the particular version of the likelihood function.
 
   # print('estimatesTEMP = ')
   # print(estimatesTEMP)
@@ -451,6 +465,10 @@ FCVARestn <- function(x, k, r, opt) {
   # Coefficients are taken from a global defined in the likelihood
   #   function
   results$coeffs <- estimatesTEMP
+
+  # Recalculate concentrated parameter estimates (moved above).
+  # estimates <- GetParams(y, k, r, dbTemp, opt) # Do right after optimization.
+  # results$coeffs <- estimates
 
   #--------------------------------------------------------------------------------
   # CHECK RANK CONDITION

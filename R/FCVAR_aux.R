@@ -1264,9 +1264,9 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 #' for a given set of parameter values. This function adjusts the variables with the level parameter,
 #'if present, and returns the log-likelihood given \code{d} and \code{b}.
 #'
-#' @param x A matrix of variables to be included in the system.
 #' @param params A vector of parameters \code{d} and \code{b}
 #' (and \code{mu} if option selected).
+#' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
@@ -1348,8 +1348,14 @@ FCVARlike <- function(params, x, k, r, opt) {
   }
 
 
-  # Obtain concentrated parameter estimates$
+  # Obtain concentrated parameter estimates.
   estimates <- GetParams(y, k, r, c(d, b), opt)
+
+
+
+  # Could have a function GetEstimates() that does all of the above.
+  # estimates <- GetEstimates(params, x, k, r, opt)
+
 
   # Storing the estimates in a global structure here allows us to skip a
   #   call to GetParams after optimization to recover the coefficient
@@ -1364,18 +1370,150 @@ FCVARlike <- function(params, x, k, r, opt) {
   }
 
 
+
+
   # Calculate value of likelihood function.
-  T <- nrow(y) - opt$N
-  p <- ncol(y)
+  # T <- nrow(y) - opt$N
+  # p <- ncol(y)
+  # Base this on raw inputs:
+  T <- nrow(x) - opt$N
+  p <- ncol(x)
   like <- - T*p/2*( log(2*pi) + 1)  - T/2*log(det(estimates$OmegaHat))
 
   # Assign the value for the global variable estimatesTEMP.
   # Might adjust this later but it will work for now.
   # print('Search list in FCVARlike():')
   # print(search())
-  assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
+  # assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
 
   return(like)
+}
+
+
+#' Obtain concentrated parameter estimates for the Constrained FCVAR Model
+#'
+#' \code{GetEstimates} calculates the concentrated parameter estimates for
+#' the constrained FCVAR model for a given set of parameter values.
+#' It is used after estimating the parameters that are numerically optimized
+#' to obtain the corresponding concentrated parameters.
+#' Like \code{FCVARlike} , this function adjusts the variables with the level parameter,
+#' if present, and returns the log-likelihood given \code{d} and \code{b}.
+#'
+#' @param params A vector of parameters \code{d} and \code{b}
+#' (and \code{mu} if option selected).
+#' @param x A matrix of variables to be included in the system.
+#' @param k The number of lags in the system.
+#' @param r The cointegrating rank.
+#' @param opt A list object that stores the chosen estimation options,
+#' generated from \code{FCVARoptions()}.
+#' @return A list object \code{estimates} containing the estimates,
+#' including the following parameters:
+#' \describe{
+#'   \item{\code{db}}{The orders of fractional integration (taken directly from the input).}
+#'   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
+#'   \item{\code{betaHat}}{A \eqn{p x r} matrix of cointegrating vectors.
+#'       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
+#'   \item{\code{rhoHat}}{A \eqn{p x 1} vector of restricted constatnts.}
+#'   \item{\code{piHat}}{A \eqn{p x p} matrix \eqn{\Pi = \alpha \beta'} of long-run levels.}
+#'   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
+#'   \item{\code{GammaHat}}{A ( \eqn{p x kp} matrix \code{cbind(GammaHat1,...,GammaHatk)})
+#'   of autoregressive coefficients. }
+#'   \item{\code{muHat}}{A vector of the optimal \code{mu} if level parameter is selected. }
+#' }
+#' @examples
+#' opt <- FCVARoptions()
+#' opt$gridSearch   <- 0 # Disable grid search in optimization.
+#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+#' results <- FCVARestn(x, k = 2, r = 1, opt)
+#' GetEstimates(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
+#' @family FCVAR auxilliary functions
+#' @seealso \code{FCVARoptions} to set default estimation options.
+#' \code{FCVARlike} performs the same calculations to obtain the value
+#' of the likelihood function.
+#'
+GetEstimates <- function(params, x, k, r, opt) {
+
+  # global estimatesTEMP
+
+  T <- nrow(x)
+  p <- ncol(x)
+
+  # print('params = ')
+  # print(params)
+
+
+  # If there is one linear restriction imposed, optimization is over phi,
+  #  so translate from phi to (d,b), otherwise, take parameters as
+  #  given.
+  if(!is.null((opt$R_psi)) && nrow(opt$R_psi) == 1) {
+    H <- pracma::null(opt$R_psi)
+    h <- t(opt$R_psi) %*% solve(opt$R_psi %*% t(opt$R_psi)) %*% opt$r_psi
+    db <- H*params[1] + h
+    d <- db[1]
+    b <- db[2]
+    if (opt$levelParam) {
+      mu <- params[2:length(params)]
+    }
+
+  } else {
+    d <- params[1]
+    b <- params[2]
+    if (opt$levelParam) {
+      mu <- params[3:length(params)]
+    }
+
+  }
+
+
+  # Modify the data by a mu level.
+  if (opt$levelParam) {
+
+    # print('class(params) = ')
+    # print(class(params))
+    # print('class(mu) = ')
+    # print(class(mu))
+    #
+    # print('mu = ')
+    # print(mu)
+    # print('diag(mu) = ')
+    # print(diag(mu))
+    #
+    #
+    # print('T = ')
+    # print(T)
+    y <- x - matrix(1, nrow = T, ncol = p) %*% diag(mu)
+  } else {
+    y <- x
+  }
+
+
+  # If d=b is not imposed via opt$restrictDB, but d>=b is required in
+  #	opt$constrained, then impose the inequality here.
+  if(opt$constrained) {
+    b <- min(b, d)
+  }
+
+
+  # Obtain concentrated parameter estimates$
+  estimates <- GetParams(y, k, r, c(d, b), opt)
+
+  # Storing the estimates in a global structure here allows us to skip a
+  #   call to GetParams after optimization to recover the coefficient
+  #   estimates
+  # estimatesTEMP <- estimates
+  # If level parameter is present, they are the last p parameters in the
+  #   params vector
+  if (opt$levelParam) {
+    estimates$muHat <- mu
+  } else {
+    estimates$muHat <- NULL
+  }
+
+  return(estimates)
+
 }
 
 

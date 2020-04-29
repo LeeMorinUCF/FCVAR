@@ -1,0 +1,16 @@
+[1] "j = "
+[1] 1
+[1] "j = "
+[1] 2
+[1] "j = "
+[1] 3
+[1] "j = "
+[1] 4
+[1] "j = "
+[1] 5
+Bootstrap results:
+Unrestricted log-likelihood: 113.388
+Restricted log-likelihood:   97.458
+Test results:
+LR statistic: 	 31.858
+P-value (BS): 	 0.000

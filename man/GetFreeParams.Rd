@@ -74,6 +74,7 @@ Other FCVAR auxilliary functions:
 \code{\link{FCVARsimBS}()},
 \code{\link{FCVARsim}()},
 \code{\link{FracDiff}()},
+\code{\link{GetEstimates}()},
 \code{\link{GetParams}()},
 \code{\link{GetResiduals}()},
 \code{\link{GetRestrictedParams}()},
