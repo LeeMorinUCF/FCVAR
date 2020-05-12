@@ -194,42 +194,9 @@ head(frtab)
 frtab[217:223, ]
 tail(frtab)
 
-
-
 ##################################################
-# 
+# Interpolate critical values local to chosen b.
 ##################################################
-
-
-# real*8 xndf(221,31), bval(31), probs(221), ginv(221)
-# real*8 bedf(221), estcrit(31)
-# do i=1,np
-#   do j=1,nb
-#     estcrit(j) = xndf(i,j)
-#   end do
-#   call blocal(nb,bb,estcrit,bval,bedf(i))
-# end do
-
-nb = 31
-np = 221
-
-bval <- unique(frtab[, 'bbb'])
-bval <- bval[order(bval)]
-
-bb <- 0.73
-
-bedf <- rep(NA, np)
-
-# ib <- 1
-for (ib in 1:np) {
-  
-  b_i <- bval[ib]
-  estcrit <- frtab[frtab[, 'bbb'] == b_i, 'xndf']
-  
-  bedf[ib] <- blocal(nb,bb,estcrit,bval)
-  
-}
-
 
 # blocal <- function(nb, bb, estcrit, bval)
 
@@ -261,16 +228,82 @@ blocal <- function(nb, bb, estcrit, bval) {
   
   bfit <- sum(lm_olsqc$coefficients*bb^seq(0,2))
   
-  return(bedf_i)
+  return(bfit)
 }
 
 
+##################################################
+# Intermediate calculations for p-values
+##################################################
+
+
+# real*8 xndf(221,31), bval(31), probs(221), ginv(221)
+# real*8 bedf(221), estcrit(31)
+# do i=1,np
+#   do j=1,nb
+#     estcrit(j) = xndf(i,j)
+#   end do
+#   call blocal(nb,bb,estcrit,bval,bedf(i))
+# end do
+
+nb <- 31
+np <- 221
+
+bval <- unique(frtab[, 'bbb'])
+bval <- bval[order(bval)]
+
+probs <- unique(frtab[, 'probs'])
+probs <- probs[order(probs)]
+
+bb <- 0.73
+
+bedf <- rep(NA, np)
+
+# ib <- 1
+for (i in 1:np) {
+  
+  # b_i <- bval[ib]
+  # estcrit <- frtab[frtab[, 'bbb'] == b_i, 'xndf']
+  
+  prob_i <- probs[i]
+  estcrit <- frtab[frtab[, 'probs'] == prob_i, 'xndf']
+  
+  bedf[i] <- blocal(nb, bb, estcrit, bval)
+  
+}
+
+# Obtain inverse CDG of the Chi-squared distribution.
+# gcinv(iq,np,probs,ginv)
+ginv <- qchisq(probs, df = iq^2) 
+
+
+# Next, call the fuction to calculate p-values:
+# fpval(np = 9, iq, stat, probs, bedf, ginv, pval)
 
 ##################################################
-# 
+# Calculate p-values
 ##################################################
 
+stat <- 3.84
 
+# c This routine calculates P values.
+# c
+# c stat is test statistic.
+# c np is number of points for local approximation (probably 9).
+# c bedf contains quantiles of numerical distribution for specified.
+# c value of b or values of b and d.
+# c ginv contains quantiles of approximating chi-squared distribution.
+# c
+fpval <- function(np = 9, iq, stat, probs, bedf, ginv) {
+  
+  nomax <- 25
+  nvmax <- 3
+  ndf <- iq**2
+  
+  # Deal with extreme cases.
+  
+  return(pval)
+}
 
 
 ##################################################
