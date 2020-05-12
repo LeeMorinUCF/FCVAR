@@ -201,6 +201,69 @@ tail(frtab)
 ##################################################
 
 
+# real*8 xndf(221,31), bval(31), probs(221), ginv(221)
+# real*8 bedf(221), estcrit(31)
+# do i=1,np
+#   do j=1,nb
+#     estcrit(j) = xndf(i,j)
+#   end do
+#   call blocal(nb,bb,estcrit,bval,bedf(i))
+# end do
+
+nb = 31
+np = 221
+
+bval <- unique(frtab[, 'bbb'])
+bval <- bval[order(bval)]
+
+bb <- 0.73
+
+bedf <- rep(NA, np)
+
+# ib <- 1
+for (ib in 1:np) {
+  
+  b_i <- bval[ib]
+  estcrit <- frtab[frtab[, 'bbb'] == b_i, 'xndf']
+  
+  bedf[ib] <- blocal(nb,bb,estcrit,bval)
+  
+}
+
+
+# blocal <- function(nb, bb, estcrit, bval)
+
+blocal <- function(nb, bb, estcrit, bval) {
+  
+  # Weights on neighboring quantiles are based on trapezoidal kernel. 
+  weight <- 1.0 - 5.0*abs(bval - bb)
+  weight[weight < 0] <- 0
+  # Includes at most 9 observations. 
+  
+  # Determine the quantiles to be used for interpolation. 
+  # jbot will be index of lowest b that gets positive weight. 
+  jbot <- which(weight > 0)[1]
+  nobs <- sum(weight > 0)
+  weight_sel <- seq(jbot, jbot + nobs - 1)
+  
+  # Create a dataset for interpolation by regression.
+  yx_mat <- data.frame(y = numeric(9), 
+                       x1 = numeric(9), 
+                       x2 = numeric(9), 
+                       x3 = numeric(9))
+  
+  yx_mat[1:nobs, 'y'] <- weight[weight_sel]*estcrit[weight_sel]
+  yx_mat[1:nobs, 'x1'] <- weight[weight_sel]
+  yx_mat[1:nobs, 'x2'] <- weight[weight_sel]*bval[weight_sel]
+  yx_mat[1:nobs, 'x3'] <- weight[weight_sel]*bval[weight_sel]^2
+  
+  lm_olsqc <- lm(formula = y ~ x1 + x2 + x3 - 1, data = yx_mat)
+  
+  bfit <- sum(lm_olsqc$coefficients*bb^seq(0,2))
+  
+  return(bedf_i)
+}
+
 
 
 ##################################################
