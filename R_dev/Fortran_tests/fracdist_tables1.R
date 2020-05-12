@@ -272,7 +272,7 @@ for (i in 1:np) {
   
 }
 
-# Obtain inverse CDG of the Chi-squared distribution.
+# Obtain inverse CDF of the Chi-squared distribution.
 # gcinv(iq,np,probs,ginv)
 ginv <- qchisq(probs, df = iq^2) 
 
@@ -289,21 +289,254 @@ stat <- 3.84
 # c This routine calculates P values.
 # c
 # c stat is test statistic.
-# c np is number of points for local approximation (probably 9).
+# c npts is number of points for local approximation (probably 9).
 # c bedf contains quantiles of numerical distribution for specified.
 # c value of b or values of b and d.
 # c ginv contains quantiles of approximating chi-squared distribution.
 # c
-fpval <- function(np = 9, iq, stat, probs, bedf, ginv) {
+fpval <- function(npts = 9, iq, stat, probs, bedf, ginv) {
   
-  nomax <- 25
-  nvmax <- 3
+  # nomax <- 25
+  # nvmax <- 3
   ndf <- iq**2
   
   # Deal with extreme cases.
+  btiny <- 0.5*bedf[1]
+  bbig <- 2.0*bedf[221]
+  if (stat < btiny) {
+    pval = 1.0
+    return(pval)
+  }
+  if (stat > bbig) {
+    pval = 0.0
+    return(pval)
+  }
+  
+  
+  # Find critical value closest to test statistic.
+  diff <- abs(stat - bedf)
+  imin <- which.min(diff)[1]
+  diffm <- diff[imin]
+  
+  nph <- npts/2
+  nptop <- 221 - nph
+  
+  
+  # Create a dataset for interpolation by regression.
+  yx_mat <- data.frame(y = numeric(npts), 
+                       x1 = numeric(npts), 
+                       x2 = numeric(npts), 
+                       x3 = numeric(npts))
+  # The form depends on the proximity to the endpoints. 
+  
+  if (imin > nph & imin < nptop) {
+    # imin is not too close to the end. Use np points around stat.
+    
+    
+    # Populate the dataset for interpolation by regression.
+    ic <- imin - nph - 1 + seq(1, npts)
+    yx_mat[, 'y'] <- ginv[ic]
+    yx_mat[, 'x1'] <- 1.0
+    yx_mat[, 'x2'] <- bedf[ic]
+    yx_mat[, 'x3'] <- bedf[ic]^2
+    
+  } else {
+    # imin is close to one of the ends. Use points from imin +/- nph to end.
+    
+    if (imin < nph) {
+      
+      np1 <- imin + nph
+      np1 <- max(np1, 5)
+      
+      # Populate the dataset for interpolation by regression.
+      ic <- seq(1, np1)
+      yx_mat[1:np1, 'y'] <- ginv[ic]
+      yx_mat[1:np1, 'x1'] <- 1.0
+      yx_mat[1:np1, 'x2'] <- bedf[ic]
+      yx_mat[1:np1, 'x3'] <- bedf[ic]^2
+      
+    } else { 
+      
+      np1 <- 222 - imin + nph
+      np1 <- max(np1, 5)
+      
+      # Populate the dataset for interpolation by regression.
+      ic <- 222 - seq(1, npts)
+      yx_mat[1:np1, 'y'] <- ginv[ic]
+      yx_mat[1:np1, 'x1'] <- 1.0
+      yx_mat[1:np1, 'x2'] <- bedf[ic]
+      yx_mat[1:np1, 'x3'] <- bedf[ic]^2
+      
+    }
+    
+  }
+  
+  # Run regression and obtain p-value. 
+  lm_olsqc <- lm(formula = y ~ x1 + x2 + x3 - 1, data = yx_mat)
+  
+  crfit <- sum(lm_olsqc$coefficients*stat^seq(0,2))
+  crfit <- max(crfit, 10^(-6))
+  
+  pval <- pchisq(crfit, df = ndf) 
+  pval <- 1.0 - pval
   
   return(pval)
 }
+
+pval <- fpval(npts = 9, iq, stat, probs, bedf, ginv)
+
+
+
+##################################################
+# Main function for calculating p-values
+# Includes preliminary calculations. 
+##################################################
+
+fracdist_pvalues <- function(iq, iscon, dir_name, bb, stat) {
+  
+  # Obtain relevant table of statistics.
+  frtab <- get_fracdist_tab(iq, iscon, dir_name)
+  bval <- unique(frtab[, 'bbb'])
+  bval <- bval[order(bval)]
+  probs <- unique(frtab[, 'probs'])
+  probs <- probs[order(probs)]
+  
+  # Calculate the approximate CDF for this particular value of b.
+  nb <- 31
+  np <- 221
+  bedf <- rep(NA, np)
+  for (i in 1:np) {
+    
+    prob_i <- probs[i]
+    estcrit <- frtab[frtab[, 'probs'] == prob_i, 'xndf']
+    
+    bedf[i] <- blocal(nb, bb, estcrit, bval)
+    
+  }
+  
+  # Obtain inverse CDF of the Chi-squared distribution.
+  ginv <- qchisq(probs, df = iq^2) 
+  # This is the dependent variable in the interpolation regressions. 
+  
+  # Calculate p-values. 
+  pval <- fpval(npts = 9, iq, stat, probs, bedf, ginv)
+  
+  return(pval)
+}
+
+
+pval <- fracdist_pvalues(iq = 1, iscon = 0, dir_name = data_dir, 
+                         bb = 0.73, stat = 3.84)
+print(pval)
+
+
+##################################################
+# Might as well finish the job
+# Critical Values, in case someone needs them
+##################################################
+
+# c This routine calculates critical values.
+# c
+# c clevel is level for test.
+# c npts is number of points for local approximation (probably 9).
+# c bedf contains quantiles of numerical distribution for specified.
+# c value of b or values of b and d.
+# c ginv contains quantiles of approximating chi-squared distribution.
+# c
+fpcrit <- function(npts = 9, iq, clevel, value, probs, bedf, ginv) {
+  
+  # nomax <- 25
+  # nvmax <- 3
+  ndf <- iq**2
+  
+  # Handle extreme cases.
+  ptiny <- 0.0001
+  pbig <- 0.9999
+  if (clevel < ptiny) {
+    ccrit = bedf[221]
+    return(ccrit)
+  }
+  if (clevel > pbig) {
+    ccrit = bedf[221]
+    return(ccrit)
+  }
+  
+  
+  # Find critical value closest to test statistic.
+  diff <- abs(stat - bedf)
+  imin <- which.min(diff)[1]
+  diffm <- diff[imin]
+  
+  nph <- npts/2
+  nptop <- 221 - nph
+  
+  
+  # Create a dataset for interpolation by regression.
+  yx_mat <- data.frame(y = numeric(npts), 
+                       x1 = numeric(npts), 
+                       x2 = numeric(npts), 
+                       x3 = numeric(npts))
+  # The form depends on the proximity to the endpoints. 
+  
+  if (imin > nph & imin < nptop) {
+    # imin is not too close to the end. Use np points around stat.
+    
+    
+    # Populate the dataset for interpolation by regression.
+    ic <- imin - nph - 1 + seq(1, npts)
+    yx_mat[, 'y'] <- ginv[ic]
+    yx_mat[, 'x1'] <- 1.0
+    yx_mat[, 'x2'] <- bedf[ic]
+    yx_mat[, 'x3'] <- bedf[ic]^2
+    
+  } else {
+    # imin is close to one of the ends. Use points from imin +/- nph to end.
+    
+    if (imin < nph) {
+      
+      np1 <- imin + nph
+      np1 <- max(np1, 5)
+      
+      # Populate the dataset for interpolation by regression.
+      ic <- seq(1, np1)
+      yx_mat[1:np1, 'y'] <- ginv[ic]
+      yx_mat[1:np1, 'x1'] <- 1.0
+      yx_mat[1:np1, 'x2'] <- bedf[ic]
+      yx_mat[1:np1, 'x3'] <- bedf[ic]^2
+      
+    } else { 
+      
+      np1 <- 222 - imin + nph
+      np1 <- max(np1, 5)
+      
+      # Populate the dataset for interpolation by regression.
+      ic <- 222 - seq(1, npts)
+      yx_mat[1:np1, 'y'] <- ginv[ic]
+      yx_mat[1:np1, 'x1'] <- 1.0
+      yx_mat[1:np1, 'x2'] <- bedf[ic]
+      yx_mat[1:np1, 'x3'] <- bedf[ic]^2
+      
+    }
+    
+  }
+  
+  # Run regression and obtain p-value. 
+  lm_olsqc <- lm(formula = y ~ x1 + x2 + x3 - 1, data = yx_mat)
+  
+  crfit <- sum(lm_olsqc$coefficients*stat^seq(0,2))
+  crfit <- max(crfit, 10^(-6))
+  
+  pval <- pchisq(crfit, df = ndf) 
+  pval <- 1.0 - pval
+  
+  return(ccrit)
+}
+
+ccrit <- fpcrit(npts = 9, iq, stat, probs, bedf, ginv)
+
+
+
+
 
 
 ##################################################
