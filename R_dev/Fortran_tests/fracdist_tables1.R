@@ -304,11 +304,11 @@ fpval <- function(npts = 9, iq, stat, probs, bedf, ginv) {
   btiny <- 0.5*bedf[1]
   bbig <- 2.0*bedf[221]
   if (stat < btiny) {
-    pval = 1.0
+    pval <- 1.0
     return(pval)
   }
   if (stat > bbig) {
-    pval = 0.0
+    pval <- 0.0
     return(pval)
   }
   
@@ -361,7 +361,7 @@ fpval <- function(npts = 9, iq, stat, probs, bedf, ginv) {
       np1 <- max(np1, 5)
       
       # Populate the dataset for interpolation by regression.
-      ic <- 222 - seq(1, npts)
+      ic <- 222 - seq(1, np1)
       yx_mat[1:np1, 'y'] <- ginv[ic]
       yx_mat[1:np1, 'x1'] <- 1.0
       yx_mat[1:np1, 'x2'] <- bedf[ic]
@@ -439,11 +439,11 @@ print(pval)
 # c
 # c clevel is level for test.
 # c npts is number of points for local approximation (probably 9).
-# c bedf contains quantiles of numerical distribution for specified.
+# c bedf contains quantiles of numerical distribution for specified
 # c value of b or values of b and d.
 # c ginv contains quantiles of approximating chi-squared distribution.
 # c
-fpcrit <- function(npts = 9, iq, clevel, value, probs, bedf, ginv) {
+fpcrit <- function(npts = 9, iq, clevel, probs, bedf, ginv) {
   
   # nomax <- 25
   # nvmax <- 3
@@ -453,19 +453,22 @@ fpcrit <- function(npts = 9, iq, clevel, value, probs, bedf, ginv) {
   ptiny <- 0.0001
   pbig <- 0.9999
   if (clevel < ptiny) {
-    ccrit = bedf[221]
+    ccrit <- bedf[221]
     return(ccrit)
   }
   if (clevel > pbig) {
-    ccrit = bedf[221]
+    ccrit <- bedf[221]
     return(ccrit)
   }
   
   
-  # Find critical value closest to test statistic.
-  diff <- abs(stat - bedf)
+  # Find probability closest to test level. 
+  cquant <- 1.0 - clevel
+  diff <- abs(cquant - probs)
   imin <- which.min(diff)[1]
   diffm <- diff[imin]
+  
+  gcq <- qchisq(cquant, df = ndf) 
   
   nph <- npts/2
   nptop <- 221 - nph
@@ -481,13 +484,12 @@ fpcrit <- function(npts = 9, iq, clevel, value, probs, bedf, ginv) {
   if (imin > nph & imin < nptop) {
     # imin is not too close to the end. Use np points around stat.
     
-    
     # Populate the dataset for interpolation by regression.
     ic <- imin - nph - 1 + seq(1, npts)
-    yx_mat[, 'y'] <- ginv[ic]
+    yx_mat[, 'y'] <- bedf[ic]
     yx_mat[, 'x1'] <- 1.0
-    yx_mat[, 'x2'] <- bedf[ic]
-    yx_mat[, 'x3'] <- bedf[ic]^2
+    yx_mat[, 'x2'] <- ginv[ic]
+    yx_mat[, 'x3'] <- ginv[ic]^2
     
   } else {
     # imin is close to one of the ends. Use points from imin +/- nph to end.
@@ -499,10 +501,10 @@ fpcrit <- function(npts = 9, iq, clevel, value, probs, bedf, ginv) {
       
       # Populate the dataset for interpolation by regression.
       ic <- seq(1, np1)
-      yx_mat[1:np1, 'y'] <- ginv[ic]
+      yx_mat[1:np1, 'y'] <- bedf[ic]
       yx_mat[1:np1, 'x1'] <- 1.0
-      yx_mat[1:np1, 'x2'] <- bedf[ic]
-      yx_mat[1:np1, 'x3'] <- bedf[ic]^2
+      yx_mat[1:np1, 'x2'] <- ginv[ic]
+      yx_mat[1:np1, 'x3'] <- ginv[ic]^2
       
     } else { 
       
@@ -510,30 +512,150 @@ fpcrit <- function(npts = 9, iq, clevel, value, probs, bedf, ginv) {
       np1 <- max(np1, 5)
       
       # Populate the dataset for interpolation by regression.
-      ic <- 222 - seq(1, npts)
-      yx_mat[1:np1, 'y'] <- ginv[ic]
+      ic <- 222 - seq(1, np1)
+      yx_mat[1:np1, 'y'] <- bedf[ic]
       yx_mat[1:np1, 'x1'] <- 1.0
-      yx_mat[1:np1, 'x2'] <- bedf[ic]
-      yx_mat[1:np1, 'x3'] <- bedf[ic]^2
+      yx_mat[1:np1, 'x2'] <- ginv[ic]
+      yx_mat[1:np1, 'x3'] <- ginv[ic]^2
       
     }
     
   }
   
-  # Run regression and obtain p-value. 
+  # Run regression and obtain critical value. 
   lm_olsqc <- lm(formula = y ~ x1 + x2 + x3 - 1, data = yx_mat)
   
-  crfit <- sum(lm_olsqc$coefficients*stat^seq(0,2))
-  crfit <- max(crfit, 10^(-6))
-  
-  pval <- pchisq(crfit, df = ndf) 
-  pval <- 1.0 - pval
+  ccrit <- sum(lm_olsqc$coefficients*gcq^seq(0,2))
   
   return(ccrit)
 }
 
-ccrit <- fpcrit(npts = 9, iq, stat, probs, bedf, ginv)
 
+
+ccrit <- fpcrit(npts = 9, iq, clevel = 0.05, probs, bedf, ginv)
+print(ccrit)
+
+for (clevel_i in c(0.01, 0.05, 0.10)) {
+  ccrit <- fpcrit(npts = 9, iq, clevel = clevel_i, probs, bedf, ginv)
+  print(ccrit)
+  
+}
+
+
+
+##################################################
+# Main function for calculating either critical 
+# values or p-values
+# Includes preliminary calculations. 
+##################################################
+
+fracdist_values <- function(iq, iscon, dir_name, bb, stat, 
+                            ipc = TRUE, clevel = c(0.01, 0.05, 0.10)) {
+  
+  # Obtain relevant table of statistics.
+  frtab <- get_fracdist_tab(iq, iscon, dir_name)
+  bval <- unique(frtab[, 'bbb'])
+  bval <- bval[order(bval)]
+  probs <- unique(frtab[, 'probs'])
+  probs <- probs[order(probs)]
+  
+  # Calculate the approximate CDF for this particular value of b.
+  nb <- 31
+  np <- 221
+  bedf <- rep(NA, np)
+  for (i in 1:np) {
+    
+    prob_i <- probs[i]
+    estcrit <- frtab[frtab[, 'probs'] == prob_i, 'xndf']
+    
+    bedf[i] <- blocal(nb, bb, estcrit, bval)
+    
+  }
+  
+  # Obtain inverse CDF of the Chi-squared distribution.
+  ginv <- qchisq(probs, df = iq^2) 
+  # This is the dependent variable in the interpolation regressions. 
+  
+  # Perform required calculation.
+  if (ipc == TRUE) {
+    
+    # Calculate p-values. 
+    outval <- fpval(npts = 9, iq, stat, probs, bedf, ginv)
+    
+  } else {
+    
+    # Calculate critical values. 
+    
+    # Might specify a list of critical values. 
+    outval <- rep(NA, length(clevel))
+    for (i in 1:length(clevel)) {
+      clevel_i <- clevel[i]
+      outval[i] <- fpcrit(npts = 9, iq, clevel = clevel_i, probs, bedf, ginv)
+      
+    }
+    
+  }
+  
+  return(outval)
+}
+
+
+##################################################
+# Testing
+##################################################
+
+
+
+# Testing critical values.
+
+
+# With precalculated values from given bb and iq. 
+# ccrit <- fpcrit(npts = 9, iq, clevel = 0.05, probs, bedf, ginv)
+# print(ccrit)
+# 
+# for (clevel_i in c(0.01, 0.05, 0.10)) {
+#   ccrit <- fpcrit(npts = 9, iq, clevel = clevel_i, probs, bedf, ginv)
+#   print(ccrit)
+# }
+
+fracdist_out <- fracdist_values(iq, iscon, dir_name, bb, stat, 
+                                ipc = FALSE, clevel = 0.05)
+print(fracdist_out)
+
+fracdist_out <- fracdist_values(iq, iscon, dir_name, bb, stat, 
+                                ipc = FALSE)
+print(fracdist_out)
+
+
+# Testing p-values.
+
+# Using function specifically for p-values:
+pval <- fracdist_pvalues(iq = 1, iscon = 0, dir_name = data_dir, 
+                         bb = 0.73, stat = 3.84)
+print(pval)
+
+pval <- fracdist_pvalues(iq = 12, iscon = 0, dir_name = data_dir, 
+                         bb = 0.73, stat = 84)
+print(pval)
+
+
+
+fracdist_out <- fracdist_values(iq = 1, iscon = 0, dir_name = data_dir, 
+                                bb = 0.73, stat = 3.84)
+print(fracdist_out)
+
+fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
+                                bb = 0.73, stat = 3.84)
+print(fracdist_out)
+
+fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
+                                bb = 0.73, stat = 84)
+print(fracdist_out)
+# Fail: Gives p-value for 3.84. Should be 1.00. 
+
+fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
+                                bb = 0.73, stat = 184)
+print(fracdist_out)
 
 
 

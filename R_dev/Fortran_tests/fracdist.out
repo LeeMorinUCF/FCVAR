@@ -4,3 +4,8 @@ no constant  q  2  b 0.5100  stat      3.8400  P value 0.4208
 no constant  q  3  b 0.5100  stat      3.8400  P value 0.9188
 no constant  q 12  b 0.5100  stat      3.8400  P value 1.0000
 no constant  q  1  b 0.7300  stat      3.8400  P value 0.0461
+no constant  q  1  b 0.7300  level 0.0100  critical value   6.4588
+no constant  q  1  b 0.7300  level 0.0500  critical value   3.7066
+no constant  q  1  b 0.7300  level 0.1000  critical value   2.5927
+no constant  q 12  b 0.7300  stat     84.0000  P value 1.0000
+no constant  q 12  b 0.7300  stat    184.0000  P value 0.6573
