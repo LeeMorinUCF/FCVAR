@@ -89,7 +89,7 @@ c
             else
               write(6,125) clevel, ccrit
  125          format(' For test at level ', f5.3,
-     &          ', critical value is', f7.1)           
+     &          ', critical value is', f7.1)
             end if
             if (iscon.eq.0) then
               write(13,114) iq, bb, clevel, ccrit
