@@ -2,7 +2,7 @@
 ##################################################
 # 
 # Fractionally Cointegrated VAR Model
-# Tables for Critical Values and P-values
+# Functions for Critical Values and P-values
 # 
 # Lealand Morin, Ph.D.
 # Assistant Professor
@@ -14,9 +14,8 @@
 # 
 ##################################################
 # 
-# fracdist_tables.R extracts tables for fracdist 
-#   critial values and p-values and organizes them 
-#   in a form suitable for use in R. 
+# fracdist_lib.R calculates critial values and p-values 
+#   for rank tests in the FCVAR model. 
 # 
 # Dependencies:
 #   None.
@@ -131,7 +130,7 @@ tail(frtab)
 # and quantiles for all values of the fractional 
 # integration parameter for a particular rank and 
 # soecification of constant. 
-get_fracdist_tab <- function(iq, iscon, dir_name) {
+get_fracdist_tab <- function(iq, iscon, dir_name, file_ext = 'txt') {
   
   # Determine required file name. 
   
@@ -147,37 +146,51 @@ get_fracdist_tab <- function(iq, iscon, dir_name) {
   dq <- substr(dq, nchar(dq) - 1, nchar(dq))
   
   
-  in_file_name <- sprintf('%s/%s%s.txt', dir_name, dfirst, dq)
-  
-  # Initialize matrix and open connection.
-  frtab <- data.frame(bbb = numeric(221*31), 
-                      probs = numeric(221*31), 
-                      xndf = numeric(221*31))
-  
-  frtab_lines <- readLines(con = in_file_name)
-  lines_read <- 0
-  
-  # Loop on fractional integration parameter
-  # to collect table from separate pieces.
-  for (ib in 1:31) {
+  if (file_ext == 'txt') {
     
-    # Read the value of b.
-    bbb_str <- frtab_lines[lines_read + 1]
-    lines_read <- lines_read + 1
-    bbb <- as.numeric(substr(bbb_str, 6, 9))
+    # Load original tables from Fortran version.
     
-    # Read the probabilities and quantiles.
-    frtab_sub <- data.frame(bbb = rep(bbb, 221), 
-                            probs = numeric(221), 
-                            xndf = numeric(221))
+    in_file_name <- sprintf('%s/%s%s.txt', dir_name, dfirst, dq)
     
-    frtab_lines_sub <- frtab_lines[seq(lines_read + 1, lines_read + 221)]
-    lines_read <- lines_read + 221
-    frtab_sub[, 'probs'] <- as.numeric(substr(frtab_lines_sub, 1, 6))
-    frtab_sub[, 'xndf'] <- as.numeric(substr(frtab_lines_sub, 9, 25))
+    # Initialize matrix and open connection.
+    frtab <- data.frame(bbb = numeric(221*31), 
+                        probs = numeric(221*31), 
+                        xndf = numeric(221*31))
     
-    # Append to the full table. 
-    frtab[seq((ib - 1)*221 + 1, ib*221), ] <- frtab_sub
+    frtab_lines <- readLines(con = in_file_name)
+    lines_read <- 0
+    
+    # Loop on fractional integration parameter
+    # to collect table from separate pieces.
+    for (ib in 1:31) {
+      
+      # Read the value of b.
+      bbb_str <- frtab_lines[lines_read + 1]
+      lines_read <- lines_read + 1
+      bbb <- as.numeric(substr(bbb_str, 6, 9))
+      
+      # Read the probabilities and quantiles.
+      frtab_sub <- data.frame(bbb = rep(bbb, 221), 
+                              probs = numeric(221), 
+                              xndf = numeric(221))
+      
+      frtab_lines_sub <- frtab_lines[seq(lines_read + 1, lines_read + 221)]
+      lines_read <- lines_read + 221
+      frtab_sub[, 'probs'] <- as.numeric(substr(frtab_lines_sub, 1, 6))
+      frtab_sub[, 'xndf'] <- as.numeric(substr(frtab_lines_sub, 9, 25))
+      
+      # Append to the full table. 
+      frtab[seq((ib - 1)*221 + 1, ib*221), ] <- frtab_sub
+      
+    } else if (file_ext == 'RData') {
+      
+      # Load compressed files for R.
+      in_file_name <- sprintf('%s/%s%s.RData', dir_name, dfirst, dq)
+      check_frtab <- get(load(file = in_file_name))
+      
+    } else {
+      stop('File extension not supported.')
+    }
     
   }
   
@@ -201,6 +214,10 @@ tail(frtab)
 # blocal <- function(nb, bb, estcrit, bval)
 
 blocal <- function(nb, bb, estcrit, bval) {
+  
+  if (bb < 0.51 | bb > 2.0) {
+    stop(sprintf('Specified value of b = %f is out of range 0.51 to 2.0.', bb))
+  }
   
   # Weights on neighboring quantiles are based on trapezoidal kernel. 
   weight <- 1.0 - 5.0*abs(bval - bb)
