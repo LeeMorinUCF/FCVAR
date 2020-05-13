@@ -150,7 +150,8 @@ summ_ml_1
 
 olsqc_out <- .Fortran("olsqc",
                       nobs = as.integer(num_obs),
-                      nomax = as.integer(k),
+                      # nomax = as.integer(k),
+                      nomax = as.integer(num_obs),
                       nvar = as.integer(k),
                       nvmax = as.integer(k),
                       # i1 = as.integer(0),
@@ -189,10 +190,11 @@ sqrt(olsqc_out$ssr/(olsqc_out$nobs - olsqc_out$nvar))
 summ_ml_1$sigma
 sqrt(olsqc_out$ssr/(olsqc_out$nobs - olsqc_out$nvar)) /
   summ_ml_1$sigma
-
+# Now it does.
 
 olsqc_out$beta # Doesn't match
 lm_1$coefficients
+# Now it does.
 
 # But it does match the calculated xpxi and xpy:
 olsqc_out$beta
@@ -241,12 +243,13 @@ summary(abs(olsqc_out$yvect - y))
 summary(olsqc_out$resid)
 summary(lm_1$residuals)
 summary(olsqc_out$resid - lm_1$residuals)
-
+# But now they match up to 14 decimal places.
 
 resid_check <- olsqc_out$yvect - olsqc_out$xmat %*% olsqc_out$beta
 summary(resid_check)
 # Not a match.
 # Residuals don't follow from the data and estimates.
+# At least before. Now they match.
 
 # Compare with SSR:
 sum(olsqc_out$resid^2)
@@ -278,7 +281,8 @@ t(x_mat) %*% y
 
 olsqc_out <- .Fortran("olsqc",
                       nobs = as.integer(num_obs),
-                      nomax = as.integer(k),
+                      # nomax = as.integer(k),
+                      nomax = as.integer(num_obs),
                       nvar = as.integer(k),
                       nvmax = as.integer(k),
                       # i1 = as.integer(0),
@@ -344,7 +348,8 @@ for (combo_num in 1:nrow(results)) {
   # Call the Fortran subroutine.
   olsqc_test <- .Fortran("olsqc",
                         nobs = as.integer(num_obs),
-                        nomax = as.integer(k),
+                        # nomax = as.integer(k),
+                        nomax = as.integer(num_obs),
                         nvar = as.integer(k),
                         nvmax = as.integer(k),
                         # i1 = as.integer(0),
@@ -355,13 +360,14 @@ for (combo_num in 1:nrow(results)) {
                         # xpy = numeric(k),
                         # xpxi = matrix(0, nrow = k, ncol = k),
                         xpxi = as.matrix(xpxi),
-                        # xmat = as.matrix(x_mat),
+                        xmat = as.matrix(x_mat),
                         # xmat = as.matrix(t(x_mat)),
                         # xmat = as.numeric(x_mat),
                         # xmat = as.numeric(t(x_mat)),
                         # xmat = as.numeric(matrix(x_mat, nrow = num_obs*k, byrow = TRUE)),
-                        xmat = as.numeric(matrix(t(x_mat), nrow = num_obs*k, byrow = TRUE)),
-                        yvect = as.numeric(y),
+                        # xmat = as.numeric(matrix(t(x_mat), nrow = num_obs*k, byrow = TRUE)),
+                        yvect = matrix(0, nrow = k, ncol = 1),
+                        # yvect = as.numeric(y),
                         resid = matrix(0, nrow = num_obs, ncol = 1))
 
 
@@ -386,7 +392,8 @@ sum(!(rowSums(results[, diff_cols]) == 0))
 sum(!(rowSums(abs(results[, diff_cols])) == 0))
 
 # Any incorrect:
-results[!(rowSums(abs(results[, diff_cols])) == 0), ]
+# results[!(rowSums(abs(results[, diff_cols])) == 0), ]
+results[rowSums(abs(results[, diff_cols])) > 10^(-20), ]
 
 # All correct:
 # results[(rowSums(abs(results[, diff_cols])) == 0), ]
