@@ -180,6 +180,109 @@ summary(check_frtab)
 # get_fracdist_tab(iq, iscon, dir_name, file_ext = 'txt')
 
 
+
+##################################################
+# Generate Test Cases
+##################################################
+
+# Set lists of input variables.
+iscon_list <- c(0, 1)
+iq_list <- seq(12)
+clevel_list <- c(0.10, 0.05, 0.01)
+num_bb <- 10
+num_stat <- 10
+set.seed(42)
+bb_list <- runif(num_bb, min = 0.50, max = 2.0)
+stat_inv_list <- runif(num_stat, min = 0.80, max = 1.0)
+
+
+# Create two tables, one for each function.
+
+
+# Test p-values for a variety of values of the statistic.
+test_fpval <- expand.grid(bb = bb_list, 
+                          iscon = iscon_list, 
+                          stat = rep(NA, num_stat), 
+                          iq = iq_list)
+# Draw test statistic values from the corresponding chi-squared distribution. 
+iq_length <- 2*num_bb*num_stat
+for (iq_num in 1:length(iq_list)) {
+  
+  iq <- iq_list[iq_num]
+  row_sel <- seq((iq_num - 1)*iq_length + 1, iq_num*iq_length)
+  test_fpval[row_sel, 'stat'] <- qchisq(p = rep(stat_inv_list, 2*num_bb), 
+                                        df = iq^2)
+  
+}
+# Reorder the columns. 
+test_fpval <- test_fpval[, c('iscon', 'iq', 'bb', 'stat')]
+summary(test_fpval)
+head(test_fpval)
+tail(test_fpval)
+
+
+# Test critical values for conventional significance levels. 
+test_fcval <- expand.grid(bb = bb_list, 
+                          iscon = iscon_list, 
+                          clevel = clevel_list, 
+                          iq = iq_list)
+test_fcval <- test_fcval[, c('iscon', 'iq', 'bb', 'clevel')]
+# test_fcval <- test_fcval[order(test_fcval$), ]
+summary(test_fcval)
+head(test_fcval)
+tail(test_fcval)
+
+
+# Save the files in fixed-width format. 
+out_file_name <- 'test_fpval.txt'
+out_file_name <- sprintf('%s/%s', out_dir, out_file_name)
+cat(sprintf('%s\n', paste(colnames(test_fpval), collapse = ' ')), 
+    file = out_file_name)
+for (line in 1:nrow(test_fpval)) {
+  
+  cat(sprintf('%d ', test_fpval[line, 'iscon']), 
+      file = out_file_name, append = TRUE)
+  iq <- test_fpval[line, 'iq']
+  if (iq >= 10) {
+    cat(sprintf('%d ', iq), 
+        file = out_file_name, append = TRUE)
+  } else {
+    cat(sprintf(' %d ', iq), 
+        file = out_file_name, append = TRUE)
+  }
+  cat(sprintf('%5.3f ', test_fpval[line, 'bb']), 
+      file = out_file_name, append = TRUE)
+  cat(sprintf('%8.4f\n', test_fpval[line, 'stat']), 
+      file = out_file_name, append = TRUE)
+  
+}
+
+
+# Save the files in fixed-width format. 
+out_file_name <- 'test_fcval.txt'
+out_file_name <- sprintf('%s/%s', out_dir, out_file_name)
+cat(sprintf('%s\n', paste(colnames(test_fcval), collapse = ' ')), 
+    file = out_file_name)
+for (line in 1:nrow(test_fcval)) {
+  
+  cat(sprintf('%d ', test_fcval[line, 'iscon']), 
+      file = out_file_name, append = TRUE)
+  iq <- test_fcval[line, 'iq']
+  if (iq >= 10) {
+    cat(sprintf('%d ', iq), 
+        file = out_file_name, append = TRUE)
+  } else {
+    cat(sprintf(' %d ', iq), 
+        file = out_file_name, append = TRUE)
+  }
+  cat(sprintf('%5.3f ', test_fcval[line, 'bb']), 
+      file = out_file_name, append = TRUE)
+  cat(sprintf('%4.2f\n', test_fcval[line, 'clevel']), 
+      file = out_file_name, append = TRUE)
+  
+}
+
+
 ##################################################
 # End
 ##################################################

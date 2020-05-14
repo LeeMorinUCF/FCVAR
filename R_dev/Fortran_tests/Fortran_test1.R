@@ -5,6 +5,10 @@
 #
 # Calling Fortran subroutines in R.
 #
+# Installed a version of gofortran called "TDM-GCC"
+# following a tutorial here:
+# http://fortranhelp.blogspot.com/2010/09/i-have-just-installed-gfortran-on.html
+#
 ##################################################
 
 
