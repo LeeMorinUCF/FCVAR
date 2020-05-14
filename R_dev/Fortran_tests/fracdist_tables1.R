@@ -234,6 +234,8 @@ tail(test_fcval)
 
 
 # Save the files in fixed-width format. 
+# Yes, I know this is slow but I want to control the formatting
+# the way I would read it in Fortran. 
 out_file_name <- 'test_fpval.txt'
 out_file_name <- sprintf('%s/%s', out_dir, out_file_name)
 cat(sprintf('%s\n', paste(colnames(test_fpval), collapse = ' ')), 
