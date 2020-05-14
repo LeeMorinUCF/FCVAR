@@ -6,8 +6,7 @@ c program to compute P values or critical values for tests of
 c fractional unit roots and cointegration.
 c Version 1 (May, 14 2020) that only tests file IO.
 c Copyright (c) Lealand Morin, 2020
-c
-c Need to put declaration statements before other commands.
+c.
       character*16 pval_header
       character*18 cval_header
 c
@@ -23,7 +22,7 @@ c
       stop
  334  continue
 c
-c Open file to read test cases for p-values.
+c Open file to read test cases for critical values.
 c
       open(unit=14,file='test_fcval.txt',status='OLD',err=335)
       go to 336
@@ -36,9 +35,9 @@ c
       open (unit=13,file='test_fpval.out')
       open (unit=15,file='test_fcval.out')
 c
-c Extract parameters for test case in each line.
-c Evaluate p-values.
-c Write result to output file.
+c Read parameters for test case in each line.
+c Calculate p-values.
+c Write parameters and result to output file.
 c
       write(6,100) 'Evaluating test cases for p-values'
  100  format(/,A34,/)
@@ -60,9 +59,9 @@ c
       write(6,103) 'See output in file test_fpval.out'
  103  format(/,A33,/)
 c
-c Extract parameters for test case in each line.
-c Evaluate critical values.
-c Write result to output file.
+c Read parameters for test case in each line.
+c Calculate critical values.
+c Write parameters and result to output file.
 c
       write(6,104) 'Evaluating test cases for critical values'
   104 format(/,A41,/)
@@ -77,7 +76,6 @@ c
       do ip=1,ncval
         read(14,203) iscon, iq, bb, clevel
   203   format(i1,1x,i2,1x,f5.3,1x,f4.2)
-c        ccrit = 123.12345678
         call frval(iq,isave,ipc,iscon,bb,stat,pval,clevel,ccrit)
         write(15,106) iscon, iq, bb, clevel, ccrit
   106   format(i1,1x,i2,1x,f5.3,1x,f4.2,1x,f8.4)
