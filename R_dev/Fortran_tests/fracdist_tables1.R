@@ -2,7 +2,7 @@
 ##################################################
 # 
 # Fractionally Cointegrated VAR Model
-# Tables for Critical Values and P-values
+# Test Cases for Critical Values and P-values
 # 
 # Lealand Morin, Ph.D.
 # Assistant Professor
@@ -14,12 +14,14 @@
 # 
 ##################################################
 # 
-# fracdist_tables.R extracts tables for fracdist 
+# fracdist_tables.R creates tables for fracdist 
 #   critial values and p-values and organizes them 
-#   in a form suitable for use in R. 
+#   in a form suitable for evaluation in Fortran. 
 # 
 # Dependencies:
 #   None.
+# 
+# TODO: Revise output file headings for csv file format. 
 # 
 ##################################################
 

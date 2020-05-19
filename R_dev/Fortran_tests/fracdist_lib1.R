@@ -27,103 +27,103 @@
 # Preparing the Workspace
 ##################################################
 
-# Clear workspace.
-rm(list=ls(all=TRUE))
-
-# Set working directory.
-wd_path <- '~/Research/FCVAR'
-
-# Set data directory.
-data_dir <- '~/Research/FCVAR/fracdist/mn-files'
-
-setwd(wd_path)
+# # Clear workspace.
+# rm(list=ls(all=TRUE))
+# 
+# # Set working directory.
+# wd_path <- '~/Research/FCVAR'
+# 
+# # Set data directory.
+# data_dir <- '~/Research/FCVAR/fracdist/mn-files'
+# 
+# setwd(wd_path)
 
 
 ##################################################
 # Load Packages
 ##################################################
 
-# Generate filename.
-iq <- 1
-iscon <- 0
-bval <- 0.51
-
-# subroutine readdata(iq,iscon,probs,bbb,xndf)
-# c This routine reads data from whichever input file is appropriate
-# c for the no-constant case.
-# c If iscon=0, files are frmapp01.txt through frmapp12.txt
-# c If iscon.ne.0, files are frcapp01.txt through frcapp12.txt
-
-if (iscon == 0) {
-  dfirst = 'frmapp'
-} else {
-  dfirst = 'frcapp'
-}
-
-dq <- sprintf('00%d', iq)
-dq <- substr(dq, nchar(dq) - 1, nchar(dq))
-
-
-in_file_name <- sprintf('%s/%s%s.txt', data_dir, dfirst, dq)
-
-
-# frtab <- read.table(in_file_name)
-# read.fortran()
-
-
-# Let's go old school
-# do ib=1,31
-# read(2,200) bbb(ib)
-# 200    format(4x,f5.2)
-# do j=1,221
-# read(2,201) probs(j), xndf(j,ib)
-# 201      format(f6.4,3x,f16.12)
-# end do
-# end do
-
-frtab <- data.frame(bbb = numeric(221*31), 
-                    probs = numeric(221*31), 
-                    xndf = numeric(221*31))
-
-frtab_lines <- readLines(con = in_file_name)
-lines_read <- 0
-
-# ib <- 1
-# ib <- 2
-for (ib in 1:31) {
-  
-  print(sprintf('Reading for ib = %d.', ib))
-  
-  # Read the value of b.
-  # bbb_str <- readLines(con = in_file_name, n = 1)
-  bbb_str <- frtab_lines[lines_read + 1]
-  lines_read <- lines_read + 1
-  bbb <- as.numeric(substr(bbb_str, 6, 9))
-  
-  # Read the probabilities and quantiles.
-  frtab_sub <- data.frame(bbb = rep(bbb, 221), 
-                          probs = numeric(221), 
-                          xndf = numeric(221))
-  
-  frtab_lines_sub <- frtab_lines[seq(lines_read + 1, lines_read + 221)]
-  lines_read <- lines_read + 221
-  frtab_sub[, 'probs'] <- as.numeric(substr(frtab_lines_sub, 1, 6))
-  frtab_sub[, 'xndf'] <- as.numeric(substr(frtab_lines_sub, 9, 25))
-  
-  frtab[seq((ib - 1)*221 + 1, ib*221), ] <- frtab_sub
-  
-  
-  print(sprintf('lines_read = %d.', lines_read))
-  
-}
-
-
-
-
-summary(frtab)
-head(frtab)
-frtab[217:223, ]
-tail(frtab)
+# # Generate filename.
+# iq <- 1
+# iscon <- 0
+# bval <- 0.51
+# 
+# # subroutine readdata(iq,iscon,probs,bbb,xndf)
+# # c This routine reads data from whichever input file is appropriate
+# # c for the no-constant case.
+# # c If iscon=0, files are frmapp01.txt through frmapp12.txt
+# # c If iscon.ne.0, files are frcapp01.txt through frcapp12.txt
+# 
+# if (iscon == 0) {
+#   dfirst = 'frmapp'
+# } else {
+#   dfirst = 'frcapp'
+# }
+# 
+# dq <- sprintf('00%d', iq)
+# dq <- substr(dq, nchar(dq) - 1, nchar(dq))
+# 
+# 
+# in_file_name <- sprintf('%s/%s%s.txt', data_dir, dfirst, dq)
+# 
+# 
+# # frtab <- read.table(in_file_name)
+# # read.fortran()
+# 
+# 
+# # Let's go old school
+# # do ib=1,31
+# # read(2,200) bbb(ib)
+# # 200    format(4x,f5.2)
+# # do j=1,221
+# # read(2,201) probs(j), xndf(j,ib)
+# # 201      format(f6.4,3x,f16.12)
+# # end do
+# # end do
+# 
+# frtab <- data.frame(bbb = numeric(221*31), 
+#                     probs = numeric(221*31), 
+#                     xndf = numeric(221*31))
+# 
+# frtab_lines <- readLines(con = in_file_name)
+# lines_read <- 0
+# 
+# # ib <- 1
+# # ib <- 2
+# for (ib in 1:31) {
+#   
+#   print(sprintf('Reading for ib = %d.', ib))
+#   
+#   # Read the value of b.
+#   # bbb_str <- readLines(con = in_file_name, n = 1)
+#   bbb_str <- frtab_lines[lines_read + 1]
+#   lines_read <- lines_read + 1
+#   bbb <- as.numeric(substr(bbb_str, 6, 9))
+#   
+#   # Read the probabilities and quantiles.
+#   frtab_sub <- data.frame(bbb = rep(bbb, 221), 
+#                           probs = numeric(221), 
+#                           xndf = numeric(221))
+#   
+#   frtab_lines_sub <- frtab_lines[seq(lines_read + 1, lines_read + 221)]
+#   lines_read <- lines_read + 221
+#   frtab_sub[, 'probs'] <- as.numeric(substr(frtab_lines_sub, 1, 6))
+#   frtab_sub[, 'xndf'] <- as.numeric(substr(frtab_lines_sub, 9, 25))
+#   
+#   frtab[seq((ib - 1)*221 + 1, ib*221), ] <- frtab_sub
+#   
+#   
+#   print(sprintf('lines_read = %d.', lines_read))
+#   
+# }
+# 
+# 
+# 
+# 
+# summary(frtab)
+# head(frtab)
+# frtab[217:223, ]
+# tail(frtab)
 
 
 # Create a function to assemble a table of probabilities 
@@ -182,16 +182,16 @@ get_fracdist_tab <- function(iq, iscon, dir_name, file_ext = 'txt') {
       # Append to the full table. 
       frtab[seq((ib - 1)*221 + 1, ib*221), ] <- frtab_sub
       
-    } else if (file_ext == 'RData') {
-      
-      # Load compressed files for R.
-      in_file_name <- sprintf('%s/%s%s.RData', dir_name, dfirst, dq)
-      check_frtab <- get(load(file = in_file_name))
-      
-    } else {
-      stop('File extension not supported.')
     }
     
+  } else if (file_ext == 'RData') {
+    
+    # Load compressed files for R.
+    in_file_name <- sprintf('%s/%s%s.RData', dir_name, dfirst, dq)
+    check_frtab <- get(load(file = in_file_name))
+    
+  } else {
+    stop('File extension not supported.')
   }
   
   
@@ -200,12 +200,12 @@ get_fracdist_tab <- function(iq, iscon, dir_name, file_ext = 'txt') {
 
 
 
-frtab <- get_fracdist_tab(iq = 1, iscon = 0, dir_name = data_dir)
-
-summary(frtab)
-head(frtab)
-frtab[217:223, ]
-tail(frtab)
+# frtab <- get_fracdist_tab(iq = 1, iscon = 0, dir_name = data_dir)
+# 
+# summary(frtab)
+# head(frtab)
+# frtab[217:223, ]
+# tail(frtab)
 
 ##################################################
 # Interpolate critical values local to chosen b.
@@ -263,35 +263,35 @@ blocal <- function(nb, bb, estcrit, bval) {
 #   call blocal(nb,bb,estcrit,bval,bedf(i))
 # end do
 
-nb <- 31
-np <- 221
-
-bval <- unique(frtab[, 'bbb'])
-bval <- bval[order(bval)]
-
-probs <- unique(frtab[, 'probs'])
-probs <- probs[order(probs)]
-
-bb <- 0.73
-
-bedf <- rep(NA, np)
-
-# ib <- 1
-for (i in 1:np) {
-  
-  # b_i <- bval[ib]
-  # estcrit <- frtab[frtab[, 'bbb'] == b_i, 'xndf']
-  
-  prob_i <- probs[i]
-  estcrit <- frtab[frtab[, 'probs'] == prob_i, 'xndf']
-  
-  bedf[i] <- blocal(nb, bb, estcrit, bval)
-  
-}
-
-# Obtain inverse CDF of the Chi-squared distribution.
-# gcinv(iq,np,probs,ginv)
-ginv <- qchisq(probs, df = iq^2) 
+# nb <- 31
+# np <- 221
+# 
+# bval <- unique(frtab[, 'bbb'])
+# bval <- bval[order(bval)]
+# 
+# probs <- unique(frtab[, 'probs'])
+# probs <- probs[order(probs)]
+# 
+# bb <- 0.73
+# 
+# bedf <- rep(NA, np)
+# 
+# # ib <- 1
+# for (i in 1:np) {
+#   
+#   # b_i <- bval[ib]
+#   # estcrit <- frtab[frtab[, 'bbb'] == b_i, 'xndf']
+#   
+#   prob_i <- probs[i]
+#   estcrit <- frtab[frtab[, 'probs'] == prob_i, 'xndf']
+#   
+#   bedf[i] <- blocal(nb, bb, estcrit, bval)
+#   
+# }
+# 
+# # Obtain inverse CDF of the Chi-squared distribution.
+# # gcinv(iq,np,probs,ginv)
+# ginv <- qchisq(probs, df = iq^2) 
 
 
 # Next, call the fuction to calculate p-values:
@@ -301,7 +301,7 @@ ginv <- qchisq(probs, df = iq^2)
 # Calculate p-values
 ##################################################
 
-stat <- 3.84
+# stat <- 3.84
 
 # c This routine calculates P values.
 # c
@@ -335,7 +335,8 @@ fpval <- function(npts = 9, iq, stat, probs, bedf, ginv) {
   imin <- which.min(diff)[1]
   diffm <- diff[imin]
   
-  nph <- npts/2
+  # nph <- npts/2 # Division by integer does floor. 
+  nph <- floor(npts/2)
   nptop <- 221 - nph
   
   
@@ -352,6 +353,24 @@ fpval <- function(npts = 9, iq, stat, probs, bedf, ginv) {
     
     # Populate the dataset for interpolation by regression.
     ic <- imin - nph - 1 + seq(1, npts)
+    
+    
+    # print('imin = ')
+    # print(imin)
+    # print('nph = ')
+    # print(nph)
+    # print('npts = ')
+    # print(npts)
+    # 
+    # np1 <- length(ic)
+    # 
+    # print('np1 = ')
+    # print(np1)
+    # print('ic = ')
+    # print(ic)
+    # print('ginv[ic] = ')
+    # print(ginv[ic])
+    
     yx_mat[, 'y'] <- ginv[ic]
     yx_mat[, 'x1'] <- 1.0
     yx_mat[, 'x2'] <- bedf[ic]
@@ -400,7 +419,7 @@ fpval <- function(npts = 9, iq, stat, probs, bedf, ginv) {
   return(pval)
 }
 
-pval <- fpval(npts = 9, iq, stat, probs, bedf, ginv)
+# pval <- fpval(npts = 9, iq, stat, probs, bedf, ginv)
 
 
 
@@ -442,9 +461,9 @@ fracdist_pvalues <- function(iq, iscon, dir_name, bb, stat) {
 }
 
 
-pval <- fracdist_pvalues(iq = 1, iscon = 0, dir_name = data_dir, 
-                         bb = 0.73, stat = 3.84)
-print(pval)
+# pval <- fracdist_pvalues(iq = 1, iscon = 0, dir_name = data_dir, 
+#                          bb = 0.73, stat = 3.84)
+# print(pval)
 
 
 ##################################################
@@ -549,14 +568,15 @@ fpcrit <- function(npts = 9, iq, clevel, probs, bedf, ginv) {
 
 
 
-ccrit <- fpcrit(npts = 9, iq, clevel = 0.05, probs, bedf, ginv)
-print(ccrit)
+# ccrit <- fpcrit(npts = 9, iq, clevel = 0.05, probs, bedf, ginv)
+# print(ccrit)
 
-for (clevel_i in c(0.01, 0.05, 0.10)) {
-  ccrit <- fpcrit(npts = 9, iq, clevel = clevel_i, probs, bedf, ginv)
-  print(ccrit)
-  
-}
+
+# for (clevel_i in c(0.01, 0.05, 0.10)) {
+#   ccrit <- fpcrit(npts = 9, iq, clevel = clevel_i, probs, bedf, ginv)
+#   print(ccrit)
+#   
+# }
 
 
 
@@ -635,44 +655,44 @@ fracdist_values <- function(iq, iscon, dir_name, bb, stat,
 #   print(ccrit)
 # }
 
-fracdist_out <- fracdist_values(iq, iscon, dir_name, bb, stat, 
-                                ipc = FALSE, clevel = 0.05)
-print(fracdist_out)
-
-fracdist_out <- fracdist_values(iq, iscon, dir_name, bb, stat, 
-                                ipc = FALSE)
-print(fracdist_out)
+# fracdist_out <- fracdist_values(iq, iscon, dir_name, bb, stat, 
+#                                 ipc = FALSE, clevel = 0.05)
+# print(fracdist_out)
+# 
+# fracdist_out <- fracdist_values(iq, iscon, dir_name, bb, stat, 
+#                                 ipc = FALSE)
+# print(fracdist_out)
 
 
 # Testing p-values.
 
-# Using function specifically for p-values:
-pval <- fracdist_pvalues(iq = 1, iscon = 0, dir_name = data_dir, 
-                         bb = 0.73, stat = 3.84)
-print(pval)
+# # Using function specifically for p-values:
+# pval <- fracdist_pvalues(iq = 1, iscon = 0, dir_name = data_dir, 
+#                          bb = 0.73, stat = 3.84)
+# print(pval)
+# 
+# pval <- fracdist_pvalues(iq = 12, iscon = 0, dir_name = data_dir, 
+#                          bb = 0.73, stat = 84)
+# print(pval)
 
-pval <- fracdist_pvalues(iq = 12, iscon = 0, dir_name = data_dir, 
-                         bb = 0.73, stat = 84)
-print(pval)
 
 
+# fracdist_out <- fracdist_values(iq = 1, iscon = 0, dir_name = data_dir, 
+#                                 bb = 0.73, stat = 3.84)
+# print(fracdist_out)
+# 
+# fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
+#                                 bb = 0.73, stat = 3.84)
+# print(fracdist_out)
+# 
+# fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
+#                                 bb = 0.73, stat = 84)
+# print(fracdist_out)
+# # Fail: Gives p-value for 3.84. Should be 1.00. 
 
-fracdist_out <- fracdist_values(iq = 1, iscon = 0, dir_name = data_dir, 
-                                bb = 0.73, stat = 3.84)
-print(fracdist_out)
-
-fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
-                                bb = 0.73, stat = 3.84)
-print(fracdist_out)
-
-fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
-                                bb = 0.73, stat = 84)
-print(fracdist_out)
-# Fail: Gives p-value for 3.84. Should be 1.00. 
-
-fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
-                                bb = 0.73, stat = 184)
-print(fracdist_out)
+# fracdist_out <- fracdist_values(iq = 12, iscon = 0, dir_name = data_dir, 
+#                                 bb = 0.73, stat = 184)
+# print(fracdist_out)
 
 
 
