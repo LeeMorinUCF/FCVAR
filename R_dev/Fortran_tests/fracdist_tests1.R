@@ -173,7 +173,9 @@ summary(round(test_fpval[, 'pval'], 3) -
 test_fcval[, 'cval_test'] <- NA
 
 # for (row_num in 1:10) {
-for (row_num in 1:nrow(test_fcval)) {
+# row_num <- which(is.na(test_fcval[, 'cval_test']))[1]
+for (row_num in which(is.na(test_fcval[, 'cval_test']))) {
+# for (row_num in 1:nrow(test_fcval)) {
   
   if(row_num %in% seq(0, nrow(test_fcval), by = 100)) {
     print(sprintf('Performing test case %d of %d.', row_num, nrow(test_fcval)))
@@ -205,11 +207,19 @@ all(test_fcval[, 'cval'] == round(test_fcval[, 'cval_test'], 4))
 
 plot(test_fcval[, 'cval'], 
      test_fcval[, 'cval_test'])
+hist(test_fcval[, 'cval_test'] - 
+     test_fcval[, 'cval'], breaks = 50, col = 'red')
+# There are really just a few outliers. 
 
-summary(floor(test_fcval[, 'cval']*10^2)/10^2 - 
-          round(test_fcval[, 'cval_test'], 2))
-summary(floor(test_fcval[, 'cval']*10)/10 - 
-          floor(test_fcval[, 'cval_test']*10)/10)
+quantile(test_fcval[, 'cval_test'] - 
+           test_fcval[, 'cval'], 
+         probs = c(seq(0, 0.05, by = 0.01), 
+                   seq(0.95, 1, by = 0.01)))
+
+# summary(floor(test_fcval[, 'cval']*10^2)/10^2 - 
+#           round(test_fcval[, 'cval_test'], 2))
+# summary(floor(test_fcval[, 'cval']*10)/10 - 
+#           floor(test_fcval[, 'cval_test']*10)/10)
 
 
 summary(test_fcval[, 'cval'] - round(test_fcval[, 'cval_test'], 4))
@@ -227,6 +237,8 @@ head(test_fcval[is.na(test_fcval[, 'cval_test']), ])
 tail(test_fcval[is.na(test_fcval[, 'cval_test']), ])
 # All cvals in the hundreds
 # All ranks 9 or greater. 
+
+which(is.na(test_fcval[, 'cval_test']))
 
 
 ##################################################
