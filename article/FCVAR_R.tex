@@ -636,6 +636,7 @@ The first of set of options is as follows.
 % 
 %\begin{lstlisting}[frame=single,caption={Initialization of local variables}, label = intl]
 % NOTE: Alignment is achieved by counting the number of characters, including spaces.
+% That is, this table looks ragged here but aligned in the document:
 \begin{Code}
 p               <- ncol(x1) 
 kmax            <- 3
@@ -805,9 +806,9 @@ Restricted constant:      No     Initial values:                              0
 Unestricted constant:     No     Level parameter:                           Yes
 --------------------------------------------------------------------------------
 Rank     d      b     Log-likelihood   LR statistic   P-value
- 0     0.643  0.643          440.040         25.454      ----
- 1     0.569  0.569          451.174          3.186      ----
- 2     0.576  0.576          452.707          0.120      ----
+ 0     0.643  0.643          440.040         25.454     0.043
+ 1     0.569  0.569          451.174          3.186     0.820
+ 2     0.576  0.576          452.707          0.120     0.947
  3     0.581  0.581          452.767           ----      ----
 --------------------------------------------------------------------------------
 \end{CodeOutput}

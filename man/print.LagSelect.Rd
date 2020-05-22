@@ -50,7 +50,6 @@ for each candidate lag order.
 
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},
-\code{\link{GetPvalues}()},
 \code{\link{LagSelect}()},
 \code{\link{RankTests}()},
 \code{\link{print.RankTests}()}
