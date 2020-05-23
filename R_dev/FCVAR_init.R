@@ -1,22 +1,22 @@
 ##################################################
-# 
+#
 # FCVAR Initialization Scratchpad
-# 
+#
 # Lealand Morin, Ph.D.
 # Assistant Professor
 # Department of Economics
 # College of Business Administration
 # University of Central Florida
-# 
+#
 # March 30, 2020
-# 
+#
 ##################################################
-# 
+#
 # A set of commands to initialize the FCVAR package
-# 
+#
 # Dependencies:
 #   None.
-# 
+#
 ##################################################
 
 
@@ -34,15 +34,15 @@ rm(list=ls(all=TRUE))
 library(devtools)
 # Loading required package: usethis
 # Warning messages:
-#   1: package 'devtools' was built under R version 3.5.3 
-#   2: package 'usethis' was built under R version 3.5.3 
+#   1: package 'devtools' was built under R version 3.5.3
+#   2: package 'usethis' was built under R version 3.5.3
 has_devel()
 # Your system is ready to build packages!
 
 
 
 ##################################################
-# Package initialization. 
+# Package initialization.
 ##################################################
 
 fcvar_dir <- '~/Research/FCVAR/GitRepo/FCVAR'
@@ -56,8 +56,8 @@ devtools::setup(path = fcvar_dir)
 # Error: 'setup' is not an exported object from 'namespace:devtools'
 setup(path = fcvar_dir)
 
-# devtools is no longer current. It was split into several pieces. 
-# There is a separate package for package setup. 
+# devtools is no longer current. It was split into several pieces.
+# There is a separate package for package setup.
 library(usethis)
 usethis::setup(path = fcvar_dir)
 # Does not exist. See below with create_package().
@@ -81,19 +81,19 @@ available('FCVAR')
 #   Not found.
 # Sentiment:???
 #   Warning message:
-#   package 'tidytext' was built under R version 3.5.3 
+#   package 'tidytext' was built under R version 3.5.3
 
-# This means we are G2G. 
+# This means we are G2G.
 
 # Ok now create the package.
 
 # New project 'FCVAR' is nested inside an existing project 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/', which is rarely a good idea.
 # Do you want to create anyway?
-#   
+#
 #   1: Absolutely not
 # 2: No
 # 3: Yes
-# 
+#
 # Selection: Y
 # Enter an item from the menu, or 0 to exit
 # Selection: Yes
@@ -126,11 +126,11 @@ available('FCVAR')
 # Next steps:
 # Edit field in the description
 # Create a function in the R folder.
-# Add roxygen comments before the function. 
+# Add roxygen comments before the function.
 
-# Use roxygen to build documentation. 
+# Use roxygen to build documentation.
 devtools::document()
-# Rinse and repeat. 
+# Rinse and repeat.
 
 
 # Set some folders to be ignored by R build.
@@ -160,17 +160,17 @@ usethis::use_vignette("FCVAR")
 # Generate a sketch of an article.
 usethis::use_article("FCVAR")
 # Overwrite pre-existing file 'vignettes/FCVAR.Rmd'?
-#   
+#
 #   1: Yeah
 # 2: Negative
 # 3: Not now
-# 
+#
 # Selection: 1
 # check Writing 'vignettes/FCVAR.Rmd'
 # dot Modify 'vignettes/FCVAR.Rmd'
 # check Adding '^vignettes/FCVAR\\.Rmd$' to '.Rbuildignore'
 
-# Underwhelming. Only creates a folder. 
+# Underwhelming. Only creates a folder.
 
 # Try to build:
 devtools::build_vignettes()
@@ -180,18 +180,18 @@ devtools::build_vignettes()
 
 
 # Iterations on R package.
-# load_all() is the key step in this "lather, rinse, repeat" 
+# load_all() is the key step in this "lather, rinse, repeat"
 # cycle of package development:
-#   
+#
 # 1.  Tweak a function definition.
-# 2. 
+# 2.
 load_all()
 # 3. Try out the change by running a small example or some tests.
 
 
 # Examples
 
-# Data for examples. 
+# Data for examples.
 votingJNP2014 <- read.csv('data_JNP2014.csv')
 colnames(votingJNP2014)
 # [1] "lib"    "pc"     "ir_can" "ir_us"  "un_can" "un_us"
@@ -200,27 +200,27 @@ colnames(votingJNP2014)[c(1, 3, 5)]
 x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 
 # Then run
-# usethis::use_data() 
+# usethis::use_data()
 usethis::use_data(votingJNP2014, votingJNP2014)
 # Warning: Saving duplicates only once: 'votingJNP2014'
 # check Creating 'data/'
 # check Saving 'votingJNP2014' to 'data/votingJNP2014.rda'
 
 # You should also make sure that the data has been optimally compressed:
-# Run 
-tools::checkRdaFiles('data/votingJNP2014.rda') 
+# Run
+tools::checkRdaFiles('data/votingJNP2014.rda')
 # size ASCII compress version
 # data/votingJNP2014.rda 9233 FALSE    bzip2       2
 # to determine the best compression for each file.
 # So, the best compression is 'bzip2', which is the default, so we're good.
 # The file is already quite small.
 
-# Otherwise: 
-# Re-run 
-usethis::use_data(votingJNP2014, votingJNP2014, compress = 'whatever') 
-# with compress set to that optimal value. 
-# If you've lost the code for recreating the files, you can use 
-tools::resaveRdaFiles() 
+# Otherwise:
+# Re-run
+usethis::use_data(votingJNP2014, votingJNP2014, compress = 'whatever')
+# with compress set to that optimal value.
+# If you've lost the code for recreating the files, you can use
+tools::resaveRdaFiles()
 # to re-save in place.
 
 
@@ -233,5 +233,36 @@ usethis::use_testthat()
 # dot Call `use_test()` to initialize a basic test file and open it for editing.
 
 
+# Dependencies.
+# Depends on the fracdist package on GitHUb.
+# Instructions from
+# https://stackoverflow.com/questions/30493388/create-an-r-package-that-depends-on-another-r-package-located-on-github
+#
+#
+# Package developer POV:
+#
+#   1) do:
+#
+#   devtools::use_package("jvamisc")
+#   devtools::document()
+# to add the dependency in the Imports field of your DESCRIPTION file.
+#
+# 2) manually add a field "Remotes:" in the DESCRIPTION file, specifying where on github R should look for the package:
+#
+#   #in DESCRIPTION
+#   Imports: ...,
+#     jvamisc,
+#     ...
+# Remotes: JVAdams/jvamisc
+
+# So, here we go:
+# devtools::use_package("fracdist")
+# Error: 'use_package' is not an exported object from 'namespace:devtools'
+# usethis::use_package('fracdist')
+# check Setting active project to 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR'
+# check Adding 'fracdist' to Imports field in DESCRIPTION
+# - Refer to functions with `fracdist::fun()`
+# Added to the bottom of DESCRIPTION:
+# Remotes: LeeMorinUCF/fracdist
 
 

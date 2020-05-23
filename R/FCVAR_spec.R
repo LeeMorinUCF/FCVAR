@@ -338,7 +338,7 @@ RankTests <- function(x, k, opt) {
   dHat   <- matrix(0, nrow = p+1, ncol = 1)
   LogL   <- matrix(0, nrow = p+1, ncol = 1)
   LRstat <- matrix(0, nrow = p+1, ncol = 1)
-  pv     <- matrix(0, nrow = p+1, ncol = 1)
+  pv     <- matrix(NA, nrow = p+1, ncol = 1)
 
   # Do not print FCVAR estimation for each rank in the loop.
   opt$print2screen <- 0
@@ -389,7 +389,7 @@ RankTests <- function(x, k, opt) {
     # (1) no deterministic terms, or
     # (2) there is only restricted constant and d=b, or
     # (3) there is only a level parameter and d=b.
-    if (TRUE & (
+    if (bHat[r+1] > 0 & bHat[r+1] < 2 & (
       (!opt$rConstant & !opt$unrConstant & !opt$levelParam) |
       (opt$rConstant  & !opt$unrConstant & opt$restrictDB) |
       (opt$levelParam & !opt$unrConstant & opt$restrictDB) )  ) {
@@ -409,19 +409,27 @@ RankTests <- function(x, k, opt) {
       # Testing fracdist version.
       # pval_1 <- fracdist::fracdist_values(iq = 1, iscon = 0, bb = 0.73, stat = 3.84)
 
+    } else {
+      warning(sprintf('P-values not calculated for the rank test with rank %d.\n', r),
+              'P-values are only calculated if:\n',
+              '1. there are no deterministic terms, or\n',
+              '2. there is only restricted constant and d = b, or\n',
+              '3. there is only a level parameter and d = b.\n')
     }
 
     # If automatic calls to P-value program have not been installed or
     # enabled, then p_val is empty. Set it to 999 so that it can have a
     # value for storage in the rankTestStats matrix below.
-    if(is.null(p_val)) {
-      p_val <- 999
-      # warning("P-values not calculated.\n",
-      #         "Refer to documentation to install software for computing P-values.")
-    }
+    # if(is.null(p_val)) {
+    #   p_val <- 999
+    #   # warning("P-values not calculated.\n",
+    #   #         "Refer to documentation to install software for computing P-values.")
+    # }
 
-    # Store P-values.
-    pv[r+1] <- p_val
+    # Store P-values, if calculated.
+    if(!is.null(p_val)) {
+      pv[r+1] <- p_val
+    }
 
   }
 
@@ -499,7 +507,8 @@ print.RankTests <- function(stats, k, p, T, opt) {
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf('Rank     d      b     Log-likelihood   LR statistic   P-value\n'))
   for (i in 1:p) {
-    if (stats$pv[i] != 999) {
+    # if (stats$pv[i] != 999) {
+    if (!is.na(stats$pv[i])) {
       cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f  %8.3f\n',
                   i-1, stats$dHat[i], stats$bHat[i], stats$LogL[i], stats$LRstat[i], stats$pv[i]))
     }

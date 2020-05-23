@@ -23,7 +23,8 @@ Description: A package for estimating the Fractionally Cointegrated
     Vector Autoregression (VAR) model. It includes functions for lag selection,
     cointegration rank selection and hypothesis testing. 
 Imports:
-    pracma
+    pracma,
+    fracdist
 URL: https://github.com/LeeMorinUCF/FCVAR
 BugReports: https://github.com/LeeMorinUCF/FCVAR/issues
 License: GPL-3
@@ -35,3 +36,4 @@ Suggests:
     rmarkdown,
     testthat
 VignetteBuilder: knitr
+Remotes: LeeMorinUCF/fracdist
