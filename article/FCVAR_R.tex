@@ -39,6 +39,11 @@
 %% - \title{} in title case
 %% - \Plaintitle{} without LaTeX markup (if any)
 %% - \Shorttitle{} with LaTeX markup (if any), used as running title
+% Version 1: Focus on R
+\title{The Fractionally Cointegrated Vector Autoregression Model in \proglang{R}}
+\Plaintitle{The Fractionally Cointegrated Vector Autoregression Model in R}
+\Shorttitle{FCVAR in \proglang{R}}
+% Version 2: It's available in both languages:
 \title{The Fractionally Cointegrated Vector Autoregression Model in \proglang{R}}
 \Plaintitle{The Fractionally Cointegrated Vector Autoregression Model in R}
 \Shorttitle{FCVAR in \proglang{R}}
@@ -48,14 +53,14 @@
 %% in case any normal people get past the title and want to know what this package does. 
 \Abstract{
   This article illustrates how to estimate 
-  the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}. 
+  the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}, based on a companion package in \proglang{Matlab}. 
   This model is used to detect equilibrium relationships between variables observed over time. 
   The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are interated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
   The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
   This allows for the detection of relationships with deviations that correct more slowly. 
   Existing software concentrates on either the CVAR alone, restricted to integer orders of integration, or 
-  on specific features of the variables, such as estimating the integration order or identifying whether a cointegrating relationship exists (not quite accurate: needs to be reworded before generalizing the gap in available software).
-  This software treats the time series as a sytem and estimates all parameters in a likelihood ratio framework and provides a flexible set of optins for conducting inference on many features of the cointegrating relationship. 
+  on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, bivariate anaysis or the focus on a single dependent variable (need better wording: choosing one particular variable for the LHS).
+  This software treats the time series as a sytem and estimates all parameters in a likelihood ratio framework and it provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
 
 }
 
@@ -177,10 +182,10 @@ This implements three types of regressions designed for integrated variables\foo
 
 These packages allow for only a discrete form of cointegration between the series. 
 For example, the series are all integrated, i.e. $I(1)$, and the residuals from a regression are stationary and $I(0)$. 
-The fractionally cointegrated VAR model allows for the posibility that variables can be integrated of order $d$ and cointegrated of order $d - b$, where $d$ and $b>0$ can be real numbers. 
+The fractionally cointegrated VAR model allows for the possibility that variables can be integrated of order $d$ and cointegrated of order $d - b$, where $d$ and $b>0$ can be real numbers. 
 
 
-Analysis using the above packages typically involves a preliminary alanlysis of the form of non-stationarity of the variables, using a number of unit root tests, i.e. to test whether the series are $I(1)$. 
+Analysis using the above packages typically involves a preliminary analysis of the form of non-stationarity of the variables, using a number of unit root tests, i.e. to test whether the series are $I(1)$. 
 With fractionally integrated variables, the first stage of the analysis is to determine the order of fractional integration, i.e. the parameter $d$. 
 
 \subsection{R packages for fractional integration}
@@ -205,7 +210,7 @@ Ours is more (what's the word?) thorough, in that all the parameters are estimat
 
 \end{itemize} 
 
-This package is closest to a cross between the Johansen cointegration model in \pkg{urca} and the fractionally differencing models in \pkg{a}. In fact\footnote{Maybe we should add this example back, since we had it in the first version.}, the model estimated in the \pkg{urca} packages is the special case in which the fractional integration parameters $d$ and $b$ are both equal to one. 
+The \pkg{FCVAR} package, introduced here, is closest to a cross between the Johansen cointegration model in \pkg{urca} and the fractionally differencing models in \pkg{a}. In fact\footnote{Maybe we should add this example back, since we had it in the first version.}, the model estimated in the \pkg{urca} packages is the special case in which the fractional integration parameters $d$ and $b$ are both equal to one. 
 
 
 
@@ -219,14 +224,9 @@ The latest version of the package can be downloaded from the first author's webs
 \end{center}
 % 
 \noindent It is freely available for non-commercial, academic use. 
-% For a (nearly) complete change log, please see Appendix \ref{sec version} of \cite{Nielsen2016}.
-% 
-% \subsubsection{Using the Matlab program}
-% 
-The use of this program requires a functioning installation of Matlab. Any recent version should work.  
-(more precisely: which version? And this part should go at the end)
-
-Unzip the contents of the zip file into any directory that you plan to use as the working directory of the program.
+The use of this program requires a functioning installation of Matlab. 
+The version of \proglang{Matlab} available at the release of the last version was \proglang{Matlab} 9.0, 	R2016a, number 35. However, any recent version should work.  
+\proglang{Matlab} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
 
 \subsection{Roadmap}
 
@@ -374,7 +374,7 @@ We formulate hypotheses as
   &R_\alpha \mathrm{vec}(\alpha) = 0, \label{R alpha} \\
   &R_\beta \mathrm{vec}(\beta^{\ast}) = r_\beta, \label{R beta}
 \end{align}
-with $\beta^{\ast} = (\beta', \rho')'$, and use the switching algorithm in \cite[p.\ 455]{Boswijk2004} to optimize the likelihood numerically subject to the restrictions. The switching algorithm can be improved by adding a line search, see \cite{Doornik2016}. This is done by setting the option \verb|opt.LineSearch = 1|, which is the default setting.
+with $\beta^{\ast} = (\beta', \rho')'$, and use the switching algorithm in \cite[p.\ 455]{Boswijk2004} to optimize the likelihood numerically subject to the restrictions. The switching algorithm can be improved by adding a line search, see \cite{Doornik2016}. This is done by setting the option \verb|opt$LineSearch = 1|, which is the default setting.
 
 The only limitation on the linear restrictions that can be imposed on $(d,b,\alpha,\beta^{\ast})$ in \eqref{R psi}--\eqref{R beta} is that only homogenous restrictions can be imposed on $\mathrm{vec}(\alpha)$ in \eqref{R alpha}. Otherwise, any combination of linear restrictions can be imposed on these parameters. For now, the remaining parameters cannot be restricted.
 
@@ -424,11 +424,9 @@ Clearly, one-step ahead and $h$-step ahead forecasts for the model \eqref{model 
 %% -- Main Program ---------------------------------------------------------
 
 
-\section{Main Program} \label{sec:main}
+% \section{Main Program} \label{sec:main}
 
-
-Estimating the fractionally cointegrated vector autoregression model works like this...
-
+% Renamed as Example session
 
 
 %% -- Illustrations ------------------------------------------------------------
@@ -561,11 +559,12 @@ Estimating the fractionally cointegrated vector autoregression model works like 
 %avoided.
 %\end{leftbar}
 
+\section{Example session} \label{sec:main}
 
 %\subsection{Example session: replication\textunderscore{JNP2014}.m}
-\textbf{Example session: replicationJNP2014.m}
+% \textbf{Example session: replicationJNP2014.m}
 
-The main file is \verb|fcvar_replication_JNP2014.R| and it serves as an example of what a typical session of estimation, testing, and forecasting can include. This code replicates ``Table 4: FCVAR results for Model 1'' from \cite{JNP2014} and follows the empirical procedure developed in that paper. This procedure includes the following steps:
+A demonstration of analysis is shown in \verb|FCVAR_replication_JNP2014.R| and it serves as an example of what a typical session of model specification, estimation and testing can include. This code replicates ``Table 4: FCVAR results for Model 1'' from \cite{JNP2014} and follows the empirical procedure developed in that paper. This procedure includes the following steps:
 
 \begin{enumerate}
 \item Importing data
@@ -590,15 +589,16 @@ The main file is \verb|fcvar_replication_JNP2014.R| and it serves as an example 
 
 The first step is importing the data. Executing the code 
 % in Listing~\ref{data}, 
-shown below, assigns the data from the file \verb|data_JNP2014.csv| to a matrix called \verb|data|. 
+shown below assigns data from the external dataset \verb|votingJNP2014|, which is available with the package. 
 
-\begin{leftbar}
-Better to use names of variables for clarity. 
-Are we actually using these matrices? 
-Maybe we don't need numbers. 
-I think we only \verb|x1|, so we should just call it \verb|x|.
-Finally, the actual command for a user will be from a data folder in the package. 
-\end{leftbar}
+%\begin{leftbar}
+%Better to use names of variables for clarity. 
+%Are we actually using these matrices? 
+%Maybe we don't need numbers. 
+%I think we only \verb|x1|, so we should just call it \verb|x|.
+%Finally, the actual command for a user will be from a data folder in the package. 
+%\end{leftbar}
+
 \begin{Code}
 R> x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 \end{Code}
@@ -625,7 +625,9 @@ R> x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 %\end{CodeChunk}
 %\end{lstlisting}
 
-The columns contain the following variables: (1) aggregate support for the Liberal party, (2) aggregate support for the Conservative party, (3) Canadian 3-month T-bill rates, (4) US 3-month T-bill rates, (5) Canadian unemployment rate, and (6) US unemployment rate. Since each of the models in JNP (2014) contain different combinations of these variables, the relevant columns of \verb|data| for each model are assigned to different matrices of variables named \verb|x1| through \verb|x6|.
+The columns of the full dataset contain the following variables: (1) aggregate support for the Liberal party, (2) aggregate support for the Conservative party, (3) Canadian 3-month T-bill rates, (4) US 3-month T-bill rates, (5) Canadian unemployment rate, and (6) US unemployment rate. 
+%Since each of the models in JNP (2014) contain different combinations of these variables, the relevant columns of \verb|data| for each model are assigned to different matrices of variables named \verb|x1| through \verb|x6|. 
+This example uses the variables in the first, third and fifth columns. 
 
 \subsection{Choosing options}
 \label{subsec choosing options}
@@ -652,52 +654,42 @@ while \verb|printWNtest| indicates whether to print results of white noise tests
 
 The next set of initialization commands
 % , shown in Listing~\ref{intl2}, 
-assign values to the variables contained in object \verb|opt| defined by the function \verb|FCVARoptions|. 
+assign values to the variables contained in the object \verb|opt| defined by the function \fct{FCVARoptions}. 
 
-\begin{leftbar} 
-I wonder if we should leave some of this to the package documentation. 
-Maybe for this article, we should concentrate on the options that are necessary for the examples below. 
-Besides, JSS style prefers code blocks do not have comments, i.e. state it in the text. 
-We could say that ``the rest of the options are described in the package documentation''. 
-\end{leftbar}
+%\begin{leftbar} 
+%I wonder if we should leave some of this to the package documentation. 
+%Maybe for this article, we should concentrate on the options that are necessary for the examples below. 
+%Besides, JSS style prefers code blocks do not have comments, i.e. state it in the text. 
+%We could say that ``the rest of the options are described in the package documentation''. 
+% 
+%Verdict: Here is a trimmed-down version. 
+%I hope JSS is flexible about the comments, which I think are justified here.
+%\end{leftbar}
 
 %\begin{lstlisting}[frame=single,caption={Choosing estimation options}, label = intl2]
 \begin{Code}
-opt <- EstOptions() # Define variable to store Estimation Options (object).
-
-opt$dbMin        <- c(0.01, 0.01) # lower bound for d,b.
-opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
-opt$unrConstant  <- 0 # include an unrestricted constant? 1 <- yes, 0 <- no.
-opt$rConstant    <- 0 # include a restricted constant? 1 <- yes, 0 <- no.
-opt$levelParam   <- 1 # include level parameter? 1 <- yes, 0 <- no.
-opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
-opt$db0          <- c(0.8, 0.8) # set starting values for optimization algorithm.
-opt$N            <- 0 # number of initial values to condition upon.
-opt$print2screen <- 1 # print output.
-opt$printRoots   <- 1 # do not print roots of characteristic polynomial.
-opt$plotRoots    <- 1 # do not plot roots of characteristic polynomial.
-opt$gridSearch   <- 1 # For more accurate estimation, perform the grid search.
-					  # This will make estimation take longer.
-opt$plotLike     <- 0 # Plot the likelihood (if gridSearch <- 1).
-opt$progress 	   <- 0 # Show grid search progress indicator waitbar.
+# Define variable to store estimation options.
+opt              <- EstOptions() 
+opt$dbMin        <- c(0.01, 0.01) # lower bound for d, b.
+opt$dbMax        <- c(2.00, 2.00) # upper bound for d, b.
+opt$unrConstant  <- 0   # include an unrestricted constant? 
+opt$rConstant    <- 0   # include a restricted constant? 
+opt$levelParam   <- 1   # include level parameter? 
+opt$constrained  <- 0   # impose restriction dbMax >= d >= b >= dbMin? 
+opt$restrictDB   <- 1   # impose restriction d = b ? 
+opt$db0          <- c(0.80, 0.80) # set starting values for optimization.
+opt$N            <- 0   # number of initial values to condition upon.
+opt$print2screen <- 1   # print output.
+opt$printRoots   <- 1   # do not print roots of characteristic polynomial.
+opt$plotRoots    <- 1   # do not plot roots of characteristic polynomial.
+opt$gridSearch   <- 1   # For more accurate estimation, perform a grid search.
+                        # This will make estimation take longer.
+opt$plotLike     <- 0   # Plot the likelihood (if gridSearch <- 1).
+opt$progress     <- 0   # Show grid search progress indicator waitbar.
 opt$updateTime   <- 0.5 # How often progress is updated (seconds).
 
-# Linux example:
-opt$progLoc <- '"/usr/bin/fdpval"'  # location path with program name
-                                    # of fracdist program, if installed
-                                    # Note: use both single (outside) and double
-                                    # quotes (inside). This is especially important
-                                    # if path name has spaces.
-# Windows example:
-# opt$progLoc <- '".\fdpval\fdpval"'  # program located in folder fdpval in current directory
-
-# There are many other options (see EstOptions.m for
-# everything else. These can be accessed/modified as in, for example:
-# opt$dbFminOptions$Algorithm <- 'interior-point'
-
-DefaultOpt <- opt # Store the options for restoring them in between hypothesis tests.
-
+# Store the options to reset them in between hypothesis tests.
+DefaultOpt <- opt 
 \end{Code}
 %\end{lstlisting}
 
@@ -705,26 +697,36 @@ The first line initializes the object \verb|opt| and assigns all of the default 
 The code block above 
 shows how to easily change any of the default options. Defining the program options in this way allows the user to create and store several option objects with different attributes. This can be very convenient when, for example, performing the same hypothesis tests on different data sets. 
 
-The set of available options can be broken into several categories: numerical optimization, model deterministics and restrictions, output, grid search, and $P$-values for the rank test. We recommend that only advanced users make changes to the numerical optimization options. Adding deterministics requires setting the variable corresponding to the type of deterministic component to 1. For instance, in the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. Output variables refer to either printing or plotting various information post-estimation and usually take values $1$ or $0$ (on or off). For example, if the user is not interested in the estimates of $\Gamma$, they can be suppressed by setting \verb|opt$printGammas <- 0|.
+The set of available options can be broken into several categories: numerical optimization, model deterministics and restrictions, output and grid search.
+% , and $P$-values for the rank test. 
+We recommend that only advanced users make changes to the numerical optimization options. Adding deterministics requires setting the variable corresponding to the type of deterministic component to 1. For instance, in the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. Output variables refer to either printing or plotting various information post-estimation and usually take values $1$ or $0$ (on or off). For example, if the user is not interested in the estimates of $\Gamma$, they can be suppressed by setting \verb|opt$printGammas <- 0|.
 
 The bounds on the parameter space for $d$ and $b$ are specified in \verb|opt$dbMin| and \verb|opt$dbMax|. In this example, these are both specified as 2-dimensional column vectors, in which case the first element specifies the bound on $d$ and the second element the bound on $b$. Alternatively, one can set \verb|opt$dbMin| and \verb|opt$dbMax| as scalars, which imposes the same bounds on $d$ and $b$. 
 
 An important feature in this package is the ability to pre-estimate by using a grid search. If the user selects this option, they can view progress by setting \verb|opt$progress| to $1$ (waitbar) or $2$ (output in command line). The minimum frequency of these updates is set by \verb|opt$updateTime|. The user also has the option (\verb|opt$plotLike|) to view a plot of the likelihood over $d$ and/or $b$ after the grid search completes. The output of the grid search is a preliminary estimate of the fractional parameters. These are used as starting values in the subsequent numerical optimization, and the bounds on $d$ and $b$ are set to these starting values plus/minus $0.1$ but still within the original \verb|dbMin| and \verb|dbMax| settings.
 
-As of v.1.4.0, the new option \verb|opt$LocalMax| allows more control over the grid search. If \verb|opt$LocalMax <- 0|, the function \fct{FCVARlikeGrid} returns the parameter values corresponding to the global maximum of the likelihood on the grid. If \verb|opt$LocalMax <- 1|, then \fct{FCVARlikeGrid} returns the parameter values for the local maximum corresponding to the highest value of $b$. This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014}. As of v.1.4.0, the default setting is \verb|opt$LocalMax <- 1|.
-
-Another new option in v.1.4.0 is the addition of a line search to the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$. This is added via the option \verb|opt$LineSearch <- 1| and is the default. See \citet[Section 2.2]{Doornik2016} for details.
-
 \begin{leftbar}
-We might have to rewrite this to reflect our updated strategy for the $P$-values for cointegration rank tests
--- once we figure out what that strategy is. 
-Maybe it will be as simple as calling the \pkg{Rcpp} package. 
+Warning: The current package does not have this functionality. 
+It could be implemented but I imagine there already exists something in R that can serve this role. 
+However, I think I don't quite understand the problem without it. 
+Can you provide an example? 
 \end{leftbar}
 
-In order to automatically obtain $P$-values for cointegration rank tests when $b>0.5$, the user needs to download and install the necessary program 
-% (see Section~\ref{sec obtaining}). 
-(see Section~\ref{sec:fdpval}). 
-The last option, \verb|opt$progLoc|, identifies the location of that program.
+As of v.1.4.0, the new option \verb|opt$LocalMax| allows more control over the grid search. If \verb|opt$LocalMax <- 0|, the function \fct{FCVARlikeGrid} returns the parameter values corresponding to the global maximum of the likelihood on the grid. If \verb|opt$LocalMax <- 1|, then \fct{FCVARlikeGrid} returns the parameter values for the local maximum corresponding to the highest value of $b$. This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014}. As of v.1.4.0, the default setting is \verb|opt$LocalMax <- 1|.
+
+Another option is the addition of a line search to the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$. This is added via the option \verb|opt$LineSearch <- 1| and is the default. See \citet[Section 2.2]{Doornik2016} for details.
+
+%\begin{leftbar}
+%Removing this to reflect our updated strategy for the $P$-values for cointegration rank tests
+%-- it simply calls the \pkg{fracdist} package and calculates the $P$-values. 
+%This is much better than calling the \pkg{Rcpp} package because it avoids the inevitable probelms with platform, compiler and software dependencies. 
+%Besides, CRAN doesn't like packages to make system calls because it makes assumptions about the user's setup and leads to the above problems with dependencies. 
+%\end{leftbar}
+%
+%In order to automatically obtain $P$-values for cointegration rank tests when $b>0.5$, the user needs to download and install the necessary program 
+%% (see Section~\ref{sec obtaining}). 
+%(see Section~\ref{sec:fdpval}). 
+%The last option, \verb|opt$progLoc|, identifies the location of that program.
 
 After all options have been set, the last line 
 % in Listing~\ref{intl2} 
@@ -739,9 +741,9 @@ which performs estimation of models with lag-orders from $0$ to \verb|kmax|. The
 
 % The output generated by this function is shown below. 
 \begin{leftbar}
-Our \proglang{Matlab} output is wider than 80 characters. This might sometimes be a problem. 
+Our \proglang{Matlab} output is wider than 80 characters. This will sometimes be a problem. 
 In particular, in the JSS draft, 80 characters in the \verb|CodeChunk| environment will fit well within the margins.
-This is the revised format of the output.
+What follows is the revised format of the output.
 \end{leftbar}
 
 %\begin{lstlisting}[frame=single,caption={Lag selection}, label = LagSelect]
@@ -778,7 +780,7 @@ Tests for Serial Correlation of Residuals:
 \end{CodeOutput}
 \end{CodeChunk} 
 
-Estimates of $d$ and $b$ are reported for each lag ($k$) with rank ($r$) set to the number of variables in the system. Note that in this example the restriction $d=b$ has been imposed. The log-likelihood for each lag is shown in column \verb|LogL|. The likelihood ratio test-statistic \verb|LR| is for the null hypothesis $\Gamma_k = 0$ with $P$-value reported in column \verb|pv|. This is followed by AIC and BIC information criteria. The next set of columns provides $P$-values for white noise tests on the residuals. The first $P$-value, \verb|pmvQ|, is for the multivariate Q-test followed by univarite Q-tests as well as LM tests on the $p$ individual residuals; that is, \verb|pQ1| and \verb|pLM1| are the $P$-values for the residuals in the first equation, \verb|pQ2| and \verb|pLM2| are for the residuals in the second equation, and so on. 
+Estimates of $d$ and $b$ are reported for each lag ($k$) with rank ($r$) set to the number of variables in the system. Note that in this example the restriction $d=b$ has been imposed. The log-likelihood for each lag is shown in column \verb|LogL|. The likelihood ratio test-statistic \verb|LR| is for the null hypothesis $\Gamma_k = 0$ with $P$-value reported in column \verb|pv|. This is followed by AIC and BIC information criteria. The columns in the next block provide $P$-values for white noise tests on the residuals. The first $P$-value, \verb|pmvQ|, is for the multivariate Q-test followed by univarite Q-tests as well as LM tests on the $p$ individual residuals; that is, \verb|pQ1| and \verb|pLM1| are the $P$-values for the residuals in the first equation, \verb|pQ2| and \verb|pLM2| are for the residuals in the second equation, and so on. 
 
 
 \subsection{Cointegration rank testing}
@@ -814,7 +816,13 @@ Rank     d      b     Log-likelihood   LR statistic   P-value
 \end{CodeOutput}
 \end{CodeChunk} 
 
-The first block of output provides a summary of the model specification. The second block provides the test results relevant for selecting the appropriate rank. The table is meant to be read sequentially from lowest to highest rank, i.e.\ from top to bottom. Since we can reject the null of rank 0 against the alternative of rank 3 we move to the test of rank 1 against rank 3. This test fails to reject with a $P$-value of $0.820$, so this is the appropriate choice in this case.
+
+The first block of output provides a summary of the model specification. The second block provides the test results relevant for selecting the appropriate rank. 
+These include likelihood ratio tests for a restriction to a cointegrating rank against an unrestricted model with full rank. 
+% 
+The $P$-values are calculated by the \pkg{fracdist} package, which obtains simulated $P$-values from \cite{mackinnon2014numerical}. 
+% 
+The table is meant to be read sequentially from lowest to highest rank, i.e.\ from top to bottom. Since we can reject the null of rank 0 against the alternative of rank 3 we move to the test of rank 1 against rank 3. This test fails to reject with a $P$-value of $0.820$, so this is the appropriate choice in this case.
 
 
 \subsection{Unrestricted model estimation}
@@ -839,8 +847,10 @@ Here the user first specifies the choice for the rank based on the previously pe
 The program output is shown below. It begins with a table summarizing relevant model specifications and then the coefficients and their standard errors. The roots of the characteristic polynomial are displayed at the bottom. 
 
 \begin{leftbar}
-I think we should trim this output to 80 characters wide. 
-There are no numbers in that range, only comments. 
+I trimmed the output to 80 characters wide. 
+There were no numbers in that range, only comments. 
+Besides, it is no coincidence that only the output in the first 80 characters lies in the margins of a JSS article.
+The output from the software should lie within this range. 
 \end{leftbar}
 
 \begin{CodeChunk} 
@@ -999,10 +1009,6 @@ the roots of the characteristic polynomial is also plotted along with the unit c
 The plot is shown in Figure~\ref{fig:Roots}.
 % Note that the axes of the plot are fixed, and therefore very large roots may not be shown in the plot (in this example, the real root \verb|-2.893|). This should not be a problem since such roots will always be well outside the transformed unit circle.
 
-% Check format of figures:
-Example: A basic frequency distribution of the response variable is displayed in
-%Figure~\ref{fig:quine}.
-
 
 \begin{figure}[H]
   \centering
@@ -1045,7 +1051,7 @@ R> Hdb <- HypoTest(m1, m1r1)
 
 Here we test the CVAR model (null hypothesis $d=b=1$) against the FCVAR model (alternative hypothesis $d=b\ne 1$). Since \verb|opt1$restrictDB <- 1| was selected in the choice of options,
 % in Listing \ref{intl2}, 
-the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1.R_psi = [1 0]| and \verb|opt1.r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the Matlab structure \verb|m1r1|. As before, the user can perform a series of white noise tests on the residuals by calling the \verb|mv_wntest.m| function. The next step is to perform the actual test. With the results structures from the restricted and unrestricted models, the user can call the function \verb|HypoTest.m| and perform an LR test. This function takes the two model result structures as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
+the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1$R_psi = [1 0]| and \verb|opt1$r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the Matlab structure \verb|m1r1|. As before, the user can perform a series of white noise tests on the residuals by calling the \fct{MVWNtest} function. The next step is to perform the actual test. With the results structures from the restricted and unrestricted models, the user can call the function \fct{HypoTest} and perform an LR test. This function takes the two model result structures as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
 
 Since the output of the estimated model and the white noise tests are similar to the previous example, we only show the output from the hypothesis test. 
 
@@ -1292,7 +1298,7 @@ Var3     |  10.725  0.553 |  12.237  0.427  |
 \end{verbatim}
 
 Sometimes it is the case that the model output is not normalized with respect to the user's variable of interest, for example when restrictions are imposed on $\alpha$ or $\beta$. For this reason, we also include a code section that normalizes the output, i.e.\ imposes an identity matrix in the first $r \times r$ block of $\beta$. 
-That is, $\hat{\alpha}$ is post multiplied by $G^{-1}$ so that $\pi= \hat{\alpha}(G^{-1})G\hat{\beta}' = ab'$\footnote{Let's revise this sentence to account for the changing definition of $\hat{\alpha}$ and $\hat{\beta}$}.
+That is, $\hat{\alpha}$ is post multiplied by $G^{-1}$ so that $\pi= \hat{\alpha}(G^{-1})G\hat{\beta}' = ab'$\footnote{Let's revise this sentence to account for the changing definition of $\hat{\alpha}$ and $\hat{\beta}$ throughout the calculation}.
 Of course, this code section should only be executed if it does not interfere with any restrictions imposed on the model.
 
 
@@ -1308,6 +1314,12 @@ R> print(betaHatR)
 R> print('alphaHatR = ')
 R> print(alphaHatR)
 \end{CodeInput}
+\end{CodeChunk}  
+
+
+As an example of when this feature can be useful, consider model $\mathscr{H}_{\alpha}^2$. In the output above, we notice that the cointegrating vector has not been normalized (because restrictions are imposed). The user assigns the model of interest to the variable \verb|modelRstrct|, in this case \verb|m1r4|, and executes the commands. The output is shown below.
+
+\begin{CodeChunk} 
 \begin{CodeOutput}
 [1] "betaHatR = "
            [,1]
@@ -1322,7 +1334,6 @@ R> print(alphaHatR)
 \end{CodeOutput}
 \end{CodeChunk}  
 
-As an example of when this feature can be useful, consider model $\mathscr{H}_{\alpha}^2$. In the output above, we notice that the cointegrating vector has not been normalized (because restrictions are imposed). The user assigns the model of interest to the variable \verb|modelRstrct|, in this case \verb|m1r4|, and executes the cell. The output is shown below.
 
 
 %\begin{leftbar}
@@ -1359,10 +1370,11 @@ As an example of when this feature can be useful, consider model $\mathscr{H}_{\
 
 
 
-\section[Additional examples: MoreExamples.R]{Additional examples: \code{MoreExamples.R}}
+\section{Additional examples}
 \label{sec:examples}
 
-To show some additional functionality of the FCVAR software package, this section contains several other examples, which are based on \cite{JNP2014}, but are not part of that paper.
+To show some additional functionality of the FCVAR software package, this section contains several other examples, which are based on \cite{JNP2014}, but are not part of that paper. 
+These include forecasting, bootstrap tesing, simulation and plotting of the likelihood function. 
 
 \subsection{Forecasting}
 \label{sec:forecasting}
@@ -1494,7 +1506,7 @@ P-value: 	 0.000
 P-value (BS): 	 0.021
 \end{verbatim}
 
-The user might also be interested in comparing the bootstrap likelihood ratio test statistic distribution to the asymptotic one, a $\chi$-squared distribution with \verb|H.df| degrees of freedom. 
+The user might also be interested in comparing the bootstrap likelihood ratio test statistic distribution to the asymptotic one, a $\chi$-squared distribution with \verb|H$df| degrees of freedom. 
 % The second part of Listing~\ref{BSh} performs this comparison by producing 
 These objects can be used to produce 
 a plot of the two distributions, shown in Figure~\ref{fig:BS}.
@@ -1535,7 +1547,7 @@ Restricted log-likelihood:   440.040
 Test results:
 LR statistic: 	 22.268
 P-value (BS): 	 0.031
-# Need to modify program:
+# Need to modify program (with a particular seed):
 P-value: 	 0.043
 \end{verbatim}
 in which the last $P$-value is printed to compare the bootstrap $P$-value to that based on the asymptotic distribution. 
@@ -1580,29 +1592,36 @@ the generated data is shown in Figure~\ref{fig:sim}.
 
 %% -- Extensions ---------------------------------------------------------------------
 
-\section{Extensions} \label{sec:extensions}
+% \section{Extensions} \label{sec:extensions}
+
+\subsection{Plotting the likelihood function} \label{sec:extensions}
 
 
 
+%\subsection{Extension for $P$-values} \label{sec:fdpval}
+%
+% Users don't need to do this in R:
+% 
+% We will simply mention it in the section on rank selection. 
+%
+%Although the Matlab program can run standalone, one of the functions, \verb|RankTests.m|, makes an external system call to a separately installed program, \verb|fdpval|. This external program is the C++ implementation of a Fortran program used to obtain simulated $P$-values from \cite{mackinnon2014numerical}. If the user would like $P$-values for the cointegration rank tests to be automatically calculated, we recommend obtaining this companion program, which is made available by Jason Rhinelander and can be downloaded from: 
+%\begin{center} \url{https://github.com/jagerman/fracdist/releases}
+%\end{center}
+%It can be either installed or downloaded in a compressed folder. It is important to note where the program is stored or installed, because the Matlab program requires the program location as an input in the estimation options. For example, if the program is stored in the folder \verb|/usr/bin/| on a Linux system, the location variable is defined as follows, \verb|progLoc = '"/usr/bin/fdpval"'|. For details see Sections~\ref{sec:estoptions.m} and~\ref{sec:getpvals}.
 
-\subsection{Extension for $P$-values} \label{sec:fdpval}
+% \subsection{Dealing with Local Optima}
 
-
-Although the Matlab program can run standalone, one of the functions, \verb|RankTests.m|, makes an external system call to a separately installed program, \verb|fdpval|. This external program is the C++ implementation of a Fortran program used to obtain simulated $P$-values from \cite{mackinnon2014numerical}. If the user would like $P$-values for the cointegration rank tests to be automatically calculated, we recommend obtaining this companion program, which is made available by Jason Rhinelander and can be downloaded from: 
-\begin{center} \url{https://github.com/jagerman/fracdist/releases}
-\end{center}
-It can be either installed or downloaded in a compressed folder. It is important to note where the program is stored or installed, because the Matlab program requires the program location as an input in the estimation options. For example, if the program is stored in the folder \verb|/usr/bin/| on a Linux system, the location variable is defined as follows, \verb|progLoc = '"/usr/bin/fdpval"'|. For details see Sections~\ref{sec:estoptions.m} and~\ref{sec:getpvals}.
-
-\subsection{Badly behaved objective function}
+Users should be aware that the likelihood function is sometimes badly behaved, in that there may be local optima. To mitigate this problem...
 
 We also make use of the excellent \verb|extrema.m| and \verb|extrema2.m| functions, which are written by Carlos Adrián Vargas Aguilera and are freely available from the Mathworks website. For simplicity these are included in the Auxiliary subfolder.
 
 \begin{leftbar}
-The above functions are currently not used in the R package. 
+The above functions are currently not implemented in the R package, although I think there exist functions that already do this. 
 Can we provide a use case in which the functions correct a problem or improve efficiency in the optimization?
+The reason I ask is that I don't have a test case in which I needed to use this feature. 
 \end{leftbar}
 
-These functions are used in \fct{LikeGrid.m}, which allows the user to pre-estimate to obtain starting values by using a grid search. There are four types of estimation that the grid search can perform. If $d$ and $b$ are completely unconstrained, the grid search is over two dimensions within the bounds specified by \verb|opt.dbMin| and \verb|opt.dbMax|. An example of the likelihood obtained in an unconstrained grid search is shown in Figure~\ref{fig:gridFree}. Next, if $d\ge b$ is imposed via \verb|opt.constrained = 1| (imposed in \cite{johansen2012likelihood} but relaxed in \cite{JN2018}) the computation can be cut in half. An example of this likelihood is shown in Figure~\ref{fig:gridConstrained}. If the restriction $d=b$ is imposed, then the grid search is one-dimensional as shown in Figure~\ref{fig:gridDB}. Finally, if a restriction is imposed on either $d$ or $b$ via $R_\psi$ and $r_\psi$ in \eqref{R psi}, then the grid search is also one-dimensional. An example of this situation is shown in Figure~\ref{fig:gridPhi}. Note that the $x$-axis is over the parameter $\phi$ and the fractional parameters are found from
+These functions are used in \fct{LikeGridSearch}, which allows the user to pre-estimate to obtain starting values by using a grid search. There are four types of estimation that the grid search can perform. If $d$ and $b$ are completely unconstrained, the grid search is over two dimensions within the bounds specified by \verb|opt$dbMin| and \verb|opt$dbMax|. An example of the likelihood obtained in an unconstrained grid search is shown in Figure~\ref{fig:gridFree}. Next, if $d\ge b$ is imposed via \verb|opt$constrained <- 1| (imposed in \cite{johansen2012likelihood} but relaxed in \cite{JN2018}) the computation can be cut in half. An example of this likelihood is shown in Figure~\ref{fig:gridConstrained}. If the restriction $d=b$ is imposed, then the grid search is one-dimensional as shown in Figure~\ref{fig:gridDB}. Finally, if a restriction is imposed on either $d$ or $b$ via $R_\psi$ and $r_\psi$ in \eqref{R psi}, then the grid search is also one-dimensional. An example of this situation is shown in Figure~\ref{fig:gridPhi}. Note that the $x$-axis is over the parameter $\phi$ and the fractional parameters are found from
 \begin{equation}
   \begin{bmatrix}
     d \\ b
@@ -1610,7 +1629,7 @@ These functions are used in \fct{LikeGrid.m}, which allows the user to pre-estim
   % [d \quad b]
   = H\phi + h,
 \end{equation}
-where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi}^{\prime})^{-1} r_\psi$. The bounds on $\phi$ are derived from \verb|opt.dbMin| and \verb|opt.dbMax| in a similar way\footnote{In this figure, the parameters are chosen so that $R_{\psi} = (2, -1)$ and $r_\psi$ = 0.5}.
+where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi}^{\prime})^{-1} r_\psi$. The bounds on $\phi$ are derived from \verb|opt$dbMin| and \verb|opt$dbMax| in a similar way\footnote{In this figure, the parameters are chosen so that $R_{\psi} = (2, -1)$ and $r_\psi$ = 0.5}.
 
 % I have no idea why this wasn't as easy as it should have been:
 \begin{figure}[H]
@@ -1648,8 +1667,15 @@ where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi
 
 \section{Summary and discussion} \label{sec:summary}
 
-Summary goes here. 
+\begin{leftbar}
+Should we talk about anything in the pipeline, such as the stata version or the multifractional version?
+I am leaning toward including the multifractional version on the repository in a development repo as a beta version. That way, it will be available to power users with the \pkg{devtools}, where this version can be installed by 
 
+\verb|devtools::install_github(LeeMorinUCF/FCVAR)|. 
+
+In the meantime, we can run it through some tests and examples before putting it on the version in the repository. 
+Anything else we want to include?
+\end{leftbar}
 
 %% -- Optional special unnumbered sections -------------------------------------
 
@@ -1663,8 +1689,9 @@ Summary goes here.
 %\end{leftbar}
 
 The results in this paper were obtained using
-\proglang{R}~3.4.1 with the
-\pkg{MASS}~7.3.47 package. \proglang{R} itself
+\proglang{R}~3.5.1. 
+% with the \pkg{whatever}~9.9.99 package. 
+\proglang{R} itself
 and all packages used are available from the Comprehensive
 \proglang{R} Archive Network (CRAN) at
 \url{https://CRAN.R-project.org/}.
@@ -1703,11 +1730,11 @@ We are grateful to Federico Carlini, Andreas Noack Jensen, S\o ren Johansen, Mag
 %% - After the bibliography with page break.
 %% - With proper section titles and _not_ just "Appendix".
 
-\newpage
+% \newpage
 
-\begin{appendix}
+% \begin{appendix}
 
-\section{More technical details} \label{app:technical}
+% \section{More technical details} \label{app:technical}
 
 %\begin{leftbar}
 %Appendices can be included after the bibliography (with a page break). Each
@@ -1727,7 +1754,7 @@ We are grateful to Federico Carlini, Andreas Noack Jensen, S\o ren Johansen, Mag
 %\end{itemize}
 %\end{leftbar}
 
-Technical details go here. 
+% Technical details go here. 
 
 
 %\section[Using BibTeX]{Using \textsc{Bib}{\TeX}} \label{app:bibtex}
@@ -1755,7 +1782,7 @@ Technical details go here.
 %\end{itemize}
 %\end{leftbar}
 
-\end{appendix}
+% \end{appendix}
 
 %% -----------------------------------------------------------------------------
 

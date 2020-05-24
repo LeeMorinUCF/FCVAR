@@ -408,6 +408,8 @@ RankTests <- function(x, k, opt) {
 
       # Testing fracdist version.
       # pval_1 <- fracdist::fracdist_values(iq = 1, iscon = 0, bb = 0.73, stat = 3.84)
+      # pval_1 <- fracdist::fracdist_values(iq = 1, iscon = 0, bb = 0.43, stat = 3.84)
+      # pval_1 <- fracdist::fracdist_values(iq = 1, iscon = 0, bb = 0.505, stat = 3.84)
 
     } else {
       warning(sprintf('P-values not calculated for the rank test with rank %d.\n', r),
