@@ -266,3 +266,179 @@ usethis::use_testthat()
 # Remotes: LeeMorinUCF/fracdist
 
 
+
+
+
+# Checking status of package:
+
+# devtools::check()
+# Updating FCVAR documentation
+# Writing NAMESPACE
+# Loading FCVAR
+# Writing NAMESPACE
+# -- Building ----------------------------------------------------------- FCVAR --
+#   Setting env vars:
+#   * CFLAGS    : -Wall -pedantic -fdiagnostics-color=always
+# * CXXFLAGS  : -Wall -pedantic -fdiagnostics-color=always
+# * CXX11FLAGS: -Wall -pedantic -fdiagnostics-color=always
+# --------------------------------------------------------------------------------
+#   check  checking for file 'C:\Users\le279259\Documents\Research\FCVAR\GitRepo\FCVAR/DESCRIPTION' (605ms)
+# -  preparing 'FCVAR': (18.1s)
+# check  checking DESCRIPTION meta-information ...
+# -  checking for LF line-endings in source and make files and shell scripts (1.8s)
+# -  checking for empty or unneeded directories
+# Removed empty directory 'FCVAR/vignettes'
+# -  looking to see if a 'data/datalist' file should be added
+# -  building 'FCVAR_0.0.0.9000.tar.gz'
+#
+# -- Checking ----------------------------------------------------------- FCVAR --
+#   Setting env vars:
+#   * _R_CHECK_CRAN_INCOMING_USE_ASPELL_: TRUE
+# * _R_CHECK_CRAN_INCOMING_REMOTE_    : FALSE
+# * _R_CHECK_CRAN_INCOMING_           : FALSE
+# * _R_CHECK_FORCE_SUGGESTS_          : FALSE
+# * NOT_CRAN                          : true
+# -- R CMD check ---------------------------------------------------------------------
+#   -  using log directory 'C:/Users/le279259/AppData/Local/Temp/1/RtmpuMbWJI/FCVAR.Rcheck'
+# -  using R version 3.5.1 (2018-07-02)
+# -  using platform: x86_64-w64-mingw32 (64-bit)
+# -  using session charset: ISO8859-1
+# -  using options '--no-manual --as-cran' (470ms)
+# check  checking for file 'FCVAR/DESCRIPTION'
+# -  this is package 'FCVAR' version '0.0.0.9000'
+# -  package encoding: UTF-8
+# check  checking package namespace information ...
+# check  checking package dependencies (1.1s)
+# check  checking if this is a source package ...
+# check  checking if there is a namespace
+# check  checking for executable files (642ms)
+# check  checking for hidden files and directories ...
+# check  checking for portable file names ...
+# check  checking serialization versions ...
+# W  checking whether package 'FCVAR' can be installed (4.8s)
+# Found the following significant warnings:
+#   Note: possible error in 'matrix(1, nrow = T, nol = 1)': unused argument (nol = 1)
+# See 'C:/Users/le279259/AppData/Local/Temp/1/RtmpuMbWJI/FCVAR.Rcheck/00install.out' for details.
+# Information on the location(s) of code generating the 'Note's can be
+# obtained by re-running with environment variable R_KEEP_PKG_SOURCE set
+# to 'yes'.
+# check  checking installed package size ...
+# check  checking package directory
+# check  checking DESCRIPTION meta-information (350ms)
+# N  checking top-level files
+# Non-standard file/directory found at top level:
+#   'article'
+# check  checking for left-over files ...
+# W  checking index information ...
+# Demos with missing or empty index information:
+#   FCVAR_extension_JNP2014
+# FCVAR_replication_JNP2014
+# See sections 'The INDEX file' and 'Package subdirectories' in the
+# 'Writing R Extensions' manual.
+# check  checking package subdirectories ...
+# check  checking R files for non-ASCII characters ...
+# check  checking R files for syntax errors ...
+# check  checking whether the package can be loaded ...
+# check  checking whether the package can be loaded with stated dependencies ...
+# check  checking whether the package can be unloaded cleanly ...
+# check  checking whether the namespace can be loaded with stated dependencies ...
+# check  checking whether the namespace can be unloaded cleanly ...
+# check  checking loading without being on the library search path ...
+# check  checking dependencies in R code ...
+# W  checking S3 generic/method consistency (514ms)
+# print:
+#   function(x, ...)
+#     print.FCVARestn:
+#   function(results, k, r, p, T, opt)
+#
+#     print:
+#   function(x, ...)
+#     print.LagSelect:
+#   function(stats, kmax, r, p, T, order, opt)
+#
+#     print:
+#   function(x, ...)
+#     print.RankTests:
+#   function(stats, k, p, T, opt)
+#
+#     See section 'Generic functions and methods' in the 'Writing R
+#    Extensions' manual.
+# check  checking replacement functions ...
+# check  checking foreign function calls ...
+# N  checking R code for possible problems (6.1s)
+# FCVARestn: no visible global function definition for 'optim'
+# FCVARestn: no visible global function definition for 'constrOptim'
+# FCVARoptionUpdates: no visible binding for global variable 'end'
+# FCVARsim: no visible global function definition for 'rnorm'
+# FCVARsimBS: no visible global function definition for 'rnorm'
+# FCVARsimBS: possible error in matrix(1, nrow = T, nol = 1): unused
+# argument (nol = 1)
+# FracDiff: no visible global function definition for 'nextn'
+# FracDiff: no visible global function definition for 'fft'
+# HypoTest: no visible global function definition for 'pchisq'
+# LMtest: no visible global function definition for 'pchisq'
+# LagSelect: no visible global function definition for 'pchisq'
+# LikeGridSearch: no visible global function definition for 'optim'
+# Qtest: no visible global function definition for 'pchisq'
+# plot.GetCharPolyRoots: no visible global function definition for 'pdf'
+# plot.GetCharPolyRoots: no visible global function definition for 'png'
+# plot.GetCharPolyRoots: no visible global function definition for 'plot'
+# plot.GetCharPolyRoots: no visible global function definition for
+# 'lines'
+# plot.GetCharPolyRoots: no visible global function definition for
+# 'points'
+# plot.GetCharPolyRoots: no visible global function definition for
+# 'dev.off'
+# plot.LikeGridSearch: no visible global function definition for 'pdf'
+# plot.LikeGridSearch: no visible global function definition for 'png'
+# plot.LikeGridSearch: no visible global function definition for
+# 'rainbow'
+# plot.LikeGridSearch: no visible global function definition for 'par'
+# plot.LikeGridSearch: no visible global function definition for 'persp'
+# plot.LikeGridSearch: no visible global function definition for 'plot'
+# plot.LikeGridSearch: no visible global function definition for
+# 'dev.off'
+# print.MVWNtest: no visible binding for global variable 'p'
+# Undefined global functions or variables:
+#   constrOptim dev.off end fft lines nextn optim p par pchisq pdf persp
+# plot png points rainbow rnorm
+# Consider adding
+# importFrom("grDevices", "dev.off", "pdf", "png", "rainbow")
+# importFrom("graphics", "lines", "par", "persp", "plot", "points")
+# importFrom("stats", "constrOptim", "end", "fft", "nextn", "optim",
+#            "pchisq", "rnorm")
+# to your NAMESPACE file.
+# check  checking Rd files (507ms)
+# check  checking Rd metadata ...
+# check  checking Rd line widths ...
+# check  checking Rd cross-references (413ms)
+# check  checking for missing documentation entries ...
+# check  checking for code/documentation mismatches (734ms)
+# W  checking Rd \usage sections (414ms)
+# Undocumented arguments in documentation object 'FCVARlikeFull'
+# 'beta' 'rho'
+# Documented arguments not in \usage in documentation object 'FCVARlikeFull':
+#   'betaHat' 'rhoHat'
+#
+# Undocumented arguments in documentation object 'GetFreeParams'
+# 'p'
+# Documented arguments not in \usage in documentation object 'GetFreeParams':
+#   'x'
+#
+# Functions with \usage entries need to have the appropriate \alias
+# entries, and all their arguments documented.
+# The \usage entries must correspond to syntactically valid R code.
+# See chapter 'Writing R documentation files' in the 'Writing R
+#    Extensions' manual.
+# check  checking Rd contents (721ms)
+# check  checking for unstated dependencies in examples (613ms)
+# check  checking contents of 'data' directory
+# check  checking data for non-ASCII characters ...
+# W  checking data for ASCII and uncompressed saves
+
+
+# Checking examples...
+
+# Fix the above and cut the examples short.
+# i.e. B = 9 vs 999 in comments.
+

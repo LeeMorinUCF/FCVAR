@@ -53,7 +53,7 @@
 %% in case any normal people get past the title and want to know what this package does. 
 \Abstract{
   This article illustrates how to estimate 
-  the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}, based on a companion package in \proglang{Matlab}. 
+  the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}, based on a companion package in \proglang{MATLAB}. 
   This model is used to detect equilibrium relationships between variables observed over time. 
   The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are interated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
   The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
@@ -67,8 +67,8 @@
 %% - \Keywords{} with LaTeX markup, at least one required
 %% - \Plainkeywords{} without LaTeX markup (if necessary)
 %% - Should be comma-separated and in sentence case.
-\Keywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, VAR model, \proglang{Matlab}, \proglang{R}}
-\Plainkeywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, VAR model, Matlab, R}
+\Keywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, VAR model, \proglang{MATLAB}, \proglang{R}}
+\Plainkeywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, VAR model, MATLAB, R}
 
 %% - \Address{} of at least one author
 %% - May contain multiple affiliations for each author
@@ -140,7 +140,7 @@ This article illustrates how to estimate
 
 % Examples of citations and references to functions and packages:
 % In \proglang{R} \citep{R}, models involving fractional integration are estimated by the \fct{function1} and \fct{function2} in the \pkg{pscl} package \citep{Jackman:2015}. 
-% This \proglang{R} packages is based on the \proglang{Matlab} package \pkg{FCVARmodel.m}
+% This \proglang{R} packages is based on the \proglang{MATLAB} package \pkg{FCVARmodel.m}
 % with documentation in \cite{Nielsen2016} and \cite{Nielsen2013}. 
 
 An exhaustive listing of the R packages available for time series analysis were compiled in 
@@ -214,19 +214,19 @@ The \pkg{FCVAR} package, introduced here, is closest to a cross between the Joha
 
 
 
-\subsection{The  Matlab program}
+\subsection{The  MATLAB program}
 
-This \proglang{R} package is based on a companion package \pkg{FCVARmodel.m}, written in \proglang{Matlab}. 
-The \proglang{Matlab} package is documented in \cite{Nielsen2016} and \cite{Nielsen2013}. 
+This \proglang{R} package is based on a companion package \pkg{FCVARmodel.m}, written in \proglang{MATLAB}. 
+The \proglang{MATLAB} package is documented in \cite{Nielsen2016} and \cite{Nielsen2013}. 
 The latest version of the package can be downloaded from the first author's website at Queen's University:
 % 
 \begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
 \end{center}
 % 
 \noindent It is freely available for non-commercial, academic use. 
-The use of this program requires a functioning installation of Matlab. 
-The version of \proglang{Matlab} available at the release of the last version was \proglang{Matlab} 9.0, 	R2016a, number 35. However, any recent version should work.  
-\proglang{Matlab} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
+The use of this program requires a functioning installation of MATLAB. 
+The version of \proglang{MATLAB} available at the release of the last version was \proglang{MATLAB} 9.0, 	R2016a, number 35. However, any recent version should work.  
+\proglang{MATLAB} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
 
 \subsection{Roadmap}
 
@@ -380,7 +380,7 @@ The only limitation on the linear restrictions that can be imposed on $(d,b,\alp
 
 Note that, when the restricted constant term $\rho$ is included in the model, restrictions on $\beta$ and $\rho$ must be written in the form given by \eqref{R beta}. This is without loss of generality.
 
-The restrictions in \eqref{R psi}--\eqref{R beta} above can be implemented individually or simultaneously in the Matlab program. The next section provides an example session illustrating the use of the program with a step-by-step description of a typical empirical analysis, including several restricted models in Section \ref{subsec hypo}.
+The restrictions in \eqref{R psi}--\eqref{R beta} above can be implemented individually or simultaneously in the MATLAB program. The next section provides an example session illustrating the use of the program with a step-by-step description of a typical empirical analysis, including several restricted models in Section \ref{subsec hypo}.
 
 \subsection{Forecasting from the FCVAR model}
 
@@ -582,7 +582,7 @@ A demonstration of analysis is shown in \verb|FCVAR_replication_JNP2014.R| and i
 
 % Instructions not necessary: in package documentation
 % 
-%To accommodate the sequential nature of the procedure, the main file is broken up into \textit{code sections}\footnote{For more information see \url{ http://www.mathworks.com/help/matlab/matlab_prog/run-sections-of-programs.html}}. These \textit{code sections}, known as \textit{cells} in previous versions of Matlab, allow the user to execute specific parts of a script individually. Each of the \textit{code sections} are delimited by a double comment \verb|%%| and the section header. 
+%To accommodate the sequential nature of the procedure, the main file is broken up into \textit{code sections}\footnote{For more information see \url{ http://www.mathworks.com/help/MATLAB/MATLAB_prog/run-sections-of-programs.html}}. These \textit{code sections}, known as \textit{cells} in previous versions of MATLAB, allow the user to execute specific parts of a script individually. Each of the \textit{code sections} are delimited by a double comment \verb|%%| and the section header. 
 
 
 \subsection{Importing data}
@@ -698,7 +698,7 @@ The code block above
 shows how to easily change any of the default options. Defining the program options in this way allows the user to create and store several option objects with different attributes. This can be very convenient when, for example, performing the same hypothesis tests on different data sets. 
 
 The set of available options can be broken into several categories: numerical optimization, model deterministics and restrictions, output and grid search.
-% , and $P$-values for the rank test. 
+% , and $p$~values for the rank test. 
 We recommend that only advanced users make changes to the numerical optimization options. Adding deterministics requires setting the variable corresponding to the type of deterministic component to 1. For instance, in the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. Output variables refer to either printing or plotting various information post-estimation and usually take values $1$ or $0$ (on or off). For example, if the user is not interested in the estimates of $\Gamma$, they can be suppressed by setting \verb|opt$printGammas <- 0|.
 
 The bounds on the parameter space for $d$ and $b$ are specified in \verb|opt$dbMin| and \verb|opt$dbMax|. In this example, these are both specified as 2-dimensional column vectors, in which case the first element specifies the bound on $d$ and the second element the bound on $b$. Alternatively, one can set \verb|opt$dbMin| and \verb|opt$dbMax| as scalars, which imposes the same bounds on $d$ and $b$. 
@@ -717,13 +717,13 @@ As of v.1.4.0, the new option \verb|opt$LocalMax| allows more control over the g
 Another option is the addition of a line search to the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$. This is added via the option \verb|opt$LineSearch <- 1| and is the default. See \citet[Section 2.2]{Doornik2016} for details.
 
 %\begin{leftbar}
-%Removing this to reflect our updated strategy for the $P$-values for cointegration rank tests
-%-- it simply calls the \pkg{fracdist} package and calculates the $P$-values. 
+%Removing this to reflect our updated strategy for the $p$~values for cointegration rank tests
+%-- it simply calls the \pkg{fracdist} package and calculates the $p$~values. 
 %This is much better than calling the \pkg{Rcpp} package because it avoids the inevitable probelms with platform, compiler and software dependencies. 
 %Besides, CRAN doesn't like packages to make system calls because it makes assumptions about the user's setup and leads to the above problems with dependencies. 
 %\end{leftbar}
 %
-%In order to automatically obtain $P$-values for cointegration rank tests when $b>0.5$, the user needs to download and install the necessary program 
+%In order to automatically obtain $p$~values for cointegration rank tests when $b>0.5$, the user needs to download and install the necessary program 
 %% (see Section~\ref{sec obtaining}). 
 %(see Section~\ref{sec:fdpval}). 
 %The last option, \verb|opt$progLoc|, identifies the location of that program.
@@ -741,7 +741,7 @@ which performs estimation of models with lag-orders from $0$ to \verb|kmax|. The
 
 % The output generated by this function is shown below. 
 \begin{leftbar}
-Our \proglang{Matlab} output is wider than 80 characters. This will sometimes be a problem. 
+Our \proglang{MATLAB} output is wider than 80 characters. This will sometimes be a problem. 
 In particular, in the JSS draft, 80 characters in the \verb|CodeChunk| environment will fit well within the margins.
 What follows is the revised format of the output.
 \end{leftbar}
@@ -780,7 +780,7 @@ Tests for Serial Correlation of Residuals:
 \end{CodeOutput}
 \end{CodeChunk} 
 
-Estimates of $d$ and $b$ are reported for each lag ($k$) with rank ($r$) set to the number of variables in the system. Note that in this example the restriction $d=b$ has been imposed. The log-likelihood for each lag is shown in column \verb|LogL|. The likelihood ratio test-statistic \verb|LR| is for the null hypothesis $\Gamma_k = 0$ with $P$-value reported in column \verb|pv|. This is followed by AIC and BIC information criteria. The columns in the next block provide $P$-values for white noise tests on the residuals. The first $P$-value, \verb|pmvQ|, is for the multivariate Q-test followed by univarite Q-tests as well as LM tests on the $p$ individual residuals; that is, \verb|pQ1| and \verb|pLM1| are the $P$-values for the residuals in the first equation, \verb|pQ2| and \verb|pLM2| are for the residuals in the second equation, and so on. 
+Estimates of $d$ and $b$ are reported for each lag ($k$) with rank ($r$) set to the number of variables in the system. Note that in this example the restriction $d=b$ has been imposed. The log-likelihood for each lag is shown in column \verb|LogL|. The likelihood ratio test-statistic \verb|LR| is for the null hypothesis $\Gamma_k = 0$ with $p$~value reported in column \verb|pv|. This is followed by AIC and BIC information criteria. The columns in the next block provide $p$~values for white noise tests on the residuals. The first $p$~value, \verb|pmvQ|, is for the multivariate Q-test followed by univarite Q-tests as well as LM tests on the $p$ individual residuals; that is, \verb|pQ1| and \verb|pLM1| are the $p$~values for the residuals in the first equation, \verb|pQ2| and \verb|pLM2| are for the residuals in the second equation, and so on. 
 
 
 \subsection{Cointegration rank testing}
@@ -820,9 +820,9 @@ Rank     d      b     Log-likelihood   LR statistic   P-value
 The first block of output provides a summary of the model specification. The second block provides the test results relevant for selecting the appropriate rank. 
 These include likelihood ratio tests for a restriction to a cointegrating rank against an unrestricted model with full rank. 
 % 
-The $P$-values are calculated by the \pkg{fracdist} package, which obtains simulated $P$-values from \cite{mackinnon2014numerical}. 
+The $p$~values are calculated by the \pkg{fracdist} package, which obtains simulated $p$~values from \cite{mackinnon2014numerical}. 
 % 
-The table is meant to be read sequentially from lowest to highest rank, i.e.\ from top to bottom. Since we can reject the null of rank 0 against the alternative of rank 3 we move to the test of rank 1 against rank 3. This test fails to reject with a $P$-value of $0.820$, so this is the appropriate choice in this case.
+The table is meant to be read sequentially from lowest to highest rank, i.e.\ from top to bottom. Since we can reject the null of rank 0 against the alternative of rank 3 we move to the test of rank 1 against rank 3. This test fails to reject with a $p$~value of $0.820$, so this is the appropriate choice in this case.
 
 
 \subsection{Unrestricted model estimation}
@@ -983,7 +983,7 @@ After the unrestricted model has been estimated, this code section concludes wit
 %
 The results of the white noise tests
 %, called in the last line of Listing \ref{unrEst}, 
-are shown below. For each residual both the Q- and LM-test statistics and their $P$-values are reported, in addition to the multivariate Q-test and $P$-value in the first line of the table. From the output of this table we can conclude that there does not appear to be any problems with serial correlation in the residuals.
+are shown below. For each residual both the Q- and LM-test statistics and their $p$~values are reported, in addition to the multivariate Q-test and $p$~value in the first line of the table. From the output of this table we can conclude that there does not appear to be any problems with serial correlation in the residuals.
 
 
 \begin{CodeChunk} 
@@ -1051,7 +1051,7 @@ R> Hdb <- HypoTest(m1, m1r1)
 
 Here we test the CVAR model (null hypothesis $d=b=1$) against the FCVAR model (alternative hypothesis $d=b\ne 1$). Since \verb|opt1$restrictDB <- 1| was selected in the choice of options,
 % in Listing \ref{intl2}, 
-the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1$R_psi = [1 0]| and \verb|opt1$r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the Matlab structure \verb|m1r1|. As before, the user can perform a series of white noise tests on the residuals by calling the \fct{MVWNtest} function. The next step is to perform the actual test. With the results structures from the restricted and unrestricted models, the user can call the function \fct{HypoTest} and perform an LR test. This function takes the two model result structures as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
+the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1$R_psi = [1 0]| and \verb|opt1$r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the MATLAB structure \verb|m1r1|. As before, the user can perform a series of white noise tests on the residuals by calling the \fct{MVWNtest} function. The next step is to perform the actual test. With the results structures from the restricted and unrestricted models, the user can call the function \fct{HypoTest} and perform an LR test. This function takes the two model result structures as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
 
 Since the output of the estimated model and the white noise tests are similar to the previous example, we only show the output from the hypothesis test. 
 
@@ -1064,7 +1064,7 @@ LR statistic: 	 18.295
 P-value: 	 0.000
 \end{verbatim}
 
-The log-likelihoods from both models are reported, along with the degrees of freedom, the LR test statistic, and its $P$-value. In this case the test clearly rejects the null hypothesis that the model is a CVAR. For more significant digits, or to access any of these values from the command window, the user can type \verb|Hdb|.
+The log-likelihoods from both models are reported, along with the degrees of freedom, the LR test statistic, and its $p$~value. In this case the test clearly rejects the null hypothesis that the model is a CVAR. For more significant digits, or to access any of these values from the command window, the user can type \verb|Hdb|.
 
 The next hypothesis of interest is $\mathscr{H}_{\beta}^1$, which is a zero restriction on the first element of the cointegration vector.
 
@@ -1080,7 +1080,7 @@ R> Hbeta1 <- HypoTest(m1, m1r2)
 
 Since the object \verb|opt1| has the restriction $d=b=1$ stored, the first step is to reset the options to default. The restriction on $\beta$ is then specified as in \eqref{R beta}. There are two things to note here. First, the column length of $R_{\beta}$ must equal $p_1 r$, where $p_1=p+1$ if a restricted constant is present and $p_1=p$ otherwise; recall that $p$ is the number of variables in the system and $r$ is the number of cointegrating vectors. Second, zero restrictions are the default and automatically imposed when $r_{\beta}$ is empty. Therefore, the user only needs to specify $r_{\beta}$ if it includes non-zero elements. Recall that for restrictions on $\alpha$ only $r_\alpha = 0$ is allowed so that there is no need to specify $r_\alpha$. As before, the restricted model is estimated with results stored in \verb|m1r2|, the residuals are tested for white noise, and the model under the null is tested against the unrestricted model \verb|m1| with results stored in \verb|Hbeta1|.
 
-Again, since the estimation output is similar to the first example, we only show the results of the hypothesis test here. With a $P$-value close to zero, this hypothesis is also strongly rejected.
+Again, since the estimation output is similar to the first example, we only show the results of the hypothesis test here. With a $p$~value close to zero, this hypothesis is also strongly rejected.
 
 \begin{verbatim}
 Likelihood ratio test results:
@@ -1550,7 +1550,7 @@ P-value (BS): 	 0.031
 # Need to modify program (with a particular seed):
 P-value: 	 0.043
 \end{verbatim}
-in which the last $P$-value is printed to compare the bootstrap $P$-value to that based on the asymptotic distribution. 
+in which the last $p$~value is printed to compare the bootstrap $p$~value to that based on the asymptotic distribution. 
 
 \subsection{Simulation}
 \label{sec:simulation}
@@ -1598,16 +1598,16 @@ the generated data is shown in Figure~\ref{fig:sim}.
 
 
 
-%\subsection{Extension for $P$-values} \label{sec:fdpval}
+%\subsection{Extension for $p$~values} \label{sec:fdpval}
 %
 % Users don't need to do this in R:
 % 
 % We will simply mention it in the section on rank selection. 
 %
-%Although the Matlab program can run standalone, one of the functions, \verb|RankTests.m|, makes an external system call to a separately installed program, \verb|fdpval|. This external program is the C++ implementation of a Fortran program used to obtain simulated $P$-values from \cite{mackinnon2014numerical}. If the user would like $P$-values for the cointegration rank tests to be automatically calculated, we recommend obtaining this companion program, which is made available by Jason Rhinelander and can be downloaded from: 
+%Although the MATLAB program can run standalone, one of the functions, \verb|RankTests.m|, makes an external system call to a separately installed program, \verb|fdpval|. This external program is the C++ implementation of a Fortran program used to obtain simulated $p$~values from \cite{mackinnon2014numerical}. If the user would like $p$~values for the cointegration rank tests to be automatically calculated, we recommend obtaining this companion program, which is made available by Jason Rhinelander and can be downloaded from: 
 %\begin{center} \url{https://github.com/jagerman/fracdist/releases}
 %\end{center}
-%It can be either installed or downloaded in a compressed folder. It is important to note where the program is stored or installed, because the Matlab program requires the program location as an input in the estimation options. For example, if the program is stored in the folder \verb|/usr/bin/| on a Linux system, the location variable is defined as follows, \verb|progLoc = '"/usr/bin/fdpval"'|. For details see Sections~\ref{sec:estoptions.m} and~\ref{sec:getpvals}.
+%It can be either installed or downloaded in a compressed folder. It is important to note where the program is stored or installed, because the MATLAB program requires the program location as an input in the estimation options. For example, if the program is stored in the folder \verb|/usr/bin/| on a Linux system, the location variable is defined as follows, \verb|progLoc = '"/usr/bin/fdpval"'|. For details see Sections~\ref{sec:estoptions.m} and~\ref{sec:getpvals}.
 
 % \subsection{Dealing with Local Optima}
 
