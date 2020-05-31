@@ -14,7 +14,7 @@
 \usepackage{float}   % used for better positioning of figures
 \usepackage{mathrsfs} % for script fonts
 % \usepackage[FIGTOPCAP]{subfigure}     %FIGTOPCAP puts captions on top of subfigures
-\usepackage{subfigure}     %FIGTOPCAP puts captions on top of subfigures
+\usepackage{subfigure}     %FIGTOPCAP puts captions on top of subfigures (not for JSS)
 % \usepackage{subfig}
 
 %% new custom commands
@@ -55,12 +55,12 @@
   This article illustrates how to estimate 
   the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}, based on a companion package in \proglang{MATLAB}. 
   This model is used to detect equilibrium relationships between variables observed over time. 
-  The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are interated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
+  The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
   The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
   This allows for the detection of relationships with deviations that correct more slowly. 
-  Existing software concentrates on either the CVAR alone, restricted to integer orders of integration, or 
-  on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, bivariate anaysis or the focus on a single dependent variable (need better wording: choosing one particular variable for the LHS).
-  This software treats the time series as a sytem and estimates all parameters in a likelihood ratio framework and it provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
+  Existing software concentrates on either the CVAR alone, which is restricted to integer orders of integration, or 
+  on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, bivariate anaysis or the focus on a particular response variable.
+  This software treats the time series as a sytem and estimates all parameters together in a likelihood ratio framework and it provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
 
 }
 
@@ -106,16 +106,15 @@
 
 \section[Introduction: Cointegration and fractional integration in R]{Introduction: Cointegration and fractional integration in \proglang{R}} \label{sec:intro}
 
-\begin{leftbar}
-The introduction is in principle ``as usual''. However, it should usually embed
-both the implemented \emph{methods} and the \emph{software} into the respective
-relevant literature. For the latter both competing and complementary software
-should be discussed (within the same software environment and beyond), bringing
-out relative (dis)advantages. All software mentioned should be properly
-\verb|\cite{}|d. 
-% (See also Appendix~\ref{app:bibtex} for more details on
-% \textsc{Bib}{\TeX}.)
-%
+% JSS Notes:
+%\begin{leftbar}
+%The introduction is in principle ``as usual''. However, it should usually embed
+%both the implemented \emph{methods} and the \emph{software} into the respective
+%relevant literature. For the latter both competing and complementary software
+%should be discussed (within the same software environment and beyond), bringing
+%out relative (dis)advantages. All software mentioned should be properly
+%\verb|\cite{}|d. 
+% 
 %For writing about software JSS requires authors to use the markup
 %\verb|\proglang{}| (programming languages and large programmable systems),
 %\verb|\pkg{}| (software packages), \verb|\code{}| (functions, commands,
@@ -123,120 +122,132 @@ out relative (dis)advantages. All software mentioned should be properly
 %plain text version has to be provided in the {\LaTeX} command as well. Below we
 %also illustrate how abbrevations should be introduced and citation commands can
 %be employed. See the {\LaTeX} code for more details.
-\end{leftbar}
-
-% Intro 1.0: start with the abstract and add details. 
+% \end{leftbar}
 
 This article illustrates how to estimate 
   the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}. 
   This model is used to detect equilibrium relationships between variables observed over time. 
-  The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are interated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
+  The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
   The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
-  This allows for the detection of relationships with deviations that correct more slowly. 
-
-%  Existing software concentrates on either the CVAR alone, restricted to integer orders of integration, or 
-%  on specific features of the variables, such as estimating the integration order or identifying whether a cointegrating relationship exists (not quite accurate: needs to be reworded before generalizing the gap in available software).
-%  This software treats the time series as a sytem and estimates all parameters in a likelihood ratio framework and provides a flexible set of optins for conducting inference on many features of the cointegrating relationship. 
-
-% Examples of citations and references to functions and packages:
-% In \proglang{R} \citep{R}, models involving fractional integration are estimated by the \fct{function1} and \fct{function2} in the \pkg{pscl} package \citep{Jackman:2015}. 
-% This \proglang{R} packages is based on the \proglang{MATLAB} package \pkg{FCVARmodel.m}
-% with documentation in \cite{Nielsen2016} and \cite{Nielsen2013}. 
-
-An exhaustive listing of the R packages available for time series analysis were compiled in 
-\emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman, 
-available at \verb|https://CRAN.R-project.org/view=TimeSeries|). 
+  This allows for the detection of relationships with deviations that correct more slowly than with the CVAR. 
+The packages currently available concentrate more heavily on the features of one of these two types of models. 
 % 
-Among these, the packages most relevant to the FCVAR model are related to cointegration within vector error correction models or related to long memory, often under the $ARFIMA$ framework. 
+An exhaustive listing of the R packages available for time series analysis were compiled in 
+\citet{Hyndman2020}, \citep{R}.
+% \emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman, 
+% available at \verb|https://CRAN.R-project.org/view=TimeSeries|). 
+% 
+Among these, the packages most relevant to the FCVAR model are those related to cointegration within the family of vector error correction models or those related to long memory, often under the $ARFIMA$ framework. 
 
 \subsection{R packages for estimating the CVAR model}
 
 
-In \proglang{R} \citep{R}, contegration analysis can be conducted using a variety of packages. 
+In \proglang{R}, contegration analysis can be conducted using a variety of packages. 
+% 
+One such package is \pkg{aTSA} for \emph{Alternative Time Series Analysis} \citep{aTSA2015}. 
+In this package, the \fct{coint.test} function performs Engle-Granger tests, as in \citet{EngleGranger1987},  for the null hypothesis that two or more time series, each of which is I(1), are not cointegrated. 
+This package is designed to focus on a particular response variable, restricting attention to relationships with a one-dimensional cointegrating space. That is, this framework can detect a single equilibrium equation. 
+% 
+Another package following the \citet{EngleGranger1987} approach is the \pkg{egcm} package in \citep{egcm2017}. 
+The \pkg{egcm} package restricts to a simplified form of cointegration. 
+It is designed for bivariate analysis, with a concentration on applications to the prices of financial assets.
 
-\begin{itemize} 
+Other packages have implemeted the cointegration tests in \citet{PhillipsOuliaris1990}. 
+This amounts to running a regression of the response variable on a set of regressors and testing the residuals for a unit root following \cite{PhillipsPerron1988}. 
+The \fct{po.test} from the \pkg{tseries} package \citep{tseries2019} implements this test, 
+as well as the \fct{ca.po} function in the \pkg{urca} package \citep{urca2016}. 
 
-	\item One such package is \pkg{aTSA} for \emph{Alternative Time Series Analysis} \citep{aTSA2015}. 
-	In this package, the \fct{coint.test} function performs Engle-Granger tests, as in \citet{EngleGranger1987},  for the null hypothesis that two or more time series, each of which is I(1), are not cointegrated. \\
-	-- This package is designed for bivariate analysis.
+The \pkg{cointReg} package in \cite{cointReg2016} follows a different approach, using modified ordinary least squares (OLS) approaches to the analysis of cointegration. 
+One such method is the fully modified OLS (FM-OLS) approach of \citet{PhillipsHansen1990} in the \fct{cointRegFM} function. 
+Another option is the dynamic OLS (D-OLS) approach (see \citet{PhillipsLoretan1991}, \citet{Saikkonen1991} and \citet{StockWatson1993}) implemented in \fct{cointRegD}. 
+It also implements, in \fct{cointRegIM}, a variant called integrated modified OLS (IM-OLS) of Vogelsang and Wagner (2014), 
+which is based on an augmented integration transformation of the regression model. 
 
-	\item Another package following the \citet{EngleGranger1987} approach is the \pkg{egcm} package in \citep{egcm2017}. 
-	-- This package is also designed for bivariate analysis.
-
-	\item The \fct{po.test} from the \pkg{tseries} package \citet{tseries2019} implements the tests in \citet{PhillipsOuliaris1990}. 
-
-	\item Another option is the \pkg{cointReg} in \cite{cointReg2016}. 
-This implements three types of regressions designed for integrated variables\footnote{I will describe this later, if we decide to keep it in (the above and below are sufficient, in my view) but here is a quote from their description: ``These methods include the fully modified OLS (FM-OLS) approach of Phillips and Hansen (1990) <doi:10.2307/2297545>, the dynamic OLS (D-OLS) approach of Phillips and Loretan (1991) <doi:10.2307/2298004>, Saikkonen (1991) <doi:10.1017/S0266466600004217> and Stock and Watson (1993) <doi:10.2307/2951763> and the new estimation approach called integrated modified OLS (IM-OLS) of Vogelsang and Wagner (2014) <doi:10.1016/j.jeconom.2013.10.015>. The latter is based on an augmented partial sum (integration) transformation of the regression model''.}.
-
-	\item An option without the limitation to bivariate series is the \pkg{urca} package to perform unit root tests and cointegration analysis \citep{urca2016}\footnote{They also use the Danish data, so it would be worthwhile to include in the documentation an example with and without the restriction $d = b = 1$ to compare}. \\
-	-- They have the function \fct{ca.po} implementing the tests in \citet{PhillipsOuliaris1990}. \\
-	-- This package also follows the approach in \citet{Johansen1995} in the function \fct{ca.jo}. \\
-	-- Within this framework, there is a function \fct{cajo.test} to test restrictions in the CVAR model.
-
-	\item The \fct{VECM} function in the \pkg{tsDyn} package allows for the application of either the \citet{EngleGranger1987} or the \citet{Johansen1995} MLE method. \\
-	-- This package is designed primarily with nonlinear time series models in mind. 
-
-\end{itemize} 
+In another line of research, 
+\citet{Johansen1995} analyzes the cointegrated VAR model in a more holistic fashion.
+Following this approach, the time series are treated as an endogenous system of equations and permits the estimation of a higher-dimensional cointegrating relationship, i.e. several equilibrium relationships. 
+% 
+It also allows for the joint estimation of parameters relating to the system of equations, permitting likelihood ratio tests for a wide variety of hypotheses. 
+The \fct{VECM} function in the \pkg{tsDyn} package allows for the application of either the \citet{EngleGranger1987} or the \citet{Johansen1995} MLE method. 
+However, this package is designed primarily with nonlinear time series models in mind. 
+The \pkg{urca} package 
+\citep{urca2016}\footnote{They also use the Danish data, so it might be worthwhile to include in the documentation an example with and without the restriction $d = b = 1$ to compare}, 
+which is designed to perform unit root tests and cointegration analysis, 
+follows the \citet{Johansen1995} approach in the function \fct{ca.jo}. 
+It also provides options for testing restrictions on the parameters in the model. 
+Of the packages designed for the CVAR model, this is perhaps the closest available to the \pkg{FCVAR} package, in terms of the testing opportunities available.
 
 \subsection{Segue from CVAR to $I(d)$}
 
-These packages allow for only a discrete form of cointegration between the series. 
+While the packages that follow the framework of \citet{Johansen1995} are most closly related to the \pkg{FCVAR} package, these are not suited to the analysis of series with a fractional degree of integration. 
+That is to say that these packages allow for only a discrete form of cointegration between the series. 
 For example, the series are all integrated, i.e. $I(1)$, and the residuals from a regression are stationary and $I(0)$. 
 The fractionally cointegrated VAR model allows for the possibility that variables can be integrated of order $d$ and cointegrated of order $d - b$, where $d$ and $b>0$ can be real numbers. 
-
-
+% 
 Analysis using the above packages typically involves a preliminary analysis of the form of non-stationarity of the variables, using a number of unit root tests, i.e. to test whether the series are $I(1)$. 
 With fractionally integrated variables, the first stage of the analysis is to determine the order of fractional integration, i.e. the parameter $d$. 
+This has been the focus of much of the available software to analyze series with the characteristics of so-called long memory. 
 
 \subsection{R packages for fractional integration}
 
-Quoted from \emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman, referenced above:
+In another section of the \emph{CRAN Task View: Time Series Analysis} \citep{Hyndman2020}, 
+several packages are listed for the estimation of models for series with features of fractional integration or long memory. 
+A number of these pacakages are focused on estimation of $ARFIMA$ models, known as autoregressive fractionally integrated moving average models. 
+The \pkg{fracdiff} package \citep{fracdiff2020} includes functions for fitting $ARFIMA(p,d,q)$ models, including the step of estimating the long memory parameter $d$. 
+The namesake function \fct{fracdiff} calculates the maximum likelihood estimators of the parameters of a fractionally-differenced $ARIMA(p,d,q)$ model. 
+A few notable functions in this package estimate the long memory parameter $d$ within this model\footnote{Note that the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. Specifically, \code{fracdiff::diffseries(x, d) - FCVAR::FracDiff(x - mean(x), d)} is numerically very small.}. 
+% 
+The \pkg{arfima} package \cite{arfima2018} fits a wider variety of $ARFIMA$ models. 
+% 
+Also, the \pkg{nsarfima} \citep{nsarfima2019} package provides methods for fitting and simulating non-stationary $ARFIMA$ models. 
+This package is more innovative in terms of the types of optimization problems built on the $ARFIMA$ model, including both maximum likelihood (as in \citet{Beran1995}) and minimum distance (as in \citet{Mayoral2007}) estimators. 
 
-``Some facilities for fractional differenced ARFIMA models are provided in the \pkg{fracdiff} package. The \pkg{arfima} package has more advanced and general facilities for ARFIMA and ARIMA models, including dynamic regression (transfer function) models. Additional methods for fitting and simulating non-stationary ARFIMA models are in \pkg{nsarfima}. \pkg{LongMemoryTS} provides a collection of functions for analysing long memory time series.''
+The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods methods to investigate both cointegrating relationships and fractional integration.\footnote{Morten: You would be best suited to comment on the references in this package. 
+There are several citations to your papers and I want to make sure that we are honest about the difference between what we do and what they do. 
+It seems to me that this package (\cite{LongMemoryTS2019}) chains together several separate issues, such as, estimating the fractional integration parameter and then plugging that value into the rank test as if it were known. 
+Another example is testing cointegration by estimating the fractional parameter from the residuals. 
+It seems to me that this is a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
+Our approach following \citet{Johansen1995} is more holistic, in that all the parameters are estimated jointly, aside from the rank and lag selection. 
+It captures all of these in one maximum likelihood framework and approach has the added benefit of allowing for a wide range of restrictions to test} 
 
-\begin{itemize} 
 
-	\item The \pkg{fracdiff} package (\cite{fracdiff2020}) includes functions for fitting $ARFIMA(p,d,q)$ models, including the step of estimating the long memory parameter $d$. The namesake function \fct{fracdiff} calculates the maximum likelihood estimators of the parameters of a fractionally-differenced $ARIMA(p,d,q)$ model. A few notable functions in this package estimate the long memory parameter $d$ within this model. 
-\footnote{Note that the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. Specifically, \code{all(fracdiff::diffseries(x, d) == FCVAR::FracDiff(x - mean(x), d))} returns \code{TRUE}.}
 
-	\item \pkg{arfima} \cite{arfima2018} fits a wider variety of arfima models. 
+%	\item \pkg{LongMemoryTS} this model uses a wide variety of methods methods to investigate both cointegrating relationships and fractional integration. 
+%However, it seems to me that this package (\cite{LongMemoryTS2019}) chains together several separate issues, such as, estimating the fractional integration parameter and then plugging that value into the rank test as if it were known. Another example is testing cointegration by estimating the fractional parameter from the residuals.  
+%Morten, you have a lot of citations in this package. It implements Nielsen (JoE, 2010) with a given $d$, where apparently you recommend \code{d = 0.1}. It also implements Nielsen and Shimotsu (JoE, 2007) for rank estimation in fractionally cointegrated systems. Also: Hausman-type test for fractional cointegration (Robinson (2008)). Basically a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
+%Ours is more (what's the word?) holistic, in that all the parameters are estimated jointly, aside from the rank and lag selection. It captures all of these in one maximum likelihood framework. 
+%This approach has the added benefit of allowing for a wide range of restrictions to test. 
 
-	\item \pkg{nsarfima} \cite{nsarfima2019} is more innovative in terms of the types of optimization problems built on the $ARFIMA$ model, including both maximum likelihood (as in Beran (1995)) and minimum distance (as in Mayoral, L. (2007)) estimators. 
 
-	\item \pkg{LongMemoryTS} this model uses a wide variety of methods methods to investigate both cointegrating relationships and fractional integration. 
-However, it seems to me that this package (\cite{LongMemoryTS2019}) chains together several separate issues, such as, estimating the fractional integration parameter and then plugging that value into the rank test as if it were known. Another example is testing cointegration by estimating the fractional parameter from the residuals.  
-Morten, you have a lot of citations in this package. It implements Nielsen (JoE, 2010) with a given $d$, where apparently you recommend \code{d = 0.1}. It also implements Nielsen and Shimotsu (JoE, 2007) for rank estimation in fractionally cointegrated systems. Also: Hausman-type test for fractional cointegration (Robinson (2008)). Basically a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
-Ours is more (what's the word?) thorough, in that all the parameters are estimated jointly, aside from the rank and lag selection. It captures all of these in one maximum likelihood framework. 
-
-\end{itemize} 
-
-The \pkg{FCVAR} package, introduced here, is closest to a cross between the Johansen cointegration model in \pkg{urca} and the fractionally differencing models in \pkg{a}. In fact\footnote{Maybe we should add this example back, since we had it in the first version.}, the model estimated in the \pkg{urca} packages is the special case in which the fractional integration parameters $d$ and $b$ are both equal to one. 
-
+The \pkg{FCVAR} package, introduced here, is closest to a cross between the Johansen cointegration model in \pkg{urca} and the models involving fractionally integrated variables discussed above. 
+In particular\footnote{Maybe we should add this sort of example to the documentation, since we had something similar in the first version.}, the model estimated in the \pkg{urca} packages is the special case of \pkg{FCVAR} in which the fractional integration parameters $d$ and $b$ are both equal to one. 
 
 
 \subsection{The  MATLAB program}
 
 This \proglang{R} package is based on a companion package \pkg{FCVARmodel.m}, written in \proglang{MATLAB}. 
-The \proglang{MATLAB} package is documented in \cite{Nielsen2016} and \cite{Nielsen2013}. 
-The latest version of the package can be downloaded from the first author's website at Queen's University:
-% 
-\begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
-\end{center}
-% 
-\noindent It is freely available for non-commercial, academic use. 
-The use of this program requires a functioning installation of MATLAB. 
-The version of \proglang{MATLAB} available at the release of the last version was \proglang{MATLAB} 9.0, 	R2016a, number 35. However, any recent version should work.  
-\proglang{MATLAB} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
+The \proglang{MATLAB} package is documented in \cite{Nielsen2016}, an expanded version of the package documented in \cite{Nielsen2013}. 
+
+% Moved to end, as per JSS style:
+%The latest version of the package can be downloaded from one of the author's website at Queen's University:
+%% 
+%\begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
+%\end{center}
+%% 
+%\noindent It is freely available for non-commercial, academic use. 
+%The use of this program requires a functioning installation of MATLAB. 
+%The version of \proglang{MATLAB} available at the release of the last version was \proglang{MATLAB} 9.0, 	R2016a, number 35. However, any recent version should work.  
+%\proglang{MATLAB} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
 
 \subsection{Roadmap}
 
-The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes the functioning of the main program, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes another example program, which demonstrates some additional functionality of the software. Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
+The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes an example of a modeling session, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes another example program, which demonstrates some additional functionality of the software. Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
 % Section \ref{sec programs} describes how each of the major program files work (each in a separate subsection). 
 % The Appendix contains a version change log.
+% These are removed as they belong in the package documentation. 
 
-
+% JSS Style Notes:
 %% -- Manuscript ---------------------------------------------------------------
-
 %% - In principle "as usual" again.
 %% - When using equations (e.g., {equation}, {eqnarray}, {align}, etc.
 %%   avoid empty lines before and after the equation (which would signal a new
@@ -249,6 +260,7 @@ The next section describes the FCVAR model and the restricted models that can be
 % \section{Models and software} \label{sec:models}
 \section{The fractionally cointegrated VAR model} \label{sec:fcvar}
 
+% JSS notes:
 %\begin{leftbar}
 %Note that around the \verb|{equation}| above there should be no spaces (avoided
 %in the {\LaTeX} code by \verb|%| lines) so that ``normal'' spacing is used and
@@ -419,18 +431,9 @@ Clearly, one-step ahead and $h$-step ahead forecasts for the model \eqref{model 
 
 
 
-
-
-%% -- Main Program ---------------------------------------------------------
-
-
-% \section{Main Program} \label{sec:main}
-
-% Renamed as Example session
-
-
+% JSS Notes:
 %% -- Illustrations ------------------------------------------------------------
-
+%%
 %% - Virtually all JSS manuscripts list source code along with the generated
 %%   output. The style files provide dedicated environments for this.
 %% - In R, the environments {Sinput} and {Soutput} - as produced by Sweave() or
@@ -446,9 +449,6 @@ Clearly, one-step ahead and $h$-step ahead forecasts for the model \eqref{model 
 
 %But first... Examples of displaying code in JSS style. 
 %
-%\section{Illustrations} \label{sec:illustrations}
-%
-%For a simple illustration of the FCVAR...
 %The data can be loaded by
 %%
 %\begin{CodeChunk}
@@ -474,6 +474,7 @@ Clearly, one-step ahead and $h$-step ahead forecasts for the model \eqref{model 
 %before and after code input/output should be avoided (see above).
 %\end{leftbar}
 
+% JSS format for figures:
 %A basic frequency distribution of the response variable is displayed in
 %%Figure~\ref{fig:quine}.
 %
@@ -483,10 +484,6 @@ Clearly, one-step ahead and $h$-step ahead forecasts for the model \eqref{model 
 %\caption{\label{fig:quine} Frequency distribution for number of days absent
 %from school.}
 %\end{figure}
-
-
-
-
 
 
 %As a first model for the \code{quine} data, we fit the basic Poisson regression
@@ -511,34 +508,10 @@ Clearly, one-step ahead and $h$-step ahead forecasts for the model \eqref{model 
 %glm.nb(formula = Days ~ (Eth + Sex + Age + Lrn)^2, data = quine, 
 %    init.theta = 1.60364105, link = log)
 %
-%Deviance Residuals: 
-%    Min       1Q   Median       3Q      Max  
-%-3.0857  -0.8306  -0.2620   0.4282   2.0898  
-%
 %Coefficients: (1 not defined because of singularities)
 %            Estimate Std. Error z value Pr(>|z|)    
 %(Intercept)  3.00155    0.33709   8.904  < 2e-16 ***
-%SexM        -0.77181    0.38021  -2.030  0.04236 *  
-%EthN:AgeF2  -1.23283    0.42962  -2.870  0.00411 ** 
-%SexM:AgeF2   1.55330    0.51325   3.026  0.00247 ** 
-%SexM:AgeF3   1.25227    0.45539   2.750  0.00596 ** 
-%AgeF3:LrnSL       NA         NA      NA       NA    
-%---
-%Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-%
-%(Dispersion parameter for Negative Binomial(1.6036) family taken to be 1)
-%
-%    Null deviance: 235.23  on 145  degrees of freedom
-%Residual deviance: 167.53  on 128  degrees of freedom
-%AIC: 1100.5
-%
-%Number of Fisher Scoring iterations: 1
-%
-%
-%              Theta:  1.604 
-%          Std. Err.:  0.214 
-%
-% 2 x log-likelihood:  -1062.546 
+% ...
 %\end{CodeOutput}
 %\end{CodeChunk}
 %
@@ -559,10 +532,12 @@ Clearly, one-step ahead and $h$-step ahead forecasts for the model \eqref{model 
 %avoided.
 %\end{leftbar}
 
-\section{Example session} \label{sec:main}
 
-%\subsection{Example session: replication\textunderscore{JNP2014}.m}
-% \textbf{Example session: replicationJNP2014.m}
+%% -- Main Program ---------------------------------------------------------
+% \section{Main Program} \label{sec:main}
+% Renamed as Example session
+
+\section{Example session} \label{sec:main}
 
 A demonstration of analysis is shown in \verb|FCVAR_replication_JNP2014.R| and it serves as an example of what a typical session of model specification, estimation and testing can include. This code replicates ``Table 4: FCVAR results for Model 1'' from \cite{JNP2014} and follows the empirical procedure developed in that paper. This procedure includes the following steps:
 
@@ -591,23 +566,6 @@ The first step is importing the data. Executing the code
 % in Listing~\ref{data}, 
 shown below assigns data from the external dataset \verb|votingJNP2014|, which is available with the package. 
 
-%\begin{leftbar}
-%Better to use names of variables for clarity. 
-%Are we actually using these matrices? 
-%Maybe we don't need numbers. 
-%I think we only \verb|x1|, so we should just call it \verb|x|.
-%Finally, the actual command for a user will be from a data folder in the package. 
-%\end{leftbar}
-
-\begin{Code}
-R> x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-\end{Code}
-
-%\begin{Code}
-%R> data <- read.csv('data_JNP2014.csv')
-%R> x1 <- data[, c("lib", "ir_can", "un_can")]
-%\end{Code}
-
 %\lstset{firstnumber=last}
 %\begin{lstlisting}[frame=single,caption={Importing data}, label = data]
 %\begin{CodeChunk} 
@@ -624,6 +582,26 @@ R> x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 %\end{CodeInput}
 %\end{CodeChunk}
 %\end{lstlisting}
+
+%\begin{leftbar}
+%Better to use names of variables for clarity. 
+%Are we actually using these matrices? 
+%Maybe we don't need numbers. 
+%I think we only use \verb|x1|, so we should just call it \verb|x|.
+%Finally, the actual command for a user will be from a data folder in the package. 
+%\end{leftbar}
+
+\begin{Code}
+R> x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+\end{Code}
+
+% Old version, example for user's data:
+% But this would not be included here.  
+%\begin{Code}
+%R> data <- read.csv('data_JNP2014.csv')
+%R> x1 <- data[, c("lib", "ir_can", "un_can")]
+%\end{Code}
+
 
 The columns of the full dataset contain the following variables: (1) aggregate support for the Liberal party, (2) aggregate support for the Conservative party, (3) Canadian 3-month T-bill rates, (4) US 3-month T-bill rates, (5) Canadian unemployment rate, and (6) US unemployment rate. 
 %Since each of the models in JNP (2014) contain different combinations of these variables, the relevant columns of \verb|data| for each model are assigned to different matrices of variables named \verb|x1| through \verb|x6|. 
@@ -699,6 +677,7 @@ shows how to easily change any of the default options. Defining the program opti
 
 The set of available options can be broken into several categories: numerical optimization, model deterministics and restrictions, output and grid search.
 % , and $p$~values for the rank test. 
+% These are obtained internally from the \pkg{fracdist} package, with no user input. 
 We recommend that only advanced users make changes to the numerical optimization options. Adding deterministics requires setting the variable corresponding to the type of deterministic component to 1. For instance, in the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. Output variables refer to either printing or plotting various information post-estimation and usually take values $1$ or $0$ (on or off). For example, if the user is not interested in the estimates of $\Gamma$, they can be suppressed by setting \verb|opt$printGammas <- 0|.
 
 The bounds on the parameter space for $d$ and $b$ are specified in \verb|opt$dbMin| and \verb|opt$dbMax|. In this example, these are both specified as 2-dimensional column vectors, in which case the first element specifies the bound on $d$ and the second element the bound on $b$. Alternatively, one can set \verb|opt$dbMin| and \verb|opt$dbMax| as scalars, which imposes the same bounds on $d$ and $b$. 
@@ -706,7 +685,7 @@ The bounds on the parameter space for $d$ and $b$ are specified in \verb|opt$dbM
 An important feature in this package is the ability to pre-estimate by using a grid search. If the user selects this option, they can view progress by setting \verb|opt$progress| to $1$ (waitbar) or $2$ (output in command line). The minimum frequency of these updates is set by \verb|opt$updateTime|. The user also has the option (\verb|opt$plotLike|) to view a plot of the likelihood over $d$ and/or $b$ after the grid search completes. The output of the grid search is a preliminary estimate of the fractional parameters. These are used as starting values in the subsequent numerical optimization, and the bounds on $d$ and $b$ are set to these starting values plus/minus $0.1$ but still within the original \verb|dbMin| and \verb|dbMax| settings.
 
 \begin{leftbar}
-Warning: The current package does not have this functionality. 
+Warning: The current package does not have the following functionality. 
 It could be implemented but I imagine there already exists something in R that can serve this role. 
 However, I think I don't quite understand the problem without it. 
 Can you provide an example? 
@@ -830,6 +809,8 @@ The table is meant to be read sequentially from lowest to highest rank, i.e.\ fr
 With the rank and lag selected, the user can now move to the next code section. 
 % , shown in Listing~\ref{unrEst}.
 % 
+
+% Split this up below:
 %% --------- UNRESTRICTED MODEL ESTIMATION ---------- %
 %\begin{lstlisting}[frame=single,caption={Unrestricted model estimation}, label = unrEst]
 %\begin{CodeChunk} 
@@ -1594,10 +1575,6 @@ the generated data is shown in Figure~\ref{fig:sim}.
 
 % \section{Extensions} \label{sec:extensions}
 
-\subsection{Plotting the likelihood function} \label{sec:extensions}
-
-
-
 %\subsection{Extension for $p$~values} \label{sec:fdpval}
 %
 % Users don't need to do this in R:
@@ -1610,6 +1587,9 @@ the generated data is shown in Figure~\ref{fig:sim}.
 %It can be either installed or downloaded in a compressed folder. It is important to note where the program is stored or installed, because the MATLAB program requires the program location as an input in the estimation options. For example, if the program is stored in the folder \verb|/usr/bin/| on a Linux system, the location variable is defined as follows, \verb|progLoc = '"/usr/bin/fdpval"'|. For details see Sections~\ref{sec:estoptions.m} and~\ref{sec:getpvals}.
 
 % \subsection{Dealing with Local Optima}
+\subsection{Plotting the likelihood function} \label{sec:extensions}
+
+
 
 Users should be aware that the likelihood function is sometimes badly behaved, in that there may be local optima. To mitigate this problem...
 
@@ -1690,11 +1670,25 @@ Anything else we want to include?
 
 The results in this paper were obtained using
 \proglang{R}~3.5.1. 
-% with the \pkg{whatever}~9.9.99 package. 
+with the \pkg{FCVAR} package Version 0.0.0.9000. 
+The $p$~values for rank tests are obtained using the 
+\pkg{fracdist} package Version 0.0.0.9000. 
 \proglang{R} itself
 and all packages used are available from the Comprehensive
 \proglang{R} Archive Network (CRAN) at
 \url{https://CRAN.R-project.org/}.
+
+The latest version of the \proglang{MATLAB} package \pkg{FCVARmodel.m} in \cite{Nielsen2016} 
+can be downloaded from one of the author's website at Queen's University:
+% 
+\begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
+\end{center}
+% 
+\noindent It is freely available for non-commercial, academic use. 
+The use of this program requires a functioning installation of MATLAB. 
+The version of \proglang{MATLAB} available at the release of the last version was \proglang{MATLAB} 9.0, 	R2016a, number 35. However, any recent version should work.  
+\proglang{MATLAB} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
+
 
 
 \section*{Acknowledgments}

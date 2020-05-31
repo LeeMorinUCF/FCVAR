@@ -73,14 +73,18 @@ cajo.test()
 
 library(fracdiff)
 
-x_test <- matrix(rnorm(100))
-x_test <- matrix(cumsum(rnorm(100)))
+x_test <- matrix(rnorm(1000))
+x_test <- matrix(cumsum(rnorm(1000)))
 d_test <- 0.5
 
 ds_test <- fracdiff::diffseries(x_test, d = d_test)
 fd_test <- FCVAR::FracDiff(x_test - mean(x_test), d = d_test)
 
 summary(ds_test - fd_test)
+
+sum(abs(ds_test - fd_test) > 10^(-13))
+
+
 
 sum(fracdiff::diffseries(x_test, d = d_test) ==
   FCVAR::FracDiff(x_test - mean(x_test), d = d_test))
