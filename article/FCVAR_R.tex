@@ -42,11 +42,7 @@
 % Version 1: Focus on R
 \title{The Fractionally Cointegrated Vector Autoregression Model in \proglang{R}}
 \Plaintitle{The Fractionally Cointegrated Vector Autoregression Model in R}
-\Shorttitle{FCVAR in \proglang{R}}
-% Version 2: It's available in both languages:
-\title{The Fractionally Cointegrated Vector Autoregression Model in \proglang{R}}
-\Plaintitle{The Fractionally Cointegrated Vector Autoregression Model in R}
-\Shorttitle{FCVAR in \proglang{R}}
+\Shorttitle{Fractionally Cointegrated VAR in \proglang{R}}
 
 %% - \Abstract{} almost as usual
 %% I figure that it is best to explain what this package does in plain English,  
@@ -58,9 +54,10 @@
   The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
   The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
   This allows for the detection of relationships with deviations that correct more slowly. 
-  Existing software concentrates on either the CVAR alone, which is restricted to integer orders of integration, or 
-  on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, bivariate anaysis or the focus on a particular response variable.
-  This software treats the time series as a sytem and estimates all parameters together in a likelihood ratio framework and it provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
+The \pkg{FCVAR} package ties together the features of these models in a multivariate framework that allows for an exhaustive set of testing options. 
+
+
+
 
 }
 
@@ -126,14 +123,21 @@
 
 This article illustrates how to estimate 
   the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}. 
-  This model is used to detect equilibrium relationships between variables observed over time. 
-  The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
-  The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
-  This allows for the detection of relationships with deviations that correct more slowly than with the CVAR. 
+This model is used to detect equilibrium relationships between variables observed over time. 
+The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
+The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
+This allows for the detection of relationships with deviations that correct more slowly than with the CVAR. 
+% 
 The packages currently available concentrate more heavily on the features of one of these two types of models. 
 % 
-An exhaustive listing of the R packages available for time series analysis were compiled in 
-\citet{Hyndman2020}, \citep{R}.
+
+Existing software concentrates on either the CVAR alone, which is restricted to integer orders of integration, or focuses on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, or estimating a single-equation model.
+Those that do consider fractionally cointegrated systems follow approaches developed earlier in the literature. 
+The software in \pkg{FCVAR} treats the time series as a system and estimates all parameters together in a maximum likelihood framework and it provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
+
+% 
+An exhaustive listing of the R packages \citep{R} available for time series analysis were compiled in 
+\citet{Hyndman2020}.
 % \emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman, 
 % available at \verb|https://CRAN.R-project.org/view=TimeSeries|). 
 % 
@@ -163,15 +167,14 @@ Another option is the dynamic OLS (D-OLS) approach (see \citet{PhillipsLoretan19
 It also implements, in \fct{cointRegIM}, a variant called integrated modified OLS (IM-OLS) of Vogelsang and Wagner (2014), 
 which is based on an augmented integration transformation of the regression model. 
 
-In another line of research, 
+Following another approach, 
 \citet{Johansen1995} analyzes the cointegrated VAR model in a more holistic fashion.
-Following this approach, the time series are treated as an endogenous system of equations and permits the estimation of a higher-dimensional cointegrating relationship, i.e. several equilibrium relationships. 
+In this framework, the time series are treated as an endogenous system of equations and permits the estimation of a higher-dimensional cointegrating relationship, i.e. several equilibrium relationships. 
 % 
 It also allows for the joint estimation of parameters relating to the system of equations, permitting likelihood ratio tests for a wide variety of hypotheses. 
 The \fct{VECM} function in the \pkg{tsDyn} package allows for the application of either the \citet{EngleGranger1987} or the \citet{Johansen1995} MLE method. 
 However, this package is designed primarily with nonlinear time series models in mind. 
-The \pkg{urca} package 
-\citep{urca2016}\footnote{They also use the Danish data, so it might be worthwhile to include in the documentation an example with and without the restriction $d = b = 1$ to compare}, 
+The \pkg{urca} package \citep{urca2016}, 
 which is designed to perform unit root tests and cointegration analysis, 
 follows the \citet{Johansen1995} approach in the function \fct{ca.jo}. 
 It also provides options for testing restrictions on the parameters in the model. 
@@ -179,7 +182,7 @@ Of the packages designed for the CVAR model, this is perhaps the closest availab
 
 \subsection{Segue from CVAR to $I(d)$}
 
-While the packages that follow the framework of \citet{Johansen1995} are most closly related to the \pkg{FCVAR} package, these are not suited to the analysis of series with a fractional degree of integration. 
+While the packages that follow the framework of \citet{Johansen1995} are most closely related to the \pkg{FCVAR} package, these are not suited to the analysis of series with a fractional degree of integration. 
 That is to say that these packages allow for only a discrete form of cointegration between the series. 
 For example, the series are all integrated, i.e. $I(1)$, and the residuals from a regression are stationary and $I(0)$. 
 The fractionally cointegrated VAR model allows for the possibility that variables can be integrated of order $d$ and cointegrated of order $d - b$, where $d$ and $b>0$ can be real numbers. 
@@ -195,37 +198,48 @@ several packages are listed for the estimation of models for series with feature
 A number of these pacakages are focused on estimation of $ARFIMA$ models, known as autoregressive fractionally integrated moving average models. 
 The \pkg{fracdiff} package \citep{fracdiff2020} includes functions for fitting $ARFIMA(p,d,q)$ models, including the step of estimating the long memory parameter $d$. 
 The namesake function \fct{fracdiff} calculates the maximum likelihood estimators of the parameters of a fractionally-differenced $ARIMA(p,d,q)$ model. 
-A few notable functions in this package estimate the long memory parameter $d$ within this model\footnote{Note that the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. Specifically, \code{fracdiff::diffseries(x, d) - FCVAR::FracDiff(x - mean(x), d)} is numerically very small.}. 
+A few notable functions in this package estimate the long memory parameter $d$ within this model\footnote{Note that the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. Specifically, \code{fracdiff::diffseries(x, d) - FCVAR::FracDiff(x - mean(x), d)} is numerically very small. 
+The demeaning step is not required to estimate the FCVAR model, as the mean parameters are estimated jointly with the others while optimizing the likelihood function. }. 
 % 
 The \pkg{arfima} package \cite{arfima2018} fits a wider variety of $ARFIMA$ models. 
 % 
 Also, the \pkg{nsarfima} \citep{nsarfima2019} package provides methods for fitting and simulating non-stationary $ARFIMA$ models. 
 This package is more innovative in terms of the types of optimization problems built on the $ARFIMA$ model, including both maximum likelihood (as in \citet{Beran1995}) and minimum distance (as in \citet{Mayoral2007}) estimators. 
+Overall, $ARFIMA$ models treat the data by fractional differencing to transform data to a form suitable for an $ARMA$ model, 
+similar to ordinary first differencing for variables that have unit roots. 
+The models preclude the class of models that study cointegration relationships. 
 
-The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods methods to investigate both cointegrating relationships and fractional integration.\footnote{Morten: You would be best suited to comment on the references in this package. 
-There are several citations to your papers and I want to make sure that we are honest about the difference between what we do and what they do. 
-It seems to me that this package (\cite{LongMemoryTS2019}) chains together several separate issues, such as, estimating the fractional integration parameter and then plugging that value into the rank test as if it were known. 
-Another example is testing cointegration by estimating the fractional parameter from the residuals. 
-It seems to me that this is a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
-Our approach following \citet{Johansen1995} is more holistic, in that all the parameters are estimated jointly, aside from the rank and lag selection. 
-It captures all of these in one maximum likelihood framework and approach has the added benefit of allowing for a wide range of restrictions to test} 
+The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods to investigate both cointegrating relationships and fractional integration.\footnote{Morten: You would be best suited to comment on the references in this package. 
+There are several citations to your papers and papers that I'm sure you know better and I want to make sure that we are honest about the difference between what we do and what they do. 
+It seems to me that this package is a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
+I like to think that our approach following \citet{Johansen1995} is more holistic, in that all the parameters are estimated jointly, aside from the rank and lag selection. 
+It captures all of the pieces in one maximum likelihood framework and this approach has the added benefit of allowing for a wide range of restrictions to test. 
 
+\textbf{Before I forget}, one important point to note is that I did not succeed in installing this package. 
+It requires dependencies that would not install on either my local machine or the ones in Dunning 211 or the equivalent at UCF. 
+That's too bad, because they have also implemented \cite{Jensen2014}, with your permission, in the function \fct{fdiff}. I would have liked to test it for myself. 
+In my opinion, they have too much going on in one package and the level of complexity can lead to dependency problems like this. 
+As a user, I would move on to the next package that works, which is a good reason to implement this function ourselves, without these problems. 
+Actually, now that I have looked at it more closely, the documentation is incomplete as well. 
+Our closest competitor is a work in progress. } 
+% 
+For estimating the order of the fractional integration in a series, there are several options including the 
 
+For determining the cointegrating rank, i.e. the dimension of the cointegrating relations, there are also sevaral options. 
 
-%	\item \pkg{LongMemoryTS} this model uses a wide variety of methods methods to investigate both cointegrating relationships and fractional integration. 
-%However, it seems to me that this package (\cite{LongMemoryTS2019}) chains together several separate issues, such as, estimating the fractional integration parameter and then plugging that value into the rank test as if it were known. Another example is testing cointegration by estimating the fractional parameter from the residuals.  
-%Morten, you have a lot of citations in this package. It implements Nielsen (JoE, 2010) with a given $d$, where apparently you recommend \code{d = 0.1}. It also implements Nielsen and Shimotsu (JoE, 2007) for rank estimation in fractionally cointegrated systems. Also: Hausman-type test for fractional cointegration (Robinson (2008)). Basically a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
-%Ours is more (what's the word?) holistic, in that all the parameters are estimated jointly, aside from the rank and lag selection. It captures all of these in one maximum likelihood framework. 
-%This approach has the added benefit of allowing for a wide range of restrictions to test. 
+Finally, for estimation the cointegrating relationship, this package implements a number of approaches. 
+
+It implements semiparametric approaches of A, B and C and the nonparametric approach of D. 
+
 
 
 The \pkg{FCVAR} package, introduced here, is closest to a cross between the Johansen cointegration model in \pkg{urca} and the models involving fractionally integrated variables discussed above. 
-In particular\footnote{Maybe we should add this sort of example to the documentation, since we had something similar in the first version.}, the model estimated in the \pkg{urca} packages is the special case of \pkg{FCVAR} in which the fractional integration parameters $d$ and $b$ are both equal to one. 
-
-
-\subsection{The  MATLAB program}
-
-This \proglang{R} package is based on a companion package \pkg{FCVARmodel.m}, written in \proglang{MATLAB}. 
+In particular, the model estimated in the \pkg{urca} packages is the special case of \pkg{FCVAR} in which the fractional integration parameters $d$ and $b$ are both equal to one.\footnote{They also use the Danish data, so it might be worthwhile to include in the documentation an example with and without the restriction $d = b = 1$ to compare. It may not fit in this paper but could be a short vignette (short pdf with code and descriptions) that would go on the CRAN webpage for the package. } 
+% 
+% 
+% \subsection{The  MATLAB program}
+% 
+The \proglang{R} package \pkg{FCVAR} is based on a companion package \pkg{FCVARmodel.m}, written in \proglang{MATLAB}. 
 The \proglang{MATLAB} package is documented in \cite{Nielsen2016}, an expanded version of the package documented in \cite{Nielsen2013}. 
 
 % Moved to end, as per JSS style:
@@ -239,7 +253,7 @@ The \proglang{MATLAB} package is documented in \cite{Nielsen2016}, an expanded v
 %The version of \proglang{MATLAB} available at the release of the last version was \proglang{MATLAB} 9.0, 	R2016a, number 35. However, any recent version should work.  
 %\proglang{MATLAB} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
 
-\subsection{Roadmap}
+% \subsection{Roadmap}
 
 The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes an example of a modeling session, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes another example program, which demonstrates some additional functionality of the software. Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
 % Section \ref{sec programs} describes how each of the major program files work (each in a separate subsection). 

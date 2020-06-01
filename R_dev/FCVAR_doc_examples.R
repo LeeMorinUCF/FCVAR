@@ -592,6 +592,12 @@ MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)
 WN_x_d <- FracDiff(x, d = 0.5)
 MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)
 
+# Compare with results from other packages.
+x <- matrix(cumsum(rnorm(100)), nrow = 100, ncol = 1)
+d <- 0.73
+summary(fracdiff::diffseries(x, d) - FCVAR::FracDiff(x - mean(x), d))
+summary(LongMemoryTS::fdiff(x, d) - FCVAR::FracDiff(x, d))
+
 
 # GetFreeParams(k, r, p, opt, rankJ)
 
