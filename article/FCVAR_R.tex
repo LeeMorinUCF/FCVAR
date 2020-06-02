@@ -206,7 +206,7 @@ The \pkg{arfima} package \cite{arfima2018} fits a wider variety of $ARFIMA$ mode
 Also, the \pkg{nsarfima} \citep{nsarfima2019} package provides methods for fitting and simulating non-stationary $ARFIMA$ models. 
 This package is more innovative in terms of the types of optimization problems built on the $ARFIMA$ model, including both maximum likelihood (as in \citet{Beran1995}) and minimum distance (as in \citet{Mayoral2007}) estimators. 
 Overall, $ARFIMA$ models treat the data by fractional differencing to transform data to a form suitable for an $ARMA$ model, 
-similar to ordinary first differencing for variables that have unit roots. 
+similar to ordinary first differencing for variables that have unit roots as in $ARIMA$ models. 
 The models preclude the class of models that study cointegration relationships. 
 
 The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods to investigate both cointegrating relationships and fractional integration.\footnote{Morten: You would be best suited to comment on the references in this package. 
@@ -221,16 +221,46 @@ That's too bad, because they have also implemented \cite{Jensen2014}, with your 
 In my opinion, they have too much going on in one package and the level of complexity can lead to dependency problems like this. 
 As a user, I would move on to the next package that works, which is a good reason to implement this function ourselves, without these problems. 
 Actually, now that I have looked at it more closely, the documentation is incomplete as well. 
-Our closest competitor is a work in progress. } 
+Our closest competitor is a work in progress -- but there is no need to call them out on it. } 
 % 
-For estimating the order of the fractional integration in a series, there are several options including the 
+For estimating the order of the fractional integration in a series, there are several options including...
+\citet{RobinsonL1995}, 
+\citet{RobinsonPM1995a},
+\citet{RobinsonPM1995b}, 
+\citet{GPH1983}, 
+\citet{ShimotsuPhillips2005}, 
+\citet{Shimotsu2010}, 
+\citet{FredNielsenNielsen2012}, 
+\citet{HouPerron2014}. 
+
 
 For determining the cointegrating rank, i.e. the dimension of the cointegrating relations, there are also sevaral options. 
+See 
+\citet{ChenHurvich2003},
+\citet{RobinsonYajima2002},
+\citet{NielsenShimotsu2007},
+\citet{ZhangRobinsonYao2018}. 
+
+
 
 Finally, for estimation the cointegrating relationship, this package implements a number of approaches. 
 
 It implements semiparametric approaches of A, B and C and the nonparametric approach of D. 
+See
+\citet{ChristensenNielsen2006},
+\citet{Robinson1994},
+\citet{RobinsonMarinucci2003},
+\citet{ChenHurvich2006},
+\citet{MarmolVelasco2004},
+\citet{WangWangChan2015}. 
 
+
+Cointegration:
+See
+\citet{Nielsen2010},
+\citet{Robinson2008},
+\citet{SouzaEtal2018},
+\citet{NielsenFrederiksen2011}. 
 
 
 The \pkg{FCVAR} package, introduced here, is closest to a cross between the Johansen cointegration model in \pkg{urca} and the models involving fractionally integrated variables discussed above. 
@@ -1663,7 +1693,7 @@ where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi
 
 \begin{leftbar}
 Should we talk about anything in the pipeline, such as the stata version or the multifractional version?
-I am leaning toward including the multifractional version on the repository in a development repo as a beta version. That way, it will be available to power users with the \pkg{devtools}, where this version can be installed by 
+I am leaning toward including the multifractional version on the repository in a development repo as a beta version. That way, it will be available to power users with the \pkg{devtools} package, where this version can be installed by 
 
 \verb|devtools::install_github(LeeMorinUCF/FCVAR)|. 
 
@@ -1685,7 +1715,7 @@ Anything else we want to include?
 The results in this paper were obtained using
 \proglang{R}~3.5.1. 
 with the \pkg{FCVAR} package Version 0.0.0.9000. 
-The $p$~values for rank tests are obtained using the 
+When determining cointegrating rank, the $p$~values for rank tests are obtained using the 
 \pkg{fracdist} package Version 0.0.0.9000. 
 \proglang{R} itself
 and all packages used are available from the Comprehensive
