@@ -3,7 +3,7 @@
 
 #' Select Lag Order
 #'
-#' \code{LagSelect} takes a matrix of variables and performs lag
+#' \code{FCVARlagSelect} takes a matrix of variables and performs lag
 #' 	selection on it by using the likelihood ratio test. Output and test
 #' 	results are printed to the screen.
 #'
@@ -15,12 +15,12 @@
 #' @param order The order of serial correlation for white noise tests.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return A list object \code{LagSelectStats} containing the results
+#' @return A list object \code{FCVARlagSelectStats} containing the results
 #' from repeated estimation of the FCVAR model with different orders
 #' of the autoregressive lag length.
-#' Note that row \code{j} of each of the vectors in \code{LagSelectStats}
+#' Note that row \code{j} of each of the vectors in \code{FCVARlagSelectStats}
 #' contains the associated results for lag length \code{j+1}
-#' \code{LagSelectStats} includes the following parameters:
+#' \code{FCVARlagSelectStats} includes the following parameters:
 #' \describe{
 #'   \item{\code{D}}{A (\code{kmax} + 1) x 2 vector of estimates of d and b.}
 #'   \item{\code{loglik}}{A (\code{kmax} + 1) x 1 vector of log-likelihood values.}
@@ -41,15 +41,15 @@
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+#' FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate lag order.
-#' \code{print.LagSelect} prints the output of \code{LagSelect} to screen.
+#' \code{print.FCVARlagSelect} prints the output of \code{FCVARlagSelect} to screen.
 #' @export
 #'
-LagSelect <- function(x, kmax, r, order, opt ) {
+FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 
 
   # Determine (initial) dimensions of system.
@@ -145,7 +145,7 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 
 
   # Return list of lag selection statistics.
-  LagSelectStats <- list(
+  FCVARlagSelectStats <- list(
     D = D,
     loglik = loglik,
     LRtest = LRtest,
@@ -162,23 +162,23 @@ LagSelect <- function(x, kmax, r, order, opt ) {
   # Print output if required, restoring original settings.
   opt$print2screen <- print2screen
   if (opt$print2screen) {
-    print.LagSelect(LagSelectStats, kmax, r, p, T, order, opt)
+    print.FCVARlagSelect(FCVARlagSelectStats, kmax, r, p, T, order, opt)
   }
 
-  return(LagSelectStats)
+  return(FCVARlagSelectStats)
 
 }
 
 #' Print Statistics from Lag Order Selection
 #'
-#' \code{print.LagSelect} prints the table of statistics from
-#' the output of \code{LagSelect}.
-#' \code{LagSelect} takes a matrix of variables and performs lag
+#' \code{print.FCVARlagSelect} prints the table of statistics from
+#' the output of \code{FCVARlagSelect}.
+#' \code{FCVARlagSelect} takes a matrix of variables and performs lag
 #' 	selection on it by using the likelihood ratio test.
 #'
-#' @param stats A list object \code{LagSelectStats} containing the results
+#' @param stats A list object \code{FCVARlagSelectStats} containing the results
 #' from repeated estimation of the FCVAR model with different orders
-#' of the autoregressive lag length. It is the output of \code{LagSelect}.
+#' of the autoregressive lag length. It is the output of \code{FCVARlagSelect}.
 #' @param kmax The maximum number of lags in the system.
 #' @param r The cointegrating rank. This is often set equal to \code{p},
 #' the number of variables in the system, since it is better to overspecify
@@ -196,16 +196,16 @@ LagSelect <- function(x, kmax, r, order, opt ) {
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
-#' print.LagSelect(stats = LagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
+#' FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
+#' print.FCVARlagSelect(stats = FCVARlagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate lag order.
-#' \code{print.LagSelect} prints the output of \code{LagSelect} to screen.
+#' \code{print.FCVARlagSelect} prints the output of \code{FCVARlagSelect} to screen.
 #' @export
 #'
-print.LagSelect <- function(stats, kmax, r, p, T, order, opt) {
+print.FCVARlagSelect <- function(stats, kmax, r, p, T, order, opt) {
 
 
   #--------------------------------------------------------------------------------

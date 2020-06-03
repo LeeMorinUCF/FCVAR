@@ -102,7 +102,7 @@ DefaultOpt <- opt # Store the options for restoring them in between hypothesis t
 ################################################################################
 
 opt$gridSearch <- 0
-LagSelectStats <- LagSelect(x1, kmax, r = p, order, opt)
+FCVARlagSelectStats <- FCVARlagSelect(x1, kmax, r = p, order, opt)
 
 
 ################################################################################

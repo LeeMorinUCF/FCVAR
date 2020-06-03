@@ -35,7 +35,7 @@
 #'   to make model specfication decisions.
 #'   These include:
 #' \describe{
-#'   \item{\code{LagSelect}}{for selection of the lag order}
+#'   \item{\code{FCVARlagSelect}}{for selection of the lag order}
 #'   \item{\code{FCVARrankTests}}{for choosing the cointegrating rank}
 #'   \item{\code{FCVARbootRank}}{for generating a distribution of a likelihood ratio
 #'  test statistic for the rank test}

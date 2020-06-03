@@ -43,8 +43,8 @@ for each candidate cointegrating rank.
 
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},
+\code{\link{FCVARlagSelect}()},
 \code{\link{FCVARrankTests}()},
-\code{\link{LagSelect}()},
-\code{\link{print.LagSelect}()}
+\code{\link{print.FCVARlagSelect}()}
 }
 \concept{FCVAR specification functions}

@@ -4,8 +4,8 @@ context("Specification")
 
 
 test_that("Lag selection results and output are correct", {
-  load(file = 'soln_spec/LagSelectStats.RData')
-  LagSelectStats_text_soln <- readLines('soln_spec/LagSelectStats.txt')
+  load(file = 'soln_spec/FCVARlagSelectStats.RData')
+  FCVARlagSelectStats_text_soln <- readLines('soln_spec/FCVARlagSelectStats.txt')
 
   opt <- FCVARoptions()
   opt$gridSearch   <- 0 # Disable grid search in optimization.
@@ -13,14 +13,14 @@ test_that("Lag selection results and output are correct", {
   opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
   opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
   x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-  # LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
+  # FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
 
-  capture.output(LagSelectStats_test <- LagSelect(x, kmax = 3, r = 3, order = 12, opt),
+  capture.output(FCVARlagSelectStats_test <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt),
                  file = 'soln_spec/temp.txt')
-  LagSelectStats_text <- readLines('soln_spec/temp.txt')
+  FCVARlagSelectStats_text <- readLines('soln_spec/temp.txt')
 
-  expect_equal(LagSelectStats_test, LagSelectStats)
-  expect_equal(LagSelectStats_text, LagSelectStats_text_soln)
+  expect_equal(FCVARlagSelectStats_test, FCVARlagSelectStats)
+  expect_equal(FCVARlagSelectStats_text, FCVARlagSelectStats_text_soln)
 })
 
 

@@ -97,7 +97,7 @@ m1r4 <- FCVARestn(x1, k = 2, r = 1, opt1)
 ################################################################################
 
 
-# LagSelect(x, kmax, r, order, opt )
+# FCVARlagSelect(x, kmax, r, order, opt )
 
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
@@ -105,12 +105,12 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
-# capture.output(LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt), file = 'tests/testthat/soln_spec/LagSelectStats.txt')
-# save(LagSelectStats, list = c('LagSelectStats'), file = 'tests/testthat/soln_spec/LagSelectStats.RData')
+FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
+# capture.output(FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt), file = 'tests/testthat/soln_spec/FCVARlagSelectStats.txt')
+# save(FCVARlagSelectStats, list = c('FCVARlagSelectStats'), file = 'tests/testthat/soln_spec/FCVARlagSelectStats.RData')
 
 
-# print.LagSelect(stats, kmax, r, p, order, opt)
+# print.FCVARlagSelect(stats, kmax, r, p, order, opt)
 
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
@@ -118,8 +118,8 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-LagSelectStats <- LagSelect(x, kmax = 3, r = 3, order = 12, opt)
-print.LagSelect(stats = LagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
+FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
+print.FCVARlagSelect(stats = FCVARlagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
 
 
 # FCVARrankTests(x, k, opt)
