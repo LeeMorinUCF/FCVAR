@@ -106,7 +106,7 @@ test_that("restricted estimation results and output are correct", {
   opt1 <- opt
   opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
   opt1$r_psi <- 1
-  capture.output(m1r1_test <- FCVARestn(x1, k = 2, r = 1, opt1),
+  capture.output(m1r1_test <- FCVARestn(x, k = 2, r = 1, opt1),
                  file = 'soln_estn/temp.txt')
   m1r1_text <- readLines('soln_estn/temp.txt')
 
@@ -116,7 +116,7 @@ test_that("restricted estimation results and output are correct", {
   opt1 <- opt
   opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
   # opt1$db0 <- c(0.67, 0.67) # Set starting values for optimization algorithm.
-  capture.output(m1r2_test <- FCVARestn(x1, k = 2, r = 1, opt1),
+  capture.output(m1r2_test <- FCVARestn(x, k = 2, r = 1, opt1),
                  file = 'soln_estn/temp.txt')
   m1r2_text <- readLines('soln_estn/temp.txt')
 
@@ -126,7 +126,7 @@ test_that("restricted estimation results and output are correct", {
   opt1 <- opt
   opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
   # opt1$db0 <- c(0.575, 0.575) # Set starting values for optimization algorithm.
-  capture.output(m1r4_test <- FCVARestn(x1, k = 2, r = 1, opt1),
+  capture.output(m1r4_test <- FCVARestn(x, k = 2, r = 1, opt1),
                  file = 'soln_estn/temp.txt')
   m1r4_text <- readLines('soln_estn/temp.txt')
 
