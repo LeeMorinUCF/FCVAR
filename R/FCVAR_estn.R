@@ -99,8 +99,8 @@ FCVARestn <- function(x, k, r, opt) {
     message(sprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n', k,r),
             "This computation can be slow.\n",
             "Set opt$gridSearch <- 0 to skip it.")
-    # opt$db0 <- LikeGridSearch(x, k, r, opt)
-    likeGrid_params <- LikeGridSearch(x, k, r, opt)
+    # opt$db0 <- FCVARlikeGrid(x, k, r, opt)
+    likeGrid_params <- FCVARlikeGrid(x, k, r, opt)
     opt$db0 <- likeGrid_params$params
 
     # print('opt$db0 = ')

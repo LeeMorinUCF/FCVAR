@@ -41,6 +41,7 @@ xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARhess}()},
 \code{\link{FCVARlikeFull}()},
+\code{\link{FCVARlikeGrid}()},
 \code{\link{FCVARlikeMu}()},
 \code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
@@ -52,10 +53,9 @@ Other FCVAR auxilliary functions:
 \code{\link{GetResiduals}()},
 \code{\link{GetRestrictedParams}()},
 \code{\link{Lbk}()},
-\code{\link{LikeGridSearch}()},
 \code{\link{SEmat2vecU}()},
 \code{\link{SEvec2matU}()},
 \code{\link{TransformData}()},
-\code{\link{plot.LikeGridSearch}()}
+\code{\link{plot.FCVARlikeGrid}()}
 }
 \concept{FCVAR auxilliary functions}

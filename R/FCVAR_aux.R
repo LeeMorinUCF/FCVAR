@@ -595,7 +595,7 @@ GetParams <- function(x, k, r, db, opt) {
 
 #' Grid Search to Maximize Likelihood Function
 #'
-#' \code{LikeGridSearch} performs a grid-search optimization
+#' \code{FCVARlikeGrid} performs a grid-search optimization
 #' by calculating the likelihood function
 #' on a grid of candidate parameter values.
 #' This function evaluates the likelihood over a grid of values
@@ -604,7 +604,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' 	starting values to give an approximation of the global max which can
 #' 	then be used as the starting value in the numerical optimization in
 #' 	\code{FCVARestn}.
-#' 	\code{print.LikeGridSearch} plots the likelihood function from \code{LikeGridSearch}.
+#' 	\code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
 #'
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
@@ -639,8 +639,8 @@ GetParams <- function(x, k, r, db, opt) {
 #' opt$progress     <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-#' plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+#' plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 #'
 #' # Linear restriction on fractional parameters.
 #' opt <- FCVARoptions()
@@ -655,8 +655,8 @@ GetParams <- function(x, k, r, db, opt) {
 #' opt$progress     <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-#' plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+#' plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 #'
 #' # Constrained 2-dimensional optimization.
 #' # Impose restriction dbMax >= d >= b >= dbMin.
@@ -670,7 +670,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' opt$progress     <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 #'
 #' # Unconstrained 2-dimensional optimization.
 #' opt <- FCVARoptions()
@@ -683,13 +683,13 @@ GetParams <- function(x, k, r, db, opt) {
 #' opt$progress     <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{print.LikeGridSearch} plots the likelihood function from \code{LikeGridSearch}.
-#' @note If \code{opt$LocalMax == 0}, \code{LikeGridSearch} returns the parameter values
+#' \code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' @note If \code{opt$LocalMax == 0}, \code{FCVARlikeGrid} returns the parameter values
 #'       corresponding to the global maximum of the likelihood on the grid.
-#'       If \code{opt$LocalMax == 1}, \code{LikeGridSearch} returns the parameter values for the
+#'       If \code{opt$LocalMax == 1}, \code{FCVARlikeGrid} returns the parameter values for the
 #'       local maximum corresponding to the highest value of \code{b}. This
 #'       alleviates the identification problem mentioned in Johansen and
 #'       Nielsen (2010, section 2.3).
@@ -697,7 +697,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' "Likelihood inference for a nonstationary fractional
 #' autoregressive model," Journal of Econometrics 158, 51-66.
 #'
-LikeGridSearch <- function(x, k, r, opt) {
+FCVARlikeGrid <- function(x, k, r, opt) {
 
 
 
@@ -907,7 +907,7 @@ LikeGridSearch <- function(x, k, r, opt) {
   }
 
   # # Save the workspace at this point.
-  # save.image(file = 'LikeGridSearchData1.RData')
+  # save.image(file = 'FCVARlikeGridData1.RData')
   #
   # # Testing: Analyze the like grid
   # nrow(like)
@@ -1096,7 +1096,7 @@ LikeGridSearch <- function(x, k, r, opt) {
 
   if (opt$plotLike) {
 
-    plot.LikeGridSearch(likeGrid_params, k, r, opt, main = 'default')
+    plot.FCVARlikeGrid(likeGrid_params, k, r, opt, main = 'default')
 
   }
 
@@ -1107,8 +1107,8 @@ LikeGridSearch <- function(x, k, r, opt) {
 
 #' Plot the Likelihood Function for the FCVAR Model
 #'
-#' \code{print.LikeGridSearch} plots the likelihood function from \code{LikeGridSearch}.
-#' \code{LikeGridSearch} performs a grid-search optimization
+#' \code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' \code{FCVARlikeGrid} performs a grid-search optimization
 #' by calculating the likelihood function
 #' on a grid of candidate parameter values.
 #' This function evaluates the likelihood over a grid of values
@@ -1118,7 +1118,7 @@ LikeGridSearch <- function(x, k, r, opt) {
 #' 	then be used as the starting value in the numerical optimization in
 #' 	\code{FCVARestn}.
 #'
-#' @param likeGrid_params A list output from \code{LikeGridSearch}.
+#' @param likeGrid_params A list output from \code{FCVARlikeGrid}.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
@@ -1139,13 +1139,13 @@ LikeGridSearch <- function(x, k, r, opt) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' opt$progress <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
-#' likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-#' plot.LikeGridSearch(likeGrid_params, k, r, opt, main = 'default')
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+#' plot.FCVARlikeGrid(likeGrid_params, k, r, opt, main = 'default')
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{print.LikeGridSearch} plots the likelihood function from \code{LikeGridSearch}.
+#' \code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
 #'
-plot.LikeGridSearch <- function(likeGrid_params, k, r, opt,
+plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
                                 file = NULL, file_ext = NULL,
                                 main = NULL) {
 
@@ -1253,7 +1253,7 @@ plot.LikeGridSearch <- function(likeGrid_params, k, r, opt,
 #' Likelihood Function for the Unconstrained FCVAR Model
 #'
 #' \code{FCVARlikeMu} calculates the likelihood for the unconstrained FCVAR model
-#' for a given set of parameter values. It is used by the \code{LikeGridSearch}
+#' for a given set of parameter values. It is used by the \code{FCVARlikeGrid}
 #' function to numerically optimize over the level parameter for given values of
 #' the fractional parameters.
 #'
@@ -1272,7 +1272,7 @@ plot.LikeGridSearch <- function(likeGrid_params, k, r, opt,
 #' like <- FCVARlikeMu(y = x, db = c(1, 1), mu = mean(x), k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' The \code{LikeGridSearch} calls this function to perform a grid search over the
+#' The \code{FCVARlikeGrid} calls this function to perform a grid search over the
 #' parameter values.
 #'
 FCVARlikeMu <- function(mu, y, db, k, r, opt) {

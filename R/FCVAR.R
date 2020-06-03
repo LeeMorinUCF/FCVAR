@@ -50,7 +50,7 @@
 #'   \item{\code{FracDiff}}{for fractionally differencing a multivariate series}
 #'   \item{\code{GetResiduals}}{for calculating residuals for the FCVAR model}
 #'   \item{\code{FCVARsimBS}}{for generating bootstrap samples from the FCVAR model}
-#'   \item{\code{LikeGridSearch}}{for performing a grid-search optimization with the FCVAR likelihood function}
+#'   \item{\code{FCVARlikeGrid}}{for performing a grid-search optimization with the FCVAR likelihood function}
 #' }
 #'
 #' @section Examples:

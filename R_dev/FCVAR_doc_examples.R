@@ -431,7 +431,7 @@ estimates <- GetParams(y, k = 2, r = 1, db = results$coeffs$db, opt)
 
 
 
-# LikeGridSearch(x, k, r, opt)
+# FCVARlikeGrid(x, k, r, opt)
 
 # Restrict equality of fractional parameters.
 opt <- FCVARoptions()
@@ -443,8 +443,8 @@ opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 
 # Linear restriction on fractional parameters.
@@ -460,8 +460,8 @@ opt$r_psi        <- 0.5
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 # Constrained 2-dimensional optimization.
 # Impose restriction dbMax >= d >= b >= dbMin.
@@ -475,7 +475,7 @@ opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 
 # Unconstrained 2-dimensional optimization.
 opt <- FCVARoptions()
@@ -488,12 +488,12 @@ opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 
 
 
 
-# plot.LikeGridSearch(likeGrid_params, k, r, opt, file, file_ext, main)
+# plot.FCVARlikeGrid(likeGrid_params, k, r, opt, file, file_ext, main)
 
 # Restrict equality of fractional parameters.
 opt <- FCVARoptions()
@@ -505,8 +505,8 @@ opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 
 # FCVARlikeMu(mu, y, db, k, r, opt)

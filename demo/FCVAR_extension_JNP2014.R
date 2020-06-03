@@ -388,12 +388,12 @@ opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 # Output plot for article.
 out_file_path <- sprintf('R_dev/Figures/gridDB.%s', fig_ext)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt,
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
                     main = 'default',
                     file = out_file_path,
                     file_ext = fig_ext)
@@ -412,13 +412,13 @@ opt$r_psi        <- 0.5
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 
 # Output plot for article.
 out_file_path <- sprintf('R_dev/Figures/gridPhi.%s', fig_ext)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt,
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
                     main = 'default',
                     file = out_file_path,
                     file_ext = fig_ext)
@@ -436,12 +436,12 @@ opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-# plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 # Output plot for article.
 out_file_path <- sprintf('R_dev/Figures/gridConst.%s', fig_ext)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt,
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
                     main = 'default',
                     file = out_file_path,
                     file_ext = fig_ext)
@@ -458,12 +458,12 @@ opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- LikeGridSearch(x, k = 2, r = 1, newOpt)
-# plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 # Output plot for article.
 out_file_path <- sprintf('R_dev/Figures/grid3d.%s', fig_ext)
-plot.LikeGridSearch(likeGrid_params, k = 2, r = 1, newOpt,
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
                     main = 'default',
                     file = out_file_path,
                     file_ext = fig_ext)
