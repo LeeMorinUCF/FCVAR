@@ -2,7 +2,7 @@
 
 #' Test of Restrictions on FCVAR Model
 #'
-#' \code{HypoTest} performs a likelihood ratio test of the null
+#' \code{FCVARhypoTest} performs a likelihood ratio test of the null
 #' 	hypothesis: "model is \code{modelR}" against the alternative hypothesis:
 #' 	"model is \code{modelUNR}".
 #'
@@ -29,17 +29,17 @@
 #' opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 #' opt1$r_psi <- 1
 #' m1r1 <- FCVARestn(x1, k, r, opt1)
-#' Hdb <- HypoTest(modelUNR = m1, modelR = m1r1)
+#' Hdb <- FCVARhypoTest(modelUNR = m1, modelR = m1r1)
 #'
 #' opt1 <- opt
 #' opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 #' m1r2 <- FCVARestn(x1, k, r, opt1)
-#' Hbeta1 <- HypoTest(m1, m1r2)
+#' Hbeta1 <- FCVARhypoTest(m1, m1r2)
 #'
 #' opt1 <- opt
 #' opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 #' m1r4 <- FCVARestn(x1, k, r, opt1)
-#' Halpha2 <- HypoTest(m1, m1r4)
+#' Halpha2 <- FCVARhypoTest(m1, m1r4)
 #' @family FCVAR postestimation functions
 #' @seealso The test is calculated using the results of two calls to
 #' \code{FCVARestn}, under the restricted and unrestricted models.
@@ -48,7 +48,7 @@
 #' @export
 #'
 
-HypoTest <- function(modelUNR, modelR) {
+FCVARhypoTest <- function(modelUNR, modelR) {
 
 
   # Calculate the test statistic.
@@ -106,7 +106,7 @@ HypoTest <- function(modelUNR, modelR) {
 #'   \item{\code{pv}}{An approximate p-value for the likelihood ratio statistic
 #'    based on the bootstrap distribution.}
 #'   \item{\code{H}}{A list containing the likelihood ratio test results.
-#'   It is identical to the output from \code{HypoTest}, with one addition,
+#'   It is identical to the output from \code{FCVARhypoTest}, with one addition,
 #'   namely \code{H$pvBS} which is the bootstrap p-value}
 #'   \item{\code{mBS}}{The model estimates under the null hypothesis.}
 #'   \item{\code{mUNR}}{The model estimates under the alternative hypothesis.}
@@ -154,7 +154,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 
   cat(sprintf('\nHypothesis test to bootstrap:\n'))
   # cat(H)
-  H <- HypoTest(mUNR, mBS)
+  H <- FCVARhypoTest(mUNR, mBS)
 
   # How often should the number of iterations be displayed
   show_iters <- 10

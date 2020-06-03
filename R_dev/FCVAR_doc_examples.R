@@ -257,7 +257,7 @@ Qtest(x = matrix(RW), maxlag = 10)
 
 
 
-# HypoTest(modelUNR, modelR)
+# FCVARhypoTest(modelUNR, modelR)
 
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
@@ -270,27 +270,27 @@ opt1 <- opt
 opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt1$r_psi <- 1
 m1r1 <- FCVARestn(x1, k, r, opt1)
-Hdb <- HypoTest(modelUNR = m1, modelR = m1r1)
+Hdb <- FCVARhypoTest(modelUNR = m1, modelR = m1r1)
 
 opt1 <- opt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 m1r2 <- FCVARestn(x1, k, r, opt1)
-Hbeta1 <- HypoTest(m1, m1r2)
+Hbeta1 <- FCVARhypoTest(m1, m1r2)
 
 opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 m1r4 <- FCVARestn(x1, k, r, opt1)
-Halpha2 <- HypoTest(m1, m1r4)
+Halpha2 <- FCVARhypoTest(m1, m1r4)
 
-# capture.output(Hdb <- HypoTest(modelUNR = m1, modelR = m1r1),
-#                file = 'tests/testthat/soln_post/HypoTest_Hdb.txt')
-# capture.output(Hbeta1 <- HypoTest(m1, m1r2),
-#                file = 'tests/testthat/soln_post/HypoTest_Hbeta1.txt')
-# capture.output(Halpha2 <- HypoTest(m1, m1r4),
-#                file = 'tests/testthat/soln_post/HypoTest_Halpha2.txt')
+# capture.output(Hdb <- FCVARhypoTest(modelUNR = m1, modelR = m1r1),
+#                file = 'tests/testthat/soln_post/FCVARhypoTest_Hdb.txt')
+# capture.output(Hbeta1 <- FCVARhypoTest(m1, m1r2),
+#                file = 'tests/testthat/soln_post/FCVARhypoTest_Hbeta1.txt')
+# capture.output(Halpha2 <- FCVARhypoTest(m1, m1r4),
+#                file = 'tests/testthat/soln_post/FCVARhypoTest_Halpha2.txt')
 # save(m1, m1r1, m1r2, m1r4, Hdb, Hbeta1, Halpha2,
 #      list = c('m1', 'm1r1', 'm1r2', 'm1r4', 'Hdb', 'Hbeta1', 'Halpha2'),
-#      file = 'tests/testthat/soln_post/HypoTest.RData')
+#      file = 'tests/testthat/soln_post/FCVARhypoTest.RData')
 
 
 # FCVARboot(x, k, r, optRES, optUNR, B)

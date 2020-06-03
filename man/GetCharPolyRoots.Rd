@@ -58,7 +58,7 @@ of the characteristic polynomial.
 
 Other FCVAR postestimation functions: 
 \code{\link{FCVARboot}()},
-\code{\link{HypoTest}()},
+\code{\link{FCVARhypoTest}()},
 \code{\link{LMtest}()},
 \code{\link{MVWNtest}()},
 \code{\link{Qtest}()},

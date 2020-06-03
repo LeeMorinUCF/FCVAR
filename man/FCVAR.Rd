@@ -32,7 +32,7 @@ The postestimation functions are used to display summary statistics,
 test hypotheses and test the goodness of fit of the estimated model.
   These include:
 \describe{
-  \item{\code{HypoTest}}{for a likelihood ratio test of a restricted
+  \item{\code{FCVARhypoTest}}{for a likelihood ratio test of a restricted
   vs. an unrestricted model}
   \item{\code{FCVARboot}}{for generating a distribution of a likelihood ratio
   test statistic}

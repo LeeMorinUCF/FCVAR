@@ -4,26 +4,26 @@ context("Postestimation")
 
 
 test_that("Hypothesis testing results and output are correct", {
-  load(file = 'soln_post/HypoTest.RData')
-  Hdb_text_soln <- readLines('soln_post/HypoTest_Hdb.txt')
-  Hbeta1_text_soln <- readLines('soln_post/HypoTest_Hbeta1.txt')
-  Halpha2_text_soln <- readLines('soln_post/HypoTest_Halpha2.txt')
+  load(file = 'soln_post/FCVARhypoTest.RData')
+  Hdb_text_soln <- readLines('soln_post/FCVARhypoTest_Hdb.txt')
+  Hbeta1_text_soln <- readLines('soln_post/FCVARhypoTest_Hbeta1.txt')
+  Halpha2_text_soln <- readLines('soln_post/FCVARhypoTest_Halpha2.txt')
 
-  capture.output(Hdb_test <- HypoTest(modelUNR = m1, modelR = m1r1),
+  capture.output(Hdb_test <- FCVARhypoTest(modelUNR = m1, modelR = m1r1),
                  file = 'soln_post/temp.txt')
   Hdb_text <- readLines('soln_post/temp.txt')
 
   expect_equal(Hdb_test, Hdb)
   expect_equal(Hdb_text, Hdb_text_soln)
 
-  capture.output(Hbeta1_test <- HypoTest(m1, m1r2),
+  capture.output(Hbeta1_test <- FCVARhypoTest(m1, m1r2),
                  file = 'soln_post/temp.txt')
   Hbeta1_text <- readLines('soln_post/temp.txt')
 
   expect_equal(Hbeta1_test, Hbeta1)
   expect_equal(Hbeta1_text, Hbeta1_text_soln)
 
-  capture.output(Halpha2_test <- HypoTest(m1, m1r4),
+  capture.output(Halpha2_test <- FCVARhypoTest(m1, m1r4),
                  file = 'soln_post/temp.txt')
   Halpha2_text <- readLines('soln_post/temp.txt')
 

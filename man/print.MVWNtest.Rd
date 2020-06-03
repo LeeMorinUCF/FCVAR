@@ -48,8 +48,8 @@ print.MVWNtest(stats = MVWNtest_stats, maxlag = 10)
 
 Other FCVAR postestimation functions: 
 \code{\link{FCVARboot}()},
+\code{\link{FCVARhypoTest}()},
 \code{\link{GetCharPolyRoots}()},
-\code{\link{HypoTest}()},
 \code{\link{LMtest}()},
 \code{\link{MVWNtest}()},
 \code{\link{Qtest}()},

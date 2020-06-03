@@ -54,8 +54,8 @@ An alternative test is the Ljung-Box Q-test in \code{Qtest}.
 
 Other FCVAR postestimation functions: 
 \code{\link{FCVARboot}()},
+\code{\link{FCVARhypoTest}()},
 \code{\link{GetCharPolyRoots}()},
-\code{\link{HypoTest}()},
 \code{\link{MVWNtest}()},
 \code{\link{Qtest}()},
 \code{\link{plot.GetCharPolyRoots}()},

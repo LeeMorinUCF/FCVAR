@@ -1060,13 +1060,13 @@ R> opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 R> opt1$r_psi <- 1
 R> m1r1 <- FCVARestn(x1, k, r, opt1)
 R> MVWNtest_m1r1 <- MVWNtest(m1r1$Residuals, order, printWNtest)
-R> Hdb <- HypoTest(m1, m1r1)
+R> Hdb <- FCVARhypoTest(m1, m1r1)
 \end{Code}
 %\end{lstlisting}
 
 Here we test the CVAR model (null hypothesis $d=b=1$) against the FCVAR model (alternative hypothesis $d=b\ne 1$). Since \verb|opt1$restrictDB <- 1| was selected in the choice of options,
 % in Listing \ref{intl2}, 
-the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1$R_psi = [1 0]| and \verb|opt1$r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the MATLAB structure \verb|m1r1|. As before, the user can perform a series of white noise tests on the residuals by calling the \fct{MVWNtest} function. The next step is to perform the actual test. With the results structures from the restricted and unrestricted models, the user can call the function \fct{HypoTest} and perform an LR test. This function takes the two model result structures as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
+the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1$R_psi = [1 0]| and \verb|opt1$r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the MATLAB structure \verb|m1r1|. As before, the user can perform a series of white noise tests on the residuals by calling the \fct{MVWNtest} function. The next step is to perform the actual test. With the results structures from the restricted and unrestricted models, the user can call the function \fct{FCVARhypoTest} and perform an LR test. This function takes the two model result structures as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
 
 Since the output of the estimated model and the white noise tests are similar to the previous example, we only show the output from the hypothesis test. 
 
@@ -1089,7 +1089,7 @@ R> opt1 <- DefaultOpt
 R> opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 R> m1r2 <- FCVARestn(x1, k, r, opt1)
 R> MVWNtest_m1r2 <- MVWNtest(m1r2$Residuals, order, printWNtest)
-R> Hbeta1 <- HypoTest(m1, m1r2)
+R> Hbeta1 <- FCVARhypoTest(m1, m1r2)
 \end{Code}
 %\end{lstlisting}
 
@@ -1116,7 +1116,7 @@ R> opt1$R_Alpha <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 R> opt1$gridSearch <- 0
 R> m1r3 <- FCVARestn(x1, k, r, opt1)
 R> MVWNtest_m1r3 <- MVWNtest(m1r3$Residuals, order, printWNtest)
-R> Halpha1 <- HypoTest(m1, m1r3)
+R> Halpha1 <- FCVARhypoTest(m1, m1r3)
 \end{Code}
 %\end{lstlisting}
 
@@ -1148,7 +1148,7 @@ R> opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 R> opt1$gridSearch <- 0
 R> m1r4 <- FCVARestn(x1, k, r, opt1)
 R> MVWNtest_m1r4 <- MVWNtest(m1r4$Residuals, order, printWNtest)
-R> Halpha2 <- HypoTest(m1, m1r4)
+R> Halpha2 <- FCVARhypoTest(m1, m1r4)
 \end{CodeInput}
 \begin{CodeOutput}
 Likelihood ratio test results:
@@ -1171,7 +1171,7 @@ R> opt1$gridSearch <- 0
 R> opt1$R_Alpha <- matrix(c(0, 0, 1), nrow = 1, ncol = 3)
 R> m1r5 <- FCVARestn(x1, k, r, opt1)
 R> MVWNtest_m1r5 <- MVWNtest(m1r5$Residuals, order, printWNtest)
-R> Halpha3 <- HypoTest(m1, m1r5)
+R> Halpha3 <- FCVARhypoTest(m1, m1r5)
 \end{CodeInput}
 \begin{CodeOutput}
 Likelihood ratio test results:

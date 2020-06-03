@@ -30,7 +30,7 @@ including the following parameters:
   \item{\code{pv}}{An approximate p-value for the likelihood ratio statistic
    based on the bootstrap distribution.}
   \item{\code{H}}{A list containing the likelihood ratio test results.
-  It is identical to the output from \code{HypoTest}, with one addition,
+  It is identical to the output from \code{FCVARhypoTest}, with one addition,
   namely \code{H$pvBS} which is the bootstrap p-value}
   \item{\code{mBS}}{The model estimates under the null hypothesis.}
   \item{\code{mUNR}}{The model estimates under the alternative hypothesis.}
@@ -67,8 +67,8 @@ vector autoregressions," Journal of Econometrics 192, 64-85.
 \code{FCVARestn} is called to estimate the models under the null and alternative hypotheses.
 
 Other FCVAR postestimation functions: 
+\code{\link{FCVARhypoTest}()},
 \code{\link{GetCharPolyRoots}()},
-\code{\link{HypoTest}()},
 \code{\link{LMtest}()},
 \code{\link{MVWNtest}()},
 \code{\link{Qtest}()},

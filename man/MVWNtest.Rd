@@ -60,8 +60,8 @@ MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 
 Other FCVAR postestimation functions: 
 \code{\link{FCVARboot}()},
+\code{\link{FCVARhypoTest}()},
 \code{\link{GetCharPolyRoots}()},
-\code{\link{HypoTest}()},
 \code{\link{LMtest}()},
 \code{\link{Qtest}()},
 \code{\link{plot.GetCharPolyRoots}()},

@@ -150,7 +150,7 @@ m1r1 <- FCVARestn(x1, k, r, opt1)
 MVWNtest_m1r1 <- MVWNtest(m1r1$Residuals, order, printWNtest)
 
 # Test the null of m1r1 against the alternative m1.
-Hdb <- HypoTest(m1, m1r1)
+Hdb <- FCVARhypoTest(m1, m1r1)
 
 
 #--------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ m1r2 <- FCVARestn(x1, k, r, opt1)
 MVWNtest_m1r2 <- MVWNtest(m1r2$Residuals, order, printWNtest)
 
 # Test the null of m1r2 against the alternative m1.
-Hbeta1 <- HypoTest(m1, m1r2)
+Hbeta1 <- FCVARhypoTest(m1, m1r2)
 
 
 #--------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ m1r3 <- FCVARestn(x1, k, r, opt1)
 MVWNtest_m1r3 <- MVWNtest(m1r3$Residuals, order, printWNtest)
 
 # Test the null of m1r3 against the alternative m1
-Halpha1 <- HypoTest(m1, m1r3)
+Halpha1 <- FCVARhypoTest(m1, m1r3)
 
 
 #--------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ m1r4 <- FCVARestn(x1, k, r, opt1)
 MVWNtest_m1r4 <- MVWNtest(m1r4$Residuals, order, printWNtest)
 
 # Test the null of m1r4 against the alternative m1.
-Halpha2 <- HypoTest(m1, m1r4)
+Halpha2 <- FCVARhypoTest(m1, m1r4)
 
 
 #--------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ m1r5 <- FCVARestn(x1, k, r, opt1)
 MVWNtest_m1r5 <- MVWNtest(m1r5$Residuals, order, printWNtest)
 
 # Test the null of m1r5 against the alternative m1.
-Halpha3 <- HypoTest(m1, m1r5)
+Halpha3 <- FCVARhypoTest(m1, m1r5)
 
 
 #--------------------------------------------------------------------------------
