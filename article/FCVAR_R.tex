@@ -39,7 +39,6 @@
 %% - \title{} in title case
 %% - \Plaintitle{} without LaTeX markup (if any)
 %% - \Shorttitle{} with LaTeX markup (if any), used as running title
-% Version 1: Focus on R
 \title{The Fractionally Cointegrated Vector Autoregression Model in \proglang{R}}
 \Plaintitle{The Fractionally Cointegrated Vector Autoregression Model in R}
 \Shorttitle{Fractionally Cointegrated VAR in \proglang{R}}
@@ -65,7 +64,7 @@ The \pkg{FCVAR} package ties together the features of these models in a multivar
 %% - \Plainkeywords{} without LaTeX markup (if necessary)
 %% - Should be comma-separated and in sentence case.
 \Keywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, VAR model, \proglang{MATLAB}, \proglang{R}}
-\Plainkeywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, VAR model, MATLAB, R}
+\Plainkeywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, MATLAB, R, VAR model}
 
 %% - \Address{} of at least one author
 %% - May contain multiple affiliations for each author
@@ -207,9 +206,9 @@ Also, the \pkg{nsarfima} \citep{nsarfima2019} package provides methods for fitti
 This package is more innovative in terms of the types of optimization problems built on the $ARFIMA$ model, including both maximum likelihood (as in \citet{Beran1995}) and minimum distance (as in \citet{Mayoral2007}) estimators. 
 Overall, $ARFIMA$ models treat the data by fractional differencing to transform data to a form suitable for an $ARMA$ model, 
 similar to ordinary first differencing for variables that have unit roots as in $ARIMA$ models. 
-The models preclude the class of models that study cointegration relationships. 
+This transformation precludes the use of models that study cointegration relationships. 
 
-The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods to investigate both cointegrating relationships and fractional integration.\footnote{Morten: You would be best suited to comment on the references in this package. 
+The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods to investigate both fractional integration and cointegrating relationships.\footnote{Morten: You would be best suited to comment on the references in this package. 
 There are several citations to your papers and papers that I'm sure you know better and I want to make sure that we are honest about the difference between what we do and what they do. 
 It seems to me that this package is a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
 I like to think that our approach following \citet{Johansen1995} is more holistic, in that all the parameters are estimated jointly, aside from the rank and lag selection. 
@@ -217,59 +216,50 @@ It captures all of the pieces in one maximum likelihood framework and this appro
 
 \textbf{Before I forget}, one important point to note is that I did not succeed in installing this package. 
 It requires dependencies that would not install on either my local machine or the ones in Dunning 211 or the equivalent at UCF. 
+I'm a patient guy but f I can't get it to work in 10 minutes, their user base is going to be very small. 
 That's too bad, because they have also implemented \cite{Jensen2014}, with your permission, in the function \fct{fdiff}. I would have liked to test it for myself. 
 In my opinion, they have too much going on in one package and the level of complexity can lead to dependency problems like this. 
 As a user, I would move on to the next package that works, which is a good reason to implement this function ourselves, without these problems. 
 Actually, now that I have looked at it more closely, the documentation is incomplete as well. 
 Our closest competitor is a work in progress -- but there is no need to call them out on it. } 
 % 
-For estimating the order of the fractional integration in a series, there are several options including...
-\citet{RobinsonL1995}, 
-\citet{RobinsonPM1995a},
-\citet{RobinsonPM1995b}, 
-\citet{GPH1983}, 
-\citet{ShimotsuPhillips2005}, 
-\citet{Shimotsu2010}, 
-\citet{FredNielsenNielsen2012}, 
-\citet{HouPerron2014}. 
+For estimating the order of the fractional integration in a series, there are several options including the log-periodogram estimators of \citet{GPH1983} and \citet{RobinsonPM1995b}. 
+% 
+Other options include the semiparametric local Whittle estimator of \citet{RobinsonPM1995a},
+the exact local Whittle estimator of \citet{ShimotsuPhillips2005}, 
+and a version for series with unknown mean and time trend in \citet{Shimotsu2010}. 
+They also implement more recent approaches, such as 
+the local polynomial Whittle plus noise estimator of \citet{FredNielsenNielsen2012} 
+and the modified local Whittle estimator of \citet{HouPerron2014}. 
 
 
-For determining the cointegrating rank, i.e. the dimension of the cointegrating relations, there are also sevaral options. 
-See 
-\citet{ChenHurvich2003},
-\citet{RobinsonYajima2002},
-\citet{NielsenShimotsu2007},
-\citet{ZhangRobinsonYao2018}. 
+For determining the cointegrating rank, i.e. the dimension of the cointegrating relationship, this package also provides several options. 
+These inclide a semiparametric method in \citet{ChenHurvich2003}. 
+\citet{RobinsonYajima2002} propose a model selection procedure to estimate the cointegrating rank ,
+which includes a test for equality of all memory parameters simultaneously and is further explored in \citet{NielsenShimotsu2007}. 
+Following another approach, the package also provides a method of
+identifying cointegration by eigenanalysis \citep{ZhangRobinsonYao2018}. 
 
 
+Finally, for estimation the cointegrating relationship itself, the \pkg{LongMemoryTS} package implements a number of approaches. 
+It implements semiparametric approaches for estimating the cointegrating vector, including that of 
+\citet{Robinson1994} and later \citet{RobinsonMarinucci2003} and \citet{ChristensenNielsen2006}. 
+They implement a semiparametric residual-based test for fractional cointegration from \citet{ChenHurvich2006}, 
+and other semiparametric tests in \citet{MarmolVelasco2004}and \citet{WangWangChan2015}
+and a semiparametric Hausmann-type test for fractional cointegration by \citet{Robinson2008}. 
+Also within the semiparametric family is the fully modified narrow band least squares (FMNBLS) approach in  \citet{NielsenFrederiksen2011}. 
+% 
+They also implement a nonparametric approach to test for fractional cointegration and rank estimation by \citet{Nielsen2010}.
+Following another framework, the frequency-domain test for fractional cointegration in \citet{SouzaEtal2018} is also available in this package. 
 
-Finally, for estimation the cointegrating relationship, this package implements a number of approaches. 
-
-It implements semiparametric approaches of A, B and C and the nonparametric approach of D. 
-See
-\citet{ChristensenNielsen2006},
-\citet{Robinson1994},
-\citet{RobinsonMarinucci2003},
-\citet{ChenHurvich2006},
-\citet{MarmolVelasco2004},
-\citet{WangWangChan2015}. 
-
-
-Cointegration:
-See
-\citet{Nielsen2010},
-\citet{Robinson2008},
-\citet{SouzaEtal2018},
-\citet{NielsenFrederiksen2011}. 
-
-
-The \pkg{FCVAR} package, introduced here, is closest to a cross between the Johansen cointegration model in \pkg{urca} and the models involving fractionally integrated variables discussed above. 
+In contrast, our approach is to use a fully parametric model in the maximum likelihood framework. 
+The \pkg{FCVAR} package, introduced here, is closest to a cross between the \citet{Johansen1995} cointegration model in \pkg{urca} and the models involving fractionally integrated variables discussed above. 
 In particular, the model estimated in the \pkg{urca} packages is the special case of \pkg{FCVAR} in which the fractional integration parameters $d$ and $b$ are both equal to one.\footnote{They also use the Danish data, so it might be worthwhile to include in the documentation an example with and without the restriction $d = b = 1$ to compare. It may not fit in this paper but could be a short vignette (short pdf with code and descriptions) that would go on the CRAN webpage for the package. } 
 % 
 % 
 % \subsection{The  MATLAB program}
 % 
-The \proglang{R} package \pkg{FCVAR} is based on a companion package \pkg{FCVARmodel.m}, written in \proglang{MATLAB}. 
+The \proglang{R} package \pkg{FCVAR} closely follows a companion package \pkg{FCVARmodel.m}, written in \proglang{MATLAB}. 
 The \proglang{MATLAB} package is documented in \cite{Nielsen2016}, an expanded version of the package documented in \cite{Nielsen2013}. 
 
 % Moved to end, as per JSS style:
@@ -1745,7 +1735,7 @@ The version of \proglang{MATLAB} available at the release of the last version wa
 %(if any).
 %\end{leftbar}
 
-We are grateful to Federico Carlini, Andreas Noack Jensen, S\o ren Johansen, Maggie Jones, James MacKinnon, Jason Rhinelander, and Daniela Osterrieder for comments, and to the Canada Research Chairs program, the Social Sciences and Humanities Research Council of Canada (SSHRC), and the Center for Research in Econometric Analysis of Time Series (CREATES, funded by the Danish National Research Foundation DNRF78) for financial support.
+We are grateful to Federico Carlini, Andreas Noack Jensen, S\o ren Johansen, Maggie Jones, James MacKinnon, Harry J. Paarsch, Jason Rhinelander, and Daniela Osterrieder for comments, and to the Canada Research Chairs program, the Social Sciences and Humanities Research Council of Canada (SSHRC), and the Center for Research in Econometric Analysis of Time Series (CREATES, funded by the Danish National Research Foundation DNRF78) for financial support.
 
 
 %% -- Bibliography -------------------------------------------------------------
