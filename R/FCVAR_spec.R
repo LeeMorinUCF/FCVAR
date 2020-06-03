@@ -291,7 +291,7 @@ print.LagSelect <- function(stats, kmax, r, p, T, order, opt) {
 
 #' Test for Cointegrating Rank
 #'
-#' \code{RankTests} performs a sequence of  likelihood ratio tests
+#' \code{FCVARrankTests} performs a sequence of  likelihood ratio tests
 # 	for cointegrating rank.
 #'
 #' @param x A matrix of variables to be included in the system.
@@ -316,15 +316,15 @@ print.LagSelect <- function(stats, kmax, r, p, T, order, opt) {
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' rankTestStats <- RankTests(x, k = 2, opt)
+#' rankTestStats <- FCVARrankTests(x, k = 2, opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate cointegrating rank.
-#' \code{print.RankTests} prints the output of \code{RankTests} to screen.
+#' \code{print.FCVARrankTests} prints the output of \code{FCVARrankTests} to screen.
 #' @export
 #'
-RankTests <- function(x, k, opt) {
+FCVARrankTests <- function(x, k, opt) {
 
   T <- nrow(x) - opt$N
   p <- ncol(x)
@@ -453,7 +453,7 @@ RankTests <- function(x, k, opt) {
   # Print the results to screen.
   if (opt$print2screen) {
 
-    print.RankTests(stats = rankTestStats, k, p, T, opt)
+    print.FCVARrankTests(stats = rankTestStats, k, p, T, opt)
 
   }
 
@@ -463,14 +463,14 @@ RankTests <- function(x, k, opt) {
 
 #' Print Statistics from Tests for Cointegrating Rank
 #'
-#' \code{print.RankTests} prints the table of statistics from
-#' the output of \code{RankTests}.
-#' \code{RankTests} performs a sequence of  likelihood ratio tests
+#' \code{print.FCVARrankTests} prints the table of statistics from
+#' the output of \code{FCVARrankTests}.
+#' \code{FCVARrankTests} performs a sequence of  likelihood ratio tests
 # 	for cointegrating rank.
 #'
 #' @param stats A list object \code{rankTestStats} containing the results
 #' from repeated estimation of the FCVAR model with different
-#' cointegrating ranks. It is the output of \code{RankTests}.
+#' cointegrating ranks. It is the output of \code{FCVARrankTests}.
 #' @param k The number of lags in the system.
 #' @param p The number of variables in the system.
 #' @param T The sample size.
@@ -484,16 +484,16 @@ RankTests <- function(x, k, opt) {
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' rankTestStats <- RankTests(x, k = 2, opt)
-#' print.RankTests(stats = rankTestStats, k = 2, p = ncol(x), T = nrow(x), opt)
+#' rankTestStats <- FCVARrankTests(x, k = 2, opt)
+#' print.FCVARrankTests(stats = rankTestStats, k = 2, p = ncol(x), T = nrow(x), opt)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate cointegrating rank.
-#' \code{print.RankTests} prints the output of \code{RankTests} to screen.
+#' \code{print.FCVARrankTests} prints the output of \code{FCVARrankTests} to screen.
 #' @export
 #'
-print.RankTests <- function(stats, k, p, T, opt) {
+print.FCVARrankTests <- function(stats, k, p, T, opt) {
 
 
   # create a variable for output strings

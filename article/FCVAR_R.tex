@@ -800,7 +800,7 @@ Estimates of $d$ and $b$ are reported for each lag ($k$) with rank ($r$) set to 
 
 The user now chooses the lag-order based on the information provided above and can move to the next step, which is cointegration rank testing. 
 % The next code section is shown in listing~\ref{RankSelect}. T
-In the next code block, the user first assigns the lag augmentation, $k = 2$ in this case, and then calls the function \fct{RankTests}. 
+In the next code block, the user first assigns the lag augmentation, $k = 2$ in this case, and then calls the function \fct{FCVARrankTests}. 
 
 %% --------- COINTEGRATION RANK TESTING ---------- %
 %Executing the code in Listing~\ref{RankSelect} produces the following output. 
@@ -809,7 +809,7 @@ In the next code block, the user first assigns the lag augmentation, $k = 2$ in 
 \begin{CodeChunk} 
 \begin{CodeInput}
 R> k <- 2
-R> rankTestStats <- RankTests(x1, k, opt)
+R> rankTestStats <- FCVARrankTests(x1, k, opt)
 \end{CodeInput}
 \begin{CodeOutput}
 --------------------------------------------------------------------------------
@@ -1615,7 +1615,7 @@ the generated data is shown in Figure~\ref{fig:sim}.
 % 
 % We will simply mention it in the section on rank selection. 
 %
-%Although the MATLAB program can run standalone, one of the functions, \verb|RankTests.m|, makes an external system call to a separately installed program, \verb|fdpval|. This external program is the C++ implementation of a Fortran program used to obtain simulated $p$~values from \cite{mackinnon2014numerical}. If the user would like $p$~values for the cointegration rank tests to be automatically calculated, we recommend obtaining this companion program, which is made available by Jason Rhinelander and can be downloaded from: 
+%Although the MATLAB program can run standalone, one of the functions, \verb|FCVARrankTests.m|, makes an external system call to a separately installed program, \verb|fdpval|. This external program is the C++ implementation of a Fortran program used to obtain simulated $p$~values from \cite{mackinnon2014numerical}. If the user would like $p$~values for the cointegration rank tests to be automatically calculated, we recommend obtaining this companion program, which is made available by Jason Rhinelander and can be downloaded from: 
 %\begin{center} \url{https://github.com/jagerman/fracdist/releases}
 %\end{center}
 %It can be either installed or downloaded in a compressed folder. It is important to note where the program is stored or installed, because the MATLAB program requires the program location as an input in the estimation options. For example, if the program is stored in the folder \verb|/usr/bin/| on a Linux system, the location variable is defined as follows, \verb|progLoc = '"/usr/bin/fdpval"'|. For details see Sections~\ref{sec:estoptions.m} and~\ref{sec:getpvals}.

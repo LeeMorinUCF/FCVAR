@@ -110,7 +110,7 @@ LagSelectStats <- LagSelect(x1, kmax, r = p, order, opt)
 ################################################################################
 
 k <- 2
-rankTestStats <- RankTests(x1, k, opt)
+rankTestStats <- FCVARrankTests(x1, k, opt)
 
 
 ################################################################################

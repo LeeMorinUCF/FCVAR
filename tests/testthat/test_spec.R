@@ -34,9 +34,9 @@ test_that("Rank Testing results and output are correct", {
   opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
   opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
   x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-  # rankTestStats <- RankTests(x, k = 2, opt)
+  # rankTestStats <- FCVARrankTests(x, k = 2, opt)
 
-  capture.output(rankTestStats_test <- RankTests(x, k = 2, opt),
+  capture.output(rankTestStats_test <- FCVARrankTests(x, k = 2, opt),
                  file = 'soln_spec/temp.txt')
   rankTestStats_text <- readLines('soln_spec/temp.txt')
 

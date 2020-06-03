@@ -303,7 +303,7 @@ save.image(file = out_file_name)
 # Compare to P-value based on asymptotic distribution
 #--------------------------------------------------------------------------------
 
-rankTestStats <- RankTests(x1, k, DefaultOpt)
+rankTestStats <- FCVARrankTests(x1, k, DefaultOpt)
 
 cat(sprintf('P-value: \t %1.3f\n', rankTestStats$pv[1]))
 
