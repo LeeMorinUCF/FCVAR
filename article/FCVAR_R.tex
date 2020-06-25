@@ -63,7 +63,7 @@ The \pkg{FCVAR} package ties together the features of these models in a multivar
 %% - \Keywords{} with LaTeX markup, at least one required
 %% - \Plainkeywords{} without LaTeX markup (if necessary)
 %% - Should be comma-separated and in sentence case.
-\Keywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, VAR model, \proglang{MATLAB}, \proglang{R}}
+\Keywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, \proglang{MATLAB}, \proglang{R}, VAR model}
 \Plainkeywords{cofractional process, cointegration rank, fractional autoregressive model, fractional cointegration, fractional unit root, MATLAB, R, VAR model}
 
 %% - \Address{} of at least one author
@@ -74,14 +74,21 @@ The \pkg{FCVAR} package ties together the features of these models in a multivar
 \Address{
   Morten \O rregaard Nielsen\\
   Queen's University\\
-  Address 1\\
-  Address 2\\
+  Address \\
   \emph{and}\\
   CREATES\\
-  Address 1\\
-  Address 2\\
+  Address \\
   E-mail: \email{mon@econ.queensu.ca}\\
-  URL: \url{https://mortens.webpage/~software/}
+  URL: \url{https://mortens.webpage/~software/}\\
+  \phantom{0}\\
+  Micha\l{} Ksawery Popiel\\
+  Analysis Group\\
+  E-mail: \email{Michal.Popiel@analysisgroup.com}\\
+  \phantom{0}\\
+  Lealand Morin\\
+  Department of Economics\\
+  University of Central Florida\\
+  E-mail: \email{Lealand.Morin@ucf.edu}
 }
 
 \begin{document}
@@ -142,7 +149,7 @@ An exhaustive listing of the R packages \citep{R} available for time series anal
 % 
 Among these, the packages most relevant to the FCVAR model are those related to cointegration within the family of vector error correction models or those related to long memory, often under the $ARFIMA$ framework. 
 
-\subsection{R packages for estimating the CVAR model}
+% \subsection{R packages for estimating the CVAR model}
 
 
 In \proglang{R}, contegration analysis can be conducted using a variety of packages. 
@@ -179,7 +186,7 @@ follows the \citet{Johansen1995} approach in the function \fct{ca.jo}.
 It also provides options for testing restrictions on the parameters in the model. 
 Of the packages designed for the CVAR model, this is perhaps the closest available to the \pkg{FCVAR} package, in terms of the testing opportunities available.
 
-\subsection{Segue from CVAR to $I(d)$}
+% \subsection{Segue from CVAR to $I(d)$}
 
 While the packages that follow the framework of \citet{Johansen1995} are most closely related to the \pkg{FCVAR} package, these are not suited to the analysis of series with a fractional degree of integration. 
 That is to say that these packages allow for only a discrete form of cointegration between the series. 
@@ -190,7 +197,7 @@ Analysis using the above packages typically involves a preliminary analysis of t
 With fractionally integrated variables, the first stage of the analysis is to determine the order of fractional integration, i.e. the parameter $d$. 
 This has been the focus of much of the available software to analyze series with the characteristics of so-called long memory. 
 
-\subsection{R packages for fractional integration}
+% \subsection{R packages for fractional integration}
 
 In another section of the \emph{CRAN Task View: Time Series Analysis} \citep{Hyndman2020}, 
 several packages are listed for the estimation of models for series with features of fractional integration or long memory. 

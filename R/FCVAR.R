@@ -48,16 +48,15 @@
 #'   Some exceptions include:
 #' \describe{
 #'   \item{\code{FracDiff}}{for fractionally differencing a multivariate series}
-#'   \item{\code{GetResiduals}}{for calculating residuals for the FCVAR model}
 #'   \item{\code{FCVARsimBS}}{for generating bootstrap samples from the FCVAR model}
 #'   \item{\code{FCVARlikeGrid}}{for performing a grid-search optimization with the FCVAR likelihood function}
 #' }
 #'
 #' @section Examples:
-#' Several datasets are included as examples of the model building process.
-#'   These include \code{JNP2014} and \code{BDP1997}.
-#'   Sample model builds with hypothesis tests are found in the example scripts
-#'   \code{JNPexample} and \code{BDPexample}.
+#' A dataset \code{votingJNP2014} is included for examples of the model building process.
+#'   Sample model builds with hypothesis tests and examples of other extensions are found
+#'   in the example scripts \code{FCVAR_replication_JNP2014.R} and
+#'   \code{FCVAR_extension_JNP2014.R}.
 #'   See the document \code{future_JSS_article} for details.
 #'
 #' @docType package
