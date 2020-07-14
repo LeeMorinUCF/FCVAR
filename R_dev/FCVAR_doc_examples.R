@@ -324,7 +324,7 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-m1r4 <- FCVARestn(x1, k, r, opt1)
+m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
 # save(xf, m1r4, list = c('xf', 'm1r4'), file = 'tests/testthat/soln_post/xf.RData')
 

@@ -197,6 +197,58 @@ abline(v = T, col = 'black', lwd = 3, lty = 'dashed')
 dev.off()
 
 
+#--------------------------------------------------------------------------------
+# Plot the series and forecast together.
+#--------------------------------------------------------------------------------
+
+# orig_par <- par()
+
+out_file_path <- sprintf('R_dev/Figures/forecast_vars_eqbm.%s', fig_ext)
+plot.new()
+png(out_file_path)
+
+# Bottom pane: Equilibrium Relation
+par(fig = c(0, 1, 0, 0.4), new = TRUE, mar = c(5.1, 4.1, 1.1, 2.1))
+# Reset after.
+# par(fig = c(0, 1, 0, 1), new = FALSE, mar = c(5.1, 4.1, 4.1, 2.1))
+plot(equilF,
+     # main = 'Equilibrium Relation, including Forecast',
+     xlab = 'Time, t',
+     # ylab = 'Equilibrium Relation',
+     ylab = 'Equilibrium',
+     ylim = c(yMinEq, yMaxEq),
+     type = 'l',
+     lwd = 3,
+     col = 'black')
+abline(v = T, col = 'black', lwd = 3, lty = 'dashed')
+
+# Top pane: Series and Forecast.
+par(fig = c(0, 1, 0.4, 1.0), new = TRUE, mar = c(2.1, 4.1, 4.1, 2.1))
+col_num <- 1
+plot(seriesF[, col_num],
+     # main = 'Series, including Forecast',
+     main = 'Variables and Equilibrium Relation with Forecast',
+     # xlab = 'Time, t',
+     ylab = 'Variables',
+     ylim = c(yMinS, yMaxS),
+     type = 'l',
+     lwd = 3,
+     col = color_list[col_num])
+abline(v = T, col = 'black', lwd = 3, lty = 'dashed')
+for (col_num in 2:ncol(seriesF)) {
+  lines(seriesF[, col_num],
+        lwd = 3,
+        lty = col_num,
+        col = color_list[col_num])
+}
+legend(200, 20, legend = label_list,
+       col = color_list, lty = 1:3, cex = 1.0)
+dev.off()
+
+
+# Reset after.
+# par(fig = c(0, 1, 0, 1), new = FALSE, mar = c(5.1, 4.1, 4.1, 2.1))
+
 
 
 ################################################################################

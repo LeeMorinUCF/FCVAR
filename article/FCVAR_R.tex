@@ -1331,10 +1331,10 @@ R> modelRstrct <- m1r4
 R> G <- solve(modelRstrct$coeffs$betaHat[1:r, 1:r])
 R> betaHatR <- modelRstrct$coeffs$betaHat %*% G
 R> alphaHatR <- modelRstrct$coeffs$alphaHat %*% t(solve(G))
-R> print('betaHatR = ')
-R> print(betaHatR)
-R> print('alphaHatR = ')
-R> print(alphaHatR)
+R> print("betaHatR' = ")
+R> print(t(betaHatR), print.gap = 5)
+R> print("alphaHatR' = ")
+R> print(t(alphaHatR), print.gap = 5)
 \end{CodeInput}
 \end{CodeChunk}  
 
@@ -1343,16 +1343,12 @@ As an example of when this feature can be useful, consider model $\mathscr{H}_{\
 
 \begin{CodeChunk} 
 \begin{CodeOutput}
-[1] "betaHatR = "
-           [,1]
-[1,]  1.0000000
-[2,]  0.1056815
-[3,] -0.1822645
-[1] "alphaHatR = "
-            [,1]
-[1,] -0.18773922
-[2,]  0.00000000
-[3,]  0.03855402
+[1] "betaHatR' = "
+         [,1]          [,2]           [,3]
+[1,]        1     0.1057173     -0.1824022
+[1] "alphaHatR' = "
+               [,1]     [,2]           [,3]
+[1,]     -0.1876696        0     0.03856341
 \end{CodeOutput}
 \end{CodeChunk}  
 
@@ -1436,11 +1432,23 @@ R> equilF <- seriesF %*% modelF$coeffs$betaHat
 %line([T T], [yMinEq yMaxEq], 'Color','k');
 %\end{lstlisting}
 %
+
+
+% Two-panel figure with forecasts and euilibrium relation.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_vars_eqbm.png}
+  \caption{Forecast and equilibrium relationship of final model 12 steps ahead}
+  \label{fig:forecast}
+\end{figure}
+
+
 The user specifies the forecast horizon (\verb|NumPeriods|) as well as the model (in this case, \verb|modelF <- m1r4|). These two inputs, along with the data, are used in the call to the function \fct{FCVARforecast}. This function returns \verb|xf|, a \verb|NumPeriods| by $p$ matrix of forecasted values of $X$, 
 which are forecasted to take place after \verb|x1|. 
 % This code section also plots the original series and the equilibrium relation $X\hat{\beta}$  along with the forecasts. These plots are shown in Figure~\ref{fig:forecast}.
-% Figure~\ref{fig:forecast} plots the original series and the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
-Figure~\ref{fig:forecast_vars} plots the original series and Figure~\ref{fig:forecast_eqbm} plots the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
+Figure~\ref{fig:forecast} plots the original series and the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
+% Figure~\ref{fig:forecast_vars} plots the original series and Figure~\ref{fig:forecast_eqbm} plots the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
+
 
 %The forecasts can be printed to screen by typing \verb|xf| in the command window. For this example, the forecast yields the following output:
 %\begin{verbatim}
@@ -1470,19 +1478,21 @@ Figure~\ref{fig:forecast_vars} plots the original series and Figure~\ref{fig:for
 %\end{figure}
 
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_vars.png}
-  \caption{Forecast of final model 12 steps ahead}
-  \label{fig:forecast_vars}
-\end{figure}
+%\begin{figure}[H]
+%  \centering
+%  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_vars.png}
+%  \caption{Forecast of final model 12 steps ahead}
+%  \label{fig:forecast_vars}
+%\end{figure}
+%
+%\begin{figure}[H]
+%  \centering
+%  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_eqbm.png}
+%  \caption{Forecast equilibrium relationship of final model 12 steps ahead}
+%  \label{fig:forecast_eqbm}
+%\end{figure}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_eqbm.png}
-  \caption{Forecast equilibrium relationship of final model 12 steps ahead}
-  \label{fig:forecast_eqbm}
-\end{figure}
+
 
 \subsection{Bootstrap hypothesis test}
 \label{sec:bootstr-hypoth-test}

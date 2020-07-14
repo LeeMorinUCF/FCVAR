@@ -233,10 +233,10 @@ alphaHatR <- modelRstrct$coeffs$alphaHat %*% t(solve(G))
 # Yes, I know we shouldn't be inverting, Harry, but this is quick and easy.
 
 # Print output.
-print('betaHatR = ')
-print(betaHatR)
-print('alphaHatR = ')
-print(alphaHatR)
+print("betaHatR' = ")
+print(t(betaHatR), print.gap = 5)
+print("alphaHatR' = ")
+print(t(alphaHatR), print.gap = 5)
 
 
 ################################################################################
