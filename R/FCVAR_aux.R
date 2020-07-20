@@ -41,7 +41,7 @@ FCVARsim <- function(x, model, NumPeriods) {
   b <- cf$db[2]
 
   # Generate disturbance term
-  err <- matrix(rnorm(NumPeriods*p), nrow = NumPeriods, ncol = p)
+  err <- matrix(stats::rnorm(NumPeriods*p), nrow = NumPeriods, ncol = p)
 
   #--------------------------------------------------------------------------------
   # Recursively generate simulated data values
@@ -180,7 +180,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 
   # Generate draws from Rademacher distribution for Wild bootstrap
   eRD <- - matrix(1, nrow = T, ncol = p) +
-    2*( matrix(rnorm(T), nrow = T, ncol = 1) > 0) %*% matrix(1, nrow = 1, ncol = p)
+    2*( matrix(stats::rnorm(T), nrow = T, ncol = 1) > 0) %*% matrix(1, nrow = 1, ncol = p)
 
   # Generate error term
   err <- res * eRD
@@ -867,7 +867,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
         # print('Made it here!')
 
-        min_out <- optim(StartVal,
+        min_out <- stats::optim(StartVal,
                          function(params) {-FCVARlikeMu(params, x, db, k, r, opt)})
 
         # print('Didnt make it here!')
@@ -1144,7 +1144,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' opt$progress <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-#' plot.FCVARlikeGrid(likeGrid_params, k, r, opt, main = 'default')
+#' plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, opt, main = 'default')
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
@@ -1164,9 +1164,9 @@ plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
   # Open file, if required.
   if (!is.null(file)) {
     if(file_ext == 'pdf') {
-      pdf(file)
+      grDevices::pdf(file)
     } else if(file_ext == 'png') {
-      png(file)
+      grDevices::png(file)
     } else {
       stop('Graphics format not supported. Try pdf or png format.')
     }
@@ -1189,7 +1189,7 @@ plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
     # col.pal <- colorRampPalette(c("blue", "red"))
     # col.pal <- colorRampPalette(c("yellow", "red"))
     # colors <- col.pal(100)
-    colors <- rainbow(100)
+    colors <- grDevices::rainbow(100)
     # colors <- heat.colors(100)
     # height of facets
     # like.facet.center <- (like[-1, -1] + like[-1, -ncol(like)] + like[-nrow(like), -1] + like[-nrow(like), -ncol(like)])/4
@@ -1200,14 +1200,14 @@ plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
     like.facet.range <- cut(like.facet.center, 100)
 
     # Reduce the size of margins.
-    # par()$mar
+    # graphics::par()$mar
     # 5.1 4.1 4.1 2.1
     # bottom, left, top and right margins respectively.
-    par(mar = c(1.1, 1.1, 2.1, 1.1))
+    graphics::par(mar = c(1.1, 1.1, 2.1, 1.1))
     # Reset after.
-    # par(mar = c(5.1, 4.1, 4.1, 2.1))
+    # graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
 
-    persp(dGrid, bGrid,
+    graphics::persp(dGrid, bGrid,
           # like,
           like2D,
           xlab = 'd',
@@ -1226,7 +1226,7 @@ plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
     )
 
     # Reset the size of margins.
-    par(mar = c(5.1, 4.1, 4.1, 2.1))
+    graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
 
   } else {
     # 1-dimensional plot.
@@ -1236,7 +1236,7 @@ plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
       like_x_label <- 'phi'
     }
 
-    plot(bGrid, like,
+    graphics::plot(bGrid, like,
          main = main,
          ylab = 'log-likelihood',
          xlab = like_x_label,
@@ -1248,7 +1248,7 @@ plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
 
   # Close graphics device, if any.
   if (!is.null(file)) {
-    dev.off()
+    grDevices::dev.off()
   }
 
 }
@@ -1335,6 +1335,7 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 #' FCVARlike(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
+#' @export
 #'
 FCVARlike <- function(params, x, k, r, opt) {
 
@@ -1602,14 +1603,14 @@ GetEstimates <- function(params, x, k, r, opt) {
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
 #'
-FCVARlikeFull <- function(x, k, r, coeffs, beta, rho, opt) {
+FCVARlikeFull <- function(x, k, r, coeffs, betaHat, rhoHat, opt) {
 
 
   # Add betaHat and rhoHat to the coefficients to get residuals because they
   #   are not used in the Hessian calculation and are missing from the
   #   structure coeffs
-  coeffs$betaHat <- beta
-  coeffs$rhoHat <- rho
+  coeffs$betaHat <- betaHat
+  coeffs$rhoHat <- rhoHat
 
   # Obtain residuals.
   epsilon <- GetResiduals(x, k, r, coeffs, opt)
@@ -1884,7 +1885,7 @@ Lbk <- function(x, b, k) {
 #' of the same dimensions as x.
 #' @examples
 #' set.seed(42)
-#' WN <- matrix(rnorm(200), nrow = 100, ncol = 2)
+#' WN <- matrix(stats::rnorm(200), nrow = 100, ncol = 2)
 #' MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)
 #' x <- FracDiff(x = WN, d = - 0.5)
 #' MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)
@@ -1926,7 +1927,7 @@ FracDiff <- function(x, d) {
 
 
     iT <- nrow(x)
-    np2 <- nextn(2*iT - 1, 2)
+    np2 <- stats::nextn(2*iT - 1, 2)
 
     k <- 1:(iT-1)
     b <- c(1, cumprod((k - d - 1)/k))
@@ -1945,7 +1946,8 @@ FracDiff <- function(x, d) {
     for (i in 1:p) {
 
 
-      dxi <- fft(fft(c(b, rep(0, np2 - iT))) * fft(c(x[, i], rep(0, np2 - iT))), inverse = T) / np2
+      dxi <- stats::fft(stats::fft(c(b, rep(0, np2 - iT))) *
+                          stats::fft(c(x[, i], rep(0, np2 - iT))), inverse = T) / np2
 
       dx[, i] <- Re(dxi[1:iT])
 
@@ -1966,9 +1968,9 @@ FracDiff <- function(x, d) {
 #' 	restrictions. When both \code{alpha} and \code{beta} are restricted,
 #' 	the rank condition is used to count the free parameters in those two variables.
 #'
-#' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
+#' @param p The number of variables in the system.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @param rankJ The rank of a conditioning matrix, as described in

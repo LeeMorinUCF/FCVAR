@@ -4,7 +4,7 @@
 \alias{FCVARlikeFull}
 \title{Likelihood Function for the FCVAR Model}
 \usage{
-FCVARlikeFull(x, k, r, coeffs, beta, rho, opt)
+FCVARlikeFull(x, k, r, coeffs, betaHat, rhoHat, opt)
 }
 \arguments{
 \item{x}{A matrix of variables to be included in the system.}
@@ -17,13 +17,13 @@ FCVARlikeFull(x, k, r, coeffs, beta, rho, opt)
 It is an element of the list \code{results} returned by \code{FCVARestn},
 without the parameters \code{betaHat} and \code{rhoHat}.}
 
-\item{opt}{A list object that stores the chosen estimation options,
-generated from \code{FCVARoptions()}.}
-
 \item{betaHat}{A \eqn{p x r} matrix of cointegrating vectors.
 The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
 
 \item{rhoHat}{A \eqn{p x 1} vector of restricted constatnts.}
+
+\item{opt}{A list object that stores the chosen estimation options,
+generated from \code{FCVARoptions()}.}
 }
 \value{
 A number \code{like}, the log-likelihood evaluated at the

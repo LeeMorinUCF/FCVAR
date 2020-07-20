@@ -28,17 +28,17 @@
 #' opt1 <- opt
 #' opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 #' opt1$r_psi <- 1
-#' m1r1 <- FCVARestn(x1, k, r, opt1)
+#' m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' Hdb <- FCVARhypoTest(modelUNR = m1, modelR = m1r1)
 #'
 #' opt1 <- opt
 #' opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-#' m1r2 <- FCVARestn(x1, k, r, opt1)
+#' m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' Hbeta1 <- FCVARhypoTest(m1, m1r2)
 #'
 #' opt1 <- opt
 #' opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-#' m1r4 <- FCVARestn(x1, k, r, opt1)
+#' m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' Halpha2 <- FCVARhypoTest(m1, m1r4)
 #' @family FCVAR postestimation functions
 #' @seealso The test is calculated using the results of two calls to
@@ -59,7 +59,7 @@ FCVARhypoTest <- function(modelUNR, modelR) {
   df <- modelUNR$fp - modelR$fp
 
   # Calculate the P-value for the test.
-  p_LRtest <- 1 - pchisq(LR_test, df)
+  p_LRtest <- 1 - stats::pchisq(LR_test, df)
 
   # Print output.
   cat(sprintf('Likelihood ratio test results:'))
@@ -236,7 +236,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' opt1 <- opt
 #' opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-#' m1r4 <- FCVARestn(x1, k, r, opt1)
+#' m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -592,9 +592,9 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
   # Open file, if required.
   if (!is.null(file)) {
     if(file_ext == 'pdf') {
-      pdf(file)
+      grDevices::pdf(file)
     } else if(file_ext == 'png') {
-      png(file)
+      grDevices::png(file)
     } else {
       stop('Graphics format not supported. Try pdf or png format.')
     }
@@ -609,7 +609,7 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
   }
 
 
-  plot(transformedUnitCircleX,
+  graphics::plot(transformedUnitCircleX,
        transformedUnitCircleY,
        main = main,
        xlab = 'Real Part of Root',
@@ -619,13 +619,13 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
        type = 'l',
        lwd = 3,
        col = 'red')
-  lines(unitCircleX, unitCircleY, lwd = 3, col = 'black')
-  points(Re(cPolyRoots), Im(cPolyRoots),
+  graphics::lines(unitCircleX, unitCircleY, lwd = 3, col = 'black')
+  graphics::points(Re(cPolyRoots), Im(cPolyRoots),
          pch = 16, col = 'blue')
 
   # Close graphics device, if any.
   if (!is.null(file)) {
-    dev.off()
+    grDevices::dev.off()
   }
 
 }
@@ -664,8 +664,8 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
 #' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 #'
 #' set.seed(27)
-#' WN <- rnorm(100)
-#' RW <- cumsum(rnorm(100))
+#' WN <- stats::rnorm(100)
+#' RW <- cumsum(stats::rnorm(100))
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 #' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 #' @family FCVAR postestimation functions
@@ -745,6 +745,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' from multivariate tests for white noise
 #' It is the output of \code{MVWNtest}.
 #' @param maxlag The number of lags for serial correlation tests.
+#' @param p The number of variables in the system.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -758,8 +759,8 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
 #'
 #' set.seed(27)
-#' WN <- rnorm(100)
-#' RW <- cumsum(rnorm(100))
+#' WN <- stats::rnorm(100)
+#' RW <- cumsum(stats::rnorm(100))
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 #' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 #' print.MVWNtest(stats = MVWNtest_stats, maxlag = 10)
@@ -771,7 +772,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' @note
 #' The LM test should be consistent for heteroskedastic series, Q-test is not.
 #'
-print.MVWNtest <- function(stats, maxlag) {
+print.MVWNtest <- function(stats, maxlag, p) {
 
 
   cat(sprintf('\n       White Noise Test Results (lag = %g)\n', maxlag))
@@ -816,8 +817,8 @@ print.MVWNtest <- function(stats, maxlag) {
 #' LMtest(x = results$Residuals[,2, drop = FALSE], q = 12)
 #'
 #' set.seed(27)
-#' WN <- rnorm(100)
-#' RW <- cumsum(rnorm(100))
+#' WN <- stats::rnorm(100)
+#' RW <- cumsum(stats::rnorm(100))
 #' LMtest(x = matrix(WN), q = 10)
 #' LMtest(x = matrix(RW), q = 10)
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
@@ -902,7 +903,7 @@ LMtest <- function(x,q) {
   S <- t(s) %*% s/T
   # LMstat <- T*sbar %*% S^(-1) %*% t(sbar)
   LMstat <- T*sbar %*% solve(S) %*% t(sbar)
-  pv <- 1 - pchisq(LMstat, q)
+  pv <- 1 - stats::pchisq(LMstat, q)
 
 
   # Output a list of results.
@@ -943,8 +944,8 @@ LMtest <- function(x,q) {
 #' Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
 #'
 #' set.seed(27)
-#' WN <- rnorm(100)
-#' RW <- cumsum(rnorm(100))
+#' WN <- stats::rnorm(100)
+#' RW <- cumsum(stats::rnorm(100))
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 #' Qtest(x = MVWN_x, maxlag = 10)
 #' Qtest(x = matrix(WN), maxlag = 10)
@@ -1005,7 +1006,7 @@ Qtest <- function(x, maxlag) {
 
 
   Qstat <- Qstat*T*(T+2)
-  pv <- 1 - pchisq(Qstat, p*p*maxlag) # P-value is calculated with p^2*maxlag df.
+  pv <- 1 - stats::pchisq(Qstat, p*p*maxlag) # P-value is calculated with p^2*maxlag df.
 
 
   # Output a list of results.

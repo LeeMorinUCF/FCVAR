@@ -519,7 +519,7 @@ FCVARoptionUpdates <- function(opt, p, r) {
            "R_Alpha has reduced rank!",
            "Redefine R_Alpha with linearly independent restrictions.")
     }
-    end
+
     # Check if user has imposed non-homogeneous alpha restrictions.
     if(!is.null(opt$r_Alpha) && (opt$r_Alpha != 0)) {
       cat(sprintf('\nWARNING: r_Alpha contains non-homogeneous restrictions (r_alpha non-zero).\n'))

@@ -43,15 +43,15 @@
 #' opt1 <- opt
 #' opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 #' opt1$r_psi <- 1
-#' m1r1 <- FCVARestn(x1, k, r, opt1)
+#' m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
 #'
 #' opt1 <- opt
 #' opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-#' m1r2 <- FCVARestn(x1, k, r, opt1)
+#' m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 #'
 #' opt1 <- opt
 #' opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-#' m1r4 <- FCVARestn(x1, k, r, opt1)
+#' m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to verify
@@ -282,11 +282,11 @@ FCVARestn <- function(x, k, r, opt) {
       # min_out <- optim_unc(-FCVARlikeMu(params, x, dbTemp, k, r, opt),
       #                      startVal, opt$UncFminOptions)
 
-      # min_out <- optim(StartVal,
+      # min_out <- stats::optim(StartVal,
       #                  function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)})
 
       # Add the options for optimization. Check.
-      min_out <- optim(StartVal,
+      min_out <- stats::optim(StartVal,
                        function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)},
                        control = list(maxit = opt$UncFminOptions$MaxFunEvals,
                                       reltol = opt$UncFminOptions$TolFun))
@@ -353,7 +353,7 @@ FCVARestn <- function(x, k, r, opt) {
 
 
     # Need to implement optimization correctly.
-    # min_out <- optim(startVals,
+    # min_out <- stats::optim(startVals,
     #                  function(params) {-FCVARlike(params, x, k, r, opt)})
     # Cdb, cdb, Rpsi, rpsi, LB, UB, opt$ConFminOptions)
 
@@ -367,7 +367,7 @@ FCVARestn <- function(x, k, r, opt) {
       # print(cdb)
 
       # This version uses inequality bounds:
-      min_out <- constrOptim(startVals,
+      min_out <- stats::constrOptim(startVals,
                              function(params) {-FCVARlike(params, x, k, r, opt)},
                              ui = Cdb,
                              ci = - cdb,
@@ -377,7 +377,7 @@ FCVARestn <- function(x, k, r, opt) {
     } else {
       # Constrained version with L-BFGS-B:
       # This uses only the box constraints LB and UB:
-      min_out <- optim(startVals,
+      min_out <- stats::optim(startVals,
                        function(params) {-FCVARlike(params, x, k, r, opt)},
                        method = 'L-BFGS-B', lower = LB, upper = UB,
                        control = list(maxit = opt$ConFminOptions$MaxFunEvals,
@@ -393,7 +393,7 @@ FCVARestn <- function(x, k, r, opt) {
     # by concentrating out one parameter and optimizing over the other.
     # Need an equation for b as a function of d, Rpsi and rpsi.
     # startValsSub <- startVals[-2]
-    # min_out <- constrOptim(startValsSub,
+    # min_out <- stats::constrOptim(startValsSub,
     #                        function(params) {-FCVARlike(c(params[1],
     #                                                       b_rest(d, Rpsi, rpsi),
     #                                                       params[3:length(params)]),

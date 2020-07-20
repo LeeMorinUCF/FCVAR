@@ -131,7 +131,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
     # ----- LR test of lag <- k vs lag <- k-1 -----%
     if (k > 0) {
       LRtest[k+1]   <- 2*(loglik[k+1] - loglik[k])
-      pvLRtest[k+1] <- 1 - pchisq(LRtest[k+1], p^2)
+      pvLRtest[k+1] <- 1 - stats::pchisq(LRtest[k+1], p^2)
     }
 
 
@@ -561,7 +561,7 @@ print.FCVARrankTests <- function(stats, k, p, T, opt) {
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' DefaultOpt$plotRoots <- 0
+#' opt$plotRoots <- 0
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' set.seed(42)
 #' \dontrun{FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)}

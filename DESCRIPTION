@@ -22,6 +22,7 @@ Authors@R:
 Description: A package for estimating the Fractionally Cointegrated 
     Vector Autoregression (VAR) model. It includes functions for lag selection,
     cointegration rank selection and hypothesis testing. 
+Depends: R (>= 3.5)
 Imports:
     pracma,
     fracdist

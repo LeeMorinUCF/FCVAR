@@ -11,14 +11,14 @@ GetFreeParams(k, r, p, opt, rankJ)
 
 \item{r}{The cointegrating rank.}
 
+\item{p}{The number of variables in the system.}
+
 \item{opt}{A list object that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 
 \item{rankJ}{The rank of a conditioning matrix, as described in
 Boswijk & Doornik (2004, p.447), which is only used if there are
 restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.}
-
-\item{x}{A matrix of variables to be included in the system.}
 }
 \value{
 The number of free parameters \code{fp}.

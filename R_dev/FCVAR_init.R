@@ -139,6 +139,7 @@ devtools::use_build_ignore(c("stata", "R_dev", "MATLAB"))
 usethis::use_build_ignore(c("stata", "R_dev", "MATLAB"))
 # check Setting active project to 'C:/Users/le279259/Documents/Research/FCVAR/GitRepo/FCVAR'
 # check Adding '^stata$', '^R_dev$', '^MATLAB$' to '.Rbuildignore'
+usethis::use_build_ignore(c("stata", "R_dev", "MATLAB", "article"))
 
 
 

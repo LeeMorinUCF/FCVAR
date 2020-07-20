@@ -4,7 +4,7 @@
 \alias{print.MVWNtest}
 \title{Print Statistics for Multivariate White Noise Tests}
 \usage{
-\method{print}{MVWNtest}(stats, maxlag)
+\method{print}{MVWNtest}(stats, maxlag, p)
 }
 \arguments{
 \item{stats}{A list object \code{MVWNtest_stats} containing the results
@@ -12,6 +12,8 @@ from multivariate tests for white noise
 It is the output of \code{MVWNtest}.}
 
 \item{maxlag}{The number of lags for serial correlation tests.}
+
+\item{p}{The number of variables in the system.}
 }
 \description{
 \code{print.MVWNtest} prints the statistics from \code{MVWNtest} to screen.
@@ -34,8 +36,8 @@ MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
 
 set.seed(27)
-WN <- rnorm(100)
-RW <- cumsum(rnorm(100))
+WN <- stats::rnorm(100)
+RW <- cumsum(stats::rnorm(100))
 MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 print.MVWNtest(stats = MVWNtest_stats, maxlag = 10)

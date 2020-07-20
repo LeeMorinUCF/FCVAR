@@ -32,7 +32,7 @@ on their side but they came first.)
 }
 \examples{
 set.seed(42)
-WN <- matrix(rnorm(200), nrow = 100, ncol = 2)
+WN <- matrix(stats::rnorm(200), nrow = 100, ncol = 2)
 MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)
 x <- FracDiff(x = WN, d = - 0.5)
 MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)

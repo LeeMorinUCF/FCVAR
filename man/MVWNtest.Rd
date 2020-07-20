@@ -47,8 +47,8 @@ results <- FCVARestn(x, k = 2, r = 1, opt)
 MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
 
 set.seed(27)
-WN <- rnorm(100)
-RW <- cumsum(rnorm(100))
+WN <- stats::rnorm(100)
+RW <- cumsum(stats::rnorm(100))
 MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 }
