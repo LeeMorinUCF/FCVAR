@@ -55,7 +55,8 @@ optUNR <- opt
 optRES <- opt
 optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 set.seed(42)
-FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
+\dontrun{FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)}
+FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 5)
 }
 \references{
 Boswijk, Cavaliere, Rahbek, and Taylor (2016)

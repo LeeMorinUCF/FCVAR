@@ -564,7 +564,8 @@ print.FCVARrankTests <- function(stats, k, p, T, opt) {
 #' DefaultOpt$plotRoots <- 0
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' set.seed(42)
-#' FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
+#' \dontrun{FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)}
+#' FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 5)
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{HypoTest} for the format of a hypothesis test results.

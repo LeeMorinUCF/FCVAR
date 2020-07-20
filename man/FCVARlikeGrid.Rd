@@ -86,6 +86,7 @@ plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 
 # Constrained 2-dimensional optimization.
 # Impose restriction dbMax >= d >= b >= dbMin.
+\dontrun{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
 opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -97,8 +98,10 @@ opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+}
 
 # Unconstrained 2-dimensional optimization.
+\dontrun{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.01 # Coarser grid for plotting example.
 opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -110,6 +113,7 @@ opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+}
 }
 \references{
 Johansen, S. and M. \enc{Ø}{O}. Nielsen (2010).
