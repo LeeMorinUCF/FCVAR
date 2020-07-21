@@ -629,6 +629,7 @@ FCVARoptionUpdates <- function(opt, p, r) {
 #' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to specify any bounds on fractional integration parameters.
+#' @export
 #'
 GetBounds <- function(opt) {
 

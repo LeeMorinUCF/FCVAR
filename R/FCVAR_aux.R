@@ -604,7 +604,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' 	starting values to give an approximation of the global max which can
 #' 	then be used as the starting value in the numerical optimization in
 #' 	\code{FCVARestn}.
-#' 	\code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' 	\code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
 #'
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
@@ -640,7 +640,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-#' plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+#' \dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
 #'
 #' # Linear restriction on fractional parameters.
 #' opt <- FCVARoptions()
@@ -656,7 +656,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-#' plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+#' \dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
 #'
 #' # Constrained 2-dimensional optimization.
 #' # Impose restriction dbMax >= d >= b >= dbMin.
@@ -690,7 +690,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' }
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' \code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
 #' @note If \code{opt$LocalMax == 0}, \code{FCVARlikeGrid} returns the parameter values
 #'       corresponding to the global maximum of the likelihood on the grid.
 #'       If \code{opt$LocalMax == 1}, \code{FCVARlikeGrid} returns the parameter values for the
@@ -700,6 +700,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2010).
 #' "Likelihood inference for a nonstationary fractional
 #' autoregressive model," Journal of Econometrics 158, 51-66.
+#' @export
 #'
 FCVARlikeGrid <- function(x, k, r, opt) {
 
@@ -1111,7 +1112,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
 #' Plot the Likelihood Function for the FCVAR Model
 #'
-#' \code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' \code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
 #' \code{FCVARlikeGrid} performs a grid-search optimization
 #' by calculating the likelihood function
 #' on a grid of candidate parameter values.
@@ -1144,10 +1145,11 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' opt$progress <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-#' plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, opt, main = 'default')
+#' plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{print.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' \code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' @export
 #'
 plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
                                 file = NULL, file_ext = NULL,
@@ -1273,11 +1275,12 @@ plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
 #' @examples
 #' opt <- FCVARoptions()
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' like <- FCVARlikeMu(y = x, db = c(1, 1), mu = mean(x), k = 2, r = 1, opt)
+#' like <- FCVARlikeMu(mu = colMeans(x), y = x, db = c(1, 1), k = 2, r = 1, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' The \code{FCVARlikeGrid} calls this function to perform a grid search over the
 #' parameter values.
+#' @export
 #'
 FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 
@@ -1485,6 +1488,7 @@ FCVARlike <- function(params, x, k, r, opt) {
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARlike} performs the same calculations to obtain the value
 #' of the likelihood function.
+#' @export
 #'
 GetEstimates <- function(params, x, k, r, opt) {
 
@@ -1602,6 +1606,7 @@ GetEstimates <- function(params, x, k, r, opt) {
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
+#' @export
 #'
 FCVARlikeFull <- function(x, k, r, coeffs, betaHat, rhoHat, opt) {
 
@@ -1886,11 +1891,11 @@ Lbk <- function(x, b, k) {
 #' @examples
 #' set.seed(42)
 #' WN <- matrix(stats::rnorm(200), nrow = 100, ncol = 2)
-#' MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)
+#' \dontrun{MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)}
 #' x <- FracDiff(x = WN, d = - 0.5)
-#' MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)
+#' \dontrun{MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)}
 #' WN_x_d <- FracDiff(x, d = 0.5)
-#' MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)
+#' \dontrun{MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)}
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
@@ -2193,6 +2198,7 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 #' \code{SEvec2matU} is a near inverse of \code{SEmat2vecU},
 #' in the sense that \code{SEvec2matU} obtains only a
 #' subset of the parameters in \code{results$coeffs}.
+#' @export
 #'
 SEmat2vecU <- function(coeffs, k, r, p , opt) {
 
@@ -2272,6 +2278,7 @@ SEmat2vecU <- function(coeffs, k, r, p , opt) {
 #' \code{SEmat2vecU} is a near inverse of \code{SEvec2matU},
 #' in the sense that \code{SEvec2matU} obtains only a
 #' subset of the parameters in \code{results$coeffs}.
+#' @export
 #'
 SEvec2matU <- function(param, k, r, p, opt ) {
 
@@ -2391,6 +2398,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #' "Accelerated estimation of switching algorithms: the cointegrated
 #' VAR model and other applications,"
 #' Forthcoming in Scandinavian Journal of Statistics.
+#' @export
 #'
 GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
 

@@ -378,6 +378,8 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #' @references Johansen, S. (2008). "A representation theory for a class of
 #' vector autoregressive models for fractional processes,"
 #' Econometric Theory 24, 651-676.
+#' @export
+#'
 GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 
 
@@ -482,6 +484,7 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 #' @references Johansen, S. (2008). "A representation theory for a class of
 #' vector autoregressive models for fractional processes,"
 #' Econometric Theory 24, 651-676.
+#' @export
 #'
 print.GetCharPolyRoots <- function(cPolyRoots) {
 
@@ -546,6 +549,7 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 #' @references Johansen, S. (2008). "A representation theory for a class of
 #' vector autoregressive models for fractional processes,"
 #' Econometric Theory 24, 651-676.
+#' @export
 #'
 plot.GetCharPolyRoots <- function(cPolyRoots, b,
                                   file = NULL, file_ext = NULL,
@@ -675,6 +679,7 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
 #' \code{print.MVWNtest} prints the output of \code{MVWNtest} to screen.
 #' @note
 #' The LM test should be consistent for heteroskedastic series, Q-test is not.
+#' @export
 #'
 MVWNtest <- function(x, maxlag, printResults) {
 
@@ -771,6 +776,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' \code{print.MVWNtest} prints the output of \code{MVWNtest} to screen.
 #' @note
 #' The LM test should be consistent for heteroskedastic series, Q-test is not.
+#' @export
 #'
 print.MVWNtest <- function(stats, maxlag, p) {
 
@@ -829,6 +835,7 @@ print.MVWNtest <- function(stats, maxlag, p) {
 #' An alternative test is the Ljung-Box Q-test in \code{Qtest}.
 #' @note
 #' The LM test is consistent for heteroskedastic series.
+#' @export
 #'
 LMtest <- function(x,q) {
 
@@ -958,6 +965,7 @@ LMtest <- function(x,q) {
 #' The LM test in \code{LMtest} is consistent for heteroskedastic series,
 #' while the Q-test is not.
 #' @references H. Luetkepohl (2005) "New Introduction to Multiple Time Series Analysis," Springer, Berlin.
+#' @export
 #'
 Qtest <- function(x, maxlag) {
 

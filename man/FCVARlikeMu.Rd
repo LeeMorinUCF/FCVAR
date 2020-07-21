@@ -33,7 +33,7 @@ the fractional parameters.
 \examples{
 opt <- FCVARoptions()
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-like <- FCVARlikeMu(y = x, db = c(1, 1), mu = mean(x), k = 2, r = 1, opt)
+like <- FCVARlikeMu(mu = colMeans(x), y = x, db = c(1, 1), k = 2, r = 1, opt)
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
