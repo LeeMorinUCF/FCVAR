@@ -47,7 +47,7 @@ x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 opt$progress <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+\dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.

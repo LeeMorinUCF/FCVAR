@@ -64,7 +64,7 @@ FCVARestn <- function(x, k, r, opt) {
   # global estimatesTEMP # Different in R.
 
   # --- Preliminary steps --- %
-  T <- nrow(x) - opt$N # number of observations
+  cap_T <- nrow(x) - opt$N # number of observations
   p <- ncol(x)         # number of variables
 
   # Update options based on initial user input.
@@ -296,7 +296,7 @@ FCVARestn <- function(x, k, r, opt) {
       maxLike <- min_out$value
 
 
-      y <- x - matrix(1, nrow = T+opt$N, ncol = p) %*% diag(muHat)
+      y <- x - matrix(1, nrow = cap_T+opt$N, ncol = p) %*% diag(muHat)
     } else {
       maxLike <- -FCVARlike(dbTemp, y, k, r, opt)
     }
@@ -784,7 +784,7 @@ FCVARestn <- function(x, k, r, opt) {
 
   if (opt$print2screen) {
 
-    print.FCVARestn(results = results, k, r, p, T, opt)
+    print.FCVARestn(results = results, k, r, p, cap_T, opt)
 
   }
 
@@ -809,7 +809,7 @@ FCVARestn <- function(x, k, r, opt) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
-#' @param T The sample size.
+#' @param cap_T The sample size.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return NULL
@@ -828,7 +828,7 @@ FCVARestn <- function(x, k, r, opt) {
 #' \code{print.FCVARestn} prints the output of \code{FCVARestn} to screen.
 #' @export
 #'
-print.FCVARestn <- function(results, k, r, p, T, opt) {
+print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
 
   # Extract variables for printing.
   H_psi <- results$printVars$H_psi
@@ -849,8 +849,8 @@ print.FCVARestn <- function(results, k, r, p, T, opt) {
   cat(sprintf('\n--------------------------------------------------------------------------------\n'))
   cat(sprintf('                      Fractionally Cointegrated VAR: Estimation Results                              '))
   cat(sprintf('\n--------------------------------------------------------------------------------\n'))
-  cat(sprintf('Dimension of system:  %6.0f      Number of observations in sample:       %6.0f \n', p, T+opt$N))
-  cat(sprintf('Number of lags:       %6.0f      Number of observations for estimation:  %6.0f \n', k, T))
+  cat(sprintf('Dimension of system:  %6.0f      Number of observations in sample:       %6.0f \n', p, cap_T+opt$N))
+  cat(sprintf('Number of lags:       %6.0f      Number of observations for estimation:  %6.0f \n', k, cap_T))
   cat(sprintf('Restricted constant:  %6s      Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
   cat(sprintf('Unrestricted constant:%6s      Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
 
@@ -875,7 +875,7 @@ print.FCVARestn <- function(results, k, r, p, T, opt) {
 
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf('Cointegrating rank:   %10.0f  AIC:            %10.3f \n', r, -2*maxLike + 2*fp))
-  cat(sprintf('Log-likelihood:       %10.3f  BIC:            %10.3f \n', maxLike, -2*maxLike + fp*log(T)))
+  cat(sprintf('Log-likelihood:       %10.3f  BIC:            %10.3f \n', maxLike, -2*maxLike + fp*log(cap_T)))
   cat(sprintf('log(det(Omega_hat)):  %10.3f  Free parameters:%10.0f \n', log(det(results$coeffs$OmegaHat)), fp))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf(    '    Fractional parameters:                                                                             \n'))

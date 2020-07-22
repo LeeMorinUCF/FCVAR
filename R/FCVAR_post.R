@@ -137,7 +137,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 
 
   # Calculate length of sample to generate, adjusting for initial values
-  T <- nrow(x) - optRES$N
+  cap_T <- nrow(x) - optRES$N
 
   # Use first k+1 observations for initial values
   data <- x[1:(k+1), ]
@@ -172,7 +172,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 
 
     # (1) generate bootstrap DGP under the null
-    xBS <- FCVARsimBS(data, mBS, T)
+    xBS <- FCVARsimBS(data, mBS, cap_T)
     # append initial values to bootstrap sample
     BSs <- rbind(data, xBS)
 
@@ -272,11 +272,11 @@ FCVARforecast <- function(x, model, NumPeriods) {
     # x <- rbind(x, matrix(0, nrow = 1, ncol = p))
     # x <- rbind(x, rep(0, p))
     xf <- rbind(xf, rep(0, p))
-    T <- nrow(xf)
+    cap_T <- nrow(xf)
 
     # Adjust by level parameter if present.
     if(opt$levelParam) {
-      y <- xf - matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+      y <- xf - matrix(1, nrow = cap_T, ncol = 1) %*% cf$muHat
     } else {
       y <- xf
     }
@@ -296,7 +296,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 
       z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
       if(opt$rConstant) {
-        z <- z + FracDiff( Lbk(matrix(1, nrow = T, ncol = 1), b, 1), d - b ) %*%
+        z <- z + FracDiff( Lbk(matrix(1, nrow = cap_T, ncol = 1), b, 1), d - b ) %*%
           cf$rhoHat %*% t(cf$alphaHat)
       }
 
@@ -305,7 +305,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 
     # Add unrestricted constant if present.
     if(opt$unrConstant) {
-      z <- z + matrix(1, nrow = T, ncol = 1) %*% t(cf$xiHat)
+      z <- z + matrix(1, nrow = cap_T, ncol = 1) %*% t(cf$xiHat)
     }
 
 
@@ -319,12 +319,12 @@ FCVARforecast <- function(x, model, NumPeriods) {
 
     # Adjust by level parameter if present.
     if(opt$levelParam) {
-      z <- z + matrix(1, nrow = T, ncol = 1) %*% cf$muHat
+      z <- z + matrix(1, nrow = cap_T, ncol = 1) %*% cf$muHat
     }
 
 
     # Append forecast to x matrix.
-    xf <- rbind(xf[1:(T-1),], z[T, ])
+    xf <- rbind(xf[1:(cap_T-1),], z[cap_T, ])
 
   }
 
@@ -470,8 +470,8 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-#' print.GetCharPolyRoots(cPolyRoots)
-#' plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])
+#' \dontrun{print.GetCharPolyRoots(cPolyRoots)}
+#' \dontrun{plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])}
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the model for which to calculate the roots
@@ -535,8 +535,8 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-#' print.GetCharPolyRoots(cPolyRoots)
-#' plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])
+#' \dontrun{print.GetCharPolyRoots(cPolyRoots)}
+#' \dontrun{plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])}
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the model for which to calculate the roots
@@ -683,7 +683,7 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
 #'
 MVWNtest <- function(x, maxlag, printResults) {
 
-  T <- nrow(x)
+  cap_T <- nrow(x)
   p <- ncol(x)
 
   # Create bins for values
@@ -730,7 +730,7 @@ MVWNtest <- function(x, maxlag, printResults) {
   # Print output
   if (printResults) {
 
-    print.MVWNtest(stats = MVWNtest_stats, maxlag)
+    print.MVWNtest(stats = MVWNtest_stats, maxlag, p)
 
   }
 
@@ -761,14 +761,14 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
-#' print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
+#' \dontrun{print.MVWNtest(stats = MVWNtest_stats, maxlag = 12, p = 3)}
 #'
 #' set.seed(27)
 #' WN <- stats::rnorm(100)
 #' RW <- cumsum(stats::rnorm(100))
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 #' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
-#' print.MVWNtest(stats = MVWNtest_stats, maxlag = 10)
+#' \dontrun{print.MVWNtest(stats = MVWNtest_stats, maxlag = 10, p = 2)}
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.
@@ -851,18 +851,18 @@ LMtest <- function(x,q) {
   # cat(sprintf('x is %d by %d', nrow(x), ncol(x)))
 
   # Breusch-Godfrey Lagrange Multiplier test for serial correlation.
-  T <- nrow(x)
+  cap_T <- nrow(x)
   x <- x - mean(x)
 
   # cat(sprintf('x is %d by %d', nrow(x), ncol(x)))
 
   # print(x)
 
-  y <- x[seq(q+1, T), ,  drop = FALSE]
-  z <- x[seq(1, T-q), ,  drop = FALSE]
+  y <- x[seq(q + 1, cap_T), ,  drop = FALSE]
+  z <- x[seq(1, cap_T - q), ,  drop = FALSE]
 
-  for (i in 1:(q-1)) {
-    z <- cbind(x[seq(i+1, T-q+i), ,  drop = FALSE], z)
+  for (i in 1:(q - 1)) {
+    z <- cbind(x[seq(i + 1, cap_T - q + i), ,  drop = FALSE], z)
   }
 
 
@@ -907,9 +907,9 @@ LMtest <- function(x,q) {
   # is not even calculated in a loop.
   s <- s - kron_sbar
 
-  S <- t(s) %*% s/T
+  S <- t(s) %*% s/cap_T
   # LMstat <- T*sbar %*% S^(-1) %*% t(sbar)
-  LMstat <- T*sbar %*% solve(S) %*% t(sbar)
+  LMstat <- cap_T*sbar %*% solve(S) %*% t(sbar)
   pv <- 1 - stats::pchisq(LMstat, q)
 
 
@@ -972,7 +972,7 @@ Qtest <- function(x, maxlag) {
   # print('class(x) = ')
   # print(class(x))
 
-  T <- nrow(x)
+  cap_T <- nrow(x)
   p <- ncol(x)
 
   # print('p = ')
@@ -986,19 +986,19 @@ Qtest <- function(x, maxlag) {
   # print(t(x[t, , drop = FALSE]) %*% x[t, , drop = FALSE])
 
   C0 <- matrix(0, nrow = p, ncol = p)
-  for (t in 1:T) {
+  for (t in 1:cap_T) {
     # C0 <- C0 + x[t, ] %*% t(x[t, ])
     C0 <- C0 + t(x[t, , drop = FALSE]) %*% x[t, , drop = FALSE]
   }
-  C0 <- C0/T
+  C0 <- C0/cap_T
 
   C <- array(rep(0, p*p*maxlag), dim = c(p,p,maxlag))
   for (i in 1:maxlag) {
-    for (t in (i+1):T) {
+    for (t in (i + 1):cap_T) {
       C[ , ,i] <- C[ , ,i] + t(x[t, , drop = FALSE]) %*% x[t-i, , drop = FALSE]
     }
 
-    C[ , ,i] <- C[ , ,i]/(T-i) # Note division by (T-i) instead of T.
+    C[ , ,i] <- C[ , ,i]/(cap_T - i) # Note division by (T-i) instead of T.
   }
 
 
@@ -1009,11 +1009,11 @@ Qtest <- function(x, maxlag) {
     # The following line is a more efficient calculation than the previous
     # Qstat <- Qstat+trace( (C(:,:,j)'/C0)*(C(:,:,j)/C0) ) / (T-j) %' #'
     # Need function for trace:
-    Qstat <- Qstat + sum(diag( (t(C[ , ,j]) %*% solve(C0)) %*% (C[ , ,j] %*% solve(C0)) )) / (T-j)
+    Qstat <- Qstat + sum(diag( (t(C[ , ,j]) %*% solve(C0)) %*% (C[ , ,j] %*% solve(C0)) )) / (cap_T - j)
   }
 
 
-  Qstat <- Qstat*T*(T+2)
+  Qstat <- Qstat*cap_T*(cap_T + 2)
   pv <- 1 - stats::pchisq(Qstat, p*p*maxlag) # P-value is calculated with p^2*maxlag df.
 
 

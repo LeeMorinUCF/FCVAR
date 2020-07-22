@@ -40,7 +40,7 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-print.FCVARlagSelect(stats = FCVARlagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
+\dontrun{print.FCVARlagSelect(stats = FCVAR_lag_1, kmax = 3, r = 3, p = 3, order = 12, opt)}
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.

@@ -58,8 +58,8 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-print.GetCharPolyRoots(cPolyRoots)
-plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])
+\dontrun{print.GetCharPolyRoots(cPolyRoots)}
+\dontrun{plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])}
 }
 \references{
 Johansen, S. (2008). "A representation theory for a class of

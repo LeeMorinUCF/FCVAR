@@ -1145,7 +1145,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' opt$progress <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-#' plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+#' \dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
@@ -1302,9 +1302,9 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
   estimates <- GetParams(x, k, r, db, opt)
 
   # Calculate value of likelihood function.
-  T <- t - opt$N
+  cap_T <- t - opt$N
   p <- ncol(x)
-  like <- - T*p/2*( log(2*pi) + 1)  - T/2*log(det(estimates$OmegaHat))
+  like <- - cap_T*p/2*( log(2*pi) + 1)  - cap_T/2*log(det(estimates$OmegaHat))
 
 
 
@@ -1344,7 +1344,7 @@ FCVARlike <- function(params, x, k, r, opt) {
 
   # global estimatesTEMP
 
-  T <- nrow(x)
+  cap_T <- nrow(x)
   p <- ncol(x)
 
   # print('params = ')
@@ -1390,7 +1390,7 @@ FCVARlike <- function(params, x, k, r, opt) {
     #
     # print('T = ')
     # print(T)
-    y <- x - matrix(1, nrow = T, ncol = p) %*% diag(mu)
+    y <- x - matrix(1, nrow = cap_T, ncol = p) %*% diag(mu)
   } else {
     y <- x
   }
@@ -1431,9 +1431,9 @@ FCVARlike <- function(params, x, k, r, opt) {
   # T <- nrow(y) - opt$N
   # p <- ncol(y)
   # Base this on raw inputs:
-  T <- nrow(x) - opt$N
+  cap_T <- nrow(x) - opt$N
   p <- ncol(x)
-  like <- - T*p/2*( log(2*pi) + 1)  - T/2*log(det(estimates$OmegaHat))
+  like <- - cap_T*p/2*( log(2*pi) + 1)  - cap_T/2*log(det(estimates$OmegaHat))
 
   # Assign the value for the global variable estimatesTEMP.
   # Might adjust this later but it will work for now.
@@ -1494,7 +1494,7 @@ GetEstimates <- function(params, x, k, r, opt) {
 
   # global estimatesTEMP
 
-  T <- nrow(x)
+  cap_T <- nrow(x)
   p <- ncol(x)
 
   # print('params = ')
@@ -1540,7 +1540,7 @@ GetEstimates <- function(params, x, k, r, opt) {
     #
     # print('T = ')
     # print(T)
-    y <- x - matrix(1, nrow = T, ncol = p) %*% diag(mu)
+    y <- x - matrix(1, nrow = cap_T, ncol = p) %*% diag(mu)
   } else {
     y <- x
   }
@@ -1622,10 +1622,10 @@ FCVARlikeFull <- function(x, k, r, coeffs, betaHat, rhoHat, opt) {
 
 
   # Calculate value of likelihood function.
-  T <- nrow(x) - opt$N
+  cap_T <- nrow(x) - opt$N
   p <- ncol(x)
-  OmegaHat <- t(epsilon) %*% epsilon/T
-  like <- - T*p/2*( log(2*pi) + 1)  - T/2*log(det(OmegaHat))
+  OmegaHat <- t(epsilon) %*% epsilon/cap_T
+  like <- - cap_T*p/2*( log(2*pi) + 1)  - cap_T/2*log(det(OmegaHat))
 
   return(like)
 }
@@ -1685,7 +1685,7 @@ TransformData <- function(x, k, db, opt) {
 
   # Number of initial values and sample size.
   N <- opt$N
-  T <- nrow(x) - N
+  cap_T <- nrow(x) - N
 
   # Extract parameters from input.
   d <- db[1]
@@ -1697,7 +1697,7 @@ TransformData <- function(x, k, db, opt) {
   Z1 <- x
   # Add a column with ones if model includes a restricted constant term.
   if(opt$rConstant) {
-    Z1 <- cbind(x, matrix(1, nrow = N+T, ncol = 1))
+    Z1 <- cbind(x, matrix(1, nrow = N + cap_T, ncol = 1))
   }
 
   Z1 <- FracDiff(  Lbk( Z1 , b, 1)  ,  d - b )
@@ -1708,7 +1708,7 @@ TransformData <- function(x, k, db, opt) {
   Z3 <- NULL
   # # Add a column with ones if model includes a unrestricted constant term.
   if(opt$unrConstant) {
-    Z3 <- matrix(1, nrow = T, ncol = 1)
+    Z3 <- matrix(1, nrow = cap_T, ncol = 1)
   }
 
 
@@ -1771,8 +1771,8 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
   # If level parameter is included, the data must be shifted before
   #   calculating the residuals:
   if (opt$levelParam) {
-    T <- nrow(x)
-    y <- x - matrix(1, nrow = T, ncol = 1) %*% coeffs$muHat
+    cap_T <- nrow(x)
+    y <- x - matrix(1, nrow = cap_T, ncol = 1) %*% coeffs$muHat
   } else {
     y <- x
   }
@@ -1931,10 +1931,10 @@ FracDiff <- function(x, d) {
 
 
 
-    iT <- nrow(x)
-    np2 <- stats::nextn(2*iT - 1, 2)
+    cap_T <- nrow(x)
+    np2 <- stats::nextn(2*cap_T - 1, 2)
 
-    k <- 1:(iT-1)
+    k <- 1:(cap_T-1)
     b <- c(1, cumprod((k - d - 1)/k))
 
 
@@ -1946,15 +1946,15 @@ FracDiff <- function(x, d) {
     # print('c(...) = ')
     # print(summary(c(x, rep(0, np2 - iT))))
 
-    dx <- matrix(0, nrow = iT, ncol = p)
+    dx <- matrix(0, nrow = cap_T, ncol = p)
 
     for (i in 1:p) {
 
 
-      dxi <- stats::fft(stats::fft(c(b, rep(0, np2 - iT))) *
-                          stats::fft(c(x[, i], rep(0, np2 - iT))), inverse = T) / np2
+      dxi <- stats::fft(stats::fft(c(b, rep(0, np2 - cap_T))) *
+                          stats::fft(c(x[, i], rep(0, np2 - cap_T))), inverse = cap_T) / np2
 
-      dx[, i] <- Re(dxi[1:iT])
+      dx[, i] <- Re(dxi[1:cap_T])
 
     }
 
@@ -2354,7 +2354,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #' calculated from the output of \code{TransformData} in \code{GetParams}.
 #' @param S11 A matrix of product moments,
 #' calculated from the output of \code{TransformData} in \code{GetParams}.
-#' @param T The number of observations in the sample.
+#' @param cap_T The number of observations in the sample.
 #' @param p The number of variables in the system.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
@@ -2385,7 +2385,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #' S11 <- matrix(c( 0.061355941,  -0.4109969,  -0.007468716,
 #'                  -0.410996895,  70.6110313, -15.865097810,
 #'                  -0.007468716, -15.8650978,   3.992435799), nrow = 3)
-#' switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, T = 316, p = 3, opt)
+#' switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, cap_T = 316, p = 3, opt)
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,
@@ -2400,7 +2400,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #' Forthcoming in Scandinavian Journal of Statistics.
 #' @export
 #'
-GetRestrictedParams <- function(beta0, S00, S01, S11, T, p, opt) {
+GetRestrictedParams <- function(beta0, S00, S01, S11, cap_T, p, opt) {
 
 
   r  <- ncol(beta0)

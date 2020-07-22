@@ -53,7 +53,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 
 
   # Determine (initial) dimensions of system.
-  T <- nrow(x) # Length of sample (before truncation for initial values).
+  cap_T <- nrow(x) # Length of sample (before truncation for initial values).
   p <- ncol(x) # Number of variables.
 
   # Do not print output for each WN test.
@@ -117,7 +117,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
     loglik[k+1] <- results$like
     D[k+1, ]    <- results$coeffs$db
     aic[k+1]    <- -2*loglik[k+1] + 2*results$fp
-    bic[k+1]    <- -2*loglik[k+1] + results$fp*log(T - opt$N)
+    bic[k+1]    <- -2*loglik[k+1] + results$fp*log(cap_T - opt$N)
 
     # ----- White noise tests ---------%
     MVWNtest_stats <- MVWNtest(results$Residuals, order, printWN)
@@ -162,7 +162,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
   # Print output if required, restoring original settings.
   opt$print2screen <- print2screen
   if (opt$print2screen) {
-    print.FCVARlagSelect(FCVARlagSelectStats, kmax, r, p, T, order, opt)
+    print.FCVARlagSelect(FCVARlagSelectStats, kmax, r, p, cap_T, order, opt)
   }
 
   return(FCVARlagSelectStats)
@@ -184,7 +184,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' the number of variables in the system, since it is better to overspecify
 #' than underspecify the model.
 #' @param p The number of variables in the system.
-#' @param T The sample size.
+#' @param cap_T The sample size.
 #' @param order The order of serial correlation for white noise tests.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
@@ -197,7 +197,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-#' print.FCVARlagSelect(stats = FCVARlagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
+#' \dontrun{print.FCVARlagSelect(stats = FCVAR_lag_1, kmax = 3, r = 3, p = 3, order = 12, opt)}
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
@@ -205,7 +205,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' \code{print.FCVARlagSelect} prints the output of \code{FCVARlagSelect} to screen.
 #' @export
 #'
-print.FCVARlagSelect <- function(stats, kmax, r, p, T, order, opt) {
+print.FCVARlagSelect <- function(stats, kmax, r, p, cap_T, order, opt) {
 
 
   #--------------------------------------------------------------------------------
@@ -218,8 +218,8 @@ print.FCVARlagSelect <- function(stats, kmax, r, p, T, order, opt) {
   cat(sprintf('\n--------------------------------------------------------------------------------\n'))
   cat(sprintf('                        Lag Selection Results \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
-  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T))
-  cat(sprintf('Order for WN tests:   %6.0f     Number of observations for estimation:  %6.0f \n', order, T-opt$N))
+  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, cap_T))
+  cat(sprintf('Order for WN tests:   %6.0f     Number of observations for estimation:  %6.0f \n', order, cap_T - opt$N))
   cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N )   )
   cat(sprintf('Unrestricted constant:%6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
@@ -326,7 +326,7 @@ print.FCVARlagSelect <- function(stats, kmax, r, p, T, order, opt) {
 #'
 FCVARrankTests <- function(x, k, opt) {
 
-  T <- nrow(x) - opt$N
+  cap_T <- nrow(x) - opt$N
   p <- ncol(x)
 
   # Store user specified options for printing to screen because it will be
@@ -453,7 +453,7 @@ FCVARrankTests <- function(x, k, opt) {
   # Print the results to screen.
   if (opt$print2screen) {
 
-    print.FCVARrankTests(stats = rankTestStats, k, p, T, opt)
+    print.FCVARrankTests(stats = rankTestStats, k, p, cap_T, opt)
 
   }
 
@@ -473,7 +473,7 @@ FCVARrankTests <- function(x, k, opt) {
 #' cointegrating ranks. It is the output of \code{FCVARrankTests}.
 #' @param k The number of lags in the system.
 #' @param p The number of variables in the system.
-#' @param T The sample size.
+#' @param cap_T The sample size.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return NULL
@@ -485,7 +485,7 @@ FCVARrankTests <- function(x, k, opt) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' rankTestStats <- FCVARrankTests(x, k = 2, opt)
-#' print.FCVARrankTests(stats = rankTestStats, k = 2, p = ncol(x), T = nrow(x), opt)
+#' \dontrun{print.FCVARrankTests(stats = rankTestStats, k = 2, p = ncol(x), cap_T = nrow(x), opt)}
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
@@ -493,7 +493,7 @@ FCVARrankTests <- function(x, k, opt) {
 #' \code{print.FCVARrankTests} prints the output of \code{FCVARrankTests} to screen.
 #' @export
 #'
-print.FCVARrankTests <- function(stats, k, p, T, opt) {
+print.FCVARrankTests <- function(stats, k, p, cap_T, opt) {
 
 
   # create a variable for output strings
@@ -502,8 +502,8 @@ print.FCVARrankTests <- function(stats, k, p, T, opt) {
   cat(sprintf('\n--------------------------------------------------------------------------------\n'))
   cat(sprintf('             Likelihood Ratio Tests for Cointegrating Rank                               \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
-  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, T+opt$N))
-  cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, T))
+  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, cap_T + opt$N))
+  cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, cap_T))
   cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
   cat(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
@@ -578,7 +578,7 @@ print.FCVARrankTests <- function(stats, k, p, T, opt) {
 FCVARbootRank <- function(x, k, opt, r1, r2, B) {
 
   # Calculate length of sample to generate, adjusting for initial values
-  T <- nrow(x) - opt$N
+  cap_T <- nrow(x) - opt$N
 
   # Use first k+1 observations for initial values
   data <- x[1:(k+1), ]
@@ -617,7 +617,7 @@ FCVARbootRank <- function(x, k, opt, r1, r2, B) {
 
     # print('made it before mBS')
     # (1) generate bootstrap DGP under the null
-    xBS <- FCVARsimBS(data, mBS, T)
+    xBS <- FCVARsimBS(data, mBS, cap_T)
 
     # Faiing on the previous line, with zero rank.
     # print('made it after mBS')

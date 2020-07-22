@@ -33,14 +33,14 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
-print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
+\dontrun{print.MVWNtest(stats = MVWNtest_stats, maxlag = 12, p = 3)}
 
 set.seed(27)
 WN <- stats::rnorm(100)
 RW <- cumsum(stats::rnorm(100))
 MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
-print.MVWNtest(stats = MVWNtest_stats, maxlag = 10)
+\dontrun{print.MVWNtest(stats = MVWNtest_stats, maxlag = 10, p = 2)}
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
