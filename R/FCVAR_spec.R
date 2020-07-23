@@ -15,7 +15,7 @@
 #' @param order The order of serial correlation for white noise tests.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return A list object \code{FCVARlagSelectStats} containing the results
+#' @return An S3 object of type \code{FCVAR_lags} containing the results
 #' from repeated estimation of the FCVAR model with different orders
 #' of the autoregressive lag length.
 #' Note that row \code{j} of each of the vectors in \code{FCVARlagSelectStats}
@@ -33,6 +33,15 @@
 #'   \item{\code{pvMVq}}{A scalar P-value for the Q-test for multivariate residual white noise.}
 #'   \item{\code{pvWNQ}}{A (\code{kmax} + 1) x 1 vector of P-values for the Q-tests for univariate residual white noise.}
 #'   \item{\code{pvWNLM}}{A (\code{kmax} + 1) x 1 vector of P-values for the LM-tests for univariate residual white noise.}
+#'   \item{\code{kmax}}{The maximum number of lags in the system.}
+#'   \item{\code{r}}{The cointegrating rank. This is often set equal to \code{p},
+#'     the number of variables in the system, since it is better to overspecify
+#'     than underspecify the model.}
+#'   \item{\code{p}}{The number of variables in the system.}
+#'   \item{\code{cap_T}}{The sample size.}
+#'   \item{\code{order}}{The order of serial correlation for white noise tests.}
+#'   \item{\code{opt}}{A list object that stores the chosen estimation options,
+#'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples
 #' opt <- FCVARoptions()
@@ -46,7 +55,7 @@
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate lag order.
-#' \code{print.FCVARlagSelect} prints the output of \code{FCVARlagSelect} to screen.
+#' \code{summary.FCVAR_lags} prints a summary of the output of \code{FCVARlagSelect} to screen.
 #' @export
 #'
 FCVARlagSelect <- function(x, kmax, r, order, opt ) {
@@ -156,38 +165,37 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
     bic = bic,
     pvMVq = pvMVq,
     pvWNQ = pvWNQ,
-    pvWNLM = pvWNLM
+    pvWNLM = pvWNLM,
+    kmax = kmax,
+    r = r,
+    p = p,
+    cap_T = cap_T,
+    order = order,
+    opt = opt
   )
+  class(FCVARlagSelectStats) <- 'FCVAR_lags'
 
   # Print output if required, restoring original settings.
   opt$print2screen <- print2screen
   if (opt$print2screen) {
-    print.FCVARlagSelect(FCVARlagSelectStats, kmax, r, p, cap_T, order, opt)
+    # print.FCVARlagSelect(FCVARlagSelectStats, kmax, r, p, cap_T, order, opt)
+    summary(object = FCVARlagSelectStats)
   }
 
   return(FCVARlagSelectStats)
 
 }
 
-#' Print Statistics from Lag Order Selection
+#' Summarize Statistics from Lag Order Selection
 #'
-#' \code{print.FCVARlagSelect} prints the table of statistics from
+#' \code{summary.FCVAR_lags} prints a summary of the table of statistics from
 #' the output of \code{FCVARlagSelect}.
 #' \code{FCVARlagSelect} takes a matrix of variables and performs lag
 #' 	selection on it by using the likelihood ratio test.
 #'
-#' @param stats A list object \code{FCVARlagSelectStats} containing the results
+#' @param object An S3 object of type \code{FCVAR_lags} containing the results
 #' from repeated estimation of the FCVAR model with different orders
 #' of the autoregressive lag length. It is the output of \code{FCVARlagSelect}.
-#' @param kmax The maximum number of lags in the system.
-#' @param r The cointegrating rank. This is often set equal to \code{p},
-#' the number of variables in the system, since it is better to overspecify
-#' than underspecify the model.
-#' @param p The number of variables in the system.
-#' @param cap_T The sample size.
-#' @param order The order of serial correlation for white noise tests.
-#' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -196,16 +204,18 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-#' \dontrun{print.FCVARlagSelect(stats = FCVAR_lag_1, kmax = 3, r = 3, p = 3, order = 12, opt)}
+#' FCVAR_lag_1 <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
+#' \dontrun{summary.FCVAR_lags(object = FCVAR_lag_1)}
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate lag order.
-#' \code{print.FCVARlagSelect} prints the output of \code{FCVARlagSelect} to screen.
+#' \code{summary.FCVAR_lags} prints a summary of the output of \code{FCVARlagSelect} to screen.
 #' @export
 #'
-print.FCVARlagSelect <- function(stats, kmax, r, p, cap_T, order, opt) {
+# print.FCVARlagSelect <- function(stats, kmax, r, p, cap_T, order, opt) {
+summary.FCVAR_lags <- function(object) {
+
 
 
   #--------------------------------------------------------------------------------
@@ -218,10 +228,14 @@ print.FCVARlagSelect <- function(stats, kmax, r, p, cap_T, order, opt) {
   cat(sprintf('\n--------------------------------------------------------------------------------\n'))
   cat(sprintf('                        Lag Selection Results \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
-  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, cap_T))
-  cat(sprintf('Order for WN tests:   %6.0f     Number of observations for estimation:  %6.0f \n', order, cap_T - opt$N))
-  cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N )   )
-  cat(sprintf('Unrestricted constant:%6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
+  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n',
+              object$p, object$cap_T))
+  cat(sprintf('Order for WN tests:   %6.0f     Number of observations for estimation:  %6.0f \n',
+              object$order, object$cap_T - object$opt$N))
+  cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n',
+              yesNo[object$opt$rConstant+1], object$opt$N )   )
+  cat(sprintf('Unrestricted constant:%6s     Level parameter:                        %6s\n',
+              yesNo[object$opt$unrConstant+1], yesNo[object$opt$levelParam+1] ))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf('Parameter Estimates and Information Criteria:\n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
@@ -233,19 +247,19 @@ print.FCVARlagSelect <- function(stats, kmax, r, p, cap_T, order, opt) {
 
 
   cat(sprintf('\n'))
-  for (k in seq(kmax, 0, by = -1) ) {
+  for (k in seq(object$kmax, 0, by = -1) ) {
 
     #       cat(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f %8.2f %4.2f',
     #             k, r, D(k+1,:), loglik(k+1), LRtest(k+1),
     #           pvLRtest(k+1), aic(k+1), bic(k+1), pvMVq(k+1,:))
     cat(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f',
-                k, r, stats$D[k+1, 1], stats$D[k+1, 2], stats$loglik[k+1],
-                stats$LRtest[k+1], stats$pvLRtest[k+1], stats$aic[k+1]))
+                k, object$r, object$D[k+1, 1], object$D[k+1, 2], object$loglik[k+1],
+                object$LRtest[k+1], object$pvLRtest[k+1], object$aic[k+1]))
     # For AIC add asterisk if min value
-    if(k+1 == stats$i_aic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
+    if(k+1 == object$i_aic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
     # Print BIC information criteria and add asterisk if min value
-    cat(sprintf(' %8.2f', stats$bic[k+1]))
-    if(k+1 == stats$i_bic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
+    cat(sprintf(' %8.2f', object$bic[k+1]))
+    if(k+1 == object$i_bic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
 
     # # Print multivariate white noise test P-values
     # cat(sprintf(' %4.2f', pvMVq[k+1, ]))
@@ -264,20 +278,20 @@ print.FCVARlagSelect <- function(stats, kmax, r, p, cap_T, order, opt) {
   cat(sprintf('--------------------------------------------------------------------------------\n'))
 
   cat(sprintf(' k   pmvQ'))
-  for (i in 1:p) {
-    cat(sprintf('  pQ%1.0f   pLM%1.0f', i,i))
+  for (i in 1:object$p) {
+    cat(sprintf('  pQ%1.0f   pLM%1.0f', i, i))
   }
 
   cat(sprintf('\n'))
-  for (k in seq(kmax, 0, by = -1) ) {
+  for (k in seq(object$kmax, 0, by = -1) ) {
 
     cat(sprintf('%2.0f ', k))
 
     # Print multivariate white noise test P-values
-    cat(sprintf('  %4.2f', stats$pvMVq[k+1, ]))
+    cat(sprintf('  %4.2f', object$pvMVq[k+1, ]))
     # Print the individual series white noise test P-values
-    for (i in 1:p) {
-      cat(sprintf('  %4.2f  %4.2f', stats$pvWNQ[k+1,i], stats$pvWNLM[k+1,i]))
+    for (i in 1:object$p) {
+      cat(sprintf('  %4.2f  %4.2f', object$pvWNQ[k+1,i], object$pvWNLM[k+1,i]))
     }
 
     cat(sprintf('\n'))

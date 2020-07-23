@@ -21,7 +21,7 @@ including the following parameters:
 }
 }
 \description{
-\code{Qtest} performs a (multivariate) Ljung-Box Q-test for serial correlation, see
+\code{Qtest} performs a (multivariate) Ljung-Box Q-test for serial correlation; see
 }
 \note{
 The LM test in \code{LMtest} is consistent for heteroskedastic series,
@@ -64,6 +64,6 @@ Other FCVAR postestimation functions:
 \code{\link{MVWNtest}()},
 \code{\link{plot.GetCharPolyRoots}()},
 \code{\link{print.GetCharPolyRoots}()},
-\code{\link{print.MVWNtest}()}
+\code{\link{summary.MVWN_stats}()}
 }
 \concept{FCVAR postestimation functions}

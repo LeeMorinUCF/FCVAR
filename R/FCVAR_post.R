@@ -640,13 +640,13 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
 #' \code{MVWNtest} performs multivariate tests for white noise.
 #' It performs both the Ljung-Box Q-test and the LM-test on individual series
 #' for a sequence of lag lengths.
-#' \code{print.MVWNtest} prints these statistics to screen.
+#' \code{summary.MVWN_stats} prints a summary of these statistics to screen.
 #'
 #' @param x A matrix of variables to be included in the system,
 #' typically model residuals.
 #' @param maxlag The number of lags for serial correlation tests.
 #' @param printResults An indicator to print results to screen.
-#' @return A list object \code{MVWNtest_stats} containing the test results,
+#' @return An S3 object of type \code{MVWN_stats} containing the test results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{Q}}{A 1xp vector of Q statistics for individual series.}
@@ -656,6 +656,8 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
 #'   \item{\code{mvQ}}{A multivariate Q statistic.}
 #'   \item{\code{pvMVQ}}{A p-value for multivariate Q-statistic using \code{p^2*maxlag}
 #'   degrees of freedom.}
+#'   \item{\code{maxlag}}{The number of lags for serial correlation tests.}
+#'   \item{\code{p}}{The number of variables in the system.}
 #' }
 #' @examples
 #' opt <- FCVARoptions()
@@ -676,7 +678,7 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.
 #' \code{LagSelect} uses this test as part of the lag order selection process.
-#' \code{print.MVWNtest} prints the output of \code{MVWNtest} to screen.
+#' \code{summary.MVWN_stats} prints a summary of the \code{MVWN_stats} statistics to screen.
 #' @note
 #' The LM test should be consistent for heteroskedastic series, Q-test is not.
 #' @export
@@ -718,19 +720,24 @@ MVWNtest <- function(x, maxlag, printResults) {
 
 
   # Output a list of results.
+  # Output a MVWN_stats object of results.
   MVWNtest_stats <- list(
     Q = Q,
     pvQ = pvQ,
     LM = LM,
     pvLM = pvLM,
     mvQ = mvQ,
-    pvMVQ = pvMVQ
+    pvMVQ = pvMVQ,
+    maxlag = maxlag,
+    p = p
   )
+  class(MVWNtest_stats) <- 'MVWN_stats'
 
   # Print output
   if (printResults) {
 
-    print.MVWNtest(stats = MVWNtest_stats, maxlag, p)
+    # print.MVWNtest(stats = MVWNtest_stats, maxlag, p)
+    summary(MVWNtest_stats)
 
   }
 
@@ -739,18 +746,17 @@ MVWNtest <- function(x, maxlag, printResults) {
 }
 
 
-#' Print Statistics for Multivariate White Noise Tests
+#' Summarize Statistics for Multivariate White Noise Tests
 #'
-#' \code{print.MVWNtest} prints the statistics from \code{MVWNtest} to screen.
+#' \code{summary.MVWN_stats} is an S3 method for objects of class \code{MVWN_stats}
+#' that prints a summary of the statistics from \code{MVWNtest} to screen.
 #' \code{MVWNtest} performs multivariate tests for white noise.
 #' It performs both the Ljung-Box Q-test and the LM-test on individual series
 #' for a sequence of lag lengths.
 #'
-#' @param stats A list object \code{MVWNtest_stats} containing the results
-#' from multivariate tests for white noise
+#' @param object An S3 object of type \code{MVWN_stats} containing the results
+#' from multivariate tests for white noise.
 #' It is the output of \code{MVWNtest}.
-#' @param maxlag The number of lags for serial correlation tests.
-#' @param p The number of variables in the system.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -761,34 +767,35 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
-#' \dontrun{print.MVWNtest(stats = MVWNtest_stats, maxlag = 12, p = 3)}
+#' \dontrun{summary(object = MVWNtest_stats)}
 #'
 #' set.seed(27)
 #' WN <- stats::rnorm(100)
 #' RW <- cumsum(stats::rnorm(100))
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 #' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
-#' \dontrun{print.MVWNtest(stats = MVWNtest_stats, maxlag = 10, p = 2)}
+#' \dontrun{summary(object = MVWNtest_stats)}
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.
 #' \code{LagSelect} uses this test as part of the lag order selection process.
-#' \code{print.MVWNtest} prints the output of \code{MVWNtest} to screen.
+#' \code{summary.MVWN_stats} is an S3 method for class \code{MVWN_stats} that
+#' prints a summary of the output of \code{MVWNtest} to screen.
 #' @note
-#' The LM test should be consistent for heteroskedastic series, Q-test is not.
+#' The LM test is consistent for heteroskedastic series, the Q-test is not.
 #' @export
 #'
-print.MVWNtest <- function(stats, maxlag, p) {
+# print.MVWNtest <- function(stats, maxlag, p) {
+summary.MVWN_stats <- function(object) {
 
-
-  cat(sprintf('\n       White Noise Test Results (lag = %g)\n', maxlag))
+  cat(sprintf('\n       White Noise Test Results (lag = %g)\n', object$maxlag))
   cat(sprintf('---------------------------------------------\n'))
   cat(sprintf('Variable |       Q  P-val |      LM  P-val  |\n'))
   cat(sprintf('---------------------------------------------\n'))
-  cat(sprintf('Multivar | %7.3f  %4.3f |     ----  ----  |\n', stats$mvQ, stats$pvMVQ))
-  for (i in 1:p) {
+  cat(sprintf('Multivar | %7.3f  %4.3f |     ----  ----  |\n', object$mvQ, object$pvMVQ))
+  for (i in 1:object$p) {
     cat(sprintf('Var%g     | %7.3f  %4.3f | %7.3f  %4.3f  |\n',
-                i, stats$Q[i], stats$pvQ[i], stats$LM[i], stats$pvLM[i] ))
+                i, object$Q[i], object$pvQ[i], object$LM[i], object$pvLM[i] ))
   }
 
   cat(sprintf('---------------------------------------------\n'))
@@ -925,7 +932,7 @@ LMtest <- function(x,q) {
 
 #' Ljung-Box Q-test for Serial Correlation
 #'
-#' \code{Qtest} performs a (multivariate) Ljung-Box Q-test for serial correlation, see
+#' \code{Qtest} performs a (multivariate) Ljung-Box Q-test for serial correlation; see
 # 	Luetkepohl (2005, New Introduction to Multiple Time Series Analysis, p. 169).
 #'
 #' @param x A vector or Tx1 matrix of variables to be tested,

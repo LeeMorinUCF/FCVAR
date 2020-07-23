@@ -4,7 +4,7 @@
 \alias{print.FCVARrankTests}
 \title{Print Statistics from Tests for Cointegrating Rank}
 \usage{
-\method{print}{FCVARrankTests}(stats, k, p, T, opt)
+\method{print}{FCVARrankTests}(stats, k, p, cap_T, opt)
 }
 \arguments{
 \item{stats}{A list object \code{rankTestStats} containing the results
@@ -15,7 +15,7 @@ cointegrating ranks. It is the output of \code{FCVARrankTests}.}
 
 \item{p}{The number of variables in the system.}
 
-\item{T}{The sample size.}
+\item{cap_T}{The sample size.}
 
 \item{opt}{A list object that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
@@ -33,7 +33,7 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 rankTestStats <- FCVARrankTests(x, k = 2, opt)
-\dontrun{print.FCVARrankTests(stats = rankTestStats, k = 2, p = ncol(x), T = nrow(x), opt)}
+\dontrun{print.FCVARrankTests(stats = rankTestStats, k = 2, p = ncol(x), cap_T = nrow(x), opt)}
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
@@ -45,6 +45,6 @@ Other FCVAR specification functions:
 \code{\link{FCVARbootRank}()},
 \code{\link{FCVARlagSelect}()},
 \code{\link{FCVARrankTests}()},
-\code{\link{print.FCVARlagSelect}()}
+\code{\link{summary.FCVAR_lags}()}
 }
 \concept{FCVAR specification functions}

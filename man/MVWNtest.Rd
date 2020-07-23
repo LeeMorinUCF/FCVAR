@@ -15,7 +15,7 @@ typically model residuals.}
 \item{printResults}{An indicator to print results to screen.}
 }
 \value{
-A list object \code{MVWNtest_stats} containing the test results,
+An S3 object of type \code{MVWN_stats} containing the test results,
 including the following parameters:
 \describe{
   \item{\code{Q}}{A 1xp vector of Q statistics for individual series.}
@@ -25,13 +25,15 @@ including the following parameters:
   \item{\code{mvQ}}{A multivariate Q statistic.}
   \item{\code{pvMVQ}}{A p-value for multivariate Q-statistic using \code{p^2*maxlag}
   degrees of freedom.}
+  \item{\code{maxlag}}{The number of lags for serial correlation tests.}
+  \item{\code{p}}{The number of variables in the system.}
 }
 }
 \description{
 \code{MVWNtest} performs multivariate tests for white noise.
 It performs both the Ljung-Box Q-test and the LM-test on individual series
 for a sequence of lag lengths.
-\code{print.MVWNtest} prints these statistics to screen.
+\code{summary.MVWN_stats} prints a summary of these statistics to screen.
 }
 \note{
 The LM test should be consistent for heteroskedastic series, Q-test is not.
@@ -56,7 +58,7 @@ MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
 \code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} produces the residuals intended for this test.
 \code{LagSelect} uses this test as part of the lag order selection process.
-\code{print.MVWNtest} prints the output of \code{MVWNtest} to screen.
+\code{summary.MVWN_stats} prints a summary of the \code{MVWN_stats} statistics to screen.
 
 Other FCVAR postestimation functions: 
 \code{\link{FCVARboot}()},
@@ -66,6 +68,6 @@ Other FCVAR postestimation functions:
 \code{\link{Qtest}()},
 \code{\link{plot.GetCharPolyRoots}()},
 \code{\link{print.GetCharPolyRoots}()},
-\code{\link{print.MVWNtest}()}
+\code{\link{summary.MVWN_stats}()}
 }
 \concept{FCVAR postestimation functions}

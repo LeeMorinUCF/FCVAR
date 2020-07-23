@@ -4,7 +4,7 @@
 \alias{GetRestrictedParams}
 \title{Calculate Restricted Estimates for the FCVAR Model}
 \usage{
-GetRestrictedParams(beta0, S00, S01, S11, T, p, opt)
+GetRestrictedParams(beta0, S00, S01, S11, cap_T, p, opt)
 }
 \arguments{
 \item{beta0}{The unrestricted estimate of \code{beta},
@@ -20,7 +20,7 @@ calculated from the output of \code{TransformData} in \code{GetParams}.}
 \item{S11}{A matrix of product moments,
 calculated from the output of \code{TransformData} in \code{GetParams}.}
 
-\item{T}{The number of observations in the sample.}
+\item{cap_T}{The number of observations in the sample.}
 
 \item{p}{The number of variables in the system.}
 
@@ -65,7 +65,7 @@ S01 <- matrix(c(-0.0047314320, -0.04488533,  0.006336798,
 S11 <- matrix(c( 0.061355941,  -0.4109969,  -0.007468716,
                  -0.410996895,  70.6110313, -15.865097810,
                  -0.007468716, -15.8650978,   3.992435799), nrow = 3)
-switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, T = 316, p = 3, opt)
+switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, cap_T = 316, p = 3, opt)
 }
 \references{
 Boswijk, H. P. and J. A. Doornik (2004).

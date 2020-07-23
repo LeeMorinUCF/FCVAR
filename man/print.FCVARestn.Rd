@@ -4,7 +4,7 @@
 \alias{print.FCVARestn}
 \title{Print Estimation Results from the FCVAR model}
 \usage{
-\method{print}{FCVARestn}(results, k, r, p, T, opt)
+\method{print}{FCVARestn}(results, k, r, p, cap_T, opt)
 }
 \arguments{
 \item{results}{A list object containing the estimation results of \code{FCVARestn}.}
@@ -15,7 +15,7 @@
 
 \item{p}{The number of variables in the system.}
 
-\item{T}{The sample size.}
+\item{cap_T}{The sample size.}
 
 \item{opt}{A list object that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}

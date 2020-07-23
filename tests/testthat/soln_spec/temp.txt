@@ -1,0 +1,6 @@
+Bootstrap rank test results:
+Unrestricted log-likelihood: 113.388
+Restricted log-likelihood:   97.458
+Test results:
+LR statistic: 	 31.858
+P-value (BS): 	 0.000

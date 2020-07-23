@@ -21,7 +21,7 @@ than underspecify the model.}
 generated from \code{FCVARoptions()}.}
 }
 \value{
-A list object \code{FCVARlagSelectStats} containing the results
+An S3 object of type \code{FCVAR_lags} containing the results
 from repeated estimation of the FCVAR model with different orders
 of the autoregressive lag length.
 Note that row \code{j} of each of the vectors in \code{FCVARlagSelectStats}
@@ -39,6 +39,15 @@ contains the associated results for lag length \code{j+1}
   \item{\code{pvMVq}}{A scalar P-value for the Q-test for multivariate residual white noise.}
   \item{\code{pvWNQ}}{A (\code{kmax} + 1) x 1 vector of P-values for the Q-tests for univariate residual white noise.}
   \item{\code{pvWNLM}}{A (\code{kmax} + 1) x 1 vector of P-values for the LM-tests for univariate residual white noise.}
+  \item{\code{kmax}}{The maximum number of lags in the system.}
+  \item{\code{r}}{The cointegrating rank. This is often set equal to \code{p},
+    the number of variables in the system, since it is better to overspecify
+    than underspecify the model.}
+  \item{\code{p}}{The number of variables in the system.}
+  \item{\code{cap_T}}{The sample size.}
+  \item{\code{order}}{The order of serial correlation for white noise tests.}
+  \item{\code{opt}}{A list object that stores the chosen estimation options,
+    generated from \code{FCVARoptions()}.}
 }
 }
 \description{
@@ -59,12 +68,12 @@ FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
 \code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} is called repeatedly within this function
 for each candidate lag order.
-\code{print.FCVARlagSelect} prints the output of \code{FCVARlagSelect} to screen.
+\code{summary.FCVAR_lags} prints a summary of the output of \code{FCVARlagSelect} to screen.
 
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},
 \code{\link{FCVARrankTests}()},
-\code{\link{print.FCVARlagSelect}()},
-\code{\link{print.FCVARrankTests}()}
+\code{\link{print.FCVARrankTests}()},
+\code{\link{summary.FCVAR_lags}()}
 }
 \concept{FCVAR specification functions}
