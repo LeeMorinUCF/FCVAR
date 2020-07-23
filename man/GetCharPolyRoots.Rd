@@ -20,13 +20,18 @@ generated from \code{FCVARoptions()}.}
 \item{p}{The number of variables in the system.}
 }
 \value{
-A complex vector \code{cPolyRoots} with the roots of the characteristic polynomial.
+An S3 object of type \code{FCVAR_roots} with the following elements:
+#' \describe{
+  \item{\code{cPolyRoots}}{A vector of the roots of the characteristic polynomial.
+    It is an element of the list of estimation \code{results} output from \code{FCVARestn}.}
+  \item{\code{b}}{A numeric value of the fractional cointegration parameter.}
+}
 }
 \description{
 \code{GetCharPolyRoots} calculates the roots of the
 characteristic polynomial and plots them with the unit circle
 transformed for the fractional model, see Johansen (2008).
-\code{print.GetCharPolyRoots} prints the output of
+\code{summary.FCVAR_roots} prints the output of
 \code{GetCharPolyRoots} to screen.
 }
 \note{
@@ -42,7 +47,7 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
-cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
+FCVAR_CharPoly <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
 }
 \references{
 Johansen, S. (2008). "A representation theory for a class of
@@ -53,7 +58,7 @@ Econometric Theory 24, 651-676.
 \code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} to estimate the model for which to calculate the roots
 of the characteristic polynomial.
-\code{print.GetCharPolyRoots} prints the output of
+\code{summary.FCVAR_roots} prints the output of
 \code{GetCharPolyRoots} to screen.
 
 Other FCVAR postestimation functions: 
@@ -62,8 +67,8 @@ Other FCVAR postestimation functions:
 \code{\link{LMtest}()},
 \code{\link{MVWNtest}()},
 \code{\link{Qtest}()},
-\code{\link{plot.GetCharPolyRoots}()},
-\code{\link{print.GetCharPolyRoots}()},
+\code{\link{plot.FCVAR_roots}()},
+\code{\link{summary.FCVAR_roots}()},
 \code{\link{summary.MVWN_stats}()}
 }
 \concept{FCVAR postestimation functions}

@@ -70,6 +70,6 @@ Other FCVAR auxilliary functions:
 \code{\link{Lbk}()},
 \code{\link{SEmat2vecU}()},
 \code{\link{TransformData}()},
-\code{\link{plot.FCVARlikeGrid}()}
+\code{\link{plot.FCVAR_grid}()}
 }
 \concept{FCVAR auxilliary functions}

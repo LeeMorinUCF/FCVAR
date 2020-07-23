@@ -441,14 +441,19 @@ opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+graphics::plot(x = likeGrid_params)
 
 # Output plot for article.
-out_file_path <- sprintf('R_dev/Figures/gridDB.%s', fig_ext)
-plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
-                    main = 'default',
-                    file = out_file_path,
-                    file_ext = fig_ext)
+# out_file_path <- sprintf('R_dev/Figures/gridDB.%s', fig_ext)
+# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
+#                     main = 'default',
+#                     file = out_file_path,
+#                     file_ext = fig_ext)
+# out_file_path <- 'R_dev/Figures/gridDB.png'
+# grDevices::png(out_file_path)
+# graphics::plot(x = likeGrid_params)
+# grDevices::dev.off()
 
 
 # Linear restriction on fractional parameters.
@@ -465,15 +470,19 @@ opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
-
+# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+graphics::plot(x = likeGrid_params)
 
 # Output plot for article.
-out_file_path <- sprintf('R_dev/Figures/gridPhi.%s', fig_ext)
-plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
-                    main = 'default',
-                    file = out_file_path,
-                    file_ext = fig_ext)
+# out_file_path <- sprintf('R_dev/Figures/gridPhi.%s', fig_ext)
+# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
+#                     main = 'default',
+#                     file = out_file_path,
+#                     file_ext = fig_ext)
+# out_file_path <- 'R_dev/Figures/gridPhi.png'
+# grDevices::png(out_file_path)
+# graphics::plot(x = likeGrid_params)
+# grDevices::dev.off()
 
 
 # Constrained 2-dimensional optimization.
@@ -490,13 +499,18 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction mat
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 # plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+graphics::plot(x = likeGrid_params)
 
 # Output plot for article.
-out_file_path <- sprintf('R_dev/Figures/gridConst.%s', fig_ext)
-plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
-                    main = 'default',
-                    file = out_file_path,
-                    file_ext = fig_ext)
+# out_file_path <- sprintf('R_dev/Figures/gridConst.%s', fig_ext)
+# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
+#                     main = 'default',
+#                     file = out_file_path,
+#                     file_ext = fig_ext)
+# out_file_path <- 'R_dev/Figures/gridConst.png'
+# grDevices::png(out_file_path)
+# graphics::plot(x = likeGrid_params)
+# grDevices::dev.off()
 
 
 # Unconstrained 2-dimensional optimization.
@@ -512,13 +526,18 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction mat
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 # plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
+graphics::plot(x = likeGrid_params)
 
 # Output plot for article.
-out_file_path <- sprintf('R_dev/Figures/grid3d.%s', fig_ext)
-plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
-                    main = 'default',
-                    file = out_file_path,
-                    file_ext = fig_ext)
+# out_file_path <- sprintf('R_dev/Figures/grid3d.%s', fig_ext)
+# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
+#                     main = 'default',
+#                     file = out_file_path,
+#                     file_ext = fig_ext)
+# out_file_path <- 'R_dev/Figures/grid3d.png'
+# grDevices::png(out_file_path)
+# graphics::plot(x = likeGrid_params)
+# grDevices::dev.off()
 
 
 

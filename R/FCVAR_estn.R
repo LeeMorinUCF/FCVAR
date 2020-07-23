@@ -766,7 +766,8 @@ FCVARestn <- function(x, k, r, opt) {
   # OBTAIN ROOTS OF CHARACTERISTIC POLYNOMIAL
   #--------------------------------------------------------------------------------
 
-  cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k, r, p)
+  FCVAR_CharPoly <- GetCharPolyRoots(results$coeffs, opt, k, r, p)
+  cPolyRoots <- FCVAR_CharPoly$cPolyRoots
   results$cPolyRoots <- cPolyRoots
 
 
@@ -1107,10 +1108,18 @@ summary.FCVAR_model <- function(object, ...) {
   # Print roots of characteristic polynomial if required.
   if (opt$print2screen & opt$printRoots) {
 
-    print.GetCharPolyRoots(cPolyRoots)
+    # Append the fractional integration order and set the class of output.
+    FCVAR_CharPoly <- list(cPolyRoots = cPolyRoots,
+                           b = object$coeffs$db[2])
+    class(FCVAR_CharPoly) <- 'FCVAR_roots'
 
-    plot.GetCharPolyRoots(cPolyRoots, b = object$coeffs$db[2],
-                          main = 'default')
+
+    # print.GetCharPolyRoots(cPolyRoots)
+    summary(FCVAR_CharPoly)
+
+    # plot.GetCharPolyRoots(cPolyRoots, b = object$coeffs$db[2],
+    #                       main = 'default')
+    graphics::plot(x = FCVAR_CharPoly)
 
   }
 

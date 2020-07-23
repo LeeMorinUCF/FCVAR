@@ -346,7 +346,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #' \code{GetCharPolyRoots} calculates the roots of the
 #' characteristic polynomial and plots them with the unit circle
 #' transformed for the fractional model, see Johansen (2008).
-#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{summary.FCVAR_roots} prints the output of
 #' \code{GetCharPolyRoots} to screen.
 #'
 #' @param coeffs A list of coefficients for the FCVAR model.
@@ -356,7 +356,12 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
-#' @return A complex vector \code{cPolyRoots} with the roots of the characteristic polynomial.
+#' @return An S3 object of type \code{FCVAR_roots} with the following elements:
+#' #' \describe{
+#'   \item{\code{cPolyRoots}}{A vector of the roots of the characteristic polynomial.
+#'     It is an element of the list of estimation \code{results} output from \code{FCVARestn}.}
+#'   \item{\code{b}}{A numeric value of the fractional cointegration parameter.}
+#' }
 #' @examples
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
@@ -365,12 +370,12 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
+#' FCVAR_CharPoly <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the model for which to calculate the roots
 #' of the characteristic polynomial.
-#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{summary.FCVAR_roots} prints the output of
 #' \code{GetCharPolyRoots} to screen.
 #' @note The roots are calculated from the companion form of the VAR,
 #' where the roots are given as the inverse eigenvalues of the
@@ -438,28 +443,39 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
   cPolyRoots <- 1 / eigen(PiStar)$values
   cPolyRoots <- cPolyRoots[order(-Mod(cPolyRoots))]
 
+  # Append the fractional integration order and set the class of output.
+  FCVAR_CharPoly <- list(cPolyRoots = cPolyRoots,
+                           b = b)
+  class(FCVAR_CharPoly) <- 'FCVAR_roots'
+
   # Generate graph depending on the indicator plotRoots.
   if (opt$plotRoots) {
 
-    plot.GetCharPolyRoots(cPolyRoots, b, file = NULL, file_ext = NULL)
+    # plot.GetCharPolyRoots(cPolyRoots, b, file = NULL, file_ext = NULL)
+    graphics::plot(x = FCVAR_CharPoly)
 
   }
 
 
-  return(cPolyRoots)
+  return(FCVAR_CharPoly)
 }
 
 
-#' Print Roots of the Characteristic Polynomial
+#' Print Summary of Roots of the Characteristic Polynomial
 #'
-#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{summary.FCVAR_roots} prints the output of
 #' \code{GetCharPolyRoots} to screen.
 #' \code{GetCharPolyRoots} calculates the roots of the
-#' characteristic polynomial and plots them with the unit circle
+#' characteristic polynomial to plot them with the unit circle
 #' transformed for the fractional model, see Johansen (2008).
 #'
-#' @param cPolyRoots A vector of the roots of the characteristic polynomial.
-#' An element of the list of estimation \code{results} output from \code{FCVARestn}.
+#' @param object An S3 object of type \code{FCVAR_roots} with the following elements:
+#' #' \describe{
+#'   \item{\code{cPolyRoots}}{A vector of the roots of the characteristic polynomial.
+#'     It is an element of the list of estimation \code{results} output from \code{FCVARestn}.}
+#'   \item{\code{b}}{A numeric value of the fractional cointegration parameter.}
+#' }
+#' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -469,14 +485,14 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-#' \dontrun{print.GetCharPolyRoots(cPolyRoots)}
-#' \dontrun{plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])}
+#' FCVAR_CharPoly <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
+#' \dontrun{summary(object = FCVAR_CharPoly)}
+#' \dontrun{graphics::plot(x = FCVAR_CharPoly)}
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the model for which to calculate the roots
 #' of the characteristic polynomial.
-#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{summary.FCVAR_roots} prints the output of
 #' \code{GetCharPolyRoots} to screen.
 #' @note The roots are calculated from the companion form of the VAR,
 #' where the roots are given as the inverse eigenvalues of the
@@ -486,16 +502,17 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 #' Econometric Theory 24, 651-676.
 #' @export
 #'
-print.GetCharPolyRoots <- function(cPolyRoots) {
+# print.GetCharPolyRoots <- function(cPolyRoots) {
+summary.FCVAR_roots <- function(object, ...) {
 
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf(  '    Roots of the characteristic polynomial                                                           \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf(  '    Number     Real part    Imaginary part       Modulus                                             \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
-  for (j in 1:length(cPolyRoots)) {
+  for (j in 1:length(object$cPolyRoots)) {
     cat(sprintf( '      %2.0f       %8.3f       %8.3f         %8.3f                                        \n',
-                 j, Re(cPolyRoots[j]), Im(cPolyRoots[j]), Mod(cPolyRoots[j]) ))
+                 j, Re(object$cPolyRoots[j]), Im(object$cPolyRoots[j]), Mod(object$cPolyRoots[j]) ))
   }
 
   cat(sprintf('--------------------------------------------------------------------------------\n'))
@@ -504,27 +521,21 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 
 #' Plot Roots of the Characteristic Polynomial
 #'
-#' \code{plot.GetCharPolyRoots} plots the output of
+#' \code{plot.FCVAR_roots} plots the output of
 #' \code{GetCharPolyRoots} to screen or to a file.
 #' \code{GetCharPolyRoots} calculates the roots of the
 #' characteristic polynomial and plots them with the unit circle
 #' transformed for the fractional model, see Johansen (2008).
 #'
-#' @param cPolyRoots A vector of the roots of the characteristic polynomial.
-#' An element of the list of estimation \code{results} output from \code{FCVARestn}.
-#' @param b The order of fractional integration.
-#' @param file A string path and file name in which to plot a figure.
-#' Renders to the plot window if running in RStudio if NULL.
-#' @param file_ext A string file extension to indicate the graphics format.
-#' Either png or pdf are currently supported.
-#' @param xlim The coordinates for the horizontal limits of the axes, passed to \code{plot},
-#' otherwise set to double the maximum magnitude of points on the unit circle
-#' or the transformed unit circle.
-#' @param ylim The coordinates for the vertical limits of the axes, passed to \code{plot},
-#' otherwise set to double the maximum magnitude of points on the unit circle
-#' or the transformed unit circle.
-#' @param main The main title of the plot, passed to \code{plot}.
-#' If \code{main == 'default'}, a generic title is used.
+#' @param x An S3 object of type \code{FCVAR_roots} with the following elements:
+#' #' \describe{
+#'   \item{\code{cPolyRoots}}{A vector of the roots of the characteristic polynomial.
+#'     It is an element of the list of estimation \code{results} output from \code{FCVARestn}.}
+#'   \item{\code{b}}{A numeric value of the fractional cointegration parameter.}
+#' }
+#' @param y An argument for generic method \code{plot} that is not used in \code{plot.FCVAR_roots}.
+#' @param ... Arguments to be passed to methods, such as graphical parameters
+#' for the generic plot function.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -534,14 +545,14 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-#' \dontrun{print.GetCharPolyRoots(cPolyRoots)}
-#' \dontrun{plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])}
+#' FCVAR_CharPoly <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
+#' \dontrun{summary(object = FCVAR_CharPoly)}
+#' \dontrun{graphics::plot(x = FCVAR_CharPoly)}
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} to estimate the model for which to calculate the roots
 #' of the characteristic polynomial.
-#' \code{print.GetCharPolyRoots} prints the output of
+#' \code{summary.FCVAR_roots} prints the output of
 #' \code{GetCharPolyRoots} to screen.
 #' @note The roots are calculated from the companion form of the VAR,
 #' where the roots are given as the inverse eigenvalues of the
@@ -551,14 +562,24 @@ print.GetCharPolyRoots <- function(cPolyRoots) {
 #' Econometric Theory 24, 651-676.
 #' @export
 #'
-plot.GetCharPolyRoots <- function(cPolyRoots, b,
-                                  file = NULL, file_ext = NULL,
-                                  xlim = NULL, ylim = NULL, main = NULL) {
+# plot.GetCharPolyRoots <- function(cPolyRoots, b,
+#                                   file = NULL, file_ext = NULL,
+#                                   xlim = NULL, ylim = NULL, main = NULL) {
+plot.FCVAR_roots <- function(x, y = NULL, ...) {
+
 
   # print('cPolyRoots = ')
   # print(cPolyRoots)
   # print('b = ')
   # print(b)
+
+  # Extract parameters from FCVAR_roots object.
+  cPolyRoots <- x$cPolyRoots
+  b <- x$b
+
+  # Additional parameters.
+  dots <- list(...)
+
 
   # Now calculate the line for the transformed unit circle.
   # First do the negative half.
@@ -581,35 +602,56 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
   # Plot the unit circle and its image under the mapping
   # along with the roots of the characterisitc polynomial.
 
+
+
   # Determine axes based on largest roots, if not specified.
-  if (is.null(xlim) & is.null(ylim)) {
+  # if (is.null(xlim) & is.null(ylim)) {
+  #   maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
+  #                       transformedUnitCircleY, unitCircleY) )
+  #   minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
+  #                       transformedUnitCircleY, unitCircleY) )
+  #   maxXYaxis <- max( maxXYaxis, -minXYaxis )
+  #
+  #   xlim <- 2*c(-maxXYaxis, maxXYaxis)
+  #   ylim <- 2*c(-maxXYaxis, maxXYaxis)
+  # }
+  if ('xlim' %in% names(dots) & 'ylim' %in% names(dots)) {
+
+    xlim <- dots$xlim
+    ylim <- dots$ylim
+
+  } else {
+
+    # Calculate parameters for axes.
     maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
                         transformedUnitCircleY, unitCircleY) )
     minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
                         transformedUnitCircleY, unitCircleY) )
     maxXYaxis <- max( maxXYaxis, -minXYaxis )
 
-    xlim <- 2*c(-maxXYaxis, maxXYaxis)
-    ylim <- 2*c(-maxXYaxis, maxXYaxis)
-  }
-
-  # Open file, if required.
-  if (!is.null(file)) {
-    if(file_ext == 'pdf') {
-      grDevices::pdf(file)
-    } else if(file_ext == 'png') {
-      grDevices::png(file)
-    } else {
-      stop('Graphics format not supported. Try pdf or png format.')
+    # Replace any unspecified axis limits.
+    if(!('xlim' %in% names(dots))) {
+      xlim <- 2*c(-maxXYaxis, maxXYaxis)
+    }
+    if(!('ylim' %in% names(dots))) {
+      ylim <- 2*c(-maxXYaxis, maxXYaxis)
     }
 
   }
 
-  if (!is.null(main)) {
-    if (main == 'default') {
-      main <- c('Roots of the characteristic polynomial',
-                'with the image of the unit circle')
-    }
+
+
+  # if (!is.null(main)) {
+  #   if (main == 'default') {
+  #     main <- c('Roots of the characteristic polynomial',
+  #               'with the image of the unit circle')
+  #   }
+  # }
+  if ('main' %in% names(dots)) {
+    main <- dots$main
+  } else {
+    main <- c('Roots of the characteristic polynomial',
+              'with the image of the unit circle')
   }
 
 
@@ -627,10 +669,6 @@ plot.GetCharPolyRoots <- function(cPolyRoots, b,
   graphics::points(Re(cPolyRoots), Im(cPolyRoots),
          pch = 16, col = 'blue')
 
-  # Close graphics device, if any.
-  if (!is.null(file)) {
-    grDevices::dev.off()
-  }
 
 }
 

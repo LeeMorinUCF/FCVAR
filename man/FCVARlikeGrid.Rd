@@ -17,7 +17,7 @@ FCVARlikeGrid(x, k, r, opt)
 generated from \code{FCVARoptions()}.}
 }
 \value{
-A list object \code{likeGrid_params} containing the optimization results,
+An S3 object of type \code{FCVAR_grid} containing the optimization results,
 including the following parameters:
 \describe{
   \item{\code{params}}{A vector \code{params} of \code{d} and \code{b}
@@ -32,6 +32,10 @@ corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.}
   \item{\code{dGrid}}{A vector of the grid points in the parameter \code{d}.}
   \item{\code{bGrid}}{A vector of the grid points in the parameter \code{b}.}
   \item{\code{like}}{The maximum value of the likelihood function over the chosen grid.}
+  \item{\code{k}}{The number of lags in the system.}
+  \item{\code{r}}{The cointegrating rank.}
+  \item{\code{opt}}{A list object that stores the chosen estimation options,
+    generated from \code{FCVARoptions()}.}
 }
 }
 \description{
@@ -44,7 +48,7 @@ This function evaluates the likelihood over a grid of values
 	starting values to give an approximation of the global max which can
 	then be used as the starting value in the numerical optimization in
 	\code{FCVARestn}.
-	\code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+	\code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 }
 \note{
 If \code{opt$LocalMax == 0}, \code{FCVARlikeGrid} returns the parameter values
@@ -66,7 +70,7 @@ opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-\dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
+\dontrun{plot.FCVAR_grid(likeGrid_params)}
 
 # Linear restriction on fractional parameters.
 opt <- FCVARoptions()
@@ -82,7 +86,7 @@ opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-\dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
+\dontrun{plot.FCVAR_grid(likeGrid_params)}
 
 # Constrained 2-dimensional optimization.
 # Impose restriction dbMax >= d >= b >= dbMin.
@@ -122,7 +126,7 @@ autoregressive model," Journal of Econometrics 158, 51-66.
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
-\code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+\code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 
 Other FCVAR auxilliary functions: 
 \code{\link{FCVARforecast}()},
@@ -142,6 +146,6 @@ Other FCVAR auxilliary functions:
 \code{\link{SEmat2vecU}()},
 \code{\link{SEvec2matU}()},
 \code{\link{TransformData}()},
-\code{\link{plot.FCVARlikeGrid}()}
+\code{\link{plot.FCVAR_grid}()}
 }
 \concept{FCVAR auxilliary functions}

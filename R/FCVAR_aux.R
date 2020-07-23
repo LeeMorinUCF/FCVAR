@@ -604,14 +604,14 @@ GetParams <- function(x, k, r, db, opt) {
 #' 	starting values to give an approximation of the global max which can
 #' 	then be used as the starting value in the numerical optimization in
 #' 	\code{FCVARestn}.
-#' 	\code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' 	\code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 #'
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return A list object \code{likeGrid_params} containing the optimization results,
+#' @return An S3 object of type \code{FCVAR_grid} containing the optimization results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{params}}{A vector \code{params} of \code{d} and \code{b}
@@ -626,6 +626,10 @@ GetParams <- function(x, k, r, db, opt) {
 #'   \item{\code{dGrid}}{A vector of the grid points in the parameter \code{d}.}
 #'   \item{\code{bGrid}}{A vector of the grid points in the parameter \code{b}.}
 #'   \item{\code{like}}{The maximum value of the likelihood function over the chosen grid.}
+#'   \item{\code{k}}{The number of lags in the system.}
+#'   \item{\code{r}}{The cointegrating rank.}
+#'   \item{\code{opt}}{A list object that stores the chosen estimation options,
+#'     generated from \code{FCVARoptions()}.}
 #' }
 #'
 #' @examples
@@ -640,7 +644,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-#' \dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
+#' \dontrun{plot.FCVAR_grid(likeGrid_params)}
 #'
 #' # Linear restriction on fractional parameters.
 #' opt <- FCVARoptions()
@@ -656,7 +660,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-#' \dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
+#' \dontrun{plot.FCVAR_grid(likeGrid_params)}
 #'
 #' # Constrained 2-dimensional optimization.
 #' # Impose restriction dbMax >= d >= b >= dbMin.
@@ -690,7 +694,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' }
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' \code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 #' @note If \code{opt$LocalMax == 0}, \code{FCVARlikeGrid} returns the parameter values
 #'       corresponding to the global maximum of the likelihood on the grid.
 #'       If \code{opt$LocalMax == 1}, \code{FCVARlikeGrid} returns the parameter values for the
@@ -703,8 +707,6 @@ GetParams <- function(x, k, r, db, opt) {
 #' @export
 #'
 FCVARlikeGrid <- function(x, k, r, opt) {
-
-
 
   p <- ncol(x)
 
@@ -1093,6 +1095,12 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   }
 
+  # Append additional parameters and set class of output.
+  likeGrid_params$k <- k
+  likeGrid_params$r <- r
+  likeGrid_params$opt <- opt
+  class(likeGrid_params) <- 'FCVAR_grid'
+
 
   #--------------------------------------------------------------------------------
   # PLOT THE LIKELIHOOD
@@ -1101,7 +1109,8 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   if (opt$plotLike) {
 
-    plot.FCVARlikeGrid(likeGrid_params, k, r, opt, main = 'default')
+    # plot.FCVARlikeGrid(likeGrid_params, k, r, opt, main = 'default')
+    graphics::plot(x = likeGrid_params)
 
   }
 
@@ -1112,7 +1121,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
 #' Plot the Likelihood Function for the FCVAR Model
 #'
-#' \code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' \code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 #' \code{FCVARlikeGrid} performs a grid-search optimization
 #' by calculating the likelihood function
 #' on a grid of candidate parameter values.
@@ -1123,17 +1132,10 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' 	then be used as the starting value in the numerical optimization in
 #' 	\code{FCVARestn}.
 #'
-#' @param likeGrid_params A list output from \code{FCVARlikeGrid}.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @param file A string path and file name in which to plot a figure.
-#' Renders to the plot window if running in RStudio if NULL.
-#' @param file_ext A string file extension to indicate the graphics format.
-#' Either png or pdf are currently supported.
-#' @param main The main title of the plot, passed to \code{plot}.
-#' If \code{main == 'default'}, a generic title is used.
+#' @param x An S3 object of type \code{FCVAR_grid} output from \code{FCVARlikeGrid}.
+#' @param y An argument for generic method \code{plot} that is not used in \code{plot.FCVAR_grid}.
+#' @param ... Arguments to be passed to methods, such as graphical parameters
+#' for the generic plot function.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -1145,41 +1147,36 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' opt$progress <- 2 # Show progress report on each value of b.
 #' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
-#' \dontrun{plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')}
+#' \dontrun{plot(likeGrid_params)}
+#' @note Calls \code{graphics::persp} when \code{x$Grid2d == TRUE} and
+#' calls \code{graphics::plot} when \code{x$Grid2d == FALSE}.
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{plot.FCVARlikeGrid} plots the likelihood function from \code{FCVARlikeGrid}.
+#' \code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 #' @export
 #'
-plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
-                                file = NULL, file_ext = NULL,
-                                main = NULL) {
+# plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
+#                                 file = NULL, file_ext = NULL,
+#                                 main = NULL) {
+plot.FCVAR_grid <- function(x, y = NULL, ...) {
 
   # Extract parameters.
-  Grid2d <- likeGrid_params$Grid2d
-  like <- likeGrid_params$like
-  dGrid <- likeGrid_params$dGrid
-  bGrid <- likeGrid_params$bGrid
+  Grid2d <- x$Grid2d
+  like <- x$like
+  dGrid <- x$dGrid
+  bGrid <- x$bGrid
+  opt <- x$opt
+
+  # Additional parameters.
+  dots <- list(...)
 
 
-
-  # Open file, if required.
-  if (!is.null(file)) {
-    if(file_ext == 'pdf') {
-      grDevices::pdf(file)
-    } else if(file_ext == 'png') {
-      grDevices::png(file)
-    } else {
-      stop('Graphics format not supported. Try pdf or png format.')
-    }
-
-  }
-
-  if (!is.null(main)) {
-    if (main == 'default') {
+  # if (!is.null(main)) {
+  if ('main' %in% names(dots)) {
+    main <- dots$main
+  } else {
       main <- c('Log-likelihood Function ',
-                sprintf('Rank: %d, Lags: %d', r, k))
-    }
+                sprintf('Rank: %d, Lags: %d', x$r, x$k))
   }
 
 
@@ -1248,10 +1245,6 @@ plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
 
   }
 
-  # Close graphics device, if any.
-  if (!is.null(file)) {
-    grDevices::dev.off()
-  }
 
 }
 

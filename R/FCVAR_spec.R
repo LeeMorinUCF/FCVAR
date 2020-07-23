@@ -206,7 +206,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' FCVAR_lag_1 <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-#' \dontrun{summary.FCVAR_lags(object = FCVAR_lag_1)}
+#' \dontrun{summary(object = FCVAR_lag_1)}
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
