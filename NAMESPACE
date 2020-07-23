@@ -2,9 +2,9 @@
 
 S3method(plot,FCVARlikeGrid)
 S3method(plot,GetCharPolyRoots)
-S3method(print,FCVARestn)
 S3method(print,GetCharPolyRoots)
 S3method(summary,FCVAR_lags)
+S3method(summary,FCVAR_model)
 S3method(summary,FCVAR_ranks)
 S3method(summary,MVWN_stats)
 export(FCVARboot)

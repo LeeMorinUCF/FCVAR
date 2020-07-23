@@ -157,7 +157,7 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$plotRoots <- 0
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 set.seed(42)
-FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
+# FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 # FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 5)
 # capture.output(FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 5), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.txt')
 # save(FCVARbootRank_stats, list = c('FCVARbootRank_stats'), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.RData')

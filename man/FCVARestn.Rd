@@ -17,7 +17,7 @@ FCVARestn(x, k, r, opt)
 generated from \code{FCVARoptions()}.}
 }
 \value{
-A list object \code{results} containing the estimation results,
+A list object \code{object} containing the estimation results,
 including the following parameters:
 \describe{
   \item{\code{startVals}}{Starting values used for optimization.}
@@ -32,6 +32,12 @@ including the following parameters:
   \item{\code{cPolyRoots}}{Roots of characteristic polynomial.}
   \item{\code{printVars}}{Additional variables required only for printing
   the output of \code{FCVARestn} to screen.}
+  \item{\code{k}}{The number of lags in the system.}
+  \item{\code{r}}{The cointegrating rank.}
+  \item{\code{p}}{The number of variables in the system.}
+  \item{\code{cap_T}}{The sample size.}
+  \item{\code{opt}}{A list object that stores the chosen estimation options,
+    generated from \code{FCVARoptions()}.}
 }
 }
 \description{
@@ -69,12 +75,12 @@ m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 \code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} calls this function at the start of each estimation to verify
 validity of options.
-\code{print.FCVARestn} prints the output of \code{FCVARestn} to screen.
+\code{summary.FCVAR_model} prints the output of \code{FCVARestn} to screen.
 
 Other FCVAR estimation functions: 
 \code{\link{FCVARoptionUpdates}()},
 \code{\link{FCVARoptions}()},
 \code{\link{GetBounds}()},
-\code{\link{print.FCVARestn}()}
+\code{\link{summary.FCVAR_model}()}
 }
 \concept{FCVAR estimation functions}

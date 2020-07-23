@@ -15,7 +15,7 @@
 #' @param r The cointegrating rank.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return A list object \code{results} containing the estimation results,
+#' @return A list object \code{object} containing the estimation results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{startVals}}{Starting values used for optimization.}
@@ -30,6 +30,12 @@
 #'   \item{\code{cPolyRoots}}{Roots of characteristic polynomial.}
 #'   \item{\code{printVars}}{Additional variables required only for printing
 #'   the output of \code{FCVARestn} to screen.}
+#'   \item{\code{k}}{The number of lags in the system.}
+#'   \item{\code{r}}{The cointegrating rank.}
+#'   \item{\code{p}}{The number of variables in the system.}
+#'   \item{\code{cap_T}}{The sample size.}
+#'   \item{\code{opt}}{A list object that stores the chosen estimation options,
+#'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples
 #' opt <- FCVARoptions()
@@ -56,7 +62,7 @@
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to verify
 #' validity of options.
-#' \code{print.FCVARestn} prints the output of \code{FCVARestn} to screen.
+#' \code{summary.FCVAR_model} prints the output of \code{FCVARestn} to screen.
 #' @export
 #'
 FCVARestn <- function(x, k, r, opt) {
@@ -781,10 +787,18 @@ FCVARestn <- function(x, k, r, opt) {
 
   # print('Made it here after H_psi assigned. ')
 
+  # Append remaining parameters and set class of S3 object.
+  results$k <- k
+  results$r <- r
+  results$p <- p
+  results$cap_T <- cap_T
+  results$opt <- opt
+  class(results) <- 'FCVAR_model'
 
   if (opt$print2screen) {
 
-    print.FCVARestn(results = results, k, r, p, cap_T, opt)
+    # print.FCVARestn(results = results, k, r, p, cap_T, opt)
+    summary(object = results)
 
   }
 
@@ -795,23 +809,18 @@ FCVARestn <- function(x, k, r, opt) {
 
 
 
-#' Print Estimation Results from the FCVAR model
+#' Summarize Estimation Results from the FCVAR model
 #'
-#' \code{print.FCVARestn} prints the estimation results from
+#' \code{summary.FCVAR_model} prints a summary of the estimation results from
 #' the output of \code{FCVARestn}.
 #' \code{FCVARestn} estimates the Fractionally Cointegrated VAR model.
-#'  It is the central function in the \code{FCVAR} package with several nested functions, each
-#' 	described below. It estimates the model parameters, calculates the
+#'  It is the central function in the \code{FCVAR} package with several nested functions.
+#' 	It estimates the model parameters, calculates the
 #' 	standard errors and the number of free parameters, obtains the residuals
 #' 	and the roots of the characteristic polynomial.
 #'
-#' @param results A list object containing the estimation results of \code{FCVARestn}.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param p The number of variables in the system.
-#' @param cap_T The sample size.
-#' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
+#' @param object An S3 object containing the estimation results of \code{FCVARestn}.
+#' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -825,19 +834,25 @@ FCVARestn <- function(x, k, r, opt) {
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls this function at the start of each estimation to verify
 #' validity of options.
-#' \code{print.FCVARestn} prints the output of \code{FCVARestn} to screen.
+#' \code{summary.FCVAR_model} prints a summary of the output of \code{FCVARestn} to screen.
 #' @export
 #'
-print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
+# print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
+summary.FCVAR_model <- function(object, ...) {
 
   # Extract variables for printing.
-  H_psi <- results$printVars$H_psi
-  LB <- results$printVars$LB
-  UB <- results$printVars$UB
-  startVals <- results$startVals
-  maxLike <- results$like
-  fp <- results$fp
-  cPolyRoots <- results$cPolyRoots
+  H_psi <- object$printVars$H_psi
+  LB <- object$printVars$LB
+  UB <- object$printVars$UB
+  startVals <- object$startVals
+  maxLike <- object$like
+  fp <- object$fp
+  cPolyRoots <- object$cPolyRoots
+  k <- object$k
+  r <- object$r
+  p <- object$p
+  cap_T <- object$cap_T
+  opt <- object$opt
 
 
   if (!opt$CalcSE) {
@@ -876,16 +891,16 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf('Cointegrating rank:   %10.0f  AIC:            %10.3f \n', r, -2*maxLike + 2*fp))
   cat(sprintf('Log-likelihood:       %10.3f  BIC:            %10.3f \n', maxLike, -2*maxLike + fp*log(cap_T)))
-  cat(sprintf('log(det(Omega_hat)):  %10.3f  Free parameters:%10.0f \n', log(det(results$coeffs$OmegaHat)), fp))
+  cat(sprintf('log(det(Omega_hat)):  %10.3f  Free parameters:%10.0f \n', log(det(object$coeffs$OmegaHat)), fp))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf(    '    Fractional parameters:                                                                             \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf(    '    Coefficient               Estimate                Standard error \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
-  cat(sprintf(    '         d                    %8.3f                   %8.3f                \n', results$coeffs$db[1], results$SE$db[1]))
+  cat(sprintf(    '         d                    %8.3f                   %8.3f                \n', object$coeffs$db[1], object$SE$db[1]))
 
   if (!opt$restrictDB) {
-    cat(sprintf('         b                    %8.3f                   %8.3f                \n', results$coeffs$db[2], results$SE$db[2]))
+    cat(sprintf('         b                    %8.3f                   %8.3f                \n', object$coeffs$db[2], object$SE$db[2]))
   }
 
   cat(sprintf('--------------------------------------------------------------------------------\n'))
@@ -916,7 +931,7 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
     for (i in 1:p) {
       cat(sprintf(    '        Var%d       ',i ))
       for (j in 1:r) {
-        cat(sprintf('    %8.3f     ', results$coeffs$betaHat[i,j] ))
+        cat(sprintf('    %8.3f     ', object$coeffs$betaHat[i,j] ))
       }
       cat(sprintf('\n'))
     }
@@ -925,7 +940,7 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
     if (opt$rConstant) {
       cat(sprintf(    '      Constant     ' ))
       for (j in 1:r) {
-        cat(sprintf('    %8.3f     ', results$coeffs$rhoHat[j] ))
+        cat(sprintf('    %8.3f     ', object$coeffs$rhoHat[j] ))
       }
       cat(sprintf('\n'))
     }
@@ -951,14 +966,14 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
     for (i in 1:p) {
       cat(sprintf(    '        Var %d      ',i ))
       for (j in 1:r) {
-        cat(sprintf('    %8.3f     ', results$coeffs$alphaHat[i,j] ))
+        cat(sprintf('    %8.3f     ', object$coeffs$alphaHat[i,j] ))
       }
 
       cat(sprintf('\n'))
       cat(sprintf(    '         SE %d      ',i ))
 
       for (j in 1:r) {
-        cat(sprintf('   (%8.3f  )  ', results$SE$alphaHat[i,j] ))
+        cat(sprintf('   (%8.3f  )  ', object$SE$alphaHat[i,j] ))
       }
 
       cat(sprintf('\n'))
@@ -982,7 +997,7 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
     for (i in 1:p) {
       cat(sprintf(    '      Var %d      ',i ))
       for (j in 1:p) {
-        cat(sprintf('   %8.3f    ', results$coeffs$PiHat[i,j] ))
+        cat(sprintf('   %8.3f    ', object$coeffs$PiHat[i,j] ))
       }
 
       cat(sprintf('\n'))
@@ -1001,10 +1016,10 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
     cat(sprintf('--------------------------------------------------------------------------------\n'))
     for (i in 1:p) {
       cat(sprintf(    '        Var %d      ',i ))
-      cat(sprintf('    %8.3f     ', results$coeffs$muHat[i] ))
+      cat(sprintf('    %8.3f     ', object$coeffs$muHat[i] ))
       cat(sprintf('\n'))
       cat(sprintf(    '         SE %d      ',i ))
-      cat(sprintf('   (%8.3f  )  ', results$SE$muHat[i] ))
+      cat(sprintf('   (%8.3f  )  ', object$SE$muHat[i] ))
       cat(sprintf('\n'))
     }
 
@@ -1024,10 +1039,10 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
     cat(sprintf('--------------------------------------------------------------------------------\n'))
     for (i in 1:p) {
       cat(sprintf(    '        Var %d      ',i ))
-      cat(sprintf('    %8.3f     ', results$coeffs$xiHat[i] ))
+      cat(sprintf('    %8.3f     ', object$coeffs$xiHat[i] ))
       cat(sprintf('\n'))
       cat(sprintf(    '         SE %d      ',i ))
-      cat(sprintf('   (%8.3f  )  ', results$SE$xiHat[i] ))
+      cat(sprintf('   (%8.3f  )  ', object$SE$xiHat[i] ))
       cat(sprintf('\n'))
     }
 
@@ -1045,8 +1060,8 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
     for (l in 1:k) {
 
 
-      GammaHatk <- results$coeffs$GammaHat[, seq(p*(l-1)+1, p*l)]
-      GammaSEk <- results$SE$GammaHat[, seq(p*(l-1)+1, p*l)]
+      GammaHatk <- object$coeffs$GammaHat[, seq(p*(l-1)+1, p*l)]
+      GammaSEk <- object$SE$GammaHat[, seq(p*(l-1)+1, p*l)]
 
       cat(sprintf('    Lag matrix %d (Gamma_%d):                                                                            \n', l, l ))
       cat(sprintf('--------------------------------------------------------------------------------\n'))
@@ -1094,7 +1109,7 @@ print.FCVARestn <- function(results, k, r, p, cap_T, opt) {
 
     print.GetCharPolyRoots(cPolyRoots)
 
-    plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2],
+    plot.GetCharPolyRoots(cPolyRoots, b = object$coeffs$db[2],
                           main = 'default')
 
   }

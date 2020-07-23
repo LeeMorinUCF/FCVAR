@@ -24,6 +24,6 @@ Other FCVAR estimation functions:
 \code{\link{FCVARestn}()},
 \code{\link{FCVARoptionUpdates}()},
 \code{\link{GetBounds}()},
-\code{\link{print.FCVARestn}()}
+\code{\link{summary.FCVAR_model}()}
 }
 \concept{FCVAR estimation functions}
