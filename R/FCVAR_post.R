@@ -757,6 +757,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' @param object An S3 object of type \code{MVWN_stats} containing the results
 #' from multivariate tests for white noise.
 #' It is the output of \code{MVWNtest}.
+#' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -786,7 +787,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' @export
 #'
 # print.MVWNtest <- function(stats, maxlag, p) {
-summary.MVWN_stats <- function(object) {
+summary.MVWN_stats <- function(object, ...) {
 
   cat(sprintf('\n       White Noise Test Results (lag = %g)\n', object$maxlag))
   cat(sprintf('---------------------------------------------\n'))

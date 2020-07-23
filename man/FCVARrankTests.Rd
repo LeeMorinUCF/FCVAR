@@ -15,7 +15,7 @@ FCVARrankTests(x, k, opt)
 generated from \code{FCVARoptions()}.}
 }
 \value{
-A list object \code{rankTestStats} containing the results
+An S3 object of type \code{FCVAR_ranks} containing the results
 from cointegrating rank tests, containing the following \code{(p+1)} vectors
 with \code{i}th element corresponding to \code{rank = i-1}:
 including the following parameters:
@@ -25,6 +25,11 @@ including the following parameters:
   \item{\code{LogL}}{Maximized log-likelihood.}
   \item{\code{LRstat}}{LR trace statistic for testing rank \code{r} against rank \code{p}.}
   \item{\code{pv}}{The p-value of LR trace test, or "999" if p-value is not available.}
+  \item{\code{k}}{The number of lags in the system.}
+  \item{\code{p}}{The number of variables in the system.}
+  \item{\code{cap_T}}{The sample size.}
+  \item{\code{opt}}{A list object that stores the chosen estimation options,
+    generated from \code{FCVARoptions()}.}
 }
 }
 \description{
@@ -43,12 +48,12 @@ rankTestStats <- FCVARrankTests(x, k = 2, opt)
 \code{FCVARoptions} to set default estimation options.
 \code{FCVARestn} is called repeatedly within this function
 for each candidate cointegrating rank.
-\code{print.FCVARrankTests} prints the output of \code{FCVARrankTests} to screen.
+\code{summary.FCVAR_ranks} prints a summary of the output of \code{FCVARrankTests} to screen.
 
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},
 \code{\link{FCVARlagSelect}()},
-\code{\link{print.FCVARrankTests}()},
-\code{\link{summary.FCVAR_lags}()}
+\code{\link{summary.FCVAR_lags}()},
+\code{\link{summary.FCVAR_ranks}()}
 }
 \concept{FCVAR specification functions}

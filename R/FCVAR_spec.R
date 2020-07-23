@@ -196,6 +196,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' @param object An S3 object of type \code{FCVAR_lags} containing the results
 #' from repeated estimation of the FCVAR model with different orders
 #' of the autoregressive lag length. It is the output of \code{FCVARlagSelect}.
+#' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -214,7 +215,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' @export
 #'
 # print.FCVARlagSelect <- function(stats, kmax, r, p, cap_T, order, opt) {
-summary.FCVAR_lags <- function(object) {
+summary.FCVAR_lags <- function(object, ...) {
 
 
 
@@ -312,7 +313,7 @@ summary.FCVAR_lags <- function(object) {
 #' @param k The number of lags in the system.
 #' @param opt A list object that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return A list object \code{rankTestStats} containing the results
+#' @return An S3 object of type \code{FCVAR_ranks} containing the results
 #' from cointegrating rank tests, containing the following \code{(p+1)} vectors
 #' with \code{i}th element corresponding to \code{rank = i-1}:
 #' including the following parameters:
@@ -322,6 +323,11 @@ summary.FCVAR_lags <- function(object) {
 #'   \item{\code{LogL}}{Maximized log-likelihood.}
 #'   \item{\code{LRstat}}{LR trace statistic for testing rank \code{r} against rank \code{p}.}
 #'   \item{\code{pv}}{The p-value of LR trace test, or "999" if p-value is not available.}
+#'   \item{\code{k}}{The number of lags in the system.}
+#'   \item{\code{p}}{The number of variables in the system.}
+#'   \item{\code{cap_T}}{The sample size.}
+#'   \item{\code{opt}}{A list object that stores the chosen estimation options,
+#'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples
 #' opt <- FCVARoptions()
@@ -335,7 +341,7 @@ summary.FCVAR_lags <- function(object) {
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate cointegrating rank.
-#' \code{print.FCVARrankTests} prints the output of \code{FCVARrankTests} to screen.
+#' \code{summary.FCVAR_ranks} prints a summary of the output of \code{FCVARrankTests} to screen.
 #' @export
 #'
 FCVARrankTests <- function(x, k, opt) {
@@ -457,8 +463,13 @@ FCVARrankTests <- function(x, k, opt) {
     bHat   = bHat,
     LogL   = LogL,
     LRstat = LRstat,
-    pv     = pv
+    pv     = pv,
+    k      = k,
+    p      = p,
+    cap_T  = cap_T,
+    opt    = opt
   )
+  class(rankTestStats) <- 'FCVAR_ranks'
 
 
   # Restore settings.
@@ -467,7 +478,8 @@ FCVARrankTests <- function(x, k, opt) {
   # Print the results to screen.
   if (opt$print2screen) {
 
-    print.FCVARrankTests(stats = rankTestStats, k, p, cap_T, opt)
+    # print.FCVARrankTests(stats = rankTestStats, k, p, cap_T, opt)
+    summary.FCVAR_ranks(object = rankTestStats)
 
   }
 
@@ -475,21 +487,17 @@ FCVARrankTests <- function(x, k, opt) {
 }
 
 
-#' Print Statistics from Tests for Cointegrating Rank
+#' Summarize Results of Tests for Cointegrating Rank
 #'
-#' \code{print.FCVARrankTests} prints the table of statistics from
+#' \code{summary.FCVAR_ranks} prints the table of statistics from
 #' the output of \code{FCVARrankTests}.
 #' \code{FCVARrankTests} performs a sequence of  likelihood ratio tests
-# 	for cointegrating rank.
+#' 	for cointegrating rank.
 #'
-#' @param stats A list object \code{rankTestStats} containing the results
+#' @param object An S3 object of type \code{FCVAR_ranks} containing the results
 #' from repeated estimation of the FCVAR model with different
 #' cointegrating ranks. It is the output of \code{FCVARrankTests}.
-#' @param k The number of lags in the system.
-#' @param p The number of variables in the system.
-#' @param cap_T The sample size.
-#' @param opt A list object that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
+#' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
@@ -499,15 +507,16 @@ FCVARrankTests <- function(x, k, opt) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' rankTestStats <- FCVARrankTests(x, k = 2, opt)
-#' \dontrun{print.FCVARrankTests(stats = rankTestStats, k = 2, p = ncol(x), cap_T = nrow(x), opt)}
+#' \dontrun{summary.FCVAR_ranks(object = rankTestStats)}
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
 #' for each candidate cointegrating rank.
-#' \code{print.FCVARrankTests} prints the output of \code{FCVARrankTests} to screen.
+#' \code{summary.FCVAR_ranks} prints a summary of the output of \code{FCVARrankTests} to screen.
 #' @export
 #'
-print.FCVARrankTests <- function(stats, k, p, cap_T, opt) {
+# print.FCVARrankTests <- function(stats, k, p, cap_T, opt) {
+summary.FCVAR_ranks <- function(object, ...) {
 
 
   # create a variable for output strings
@@ -516,27 +525,31 @@ print.FCVARrankTests <- function(stats, k, p, cap_T, opt) {
   cat(sprintf('\n--------------------------------------------------------------------------------\n'))
   cat(sprintf('             Likelihood Ratio Tests for Cointegrating Rank                               \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
-  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n', p, cap_T + opt$N))
-  cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n', k, cap_T))
-  cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n', yesNo[opt$rConstant+1], opt$N ))
-  cat(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n', yesNo[opt$unrConstant+1], yesNo[opt$levelParam+1] ))
+  cat(sprintf('Dimension of system:  %6.0f     Number of observations in sample:       %6.0f \n',
+              object$p, object$cap_T + object$opt$N))
+  cat(sprintf('Number of lags:       %6.0f     Number of observations for estimation:  %6.0f \n',
+              object$k, object$cap_T))
+  cat(sprintf('Restricted constant:  %6s     Initial values:                         %6.0f\n',
+              yesNo[object$opt$rConstant+1], object$opt$N ))
+  cat(sprintf('Unestricted constant: %6s     Level parameter:                        %6s\n',
+              yesNo[object$opt$unrConstant+1], yesNo[object$opt$levelParam+1] ))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf('Rank     d      b     Log-likelihood   LR statistic   P-value\n'))
-  for (i in 1:p) {
+  for (i in 1:object$p) {
     # if (stats$pv[i] != 999) {
-    if (!is.na(stats$pv[i])) {
+    if (!is.na(object$pv[i])) {
       cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f  %8.3f\n',
-                  i-1, stats$dHat[i], stats$bHat[i], stats$LogL[i], stats$LRstat[i], stats$pv[i]))
+                  i-1, object$dHat[i], object$bHat[i], object$LogL[i], object$LRstat[i], object$pv[i]))
     }
     else {
       cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f      ----\n',
-                  i-1, stats$dHat[i], stats$bHat[i], stats$LogL[i], stats$LRstat[i]))
+                  i-1, object$dHat[i], object$bHat[i], object$LogL[i], object$LRstat[i]))
     }
 
   }
 
   cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f           ----      ----\n',
-              i, stats$dHat[i+1], stats$bHat[i+1], stats$LogL[i+1]))
+              i, object$dHat[i+1], object$bHat[i+1], object$LogL[i+1]))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
 
 

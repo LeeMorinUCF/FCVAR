@@ -73,7 +73,7 @@ for each candidate lag order.
 Other FCVAR specification functions: 
 \code{\link{FCVARbootRank}()},
 \code{\link{FCVARrankTests}()},
-\code{\link{print.FCVARrankTests}()},
-\code{\link{summary.FCVAR_lags}()}
+\code{\link{summary.FCVAR_lags}()},
+\code{\link{summary.FCVAR_ranks}()}
 }
 \concept{FCVAR specification functions}

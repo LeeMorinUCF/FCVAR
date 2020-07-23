@@ -4,12 +4,14 @@
 \alias{summary.FCVAR_lags}
 \title{Summarize Statistics from Lag Order Selection}
 \usage{
-\method{summary}{FCVAR_lags}(object)
+\method{summary}{FCVAR_lags}(object, ...)
 }
 \arguments{
 \item{object}{An S3 object of type \code{FCVAR_lags} containing the results
 from repeated estimation of the FCVAR model with different orders
 of the autoregressive lag length. It is the output of \code{FCVARlagSelect}.}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \description{
 \code{summary.FCVAR_lags} prints a summary of the table of statistics from
@@ -37,6 +39,6 @@ Other FCVAR specification functions:
 \code{\link{FCVARbootRank}()},
 \code{\link{FCVARlagSelect}()},
 \code{\link{FCVARrankTests}()},
-\code{\link{print.FCVARrankTests}()}
+\code{\link{summary.FCVAR_ranks}()}
 }
 \concept{FCVAR specification functions}

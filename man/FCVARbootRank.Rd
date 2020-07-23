@@ -66,7 +66,7 @@ with non-stationary volatility," Journal of Econometrics 158, 7-24.
 Other FCVAR specification functions: 
 \code{\link{FCVARlagSelect}()},
 \code{\link{FCVARrankTests}()},
-\code{\link{print.FCVARrankTests}()},
-\code{\link{summary.FCVAR_lags}()}
+\code{\link{summary.FCVAR_lags}()},
+\code{\link{summary.FCVAR_ranks}()}
 }
 \concept{FCVAR specification functions}

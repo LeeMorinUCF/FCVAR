@@ -4,12 +4,14 @@
 \alias{summary.MVWN_stats}
 \title{Summarize Statistics for Multivariate White Noise Tests}
 \usage{
-\method{summary}{MVWN_stats}(object)
+\method{summary}{MVWN_stats}(object, ...)
 }
 \arguments{
 \item{object}{An S3 object of type \code{MVWN_stats} containing the results
 from multivariate tests for white noise.
 It is the output of \code{MVWNtest}.}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \description{
 \code{summary.MVWN_stats} is an S3 method for objects of class \code{MVWN_stats}
