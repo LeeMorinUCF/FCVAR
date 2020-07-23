@@ -14,6 +14,8 @@
   \item{\code{b}}{A numeric value of the fractional cointegration parameter.}
 }}
 
+\item{y}{An argument for generic method \code{plot} that is not used in \code{plot.FCVAR_roots}.}
+
 \item{...}{Arguments to be passed to methods, such as graphical parameters
 for the generic plot function.}
 }
