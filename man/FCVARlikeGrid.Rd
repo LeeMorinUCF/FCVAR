@@ -29,8 +29,14 @@ corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.}
   \item{\code{Grid2d}}{An indicator for whether or not the optimization
   is conducted over a 2-dimensional parameter space,
   i.e. if there is no equality restriction on \code{d} and \code{b}.}
-  \item{\code{dGrid}}{A vector of the grid points in the parameter \code{d}.}
-  \item{\code{bGrid}}{A vector of the grid points in the parameter \code{b}.}
+  \item{\code{dGrid}}{A vector of the grid points in the parameter \code{d},
+    after any transformations for restrictions, if any.}
+  \item{\code{bGrid}}{A vector of the grid points in the parameter \code{b},
+    after any transformations for restrictions, if any.}
+  \item{\code{dGrid_orig}}{A vector of the grid points in the parameter \code{d},
+    in units of the fractional integration parameter.}
+  \item{\code{bGrid_orig}}{A vector of the grid points in the parameter \code{b},
+    in units of the fractional integration parameter.}
   \item{\code{like}}{The maximum value of the likelihood function over the chosen grid.}
   \item{\code{k}}{The number of lags in the system.}
   \item{\code{r}}{The cointegrating rank.}

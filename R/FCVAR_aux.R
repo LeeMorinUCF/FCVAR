@@ -623,8 +623,14 @@ GetParams <- function(x, k, r, db, opt) {
 #'   \item{\code{Grid2d}}{An indicator for whether or not the optimization
 #'   is conducted over a 2-dimensional parameter space,
 #'   i.e. if there is no equality restriction on \code{d} and \code{b}.}
-#'   \item{\code{dGrid}}{A vector of the grid points in the parameter \code{d}.}
-#'   \item{\code{bGrid}}{A vector of the grid points in the parameter \code{b}.}
+#'   \item{\code{dGrid}}{A vector of the grid points in the parameter \code{d},
+#'     after any transformations for restrictions, if any.}
+#'   \item{\code{bGrid}}{A vector of the grid points in the parameter \code{b},
+#'     after any transformations for restrictions, if any.}
+#'   \item{\code{dGrid_orig}}{A vector of the grid points in the parameter \code{d},
+#'     in units of the fractional integration parameter.}
+#'   \item{\code{bGrid_orig}}{A vector of the grid points in the parameter \code{b},
+#'     in units of the fractional integration parameter.}
 #'   \item{\code{like}}{The maximum value of the likelihood function over the chosen grid.}
 #'   \item{\code{k}}{The number of lags in the system.}
 #'   \item{\code{r}}{The cointegrating rank.}
@@ -710,14 +716,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   p <- ncol(x)
 
-  if(opt$progress != 0) {
-    if(opt$progress == 1) {
-      # This is cute but... not right now:
-      # M_status_bar <- waitbar(0,['Model: k= ',num2str(k), ', r= ', num2str(r)])
-    }
-
-    # lastTic <- tic()
-  }
 
   #--------------------------------------------------------------------------------
   # INITIALIZATION
@@ -799,6 +797,18 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     totIters <- nB
   }
 
+  # Initialize progress reports.
+  if(opt$progress != 0) {
+    if(opt$progress == 1) {
+      # This is cute but... not right now:
+      # M_status_bar <- waitbar(0,['Model: k= ',num2str(k), ', r= ', num2str(r)])
+      # OK, here it is:
+      progbar <- txtProgressBar(min = 0, max = totIters, style = 3)
+
+    }
+
+    # lastTic <- tic()
+  }
 
 
   # Create a matrix of NA's to store likelihoods, we use NA's here
@@ -826,7 +836,10 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
     b <- bGrid[iB]
 
-    if (opt$progress == 2) {
+    # Print a progress report of the preferred style.
+    if (opt$progress == 1) {
+      setTxtProgressBar(progbar, value = iterCount)
+    } else if (opt$progress == 2) {
       message(sprintf('Now estimating for iteration %d of %d: b = %f.',
                       iterCount, totIters, b))
     }
@@ -890,24 +903,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
       }
 
 
-      if (opt$progress != 0) {
-        # if (toc(lastTic) > opt$updateTime | iterCount == totIters) {
-        if ( iterCount == totIters) {
-          if (opt$progress == 1) {
-            SimNotes <- sprintf('Model: k=%g, r=%g\nb=%4.2f, d=%4.2f, like=%8.2f',
-                                k, r, db[2],db[1], like[iB,iD] )
-            # waitbar(iterCount/totIters,M_status_bar, SimNotes)
-          } else {
-            message(sprintf('Progress : %5.1f%%, b=%4.2f, d=%4.2f, like=%g.',
-                            (iterCount/totIters)*100, db[2], db[1], like[iB,iD] ))
-          }
-
-          # lastTic <- tic()
-        }
-
-      }
-
-
     }
 
 
@@ -966,7 +961,11 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     if(Grid2d) {
       # [!,smax,!,!] <- extrema2(like,1)
       # [indexB,indexD] <- ind2sub(size(like),smax)
-      indexB_and_D <- which(like == max(like), arr.ind = TRUE)
+      indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
+
+      # print('indexB_and_D = ')
+      # print(indexB_and_D)
+
       indexB <- indexB_and_D[, 1, drop = FALSE]
       indexD <- indexB_and_D[, 2, drop = FALSE]
 
@@ -981,7 +980,11 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     if(is.null(indexB) | is.null(indexD)) {
       # [ indexB, indexD ] <- find(like == max(max(like)))
 
-      indexB_and_D <- which(like == max(like), arr.ind = TRUE)
+      indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
+
+      # print('indexB_and_D = ')
+      # print(indexB_and_D)
+
       indexB <- indexB_and_D[, 1, drop = FALSE]
       indexD <- indexB_and_D[, 2, drop = FALSE]
     }
@@ -991,10 +994,16 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     # Global max.
     # [ indexB, indexD ] <- find(like == max(max(like)))
 
-    indexB_and_D <- which(like == max(like), arr.ind = TRUE)
+    indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
+
+    # print('indexB_and_D = ')
+    # print(indexB_and_D)
+
     indexB <- indexB_and_D[, 1, drop = FALSE]
     indexD <- indexB_and_D[, 2, drop = FALSE]
   }
+
+
 
 
   if(length(indexD) > 1 | length(indexB) > 1) {
@@ -1019,9 +1028,48 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   # Translate to d,b.
   if(!is.null(opt$R_psi)) {
+    # Translate the parameter estimates.
     dbHatStar <- t(H %*% bGrid[indexB] + h)
+
+    # Translate the grid points to units of the original parameters.
+    bGrid_orig <- 0*bGrid
+    dGrid_orig <- 0*dGrid
+    for (i in 1:length(bGrid)) {
+      dbHatStar_i <- t(H %*% bGrid[i] + h)
+      dGrid_orig[i] <- dbHatStar_i[1]
+      bGrid_orig[i] <- dbHatStar_i[2]
+    }
+
   } else {
+    # No translation necessary.
     dbHatStar <- cbind(dGrid[indexD], bGrid[indexB])
+    bGrid_orig <- bGrid
+    dGrid_orig <- dGrid
+  }
+
+
+
+  # Print final progress report.
+  if (opt$progress != 0) {
+    # if (toc(lastTic) > opt$updateTime | iterCount == totIters) {
+    if ( iterCount == totIters) {
+      if (opt$progress == 1) {
+        # SimNotes <- sprintf('Model: k=%g, r=%g\nb=%4.2f, d=%4.2f, like=%8.2f',
+        #                     k, r, db[2],db[1], like[iB,iD] )
+        # waitbar(iterCount/totIters,M_status_bar, SimNotes)
+        setTxtProgressBar(progbar, value = iterCount)
+        message(sprintf('\nProgress : %5.1f%%, b = %4.2f, d = %4.2f, like = %g.',
+                        (iterCount/totIters)*100,
+                        dbHatStar[2], dbHatStar[1], max(like, na.rm = TRUE) ))
+      } else if (opt$progress == 2) {
+        message(sprintf('Progress : %5.1f%%, b = %4.2f, d = %4.2f, like = %g.',
+                        (iterCount/totIters)*100,
+                        dbHatStar[2], dbHatStar[1], max(like, na.rm = TRUE) ))
+      }
+
+      # lastTic <- tic()
+    }
+
   }
 
 
@@ -1034,12 +1082,17 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     params = NA,
     dbHatStar = dbHatStar,
     muHatStar = NA,
+    max_like = max(like, na.rm = TRUE),
     Grid2d = Grid2d,
     dGrid = dGrid,
     bGrid = bGrid,
+    dGrid_orig = dGrid_orig,
+    bGrid_orig = bGrid_orig,
     like = like
   )
 
+
+  # Set parameter values for output.
   params <- dbHatStar
   likeGrid_params$params <- params
 
@@ -1165,6 +1218,8 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
   like <- x$like
   dGrid <- x$dGrid
   bGrid <- x$bGrid
+  dGrid_orig <- x$dGrid_orig
+  bGrid_orig <- x$bGrid_orig
   opt <- x$opt
 
   # Additional parameters.
@@ -1206,7 +1261,7 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
     # Reset after.
     # graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
 
-    graphics::persp(dGrid, bGrid,
+    graphics::persp(dGrid_orig, bGrid_orig,
           # like,
           like2D,
           xlab = 'd',
@@ -1231,11 +1286,13 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
     # 1-dimensional plot.
     if ((opt$R_psi[1] == 1) & (opt$R_psi[2] == -1) & (opt$r_psi[1] == 0)) {
       like_x_label <- 'd = b'
+      plot_grid <- bGrid_orig
     } else {
       like_x_label <- 'phi'
+      plot_grid <- bGrid
     }
 
-    graphics::plot(bGrid, like,
+    graphics::plot(plot_grid, like,
          main = main,
          ylab = 'log-likelihood',
          xlab = like_x_label,

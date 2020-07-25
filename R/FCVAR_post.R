@@ -883,7 +883,7 @@ summary.MVWN_stats <- function(object, ...) {
 #' The LM test is consistent for heteroskedastic series.
 #' @export
 #'
-LMtest <- function(x,q) {
+LMtest <- function(x, q) {
 
   # print('In LMtest')
   # print(size(x))

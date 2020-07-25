@@ -440,12 +440,22 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
-opt$progress     <- 2 # Show progress report on each value of b.
+opt$progress     <- 1 # Show progress bar update on each value of b.
+# opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 # plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 plot(x = likeGrid_params)
+# Add a point for the optimum.
+points(likeGrid_params$bGrid_orig[which.max(likeGrid_params$like)],
+       max(likeGrid_params$like),
+       col = 'red', pch = 16)
+# Compare likelihood values.
+# cbind(likeGrid_params$dGrid, likeGrid_params$bGrid, likeGrid_params$like)
+likeGrid_params$dbHatStar
+# cbind(likeGrid_params$dGrid_orig, likeGrid_params$bGrid_orig, likeGrid_params$like)
+
 
 # Linear restriction on fractional parameters.
 opt <- FCVARoptions()
@@ -457,12 +467,24 @@ opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 # Impose linear restriction on d and b:
 opt$R_psi        <- matrix(c(2, -1), nrow = 1, ncol = 2)
 opt$r_psi        <- 0.5
-opt$progress     <- 2 # Show progress report on each value of b.
+opt$progress     <- 1 # Show progress bar update on each value of b.
+# opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 # plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 plot(x = likeGrid_params)
+# Add a point for the optimum.
+points(likeGrid_params$bGrid[which.max(likeGrid_params$like)],
+       max(likeGrid_params$like),
+       col = 'red', pch = 16)
+# Compare likelihood values.
+# cbind(likeGrid_params$dGrid, likeGrid_params$bGrid, likeGrid_params$like)
+likeGrid_params$dbHatStar
+# cbind(likeGrid_params$dGrid_orig, likeGrid_params$bGrid_orig, likeGrid_params$like)
+
+
+
 
 # Constrained 2-dimensional optimization.
 # Impose restriction dbMax >= d >= b >= dbMin.
@@ -473,10 +495,14 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 1 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
-opt$progress     <- 2 # Show progress report on each value of b.
+opt$progress     <- 1 # Show progress bar update on each value of b.
+# opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+# max(likeGrid_params$like, na.rm = TRUE)
+likeGrid_params$dbHatStar
+likeGrid_params$max_like
 
 # Unconstrained 2-dimensional optimization.
 opt <- FCVARoptions()
@@ -486,7 +512,8 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
-opt$progress     <- 2 # Show progress report on each value of b.
+opt$progress     <- 1 # Show progress bar update on each value of b.
+# opt$progress     <- 2 # Show progress report on each value of b.
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
