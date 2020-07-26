@@ -136,3 +136,16 @@ test_mat <- test_mat + matrix(0.2*runif(length(test_1)*length(test_2)),
 
 loc_max <- find_local_max(x = test_mat)
 
+
+
+# Test for 1-dimensional problem.
+test_1_array <- as.array(cbind(test_1 - 1, test_1 + 0.2*runif(length(test_1)), test_1 - 1))
+
+loc_max <- find_local_max(x = as.array(test_1_array))
+test_1_array[, 2]
+
+
+test_2_array <- as.array(cbind(test_2 - 1, test_2 + 0.2*runif(length(test_2)), test_2 - 1))
+
+loc_max <- find_local_max(x = as.array(test_2_array))
+test_2_array[, 2]
