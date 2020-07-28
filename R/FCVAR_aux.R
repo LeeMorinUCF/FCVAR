@@ -803,7 +803,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
       # This is cute but... not right now:
       # M_status_bar <- waitbar(0,['Model: k= ',num2str(k), ', r= ', num2str(r)])
       # OK, here it is:
-      progbar <- txtProgressBar(min = 0, max = totIters, style = 3)
+      progbar <- utils::txtProgressBar(min = 0, max = totIters, style = 3)
 
     }
 
@@ -838,7 +838,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
     # Print a progress report of the preferred style.
     if (opt$progress == 1) {
-      setTxtProgressBar(progbar, value = iterCount)
+      utils::setTxtProgressBar(progbar, value = iterCount)
     } else if (opt$progress == 2) {
       message(sprintf('Now estimating for iteration %d of %d: b = %f.',
                       iterCount, totIters, b))
@@ -954,32 +954,68 @@ FCVARlikeGrid <- function(x, k, r, opt) {
   # FIND THE MAX OVER THE GRID
   #--------------------------------------------------------------------------------
 
-
   if(opt$LocalMax) {
 
     # Local max.
     if(Grid2d) {
+      # Matlab version:
       # [!,smax,!,!] <- extrema2(like,1)
       # [indexB,indexD] <- ind2sub(size(like),smax)
-      indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
 
-      # print('indexB_and_D = ')
-      # print(indexB_and_D)
+      # # Temporary: replace with global max:
+      # indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
+      # # print('indexB_and_D = ')
+      # # print(indexB_and_D)
+      # indexB <- indexB_and_D[, 1, drop = FALSE]
+      # indexD <- indexB_and_D[, 2, drop = FALSE]
 
-      indexB <- indexB_and_D[, 1, drop = FALSE]
-      indexD <- indexB_and_D[, 2, drop = FALSE]
+      # Implement local max:
+      loc_max_out <- find_local_max(as.array(like))
+      indexB <- loc_max_out$row
+      indexD <- loc_max_out$col
+
+      # Store value of local max.
+      local_max <- list(b = bGrid[indexB],
+                      d = dGrid[indexD],
+                      like = loc_max_out$value)
+
+      # Record temporary value of maximal likelihood value.
+      # It may be replaced to avoid the identification problem.
+      max_like <- max(like, na.rm = TRUE)
 
     } else {
+      # Matlab version:
       # [!,indexB,!,!] <- extrema(like)
-      indexB <- which(like == max(like))
+
+      # # Temporary: replace with global max:
+      # indexB <- which(like == max(like))
+      # indexD <- 1
+
+      # Implement local max:
+      # Need to pad 1-D array with boundary columns.
+      loc_max_out <- find_local_max(as.array(cbind(like - 1,
+                                                   like,
+                                                   like - 1)))
+      indexB <- loc_max_out$row
       indexD <- 1
+
+      # Store value of local max.
+      local_max <- list(b = bGrid[indexB],
+                        d = rep(NA, length(bGrid[indexB])),
+                        like = loc_max_out$value)
+
+      # Record temporary value of maximal likelihood value.
+      # It may be replaced to avoid the identification problem.
+      max_like <- max(like, na.rm = TRUE)
     }
 
 
     # If there is no local max, return global max.
     if(is.null(indexB) | is.null(indexD)) {
-      # [ indexB, indexD ] <- find(like == max(max(like)))
+      warning('Failure to find local maximum. Returning global maximum instead.')
 
+      # [ indexB, indexD ] <- find(like == max(max(like)))
+      max_like <- max(like, na.rm = TRUE)
       indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
 
       # print('indexB_and_D = ')
@@ -993,7 +1029,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
   } else {
     # Global max.
     # [ indexB, indexD ] <- find(like == max(max(like)))
-
+    max_like <- max(like, na.rm = TRUE)
     indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
 
     # print('indexB_and_D = ')
@@ -1004,26 +1040,32 @@ FCVARlikeGrid <- function(x, k, r, opt) {
   }
 
 
-
-
+  # Choose value among maxima, if not unique.
   if(length(indexD) > 1 | length(indexB) > 1) {
     # If maximum is not unique, take the index pair corresponding to
     # the highest value of b.
     if(Grid2d) {
       # Sort in ascending order according to indexB.
       # [indexB,indBindx] <- sort(indexB)
-      indexB <- indexB[order(indexB)]
+      # indexB <- indexB[order(indexB)]
       indBindx <- order(indexB)
+      indexB <- indexB[indBindx]
       indexD <- indexD[indBindx]
     } else {
       # Sort in ascending order.
       indexB <- indexB[order(indexB)]
     }
 
+    # Take last value, which is the local maximum with highest value of b.
     indexB <- indexB[length(indexB)]
     indexD <- indexD[length(indexD)]
+
+    # Choosing this local maximum avoids the identification problem.
+    max_like <- local_max$like[which.max(local_max$b)]
+
     # cat(sprintf('\nWarning, grid search did not find a unique maximum of the log-likelihood function.\n')  )
-    warning('Grid search did not find a unique maximum of the log-likelihood function.')
+    message('Grid search did not find a unique maximum of the log-likelihood function.',
+            '\nInspect the plot of the log-likelihood function to verify your choice of the LocalMax option.')
   }
 
   # Translate to d,b.
@@ -1038,6 +1080,24 @@ FCVARlikeGrid <- function(x, k, r, opt) {
       dbHatStar_i <- t(H %*% bGrid[i] + h)
       dGrid_orig[i] <- dbHatStar_i[1]
       bGrid_orig[i] <- dbHatStar_i[2]
+    }
+
+    # Translate local maxima.
+    for (i in 1:length(local_max$b)) {
+      local_max_db <- matrix(c(local_max$b[i]), nrow = length(local_max$b[i]), ncol = 1)
+      # local_max_db <- matrix(c(local_max$b), nrow = 1, ncol = length(local_max$b))
+      print('local_max_db = ')
+      print(local_max_db)
+      print('H = ')
+      print(H)
+      print('h = ')
+      print(h)
+      print('H %*% local_max_db = ')
+      print(H %*% local_max_db)
+
+      dbHatStar_i <- t(H %*% local_max_db + h)
+      local_max$b[i] <- dbHatStar_i[1]
+      local_max$d[i] <- dbHatStar_i[2]
     }
 
   } else {
@@ -1057,7 +1117,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
         # SimNotes <- sprintf('Model: k=%g, r=%g\nb=%4.2f, d=%4.2f, like=%8.2f',
         #                     k, r, db[2],db[1], like[iB,iD] )
         # waitbar(iterCount/totIters,M_status_bar, SimNotes)
-        setTxtProgressBar(progbar, value = iterCount)
+        utils::setTxtProgressBar(progbar, value = iterCount)
         message(sprintf('\nProgress : %5.1f%%, b = %4.2f, d = %4.2f, like = %g.',
                         (iterCount/totIters)*100,
                         dbHatStar[2], dbHatStar[1], max(like, na.rm = TRUE) ))
@@ -1082,7 +1142,9 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     params = NA,
     dbHatStar = dbHatStar,
     muHatStar = NA,
-    max_like = max(like, na.rm = TRUE),
+    # max_like = max(like, na.rm = TRUE),
+    max_like = max_like,
+    local_max = NA,
     Grid2d = Grid2d,
     dGrid = dGrid,
     bGrid = bGrid,
@@ -1090,6 +1152,11 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     bGrid_orig = bGrid_orig,
     like = like
   )
+
+  # Record local maxima, if required.
+  if(opt$LocalMax) {
+    likeGrid_params$local_max = local_max
+  }
 
 
   # Set parameter values for output.
@@ -1304,6 +1371,113 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
 
 
 }
+
+
+#' Find local optima
+#'
+#' \code{find_local_max} finds the row and column numbers corresponding
+#' to the local maxima of a 1- or 2-dimensional array.
+#'
+#' @param x A 1- or 2-dimensional numerical array of the candidate values
+#' of the objective function.
+#' @return A list object with three elements:
+#' \describe{
+#'   \item{\code{row}}{An integer row number of the local maxima. }
+#'   \item{\code{col}}{An integer column number of the local maxima. }
+#'   \item{\code{value}}{The numeric values of the local maxima. }
+#' }
+#'
+#'
+find_local_max <- function(x) {
+
+  # Determine size of input.
+  nrows <- dim(x)[1]
+  ncols <- dim(x)[2]
+
+  # Remove corner cases.
+  if (nrows == 1 & ncols == 1) {
+    return(list(row = 1, col = 1, value = x))
+  } else if (nrows == 1) {
+    x <- t(x)
+    nrows <- ncols
+    ncols <- 1
+  }
+
+  # Initialize matrix of local max indicators.
+  loc_max_ind <- matrix(TRUE, nrow = nrows, ncol = ncols)
+
+  # Proceed by ruling out locally dominated points.
+
+  # Check above.
+  # x_check <- rbind(matrix( - Inf, nrow = 1, ncol = ncols),
+  #                  x[ - nrows, ])
+  x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
+  x_check[ - 1, ] <- x[ - nrows, ]
+  loc_max_ind <- loc_max_ind & (x > x_check)
+
+  # Check below.
+  # x_check <- rbind(x[ - 1, ],
+  #                  matrix( - Inf, nrow = 1, ncol = ncols))
+  x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
+  x_check[ - nrows, ] <- x[ - 1, ]
+  loc_max_ind <- loc_max_ind & (x > x_check)
+
+
+  # Check sides and diagonals only if 2-dimensional matrix.
+  if (ncols > 1) {
+
+    # Check left.
+    # x_check <- cbind(matrix( - Inf, nrow = nrows, ncol = 1),
+    #                  x[ , - ncols])
+    x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
+    x_check[ , - 1] <- x[ , - ncols]
+    loc_max_ind <- loc_max_ind & (x > x_check)
+
+    # Check right.
+    # x_check <- cbind(x[ , - 1],
+    #                  matrix( - Inf, nrow = nrows, ncol = 1))
+    x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
+    x_check[ , - ncols] <- x[ , - 1]
+    loc_max_ind <- loc_max_ind & (x > x_check)
+
+
+    # Check top left.
+    x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
+    x_check[ - 1, - 1] <- x[ - nrows, - ncols]
+    loc_max_ind <- loc_max_ind & (x > x_check)
+
+    # Check top right.
+    x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
+    x_check[ - 1, - ncols] <- x[ - nrows, - 1]
+    loc_max_ind <- loc_max_ind & (x > x_check)
+
+
+    # Check bottom left.
+    x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
+    x_check[ - nrows, - 1] <- x[ - 1, - ncols]
+    loc_max_ind <- loc_max_ind & (x > x_check)
+
+    # Check bottom right.
+    x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
+    x_check[ - nrows, - ncols] <- x[ - 1, - 1]
+    loc_max_ind <- loc_max_ind & (x > x_check)
+
+  }
+
+
+  # Assemble output into a list.
+  loc_max_out <- list(
+    row = matrix(rep(seq(nrows), ncols),
+                 nrow = nrows,
+                 ncol = ncols)[loc_max_ind],
+    col = matrix(rep(seq(ncols), nrows),
+                 nrow = nrows,
+                 ncol = ncols, byrow = TRUE)[loc_max_ind],
+    value = x[loc_max_ind])
+
+  return(loc_max_out)
+}
+
 
 
 #' Likelihood Function for the Unconstrained FCVAR Model

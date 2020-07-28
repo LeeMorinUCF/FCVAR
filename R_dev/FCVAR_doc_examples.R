@@ -455,6 +455,8 @@ points(likeGrid_params$bGrid_orig[which.max(likeGrid_params$like)],
 # cbind(likeGrid_params$dGrid, likeGrid_params$bGrid, likeGrid_params$like)
 likeGrid_params$dbHatStar
 # cbind(likeGrid_params$dGrid_orig, likeGrid_params$bGrid_orig, likeGrid_params$like)
+likeGrid_params$local_max
+likeGrid_params$max_like
 
 
 # Linear restriction on fractional parameters.
@@ -478,11 +480,15 @@ plot(x = likeGrid_params)
 points(likeGrid_params$bGrid[which.max(likeGrid_params$like)],
        max(likeGrid_params$like),
        col = 'red', pch = 16)
+points(likeGrid_params$bGrid[which(likeGrid_params$like == likeGrid_params$max_like)],
+       max(likeGrid_params$max_like),
+       col = 'red', pch = 16, cex = 2)
 # Compare likelihood values.
 # cbind(likeGrid_params$dGrid, likeGrid_params$bGrid, likeGrid_params$like)
 likeGrid_params$dbHatStar
+likeGrid_params$max_like
 # cbind(likeGrid_params$dGrid_orig, likeGrid_params$bGrid_orig, likeGrid_params$like)
-
+likeGrid_params$local_max
 
 
 
