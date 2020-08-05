@@ -50,6 +50,43 @@
 
 FCVARhypoTest <- function(modelUNR, modelR) {
 
+  # Error handling for reverse-ordered likelihood values.
+  if (modelUNR$like < modelR$like) {
+    stop(c('Likelihood value from restricted model is larger than that from unrestricted model.\n',
+           '   This could occur for a few reasons. Verify that the following conditions hold:\n',
+           '1. You have not confused the arguments, i.e., misplaced the unrestricted and restricted model.\n',
+           '2. The restricted model is nested in the unrestricted model. That is, the estimates from\n',
+           '   the restricted model should also satisfy any identifying restrictions of the unrestricted model.\n',
+           '3. The unrestricted model still has enough restrictions to identify alpha and beta.\n',
+           '   For example, the default restriction is to set the upper rxr block of beta to the identity matrix.\n',
+           '4. The likelihood functions are truly optimized. Plot the likelihood function with FCVARlikeGrid,\n',
+           '   and use the optimal grid point as a starting value.\n',
+           '   Use a finer grid or stronger convergence criteria, if necessary.'))
+  }
+
+  # Warning for identical likelihood values.
+  if (modelUNR$like == modelR$like) {
+    warning(c('Likelihood value from restricted model is equal to that from unrestricted model.\n',
+           '   Although this is not impossible, it is a negligible event. Verify that the following conditions hold:\n',
+           '1. You have not confused the arguments, i.e., passed the same model to both the unrestricted and\n',
+           '   restricted model.\n',
+           '2. The restricted model is nested in the unrestricted model. That is, the estimates from\n',
+           '   the restricted model should also satisfy any identifying restrictions of the unrestricted model.\n',
+           '3. The unrestricted model still has enough restrictions to identify alpha and beta.\n',
+           '   For example, the default restriction is to set the upper rxr block of beta to the identity matrix.\n',
+           '4. The likelihood functions are truly optimized. Plot the likelihood function with FCVARlikeGrid,\n',
+           '   and use the optimal grid point as a starting value.\n',
+           '   Use a finer grid or stronger convergence criteria, if necessary.'))
+  }
+
+  # Error handling when no reduction of the number of free parameters.
+  if (modelUNR$fp <= modelR$fp) {
+    stop(c('Unrestricted model does not have more free parameters than restricted model.\n',
+           '   This could occur for a few reasons. Verify that the following conditions hold:\n',
+           '1. You have not confused the arguments, i.e., misplaced the unrestricted and restricted model.\n',
+           '2. The restricted model is nested in the unrestricted model. That is, the estimates from\n',
+           '   the restricted model should also satisfy any identifying restrictions of the unrestricted model.'))
+  }
 
   # Calculate the test statistic.
   LR_test <- 2*(modelUNR$like - modelR$like)

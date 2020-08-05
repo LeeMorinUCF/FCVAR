@@ -293,6 +293,21 @@ Halpha2 <- FCVARhypoTest(m1, m1r4)
 #      file = 'tests/testthat/soln_post/FCVARhypoTest.RData')
 
 
+# Test warnings and errors from corner cases of hypothesis tests.
+# Without errors:
+LR_test <- FCVARhypoTest(modelUNR = list(like = 3, fp = 22),
+                         modelR = list(like = 0, fp = 20))
+# Same likelihood value:
+LR_test <- FCVARhypoTest(modelUNR = list(like = 3, fp = 22),
+                         modelR = list(like = 3, fp = 20))
+# Unordered likelihood value:
+LR_test <- FCVARhypoTest(modelUNR = list(like = 3, fp = 22),
+                         modelR = list(like = 6, fp = 20))
+# Unordered number of free parameters:
+LR_test <- FCVARhypoTest(modelUNR = list(like = 3, fp = 18),
+                         modelR = list(like = 0, fp = 20))
+
+
 # FCVARboot(x, k, r, optRES, optUNR, B)
 
 opt <- FCVARoptions()
