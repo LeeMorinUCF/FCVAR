@@ -13,7 +13,7 @@ TransformData(x, k, db, opt)
 
 \item{db}{The orders of fractional integration.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 }
 \value{

@@ -12,7 +12,7 @@ If \code{k>0}, actual data is used for initial values.}
 
 \item{k}{The number of lags in the system.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 
 \item{r1}{The cointegrating rank under the null hypothesis.}

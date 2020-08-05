@@ -22,7 +22,7 @@ The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations
 
 \item{rhoHat}{A \eqn{p x 1} vector of restricted constatnts.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 }
 \value{

@@ -13,7 +13,7 @@ FCVARlikeGrid(x, k, r, opt)
 
 \item{r}{The cointegrating rank.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 }
 \value{
@@ -40,7 +40,7 @@ corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.}
   \item{\code{like}}{The maximum value of the likelihood function over the chosen grid.}
   \item{\code{k}}{The number of lags in the system.}
   \item{\code{r}}{The cointegrating rank.}
-  \item{\code{opt}}{A list object that stores the chosen estimation options,
+  \item{\code{opt}}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
     generated from \code{FCVARoptions()}.}
 }
 }

@@ -11,7 +11,7 @@ FCVARrankTests(x, k, opt)
 
 \item{k}{The number of lags in the system.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 }
 \value{
@@ -28,7 +28,7 @@ including the following parameters:
   \item{\code{k}}{The number of lags in the system.}
   \item{\code{p}}{The number of variables in the system.}
   \item{\code{cap_T}}{The sample size.}
-  \item{\code{opt}}{A list object that stores the chosen estimation options,
+  \item{\code{opt}}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
     generated from \code{FCVARoptions()}.}
 }
 }

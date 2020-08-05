@@ -17,7 +17,7 @@ FCVARlikeMu(mu, y, db, k, r, opt)
 
 \item{r}{The cointegrating rank.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 }
 \value{

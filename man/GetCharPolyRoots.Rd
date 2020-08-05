@@ -10,7 +10,7 @@ GetCharPolyRoots(coeffs, opt, k, r, p)
 \item{coeffs}{A list of coefficients for the FCVAR model.
 An element of the list of estimation \code{results} output from \code{FCVARestn}.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 
 \item{k}{The number of lags in the system.}

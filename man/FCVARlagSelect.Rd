@@ -17,7 +17,7 @@ than underspecify the model.}
 
 \item{order}{The order of serial correlation for white noise tests.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 }
 \value{
@@ -46,7 +46,7 @@ contains the associated results for lag length \code{j+1}
   \item{\code{p}}{The number of variables in the system.}
   \item{\code{cap_T}}{The sample size.}
   \item{\code{order}}{The order of serial correlation for white noise tests.}
-  \item{\code{opt}}{A list object that stores the chosen estimation options,
+  \item{\code{opt}}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
     generated from \code{FCVARoptions()}.}
 }
 }

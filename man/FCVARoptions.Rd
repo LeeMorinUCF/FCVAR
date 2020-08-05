@@ -7,7 +7,7 @@
 FCVARoptions()
 }
 \value{
-A list object \code{opt} that stores the default estimation options.
+An S3 object of class \code{FCVAR_opt} that stores the default estimation options.
 }
 \description{
 \code{FCVARoptions} defines the estimation options used in the FCVAR

@@ -16,7 +16,7 @@ GetResiduals(x, k, r, coeffs, opt)
 \item{coeffs}{A list of coefficients of the FCVAR model.
 It is an element of the list \code{results} returned by \code{FCVARestn}.}
 
-\item{opt}{A list object that stores the chosen estimation options,
+\item{opt}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 generated from \code{FCVARoptions()}.}
 }
 \value{

@@ -13,11 +13,11 @@ FCVARboot(x, k, r, optRES, optUNR, B)
 
 \item{r}{The cointegrating rank.}
 
-\item{optRES}{A list object that stores the chosen estimation options
+\item{optRES}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options
 for the restricted model, as generated from \code{FCVARoptions()},
 with adjustments as necessary.}
 
-\item{optUNR}{A list object that stores the chosen estimation options
+\item{optUNR}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options
 for the unrestricted model.}
 
 \item{B}{The number of bootstrap samples.}
