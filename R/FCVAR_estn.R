@@ -13,7 +13,7 @@
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A list object \code{object} containing the estimation results,
 #' including the following parameters:
@@ -34,7 +34,7 @@
 #'   \item{\code{r}}{The cointegrating rank.}
 #'   \item{\code{p}}{The number of variables in the system.}
 #'   \item{\code{cap_T}}{The sample size.}
-#'   \item{\code{opt}}{A list object that stores the chosen estimation options,
+#'   \item{\code{opt}}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples

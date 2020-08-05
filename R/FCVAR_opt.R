@@ -6,7 +6,7 @@
 #' \code{FCVARoptions} defines the estimation options used in the FCVAR
 #'   estimation procedure and the related programs.
 #'
-#' @return A list object \code{opt} that stores the default estimation options.
+#' @return An S3 object of class \code{FCVAR_opt} that stores the default estimation options.
 #' @examples
 #' opt <- FCVARoptions()
 #' @family FCVAR estimation functions
@@ -195,6 +195,8 @@ FCVARoptions <- function() {
 
   )
 
+  # Define class of object.
+  class(opt) <- 'FCVAR_opt'
 
   return(opt)
 }
@@ -213,7 +215,7 @@ FCVARoptions <- function() {
 #'   \item Check for appropriate dimensions and redundancies in the restriction matrices \code{R_psi}, \code{R_Alpha} and \code{R_Beta}.
 #' }
 #'
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @param p The number of variables in the system.
 #' @param r The cointegrating rank.
@@ -408,8 +410,8 @@ FCVARoptionUpdates <- function(opt, p, r) {
     # opt$r_psi <- matrix(c(opt$r_psi, 0), nrow = 2, ncol = 1)
     # But it led to non-conformable matrices.
     if(opt$constrained) {
-      cat(sprintf('\nNote: Redundant options. Both constrained (d>=b) and restrict (d=b) selected.'))
-      cat(sprintf('\n Only d=b imposed.\n'))
+      # cat(sprintf('\nNote: Redundant options. Both constrained (d>=b) and restrict (d=b) selected.'))
+      # cat(sprintf('\n Only d=b imposed.\n'))
       warning("Redundant options constraining d and b.\n",
               "Both constrained (d >= b) and restrict (d = b) selected.\n",
               "Only d = b is imposed.")
@@ -614,7 +616,7 @@ FCVARoptionUpdates <- function(opt, p, r) {
 #'   \code{phi}, which is given by \code{db <- H*phi + h},
 #'   using the restrictions implied by \code{H} and \code{h}.
 #'
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A list object \code{UB_LB_bounds} containing the upper (\code{UB}) and lower (\code{LB})  bounds on either \code{db} or \code{phi}.
 #' These vectors are either 1- or 2-dimensional depending on whether a restriction on \code{d} and \code{b} is imposed or not.

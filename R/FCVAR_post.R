@@ -130,10 +130,10 @@ FCVARhypoTest <- function(modelUNR, modelR) {
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
-#' @param optRES A list object that stores the chosen estimation options
+#' @param optRES An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options
 #'   for the restricted model, as generated from \code{FCVARoptions()},
 #'   with adjustments as necessary.
-#' @param optUNR A list object that stores the chosen estimation options
+#' @param optUNR An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options
 #'   for the unrestricted model.
 #' @param B The number of bootstrap samples.
 #' @return A list object \code{FCVARboot_stats} containing the estimation results,
@@ -388,7 +388,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #'
 #' @param coeffs A list of coefficients for the FCVAR model.
 #' An element of the list of estimation \code{results} output from \code{FCVARestn}.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.

@@ -13,7 +13,7 @@
 #' the number of variables in the system, since it is better to overspecify
 #' than underspecify the model.
 #' @param order The order of serial correlation for white noise tests.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return An S3 object of type \code{FCVAR_lags} containing the results
 #' from repeated estimation of the FCVAR model with different orders
@@ -40,7 +40,7 @@
 #'   \item{\code{p}}{The number of variables in the system.}
 #'   \item{\code{cap_T}}{The sample size.}
 #'   \item{\code{order}}{The order of serial correlation for white noise tests.}
-#'   \item{\code{opt}}{A list object that stores the chosen estimation options,
+#'   \item{\code{opt}}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples
@@ -311,7 +311,7 @@ summary.FCVAR_lags <- function(object, ...) {
 #'
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return An S3 object of type \code{FCVAR_ranks} containing the results
 #' from cointegrating rank tests, containing the following \code{(p+1)} vectors
@@ -326,7 +326,7 @@ summary.FCVAR_lags <- function(object, ...) {
 #'   \item{\code{k}}{The number of lags in the system.}
 #'   \item{\code{p}}{The number of variables in the system.}
 #'   \item{\code{cap_T}}{The sample size.}
-#'   \item{\code{opt}}{A list object that stores the chosen estimation options,
+#'   \item{\code{opt}}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples
@@ -569,7 +569,7 @@ summary.FCVAR_ranks <- function(object, ...) {
 #' @param r1 The cointegrating rank under the null hypothesis.
 #' @param r2 The cointegrating rank under the alternative hypothesis.
 #' @param B The number of bootstrap samples.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A list object \code{FCVARbootRank_stats} containing the test results,
 #' including the following parameters:

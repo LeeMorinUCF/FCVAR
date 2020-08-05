@@ -281,7 +281,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param db The orders of fractional integration.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A list object \code{estimates} containing the estimates,
 #' including the following parameters:
@@ -609,7 +609,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return An S3 object of type \code{FCVAR_grid} containing the optimization results,
 #' including the following parameters:
@@ -634,7 +634,7 @@ GetParams <- function(x, k, r, db, opt) {
 #'   \item{\code{like}}{The maximum value of the likelihood function over the chosen grid.}
 #'   \item{\code{k}}{The number of lags in the system.}
 #'   \item{\code{r}}{The cointegrating rank.}
-#'   \item{\code{opt}}{A list object that stores the chosen estimation options,
+#'   \item{\code{opt}}{An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #'     generated from \code{FCVARoptions()}.}
 #' }
 #'
@@ -1492,7 +1492,7 @@ find_local_max <- function(x) {
 #' @param mu The level parameter.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A number \code{like}, the log-likelihood evaluated at the
 #' specified parameter values.
@@ -1547,7 +1547,7 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A number \code{like}, the log-likelihood evaluated at the
 #' specified parameter values.
@@ -1683,7 +1683,7 @@ FCVARlike <- function(params, x, k, r, opt) {
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A list object \code{estimates} containing the estimates,
 #' including the following parameters:
@@ -1813,7 +1813,7 @@ GetEstimates <- function(params, x, k, r, opt) {
 #' @param betaHat A \eqn{p x r} matrix of cointegrating vectors.
 #' The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.
 #' @param rhoHat A \eqn{p x 1} vector of restricted constatnts.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A number \code{like}, the log-likelihood evaluated at the
 #' specified parameter values.
@@ -1864,7 +1864,7 @@ FCVARlikeFull <- function(x, k, r, coeffs, betaHat, rhoHat, opt) {
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
 #' @param db The orders of fractional integration.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A list object \code{Z_array} containing the transformed data,
 #' including the following parameters:
@@ -1968,7 +1968,7 @@ TransformData <- function(x, k, db, opt) {
 #' @param r The cointegrating rank.
 #' @param coeffs A list of coefficients of the FCVAR model.
 #' It is an element of the list \code{results} returned by \code{FCVARestn}.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A matrix \code{epsilon} of residuals from FCVAR model estimation
 #' calculated with the parameter estimates specified in \code{coeffs}.
@@ -2200,7 +2200,7 @@ FracDiff <- function(x, d) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @param rankJ The rank of a conditioning matrix, as described in
 #' Boswijk & Doornik (2004, p.447), which is only used if there are
@@ -2290,7 +2290,7 @@ GetFreeParams <- function(k, r, p, opt, rankJ) {
 #' @param r The cointegrating rank.
 #' @param coeffs A list of coefficients of the FCVAR model.
 #' It is an element of the list \code{results} returned by \code{FCVARestn}.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return The \code{hessian} matrix  of second derivatives of the FCVAR
 #' log-likelihood function, calculated with the parameter estimates
@@ -2396,7 +2396,7 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return A vector \code{param} of parameters in the FCVAR model.
 #' @examples
@@ -2473,7 +2473,7 @@ SEmat2vecU <- function(coeffs, k, r, p , opt) {
 #' @param k The number of lags in the system.
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #' @return \code{coeffs}, a list of coefficients of the FCVAR model.
 #' It has the same form as an element of the list \code{results}
@@ -2580,7 +2580,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #' calculated from the output of \code{TransformData} in \code{GetParams}.
 #' @param cap_T The number of observations in the sample.
 #' @param p The number of variables in the system.
-#' @param opt A list object that stores the chosen estimation options,
+#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
 #'
 #'#' @return A list object \code{switched_mats} containing the restricted estimates,
