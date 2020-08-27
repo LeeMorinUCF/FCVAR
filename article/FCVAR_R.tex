@@ -53,7 +53,7 @@
   The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
   The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
   This allows for the detection of relationships with deviations that correct more slowly. 
-The \pkg{FCVAR} package ties together the features of these models in a multivariate framework that allows for an exhaustive set of testing options. 
+The \pkg{FCVAR} package ties together the features of these models in a multivariate framework that allows for an comprehensive set of testing options. 
 
 
 
@@ -127,147 +127,42 @@ The \pkg{FCVAR} package ties together the features of these models in a multivar
 %be employed. See the {\LaTeX} code for more details.
 % \end{leftbar}
 
-This article illustrates how to estimate 
-  the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}. 
-This model is used to detect equilibrium relationships between variables observed over time. 
-The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
-The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
+Many time series exhibit features of fractional integration. 
+Detecting equlibrium relationships between such variables can be problematic if this feature is not built into the model. 
+% 
+The fractionally cointegrated vector autoregression model (FCVAR) is designed to detect equilibrium relationships between fractionally integrated variables. 
+A restricted version, the cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
+In contrast, the fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can also be fractionally integrated but of a lower order than the variables themselves. 
 This allows for the detection of relationships with deviations that correct more slowly than with the CVAR. 
 % 
+
 The packages currently available concentrate more heavily on the features of one of these two types of models. 
 % 
-
-Existing software concentrates on either the CVAR alone, which is restricted to integer orders of integration, or focuses on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, or estimating a single-equation model.
+Many packages concentrate on either the CVAR alone, which is restricted to integer orders of integration. Some focus on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, or estimating a single-equation model. 
 Those that do consider fractionally cointegrated systems follow approaches developed earlier in the literature. 
-The software in \pkg{FCVAR} treats the time series as a system and estimates all parameters together in a maximum likelihood framework and it provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
+The software in \pkg{FCVAR} treats the time series as a system and estimates all parameters together in a maximum likelihood framework. 
+This provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
 
-% 
-An exhaustive listing of the R packages \citep{R} available for time series analysis were compiled in 
-\citet{Hyndman2020}.
-% \emph{CRAN Task View: Time Series Analysis} by Rob J Hyndman, 
-% available at \verb|https://CRAN.R-project.org/view=TimeSeries|). 
-% 
-Among these, the packages most relevant to the FCVAR model are those related to cointegration within the family of vector error correction models or those related to long memory, often under the $ARFIMA$ framework. 
-
-% \subsection{R packages for estimating the CVAR model}
+The most common tests impose (linear or equality restrictions) on the cointegrating space and the (error correction vectors). 
+The model can also test equality and inequality restrictions on the fractional differencing parameters. 
+In addition, any linear restriction on the short run autoregressive parameters is also a possibility. 
+The maximum likelihhood framework allows for joint testing of any combination of these restrictions with a likelihood ratio test. 
 
 
-In \proglang{R}, contegration analysis can be conducted using a variety of packages. 
-% 
-One such package is \pkg{aTSA} for \emph{Alternative Time Series Analysis} \citep{aTSA2015}. 
-In this package, the \fct{coint.test} function performs Engle-Granger tests, as in \citet{EngleGranger1987},  for the null hypothesis that two or more time series, each of which is I(1), are not cointegrated. 
-This package is designed to focus on a particular response variable, restricting attention to relationships with a one-dimensional cointegrating space. That is, this framework can detect a single equilibrium equation. 
-% 
-Another package following the \citet{EngleGranger1987} approach is the \pkg{egcm} package in \citep{egcm2017}. 
-The \pkg{egcm} package restricts to a simplified form of cointegration. 
-It is designed for bivariate analysis, with a concentration on applications to the prices of financial assets.
-
-Other packages have implemeted the cointegration tests in \citet{PhillipsOuliaris1990}. 
-This amounts to running a regression of the response variable on a set of regressors and testing the residuals for a unit root following \cite{PhillipsPerron1988}. 
-The \fct{po.test} from the \pkg{tseries} package \citep{tseries2019} implements this test, 
-as well as the \fct{ca.po} function in the \pkg{urca} package \citep{urca2016}. 
-
-The \pkg{cointReg} package in \cite{cointReg2016} follows a different approach, using modified ordinary least squares (OLS) approaches to the analysis of cointegration. 
-One such method is the fully modified OLS (FM-OLS) approach of \citet{PhillipsHansen1990} in the \fct{cointRegFM} function. 
-Another option is the dynamic OLS (D-OLS) approach (see \citet{PhillipsLoretan1991}, \citet{Saikkonen1991} and \citet{StockWatson1993}) implemented in \fct{cointRegD}. 
-It also implements, in \fct{cointRegIM}, a variant called integrated modified OLS (IM-OLS) of Vogelsang and Wagner (2014), 
-which is based on an augmented integration transformation of the regression model. 
-
-Following another approach, 
-\citet{Johansen1995} analyzes the cointegrated VAR model in a more holistic fashion.
-In this framework, the time series are treated as an endogenous system of equations and permits the estimation of a higher-dimensional cointegrating relationship, i.e. several equilibrium relationships. 
-% 
-It also allows for the joint estimation of parameters relating to the system of equations, permitting likelihood ratio tests for a wide variety of hypotheses. 
-The \fct{VECM} function in the \pkg{tsDyn} package allows for the application of either the \citet{EngleGranger1987} or the \citet{Johansen1995} MLE method. 
-However, this package is designed primarily with nonlinear time series models in mind. 
-The \pkg{urca} package \citep{urca2016}, 
-which is designed to perform unit root tests and cointegration analysis, 
-follows the \citet{Johansen1995} approach in the function \fct{ca.jo}. 
-It also provides options for testing restrictions on the parameters in the model. 
-Of the packages designed for the CVAR model, this is perhaps the closest available to the \pkg{FCVAR} package, in terms of the testing opportunities available.
-
-% \subsection{Segue from CVAR to $I(d)$}
-
-While the packages that follow the framework of \citet{Johansen1995} are most closely related to the \pkg{FCVAR} package, these are not suited to the analysis of series with a fractional degree of integration. 
-That is to say that these packages allow for only a discrete form of cointegration between the series. 
-For example, the series are all integrated, i.e. $I(1)$, and the residuals from a regression are stationary and $I(0)$. 
-The fractionally cointegrated VAR model allows for the possibility that variables can be integrated of order $d$ and cointegrated of order $d - b$, where $d$ and $b>0$ can be real numbers. 
-% 
-Analysis using the above packages typically involves a preliminary analysis of the form of non-stationarity of the variables, using a number of unit root tests, i.e. to test whether the series are $I(1)$. 
-With fractionally integrated variables, the first stage of the analysis is to determine the order of fractional integration, i.e. the parameter $d$. 
-This has been the focus of much of the available software to analyze series with the characteristics of so-called long memory. 
-
-% \subsection{R packages for fractional integration}
-
-In another section of the \emph{CRAN Task View: Time Series Analysis} \citep{Hyndman2020}, 
-several packages are listed for the estimation of models for series with features of fractional integration or long memory. 
-A number of these pacakages are focused on estimation of $ARFIMA$ models, known as autoregressive fractionally integrated moving average models. 
-The \pkg{fracdiff} package \citep{fracdiff2020} includes functions for fitting $ARFIMA(p,d,q)$ models, including the step of estimating the long memory parameter $d$. 
-The namesake function \fct{fracdiff} calculates the maximum likelihood estimators of the parameters of a fractionally-differenced $ARIMA(p,d,q)$ model. 
-A few notable functions in this package estimate the long memory parameter $d$ within this model\footnote{Note that the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. Specifically, \code{fracdiff::diffseries(x, d) - FCVAR::FracDiff(x - mean(x), d)} is numerically very small. 
-The demeaning step is not required to estimate the FCVAR model, as the mean parameters are estimated jointly with the others while optimizing the likelihood function. }. 
-% 
-The \pkg{arfima} package \cite{arfima2018} fits a wider variety of $ARFIMA$ models. 
-% 
-Also, the \pkg{nsarfima} \citep{nsarfima2019} package provides methods for fitting and simulating non-stationary $ARFIMA$ models. 
-This package is more innovative in terms of the types of optimization problems built on the $ARFIMA$ model, including both maximum likelihood (as in \citet{Beran1995}) and minimum distance (as in \citet{Mayoral2007}) estimators. 
-Overall, $ARFIMA$ models treat the data by fractional differencing to transform data to a form suitable for an $ARMA$ model, 
-similar to ordinary first differencing for variables that have unit roots as in $ARIMA$ models. 
-This transformation precludes the use of models that study cointegration relationships. 
-
-The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods to investigate both fractional integration and cointegrating relationships.\footnote{Morten: You would be best suited to comment on the references in this package. 
-There are several citations to your papers and papers that I'm sure you know better and I want to make sure that we are honest about the difference between what we do and what they do. 
-It seems to me that this package is a who's who of analyzing the cointegration of fractional systems, except for Johansen's MLE framework, which is what we implement.
-I like to think that our approach following \citet{Johansen1995} is more holistic, in that all the parameters are estimated jointly, aside from the rank and lag selection. 
-It captures all of the pieces in one maximum likelihood framework and this approach has the added benefit of allowing for a wide range of restrictions to test. 
-
-\textbf{Before I forget}, one important point to note is that I did not succeed in installing this package. 
-It requires dependencies that would not install on either my local machine or the ones in Dunning 211 or the equivalent at UCF. 
-I'm a patient guy but f I can't get it to work in 10 minutes, their user base is going to be very small. 
-That's too bad, because they have also implemented \cite{Jensen2014}, with your permission, in the function \fct{fdiff}. I would have liked to test it for myself. 
-In my opinion, they have too much going on in one package and the level of complexity can lead to dependency problems like this. 
-As a user, I would move on to the next package that works, which is a good reason to implement this function ourselves, without these problems. 
-Actually, now that I have looked at it more closely, the documentation is incomplete as well. 
-Our closest competitor is a work in progress -- but there is no need to call them out on it. } 
-% 
-For estimating the order of the fractional integration in a series, there are several options including the log-periodogram estimators of \citet{GPH1983} and \citet{RobinsonPM1995b}. 
-% 
-Other options include the semiparametric local Whittle estimator of \citet{RobinsonPM1995a},
-the exact local Whittle estimator of \citet{ShimotsuPhillips2005}, 
-and a version for series with unknown mean and time trend in \citet{Shimotsu2010}. 
-They also implement more recent approaches, such as 
-the local polynomial Whittle plus noise estimator of \citet{FredNielsenNielsen2012} 
-and the modified local Whittle estimator of \citet{HouPerron2014}. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Review of existing software
+% Abridged version
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-For determining the cointegrating rank, i.e. the dimension of the cointegrating relationship, this package also provides several options. 
-These inclide a semiparametric method in \citet{ChenHurvich2003}. 
-\citet{RobinsonYajima2002} propose a model selection procedure to estimate the cointegrating rank ,
-which includes a test for equality of all memory parameters simultaneously and is further explored in \citet{NielsenShimotsu2007}. 
-Following another approach, the package also provides a method of
-identifying cointegration by eigenanalysis \citep{ZhangRobinsonYao2018}. 
+Of the packages that estimate integer-order cointegration...
 
 
-Finally, for estimation the cointegrating relationship itself, the \pkg{LongMemoryTS} package implements a number of approaches. 
-It implements semiparametric approaches for estimating the cointegrating vector, including that of 
-\citet{Robinson1994} and later \citet{RobinsonMarinucci2003} and \citet{ChristensenNielsen2006}. 
-They implement a semiparametric residual-based test for fractional cointegration from \citet{ChenHurvich2006}, 
-and other semiparametric tests in \citet{MarmolVelasco2004}and \citet{WangWangChan2015}
-and a semiparametric Hausmann-type test for fractional cointegration by \citet{Robinson2008}. 
-Also within the semiparametric family is the fully modified narrow band least squares (FMNBLS) approach in  \citet{NielsenFrederiksen2011}. 
-% 
-They also implement a nonparametric approach to test for fractional cointegration and rank estimation by \citet{Nielsen2010}.
-Following another framework, the frequency-domain test for fractional cointegration in \citet{SouzaEtal2018} is also available in this package. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Review of existing software
+% End
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In contrast, our approach is to use a fully parametric model in the maximum likelihood framework. 
-The \pkg{FCVAR} package, introduced here, is closest to a cross between the \citet{Johansen1995} cointegration model in \pkg{urca} and the models involving fractionally integrated variables discussed above. 
-In particular, the model estimated in the \pkg{urca} packages is the special case of \pkg{FCVAR} in which the fractional integration parameters $d$ and $b$ are both equal to one.\footnote{They also use the Danish data, so it might be worthwhile to include in the documentation an example with and without the restriction $d = b = 1$ to compare. It may not fit in this paper but could be a short vignette (short pdf with code and descriptions) that would go on the CRAN webpage for the package. } 
-% 
-% 
-% \subsection{The  MATLAB program}
-% 
-The \proglang{R} package \pkg{FCVAR} closely follows a companion package \pkg{FCVARmodel.m}, written in \proglang{MATLAB}. 
-The \proglang{MATLAB} package is documented in \cite{Nielsen2016}, an expanded version of the package documented in \cite{Nielsen2013}. 
 
 % Moved to end, as per JSS style:
 %The latest version of the package can be downloaded from one of the author's website at Queen's University:
@@ -412,7 +307,7 @@ F_{q+1}(u) &= u^{b-1} - \int_{0}^{1}u^{b-1} \mathsf{d} u = u^{b-1}-1/b,
 see \cite{Dolatabadi2014}.
 \end{enumerate}
 
-Importantly, the asymptotic distribution \eqref{LR asy distr} of the test statistic $\lrt(q)$ depends on both $b$ and $q=p-r$. The dependence on the unknown (true value of the) scalar parameter $b$ complicates empirical analysis compared to the CVAR model. Generally, the distribution \eqref{LR asy distr} would need to be simulated on a case-by-case basis. However, for model \eqref{vecm model} and for model \eqref{model with constants} with $d=b$ and $\xi=0$, and hence also for model \eqref{model with level par} with $d=b$ in light of bullet 3.\ above, computer programs for computing asymptotic critical values and asymptotic $P$ values for the LR cointegration rank tests based on numerical distribution functions, are made available by \cite{mackinnon2014numerical}. Their computer programs are incorporated in the present program for the relevant cases/models as discussed and illustrated below.
+Importantly, the asymptotic distribution \eqref{LR asy distr} of the test statistic $\lrt(q)$ depends on both $b$ and $q=p-r$. The dependence on the unknown (true value of the) scalar parameter $b$ complicates empirical analysis compared to the CVAR model. Generally, the distribution \eqref{LR asy distr} would need to be simulated on a case-by-case basis. However, for model \eqref{vecm model} and for model \eqref{model with constants} with $d=b$ and $\xi=0$, and hence also for model \eqref{model with level par} with $d=b$ in light of bullet 3.\ above, computer programs for computing asymptotic critical values and asymptotic $P$ values for the LR cointegration rank tests based on numerical distribution functions, are made available by \cite{mackinnon2014numerical}. Their computer programs are incorporated in the present program with a companion \proglang{R} package \pkg{fracdist} for the relevant cases/models as discussed and illustrated below.
 
 
 
