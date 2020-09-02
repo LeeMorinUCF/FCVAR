@@ -53,7 +53,7 @@
   The cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
   The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
   This allows for the detection of relationships with deviations that correct more slowly. 
-The \pkg{FCVAR} package ties together the features of these models in a multivariate framework that allows for an comprehensive set of testing options. 
+The \pkg{FCVAR} package ties together the features of these models in a maximum likelihood approach to allow for a comprehensive set of testing options. 
 
 
 
@@ -128,10 +128,10 @@ The \pkg{FCVAR} package ties together the features of these models in a multivar
 % \end{leftbar}
 
 Many time series exhibit features of fractional integration. 
-Detecting equlibrium relationships between such variables can be problematic if this feature is not built into the model. 
+The detection of equlibrium relationships between such variables is problematic if this feature is not built into the model. 
 % 
 The fractionally cointegrated vector autoregression model (FCVAR) is designed to detect equilibrium relationships between fractionally integrated variables. 
-A restricted version, the cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e. exhibit unit root behavior, where deviations from this relationship are not integrated. 
+A restricted version, the cointegrated vector autoregression model (CVAR) can detect an equilibrium relationship between variables that are integrated, i.e.~exhibit unit root behavior, where deviations from this relationship are not integrated. 
 In contrast, the fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can also be fractionally integrated but of a lower order than the variables themselves. 
 This allows for the detection of relationships with deviations that correct more slowly than with the CVAR. 
 % 
@@ -144,9 +144,9 @@ The software in \pkg{FCVAR} treats the time series as a system and estimates all
 This provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
 
 The most common tests impose (linear or equality restrictions) on the cointegrating space and the (error correction vectors). 
-The model can also test equality and inequality restrictions on the fractional differencing parameters. 
-In addition, any linear restriction on the short run autoregressive parameters is also a possibility. 
-The maximum likelihhood framework allows for joint testing of any combination of these restrictions with a likelihood ratio test. 
+The user can also test equality and inequality restrictions on the fractional differencing parameters. 
+In addition, the user can test any linear restriction on the short run autoregressive parameters. 
+The maximum likelihood framework allows for joint testing of any combination of these restrictions with a likelihood ratio test. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,8 +154,61 @@ The maximum likelihhood framework allows for joint testing of any combination of
 % Abridged version
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+An exhaustive listing of the R packages \citep{R} available for time series analysis was compiled by 
+\citet{Hyndman2020}.
+% 
+Of the packages that estimate integer-order cointegration, such as in the CVAR, several packages perform Engle-Granger tests, following \citet{EngleGranger1987}. 
+One such package is \pkg{aTSA} for \emph{Alternative Time Series Analysis} \citep{aTSA2015}, 
+% 
+another is the \pkg{egcm} package in \citep{egcm2017}. 
+% 
+Other packages have implemeted the cointegration tests in \citet{PhillipsOuliaris1990}. 
+This amounts to running a regression of the response variable on a set of regressors and testing the residuals for a unit root following \cite{PhillipsPerron1988}. 
+The \pkg{tseries} package \citep{tseries2019} implements this test, 
+as well as the \pkg{urca} package \citep{urca2016}. 
+% 
+There are also a variety of choices among modified ordinary least squares (OLS) approaches, 
+including the \pkg{cointReg} package in \cite{cointReg2016}, implementing the methods of \citet{PhillipsHansen1990} \citet{PhillipsLoretan1991}, \citet{Saikkonen1991} and \citet{StockWatson1993}. 
+% 
+Following a maximum likelihood approach, 
+the \pkg{tsDyn} package and the \pkg{urca} package
+implement the cointegrated VAR model, as in \citet{Johansen1995}. 
+Of the packages designed for the CVAR model, 
+\pkg{urca} is perhaps the closest available to the \pkg{FCVAR} package, in terms of the testing opportunities available.
 
-Of the packages that estimate integer-order cointegration...
+
+The methods above allow for only a discrete form of cointegration between the series. 
+There are several packages designed for series with fractional integration or long memory. 
+% 
+A number of these pacakages are focused on estimation of $ARFIMA$ models, or autoregressive fractionally integrated moving average models. 
+% 
+The \pkg{fracdiff}%
+\footnote{There appears to be some duplication between this package and ours: 
+the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. 
+Specifically, \code{fracdiff::diffseries(x, d) - FCVAR::FracDiff(x - mean(x), d)} is numerically very small. 
+The demeaning step is not required to estimate the FCVAR model, as the mean parameters are estimated jointly with the others while optimizing the likelihood function. }
+%
+package by \citep{fracdiff2020} includes one such example. 
+% 
+Other options include the \pkg{arfima} package by \cite{arfima2018}
+and \pkg{nsarfima} package by \citep{nsarfima2019}. 
+The latter package uses a few types of optimization methods built on the $ARFIMA$ model, including both maximum likelihood (as in \citet{Beran1995}) and minimum distance (as in \citet{Mayoral2007}) estimators. 
+The \pkg{PACKAGE-NAME} provides a careful optimization procedure by showing estimates corresponding to multiple local optima---a common occurrence in these models---and this feature is accounted for in \pkg{FCVAR} as well.
+% 
+
+The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods to investigate both fractional integration and cointegrating relationships. 
+They implement the early semiparametric approaches for estimating the cointegrating vector, including that of 
+\citet{Robinson1994} and later \citet{RobinsonMarinucci2003}, \citet{MarmolVelasco2004},  \citet{ChristensenNielsen2006} and \citet{Robinson2008}. 
+% 
+They also implement more recent procedures of \citet{Nielsen2010} and \citet{WangWangChan2015}, 
+as well as the frequency-domain test for fractional cointegration in \citet{SouzaEtal2018}. 
+% 
+% I'm not unintentionally padding with so many references but, in this case, our point is that these guys include everything but the kitchen sink---the kitchen sink being the FCVAR. 
+% 
+One feature that is missing, however, is the maximum likelihood method of \citet{Johansen1995}, which was extended to fractional processes in (\textbf{cite JN papers}).
+This framework allows for joint testing of a comprehensive set of restrictions and provides the 
+foundation on which the \pkg{FCVAR} package is built. 
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -546,106 +599,70 @@ This example uses the variables in the first, third and fifth columns.
 \subsection{Choosing options}
 \label{subsec choosing options}
 
-Once the data is imported, the user sets the program options. The script contains two sets of options: variables set for function arguments in the script itself and model/estimation related options. 
-% Listing ~\ref{intl} shows the first of set of options. 
-The first of set of options is as follows. 
-% 
-%\begin{lstlisting}[frame=single,caption={Initialization of local variables}, label = intl]
-% NOTE: Alignment is achieved by counting the number of characters, including spaces.
-% That is, this table looks ragged here but aligned in the document:
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Abridged verion of Options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Once the data are imported, the user sets the program options. The script contains two sets of options: the arguments of the estimation functions and an object comprising the settings for model specification and estimation. 
+The first set of options is as follows. 
 \begin{Code}
 p               <- ncol(x1) 
 kmax            <- 3
 order           <- 12
-printWNtest     <-  1
 \end{Code}
-%\end{lstlisting}
 
 The variable \verb|kmax| determines the highest lag order for the sequential testing that is performed in the lag selection, whereas \verb|p| is the dimension of the system. 
-% The other variables are self-explanatory.
-The \verb|order| specifies the number of lags used for the white noise test in lag selection, 
-while \verb|printWNtest| indicates whether to print results of white noise tests post-estimation. 
+The \verb|order| specifies the number of lags used for the white noise test in lag selection.
 
 The next set of initialization commands
-% , shown in Listing~\ref{intl2}, 
-assign values to the variables contained in the object \verb|opt| defined by the function \fct{FCVARoptions}. 
+assign values to the variables contained in the object \verb|opt|, defined by the function \fct{FCVARoptions}. 
 
-%\begin{leftbar} 
-%I wonder if we should leave some of this to the package documentation. 
-%Maybe for this article, we should concentrate on the options that are necessary for the examples below. 
-%Besides, JSS style prefers code blocks do not have comments, i.e. state it in the text. 
-%We could say that ``the rest of the options are described in the package documentation''. 
-% 
-%Verdict: Here is a trimmed-down version. 
-%I hope JSS is flexible about the comments, which I think are justified here.
-%\end{leftbar}
-
-%\begin{lstlisting}[frame=single,caption={Choosing estimation options}, label = intl2]
 \begin{Code}
-# Define variable to store estimation options.
-opt              <- EstOptions() 
-opt$dbMin        <- c(0.01, 0.01) # lower bound for d, b.
-opt$dbMax        <- c(2.00, 2.00) # upper bound for d, b.
+opt              <- FCVARoptions() 
 opt$unrConstant  <- 0   # include an unrestricted constant? 
 opt$rConstant    <- 0   # include a restricted constant? 
 opt$levelParam   <- 1   # include level parameter? 
 opt$constrained  <- 0   # impose restriction dbMax >= d >= b >= dbMin? 
 opt$restrictDB   <- 1   # impose restriction d = b ? 
 opt$db0          <- c(0.80, 0.80) # set starting values for optimization.
-opt$N            <- 0   # number of initial values to condition upon.
-opt$print2screen <- 1   # print output.
-opt$printRoots   <- 1   # do not print roots of characteristic polynomial.
-opt$plotRoots    <- 1   # do not plot roots of characteristic polynomial.
-opt$gridSearch   <- 1   # For more accurate estimation, perform a grid search.
-                        # This will make estimation take longer.
-opt$plotLike     <- 0   # Plot the likelihood (if gridSearch <- 1).
-opt$progress     <- 0   # Show grid search progress indicator waitbar.
-opt$updateTime   <- 0.5 # How often progress is updated (seconds).
-
-# Store the options to reset them in between hypothesis tests.
-DefaultOpt <- opt 
+opt$gridSearch   <- 0
 \end{Code}
-%\end{lstlisting}
 
-The first line initializes the object \verb|opt| and assigns all of the default options set in \verb|FCVARoptions|. The user can see the full set of options by typing \verb|DefaultOpt| (or \verb|opt| after initialization) in the command line. % Listing~\ref{intl2} 
+The first line initializes the object \verb|opt| and assigns all of the default options set in \verb|FCVARoptions|. 
 The code block above 
-shows how to easily change any of the default options. Defining the program options in this way allows the user to create and store several option objects with different attributes. This can be very convenient when, for example, performing the same hypothesis tests on different data sets. 
+shows how to easily change any of the default options. 
+Defining the program options in this way allows the user to create and store several option objects with different attributes. 
+This can be very convenient when, for example, performing the same hypothesis tests on different data sets. 
 
-The set of available options can be broken into several categories: numerical optimization, model deterministics and restrictions, output and grid search.
-% , and $p$~values for the rank test. 
-% These are obtained internally from the \pkg{fracdist} package, with no user input. 
-We recommend that only advanced users make changes to the numerical optimization options. Adding deterministics requires setting the variable corresponding to the type of deterministic component to 1. For instance, in the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. Output variables refer to either printing or plotting various information post-estimation and usually take values $1$ or $0$ (on or off). For example, if the user is not interested in the estimates of $\Gamma$, they can be suppressed by setting \verb|opt$printGammas <- 0|.
+The next set of option settings define the model to be estimated. 
+In the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. 
+Adding deterministics requires setting the variable corresponding to the type of deterministic component, either \verb|rConstant| or \verb|unrConstant|, to \verb|1|. 
+% 
+The user may want to set restrictions on the fractional integration parameters $d$ and $b$. 
+Setting the option \verb|opt$constrained  <- 1| would impose the inequality restriction $d >= b$. 
+In this example, the restriction $d = b$ is imposed. 
 
-The bounds on the parameter space for $d$ and $b$ are specified in \verb|opt$dbMin| and \verb|opt$dbMax|. In this example, these are both specified as 2-dimensional column vectors, in which case the first element specifies the bound on $d$ and the second element the bound on $b$. Alternatively, one can set \verb|opt$dbMin| and \verb|opt$dbMax| as scalars, which imposes the same bounds on $d$ and $b$. 
+The last two settings relate to the numerical optimization of the likelihood function, to expedite the estimation for this example. 
+The option \verb|db0| sets the optimization to begin at the starting values $d = b = 0.80$. 
+The option \verb|gridSearch| is set off, which specifies that a single optimization sequence will be performed with these starting values. 
+In practice, the grid search would be set with  \verb|opt$gridSearch <- 1|, i.e.~the default, particularly in an initial investigation of the data, 
+so that several values of $d$ and $b$ can be tested as potential starting values. 
+This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014} because the likelihood function may have several local optima. 
+This functionality is described in detail in Section \ref{sec:extensions}. 
 
-An important feature in this package is the ability to pre-estimate by using a grid search. If the user selects this option, they can view progress by setting \verb|opt$progress| to $1$ (waitbar) or $2$ (output in command line). The minimum frequency of these updates is set by \verb|opt$updateTime|. The user also has the option (\verb|opt$plotLike|) to view a plot of the likelihood over $d$ and/or $b$ after the grid search completes. The output of the grid search is a preliminary estimate of the fractional parameters. These are used as starting values in the subsequent numerical optimization, and the bounds on $d$ and $b$ are set to these starting values plus/minus $0.1$ but still within the original \verb|dbMin| and \verb|dbMax| settings.
+Another option related to optimization is a line search in the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$, such as when conduction hypothesis tests. 
+This is added via the option \verb|opt$LineSearch <- 1| and is the default. See \citet[Section 2.2]{Doornik2016} for details. 
 
-\begin{leftbar}
-Warning: The current package does not have the following functionality. 
-It could be implemented but I imagine there already exists something in R that can serve this role. 
-However, I think I don't quite understand the problem without it. 
-Can you provide an example? 
-\end{leftbar}
+The remaining options can be divided into several categories: numerical optimization, model deterministics and restrictions, output and grid search. 
+These are explained in detail in the package documentation. 
 
-As of v.1.4.0, the new option \verb|opt$LocalMax| allows more control over the grid search. If \verb|opt$LocalMax <- 0|, the function \fct{FCVARlikeGrid} returns the parameter values corresponding to the global maximum of the likelihood on the grid. If \verb|opt$LocalMax <- 1|, then \fct{FCVARlikeGrid} returns the parameter values for the local maximum corresponding to the highest value of $b$. This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014}. As of v.1.4.0, the default setting is \verb|opt$LocalMax <- 1|.
 
-Another option is the addition of a line search to the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$. This is added via the option \verb|opt$LineSearch <- 1| and is the default. See \citet[Section 2.2]{Doornik2016} for details.
 
-%\begin{leftbar}
-%Removing this to reflect our updated strategy for the $p$~values for cointegration rank tests
-%-- it simply calls the \pkg{fracdist} package and calculates the $p$~values. 
-%This is much better than calling the \pkg{Rcpp} package because it avoids the inevitable probelms with platform, compiler and software dependencies. 
-%Besides, CRAN doesn't like packages to make system calls because it makes assumptions about the user's setup and leads to the above problems with dependencies. 
-%\end{leftbar}
-%
-%In order to automatically obtain $p$~values for cointegration rank tests when $b>0.5$, the user needs to download and install the necessary program 
-%% (see Section~\ref{sec obtaining}). 
-%(see Section~\ref{sec:fdpval}). 
-%The last option, \verb|opt$progLoc|, identifies the location of that program.
-
-After all options have been set, the last line 
-% in Listing~\ref{intl2} 
-stores them in \verb|DefaultOpt| so that the user can recall them at any point in the estimation. This is particularly useful if the user wants to change only a few options in between estimations.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Abridged verion of Options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{Lag-order selection}
