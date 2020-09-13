@@ -67,8 +67,6 @@
 #'
 FCVARestn <- function(x, k, r, opt) {
 
-  # global estimatesTEMP # Different in R.
-
   # --- Preliminary steps --- %
   cap_T <- nrow(x) - opt$N # number of observations
   p <- ncol(x)         # number of variables
@@ -76,49 +74,25 @@ FCVARestn <- function(x, k, r, opt) {
   # Update options based on initial user input.
   opt <- FCVARoptionUpdates(opt, p, r)
 
-  # print('opt$print2screen = ')
-  # print(opt$print2screen)
-
-  # Clear previous instances of coefficient estimates. This is done
-  #   because estimatesTemp is a global structure that will not be cleared
-  #   automatically if estimation is interrupted.
-  # estimatesTEMP <- NULL
-
-  # Assign the value for the global variable estimatesTEMP.
-  # Might adjust this later but it will work for now.
-  # assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
 
   #--------------------------------------------------------------------------------
   # GRID SEARCH
   #--------------------------------------------------------------------------------
 
-  # Hide all warnings for grid search.
-  # warning('off', 'all')
 
   # Perform grid search and store results as starting values for
   #   numerical optimization below.
   if(opt$gridSearch) {
-    # cat(sprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n',
-    #             k,r))
-    # cat(sprintf('This computation can be slow.\n'))
-    # cat(sprintf('Set opt$gridSearch <- 0 to skip it.\n'))
     message(sprintf('\nRunning grid search over likelihood for k=%g, r=%g.\n', k,r),
             "This computation can be slow.\n",
             "Set opt$gridSearch <- 0 to skip it.")
-    # opt$db0 <- FCVARlikeGrid(x, k, r, opt)
     likeGrid_params <- FCVARlikeGrid(x, k, r, opt)
     opt$db0 <- likeGrid_params$params
-
-    # print('opt$db0 = ')
-    # print(opt$db0)
 
     # Change upper and lower bounds to limit the search to some small
     #   interval around the starting values.
     opt$UB_db[1:2] <- pmin(opt$db0[1:2] + c(0.1, 0.1), opt$dbMax)
     opt$LB_db[1:2] <- pmax(opt$db0[1:2] - c(0.1, 0.1), opt$dbMin)
-
-    # print('opt$UB_db = ')
-    # print(opt$UB_db)
 
 
   } else {
@@ -129,19 +103,6 @@ FCVARestn <- function(x, k, r, opt) {
     opt$LB_db <- UB_LB_bounds$LB
 
   }
-
-
-
-  # Turn warnings back on for main estimation.
-  # warning('on','all')
-
-  # Hide warnings related to algorithm changes in numerical optimization.
-  # warning('off','optim:fminunc:SwitchingMethod')
-  # warning('off','optimL:fminunc:SwitchingMethod')
-
-  # Hide warnings related to singular matrix in numerical optimization.
-  # warning('off','MATLAB:nearlySingularMatrix')
-
 
 
   #--------------------------------------------------------------------------------
@@ -169,22 +130,12 @@ FCVARestn <- function(x, k, r, opt) {
     H_psi <- pracma::null(Rpsi)
 
     # Need to back out phi from given db0
-    # startVals <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(startVals[1:2])
     startVals <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(startVals)
 
     if(opt$gridSearch) {
       # Translate from d,b to phi.
 
-      # print('H_psi = ')
-      # print(H_psi)
-      # print('opt$UB_db = ')
-      # print(opt$UB_db)
-      # print('t(opt$UB_db) = ')
-      # print(t(opt$UB_db))
-
-      # UB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(opt$UB_db)
       UB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% opt$UB_db
-      # LB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(opt$LB_db)
       LB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% opt$LB_db
     } else {
       # Otherwise GetBounds returns the values in terms of phi.
@@ -224,14 +175,12 @@ FCVARestn <- function(x, k, r, opt) {
     # If there are equality restrictions add coefficients of 0 to the
     #  level parameter.
     if(!is.null(Rpsi)) {
-      # Check conformability:
       Rpsi <- cbind(Rpsi, matrix(0, nrow = nrow(Rpsi), ncol = p))
     }
 
     # If there are inequality restrictions add coefficients of 0 to the
     #  level parameter.
     if(!is.null(Cdb)) {
-      # Check conformability:
       Cdb <- cbind(Cdb, matrix(0, nrow = nrow(Cdb), ncol = p))
     }
 
@@ -239,10 +188,8 @@ FCVARestn <- function(x, k, r, opt) {
     #   starting values, set as the first observations on each variable,
     #   to the startVals variable to account for the level parameter.
     if(opt$gridSearch == 0) {
-      # Check conformability:
       startVals <- unlist(c(startVals, x[1, ]))
     } else {
-      # Check conformability:
       startVals <- c(startVals, opt$db0[3:length(opt$db0)])
     }
 
@@ -256,18 +203,7 @@ FCVARestn <- function(x, k, r, opt) {
   }
 
 
-  # print('Made it here in FCVAR_estn!')
-
-
-  # if(size(opt$R_psi) == 2) {
   if(nrow(opt$R_psi) == 2) { # i.e. 2 restrictions?
-
-
-    # print('Condition (size(opt$R_psi) == 2) is imposed, whatever that means.')
-    # print('I think it means 2 restrictions but correct me if I am wrong.')
-    # print('In any case, I replaced it with this condition: (nrow(opt$R_psi) == 2),')
-    # print('which is equivalent to (size(opt$R_psi, 1) == 2) in Matlab.')
-
 
     # d,b are exactly identified by the linear restrictions and Rpsi is
     #  invertible. We use opt$R_psi here because Rpsi is adjusted
@@ -313,14 +249,6 @@ FCVARestn <- function(x, k, r, opt) {
     estimates <- GetParams(y, k, r, dbTemp, opt)
 
 
-    # # Test GetParams()
-    # print('summary(y) = ')
-    # print(summary(y))
-    # print('dbTemp = ')
-    # print(dbTemp)
-    # print('estimates = ')
-    # print(estimates)
-
     # Storing the estimates in a global structure here allows us to skip a
     #   call to GetParams after optimization to recover the coefficient
     #   estimates
@@ -334,28 +262,12 @@ FCVARestn <- function(x, k, r, opt) {
     }
 
 
-    # Assign the value for the global variable estimatesTEMP.
-    # Might adjust this later but it will work for now.
-    # assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
-
-
-    # Instead, obtain estimatesTEMP from a function:
-    # estimatesTEMP <- GetEstimates(params, x, k, r, opt)
-    # estimatesTEMP <- GetEstimates(y, k, r, dbTemp, opt)
-    # Note parameters are different in this case.
 
 
   } else {
     # [ !, maxLike, ! ]
     # <- fmincon(@( params ) -FCVARlike(x, params, k, r, opt),
     #            startVals, Cdb, cdb, Rpsi, rpsi, LB, UB, [], opt$ConFminOptions )
-
-    # Test the likelihood function.
-    # print('like = ')
-    # # params <- c(0.8, 0.8)
-    # params <- startVals
-    # FCVARlike(params, x, k, r, opt)
-    # print(FCVARlike(params, x, k, r, opt))
 
 
     # Need to implement optimization correctly.
@@ -415,6 +327,7 @@ FCVARestn <- function(x, k, r, opt) {
     # print(min_out)
 
 
+    # The MATLAB version uses a global variable estimatesTEMP.
     # Instead, obtain estimatesTEMP from a function:
     estimatesTEMP <- GetEstimates(min_out$par, x, k, r, opt)
 
@@ -431,8 +344,6 @@ FCVARestn <- function(x, k, r, opt) {
   #--------------------------------------------------------------------------------
 
   # Store the updated estimation options.
-  # results$startVals <- startVals
-  # results$options <- opt
   results <- list(
     startVals = startVals,
     options = opt,
@@ -457,27 +368,11 @@ FCVARestn <- function(x, k, r, opt) {
   maxLike <- -maxLike
   results$like <- maxLike
 
-  # Some people might find this offensive:
-
-  # print('estimatesTEMP = ')
-  # print(estimatesTEMP)
-
-  # Cut this estimatesTEMP out first:
-  # estimatesTEMP <- get('estimatesTEMP', envir = .GlobalEnv)
-  # But need to replace it with
-  # estimates <- GetEstimates(params, x, k, r, opt)
-  # for the particular version of the likelihood function.
-
-  # print('estimatesTEMP = ')
-  # print(estimatesTEMP)
 
   # Coefficients are taken from a global defined in the likelihood
   #   function
   results$coeffs <- estimatesTEMP
 
-  # Recalculate concentrated parameter estimates (moved above).
-  # estimates <- GetParams(y, k, r, dbTemp, opt) # Do right after optimization.
-  # results$coeffs <- estimates
 
   #--------------------------------------------------------------------------------
   # CHECK RANK CONDITION
@@ -515,18 +410,6 @@ FCVARestn <- function(x, k, r, opt) {
     rH <- ncol(H_beta) # number of free parameters in beta (including constant)
 
     # Following Boswijk & Doornik (2004, p.447) identification condition
-    # Check conformability:
-
-    # print(diag(p))
-    # print(results$coeffs$betaHat)
-    # print(results$coeffs$rhoHat)
-    # print(rbind(results$coeffs$betaHat,
-    #             results$coeffs$rhoHat))
-    # print(cbind(A, matrix(0, nrow = p*r, ncol = rH)))
-    # print(kronecker(diag(p),
-    #                 rbind(results$coeffs$betaHat,
-    #                       results$coeffs$rhoHat)))
-    # print(A)
 
     kronA <- kronecker(diag(p),
                        rbind(results$coeffs$betaHat,
@@ -553,21 +436,17 @@ FCVARestn <- function(x, k, r, opt) {
   if (r > 0) {
 
     if(qr(results$coeffs$alphaHat)$rank < r) {
-      # cat(sprintf('\nWarning: Alpha hat has rank less than r!\n'))
       warning("Estimated matrix alphaHat has rank less than r!",
               "Consider modifying restrictions or estimating with reduced rank.")
     }
 
     if( qr(results$coeffs$betaHat)$rank < r) {
-      # cat(sprintf('\nWarning: Beta hat has rank less than r!\n'))
       warning("Estimated matrix betaHat has rank less than r!",
               "Consider modifying restrictions or estimating with reduced rank.")
     }
 
   }
 
-
-  # print('Made it here in FCVAR_estn!')
 
   #--------------------------------------------------------------------------------
   # FREE PARAMETERS
@@ -579,8 +458,6 @@ FCVARestn <- function(x, k, r, opt) {
   # Store the result.
   results$fp <- fp
 
-
-  # print('Completed Free Parameters in FCVAR_estn!')
 
   #--------------------------------------------------------------------------------
   # STANDARD ERRORS
@@ -624,30 +501,10 @@ FCVARestn <- function(x, k, r, opt) {
       # Length of vec(estimated coefficients in Hessian).
       R_cols  <- colDB + colMu + colRh + colA + colG
 
-      # print('colDB = ')
-      # print(colDB)
-      # print('colMu = ')
-      # print(colMu)
-      # print('colRh = ')
-      # print(colRh)
-      # print('colA = ')
-      # print(colA)
-      # print('colG = ')
-      # print(colG)
-      # print('R_cols = ')
-      # print(R_cols)
 
       # The restriction matrix will have rows equal to the number of
       #   restrictions.
       R_rows <- rowDB + rowA
-
-      # print('rowA = ')
-      # print(rowA)
-      # print('rowDB = ')
-      # print(rowDB)
-      # print('R_rows = ')
-      # print(R_rows)
-
 
 
       R <- matrix(0, nrow = R_rows, ncol = R_cols)
@@ -677,26 +534,14 @@ FCVARestn <- function(x, k, r, opt) {
       }
 
 
-      # coeffs <- results$coeffs
-
       # Calculate unrestricted Hessian.
       H <- FCVARhess(x, k, r, results$coeffs, opt)
 
       # Harry would go crazy if he saw how many times we
       # would be inverting this matrix!
+      # (But it's small, so it's okay.)
       Hinv <- solve(H)
 
-      # print('H = ')
-      # print(H)
-      # print(H/10^(5))
-      # print('diag(H) = ')
-      # print(diag(H)/10^(5))
-
-      # Check condition of Hessian.
-      # eigenH <- eigen(H)
-      # max(abs(eigenH$values))
-      # max(abs(eigenH$values))
-      # max(abs(eigenH$values))/min(abs(eigenH$values))
 
       # R doesn't like to invert empty matrices:
       # print(R %*% solve(H) %*% t(R))
@@ -709,22 +554,8 @@ FCVARestn <- function(x, k, r, opt) {
         Q_meat <- matrix(0, nrow = R_cols, ncol = R_cols)
       }
 
-      # # Calculate the restricted Hessian.
-      # Q <- -solve(H) +
-      #   solve(H) %*%
-      #   # t(R) %*% solve(R %*% solve(H) %*% t(R)) %*% R %*%
-      #   Q_meat %*%
-      #   solve(H)
-
-
       # Calculate the restricted Hessian.
-      Q <- -Hinv +
-        Hinv %*%
-        # t(R) %*% solve(R %*% solve(H) %*% t(R)) %*% R %*%
-        Q_meat %*%
-        Hinv
-
-
+      Q <- -Hinv + Hinv %*% Q_meat %*% Hinv
 
 
     } else {
@@ -740,17 +571,12 @@ FCVARestn <- function(x, k, r, opt) {
     Q <- matrix(0, nrow = NumCoeffs, ncol = NumCoeffs)
   }
 
-  # print('Q = ')
-  # print(Q)
-
 
   # Calculate the standard errors and store them.
   SE <- sqrt(diag(Q))
   results$SE <- SEvec2matU(SE,k,r,p, opt)
   results$NegInvHessian <- Q
 
-
-  # print('Completed standard errors in FCVAR_estn!')
 
   #--------------------------------------------------------------------------------
   # GET RESIDUALS
@@ -775,18 +601,12 @@ FCVARestn <- function(x, k, r, opt) {
   # PRINT OUTPUT
   #--------------------------------------------------------------------------------
 
-  # print('opt$print2screen = ')
-  # print(opt$print2screen)
-  # print('Made it here before H_psi')
-
   printVars <- list(
     H_psi = H_psi,
     LB = LB,
     UB = UB
   )
   results$printVars <- printVars
-
-  # print('Made it here after H_psi assigned. ')
 
   # Append remaining parameters and set class of S3 object.
   results$k <- k
@@ -798,11 +618,9 @@ FCVARestn <- function(x, k, r, opt) {
 
   if (opt$print2screen) {
 
-    # print.FCVARestn(results = results, k, r, p, cap_T, opt)
     summary(object = results)
 
   }
-
 
 
   return(results)
@@ -1114,11 +932,8 @@ summary.FCVAR_model <- function(object, ...) {
     class(FCVAR_CharPoly) <- 'FCVAR_roots'
 
 
-    # print.GetCharPolyRoots(cPolyRoots)
     summary(FCVAR_CharPoly)
 
-    # plot.GetCharPolyRoots(cPolyRoots, b = object$coeffs$db[2],
-    #                       main = 'default')
     graphics::plot(x = FCVAR_CharPoly)
 
   }
