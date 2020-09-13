@@ -755,7 +755,7 @@ plot.FCVAR_roots <- function(x, y = NULL, ...) {
 #' \code{LagSelect} uses this test as part of the lag order selection process.
 #' \code{summary.MVWN_stats} prints a summary of the \code{MVWN_stats} statistics to screen.
 #' @note
-#' The LM test should be consistent for heteroskedastic series, Q-test is not.
+#' The LM test is consistent for heteroskedastic series; the Q-test is not.
 #' @export
 #'
 MVWNtest <- function(x, maxlag, printResults) {
@@ -879,47 +879,49 @@ summary.MVWN_stats <- function(object, ...) {
 }
 
 
-#' Breusch-Godfrey Lagrange Multiplier Test for Serial Correlation
-#'
-#' \code{LMtest} performs a Breusch-Godfrey Lagrange Multiplier test
-#' for serial correlation.
-#'
-#' @param x A vector or Tx1 matrix of variables to be tested,
-#' typically model residuals.
-#' @param q The number of lags for the serial correlation tests.
-#' @return A list object \code{LMtest_out} containing the test results,
-#' including the following parameters:
-#' \describe{
-#'   \item{\code{LM}}{The LM statistic for individual series.}
-#'   \item{\code{pv}}{The p-value for LM-test on individual series.}
-#' }
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
-#' LMtest(x = matrix(results$Residuals[, 1]), q = 12)
-#' LMtest(x = results$Residuals[,2, drop = FALSE], q = 12)
-#'
-#' set.seed(27)
-#' WN <- stats::rnorm(100)
-#' RW <- cumsum(stats::rnorm(100))
-#' LMtest(x = matrix(WN), q = 10)
-#' LMtest(x = matrix(RW), q = 10)
-#' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
-#' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
-#' @family FCVAR postestimation functions
-#' @seealso \code{MVWNtest} calls this function to test residuals
-#' from the estimation results of \code{FCVARestn}.
-#' An alternative test is the Ljung-Box Q-test in \code{Qtest}.
-#' @note
-#' The LM test is consistent for heteroskedastic series.
-#' @export
-#'
+# Breusch-Godfrey Lagrange Multiplier Test for Serial Correlation
+#
+# \code{LMtest} performs a Breusch-Godfrey Lagrange Multiplier test
+# for serial correlation.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param x A vector or Tx1 matrix of variables to be tested,
+# typically model residuals.
+# @param q The number of lags for the serial correlation tests.
+# @return A list object \code{LMtest_out} containing the test results,
+# including the following parameters:
+# \describe{
+#   \item{\code{LM}}{The LM statistic for individual series.}
+#   \item{\code{pv}}{The p-value for LM-test on individual series.}
+# }
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+# LMtest(x = matrix(results$Residuals[, 1]), q = 12)
+# LMtest(x = results$Residuals[,2, drop = FALSE], q = 12)
+#
+# set.seed(27)
+# WN <- stats::rnorm(100)
+# RW <- cumsum(stats::rnorm(100))
+# LMtest(x = matrix(WN), q = 10)
+# LMtest(x = matrix(RW), q = 10)
+# MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+# MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
+# @family FCVAR postestimation functions
+# @seealso \code{MVWNtest} calls this function to test residuals
+# from the estimation results of \code{FCVARestn}.
+# An alternative test is the Ljung-Box Q-test in \code{Qtest}.
+# @note
+# The LM test is consistent for heteroskedastic series.
+# @export
+#
 LMtest <- function(x, q) {
 
   # print('In LMtest')
@@ -1006,50 +1008,50 @@ LMtest <- function(x, q) {
 }
 
 
-#' Ljung-Box Q-test for Serial Correlation
-#'
-#' \code{Qtest} performs a (multivariate) Ljung-Box Q-test for serial correlation; see
-# 	Luetkepohl (2005, New Introduction to Multiple Time Series Analysis, p. 169).
-#'
-#' @param x A vector or Tx1 matrix of variables to be tested,
-#' typically model residuals.
-#' @param maxlag The number of lags for the serial correlation tests.
-#' @return A list object \code{LMtest_out} containing the test results,
-#' including the following parameters:
-#' \describe{
-#'   \item{\code{Qstat}}{A 1xp vector of Q statistics for individual series.}
-#'   \item{\code{pv}}{A 1xp vector of P-values for Q-test on individual series.}
-#' }
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
-#' Qtest(x = results$Residuals, maxlag = 12)
-#' Qtest(x = matrix(results$Residuals[, 1]), maxlag = 12)
-#' Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
-#'
-#' set.seed(27)
-#' WN <- stats::rnorm(100)
-#' RW <- cumsum(stats::rnorm(100))
-#' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
-#' Qtest(x = MVWN_x, maxlag = 10)
-#' Qtest(x = matrix(WN), maxlag = 10)
-#' Qtest(x = matrix(RW), maxlag = 10)
-#' @family FCVAR postestimation functions
-#' @seealso \code{MVWNtest} calls this function to test residuals
-#' from the estimation results of \code{FCVARestn}.
-#' An alternative test is the Breusch-Godfrey Lagrange Multiplier Test in \code{LMtest}.
-#' @note
-#' The LM test in \code{LMtest} is consistent for heteroskedastic series,
-#' while the Q-test is not.
-#' @references H. Luetkepohl (2005) "New Introduction to Multiple Time Series Analysis," Springer, Berlin.
-#' @export
-#'
+# Ljung-Box Q-test for Serial Correlation
+#
+# \code{Qtest} performs a (multivariate) Ljung-Box Q-test for serial correlation; see
+#	Luetkepohl (2005, New Introduction to Multiple Time Series Analysis, p. 169).
+#
+# @param x A vector or Tx1 matrix of variables to be tested,
+# typically model residuals.
+# @param maxlag The number of lags for the serial correlation tests.
+# @return A list object \code{LMtest_out} containing the test results,
+# including the following parameters:
+# \describe{
+#   \item{\code{Qstat}}{A 1xp vector of Q statistics for individual series.}
+#   \item{\code{pv}}{A 1xp vector of P-values for Q-test on individual series.}
+# }
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
+# Qtest(x = results$Residuals, maxlag = 12)
+# Qtest(x = matrix(results$Residuals[, 1]), maxlag = 12)
+# Qtest(x = results$Residuals[,2, drop = FALSE], maxlag = 12)
+#
+# set.seed(27)
+# WN <- stats::rnorm(100)
+# RW <- cumsum(stats::rnorm(100))
+# MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
+# Qtest(x = MVWN_x, maxlag = 10)
+# Qtest(x = matrix(WN), maxlag = 10)
+# Qtest(x = matrix(RW), maxlag = 10)
+# @family FCVAR postestimation functions
+# @seealso \code{MVWNtest} calls this function to test residuals
+# from the estimation results of \code{FCVARestn}.
+# An alternative test is the Breusch-Godfrey Lagrange Multiplier Test in \code{LMtest}.
+# @note
+# The LM test in \code{LMtest} is consistent for heteroskedastic series,
+# while the Q-test is not.
+# @references H. Luetkepohl (2005) "New Introduction to Multiple Time Series Analysis," Springer, Berlin.
+# @export
+#
 Qtest <- function(x, maxlag) {
 
   # print('class(x) = ')

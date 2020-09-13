@@ -59,9 +59,7 @@ Other FCVAR postestimation functions:
 \code{\link{FCVARboot}()},
 \code{\link{FCVARhypoTest}()},
 \code{\link{GetCharPolyRoots}()},
-\code{\link{LMtest}()},
 \code{\link{MVWNtest}()},
-\code{\link{Qtest}()},
 \code{\link{summary.FCVAR_roots}()},
 \code{\link{summary.MVWN_stats}()}
 }

@@ -36,7 +36,7 @@ for a sequence of lag lengths.
 \code{summary.MVWN_stats} prints a summary of these statistics to screen.
 }
 \note{
-The LM test should be consistent for heteroskedastic series, Q-test is not.
+The LM test should be consistent for heteroskedastic series, the Q-test is not.
 }
 \examples{
 opt <- FCVARoptions()
@@ -64,8 +64,6 @@ Other FCVAR postestimation functions:
 \code{\link{FCVARboot}()},
 \code{\link{FCVARhypoTest}()},
 \code{\link{GetCharPolyRoots}()},
-\code{\link{LMtest}()},
-\code{\link{Qtest}()},
 \code{\link{plot.FCVAR_roots}()},
 \code{\link{summary.FCVAR_roots}()},
 \code{\link{summary.MVWN_stats}()}

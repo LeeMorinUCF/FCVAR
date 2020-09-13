@@ -6,12 +6,77 @@
 #' \code{FCVARoptions} defines the estimation options used in the FCVAR
 #'   estimation procedure and the related programs.
 #'
-#' @return An S3 object of class \code{FCVAR_opt} that stores the default estimation options.
+#' @return An S3 object of class \code{FCVAR_opt} that stores the default estimation options,
+#' which includes the following parameters:
+#' \describe{
+#'   \item{\code{UncFminOptions}}{CHECK: Options passed to \code{optimize} function for
+#'   unconstrained optimization of the likelihood function over the fractional integration parameters.}
+#'   \item{\code{ConFminOptions}}{CHECK: Options passed to \code{optimize} function for
+#'   constrained optimization of the likelihood function over the fractional integration parameters.}
+#'   \item{\code{LineSearch}}{Indicator for conducting a line search optimization within
+#'   the switching algorithm when optimizing over constraints on the cointegrating relations \code{\beta}
+#'   or the adjustment coefficients \code{\alpha}. See Doornik (2018, Section 2.2) for details.}
+#'   \item{\code{LocalMax}}{Indicator to select the local maximum with the highest value of \code{b}
+#'   when there are multiple local optima. This is meant to alleviate the identification problem discussed
+#'    in Johansen and Nielsen (2010, Section 2.3)  and Carlini and de Magistris (2019).
+#'    When \code{LocalMax <- 0}, the optimization returns the values of \code{d} and \code{b}
+#'    corresponding to the global optimum.}
+#'   \item{\code{dbMax}}{Upper bound for the fractional integration parameters \code{d}, \code{b}.}
+#'   \item{\code{dbMin}}{Lower bound for the fractional integration parameters \code{d}, \code{b}.}
+#'   \item{\code{db0}}{The starting values for optimization of the fractional integration parameters \code{d}, \code{b}.}
+#'   \item{\code{constrained}}{Indicator to impose restriction \code{dbMax >= d >= b >= dbMin}.}
+#'   \item{\code{restrictDB}}{Indicator to impose restriction \code{d = b}.}
+#'   \item{\code{N}}{The number of initial values: the observations to condition upon.}
+#'   \item{\code{unrConstant}}{Indicator to include an unrestricted constant.}
+#'   \item{\code{rConstant}}{Indicator to include an restricted constant.}
+#'   \item{\code{levelParam}}{Indicator to include level parameter.}
+#'   \item{\code{C_db}}{CHECK whether still used.}
+#'   \item{\code{c_db}}{CHECK whether still used.}
+#'   \item{\code{UB_db}}{An upper bound on the fractional integration parameters \code{d} and \code{b},
+#'   after transforming the parameters to account for any restrictions imposed.}
+#'   \item{\code{LB_db}}{An lower bound on the fractional integration parameters \code{d} and \code{b},
+#'   after transforming the parameters to account for any restrictions imposed.}
+#'   \item{\code{R_psi}}{A matrix for defining restrictions on the fractional integration
+#'   parameters \code{d} and \code{b}, of the form \eqn{R_{\psi}(d, b)' = r_{\psi}}.}
+#'   \item{\code{r_psi}}{A vector for defining restrictions on the fractional integration
+#'   parameters \code{d} and \code{b}, of the form \eqn{R_{\psi}(d, b)' = r_{\psi}}.}
+#'   \item{\code{R_Alpha}}{A matrix for defining restrictions on the adjustment coefficients
+#'   of the form \eqn{R_{\alpha}\alpha = r_{\alpha}}.}
+#'   \item{\code{r_Alpha}}{A vetor for defining restrictions on the adjustment coefficients
+#'   of the form \eqn{R_{\alpha}\alpha = r_{\alpha}}.}
+#'   \item{\code{R_Beta}}{A matrix for defining restrictions on the cointegrating relations
+#'   of the form \eqn{R_{\beta}\beta = r_{\beta}}.}
+#'   \item{\code{r_Beta}}{A vector for defining restrictions on the cointegrating relations
+#'   of the form \eqn{R_{\beta}\beta = r_{\beta}}.}
+#'   \item{\code{print2screen}}{Indicator to print output to screen.}
+#'   \item{\code{printGammas}}{Indicator to print estimates and standard errors on autoregressive
+#'   coefficients \eqn{\Gamma_i, i = i, ..., k}.}
+#'   \item{\code{printRoots}}{Indicator to print roots of characteristic polynomial.}
+#'   \item{\code{plotRoots}}{Indicator to plot roots of characteristic polynomial.}
+#'   \item{\code{CalcSE}}{Indicator to calculate the standard errors. It is used when displaying results.}
+#'   \item{\code{gridSearch}}{Indicator to perform a grid search for the optimization
+#'   over the fractional integration parameters, for more accurate estimation.
+#'   This will make estimation take longer.}
+#'   \item{\code{dbStep1D}}{The step size for the grid search over the fractional integration parameters
+#'   for the 1-dimensional grid search (such as when restrictions are imposed between \code{d} and \code{b}.). }
+#'   \item{\code{dbStep2D}}{The step size for the grid search over the fractional integration parameters
+#'   for the 2-dimensional grid search.}
+#'   \item{\code{plotLike}}{Indicator to plot the likelihood (only if \code{gridSearch <- 1}).}
+#'   \item{\code{progress}}{Show a waitbar for a progress indicator for the grid search.}
+#'   \item{\code{updateTime}}{How often progress is updated in the waitbar for the grid search (in seconds).}
+#' }
 #' @examples
 #' opt <- FCVARoptions()
 #' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.
 #' \code{FCVARestn} for use of these options in estimation.
+#' @references Doornik, J. A. (2018) "Accelerated Estimation of Switching Algorithms:
+#' The Cointegrated VAR Model and Other Applications."
+#' Scandinavian Journal of Statistics, Volume 45, Issue 2.
+#' @references Johansen, Søren, and Morten Ørregaard Nielsen (2010) "Likelihood inference for a nonstationary
+#' fractional autoregressive model." Journal of Econometrics 158, 51–66.
+#' @references Carlini, F., and P. S. de Magistris (2019) "On the identification of fractionally cointegrated
+#' VAR models with the F(d) condition." Journal of Business & Economic Statistics 37(1), 134–146.
 #' @export
 #'
 FCVARoptions <- function() {
@@ -136,6 +201,17 @@ FCVARoptions <- function() {
     # characteristic polynomial from being plotted.
     plotRoots = 1,
 
+
+    #--------------------------------------------------------------------------------
+    # Switch for calculating SEs
+    #--------------------------------------------------------------------------------
+
+    # Calculate SEs. This option should not be changed by the user.
+    #   Calculating standard errors is omitted in the LagSelection.m
+    #   RankTests.m functions to speed up estimation.
+    CalcSE = 1,
+
+
     #--------------------------------------------------------------------------------
     # Grid search
     #--------------------------------------------------------------------------------
@@ -162,35 +238,7 @@ FCVARoptions <- function() {
     progress = 1,
 
     # If progress ~= 0, print progress every updateTime seconds.
-    updateTime = 5,
-
-    #--------------------------------------------------------------------------------
-    # Set location path with program name
-    #--------------------------------------------------------------------------------
-
-    # Location path with program name of fracdist program, if installed,
-    #   for calculation of P-values, see MacKinnon and Nielsen (2014, JAE).
-    # If this is not installed, the option can be left as-is or blank.
-    # Note: use both single (outside) and double quotes (inside). This
-    #   is especially important if path name has spaces.
-
-    # Linux example:
-    progLoc = '"/usr/bin/fdpval"',
-
-    # Windows example:
-    #   program located in folder fdpval in current directory
-    # progLoc = '".\fdpval\fdpval"'
-
-
-    #--------------------------------------------------------------------------------
-    # Switch for calculating SEs
-    #--------------------------------------------------------------------------------
-
-    # Calculate SEs. This option should not be changed by the user.
-    #   Calculating standard errors is omitted in the LagSelection.m
-    #   RankTests.m functions to speed up estimation.
-    CalcSE = 1
-
+    updateTime = 5
 
 
   )
@@ -202,38 +250,40 @@ FCVARoptions <- function() {
 }
 
 
-#' Update Estimation Options for FCVAR Restrictions
-#'
-#' A function to set and test estimation options for validity and compatibility.
-#' This function is called prior to estimation and
-#' 	performs several checks to verify the input in the estimation
-#' 	options:
-#' \itemize{
-#'   \item Check that only one option for deterministics is chosen,
-#'   \item Check that starting values have been specified correctly,
-#'   \item Update \code{dbMin}, \code{dbMax}, based on user-specified options,
-#'   \item Check for appropriate dimensions and redundancies in the restriction matrices \code{R_psi}, \code{R_Alpha} and \code{R_Beta}.
-#' }
-#'
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @param p The number of variables in the system.
-#' @param r The cointegrating rank.
-#' @return A list object \code{newOpt} that stores the chosen estimation options,
-#' with appropriate updates based on user-defined options.
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
-#' @family FCVAR estimation functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} calls this function at the start of each estimation to verify
-#' validity of options.
-#' @export
-#'
+# Update Estimation Options for FCVAR Restrictions
+#
+# A function to set and test estimation options for validity and compatibility.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+# This function is called prior to estimation and
+# 	performs several checks to verify the input in the estimation
+# 	options:
+# \itemize{
+#   \item Check that only one option for deterministics is chosen,
+#   \item Check that starting values have been specified correctly,
+#   \item Update \code{dbMin}, \code{dbMax}, based on user-specified options,
+#   \item Check for appropriate dimensions and redundancies in the restriction matrices \code{R_psi}, \code{R_Alpha} and \code{R_Beta}.
+# }
+#
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @param p The number of variables in the system.
+# @param r The cointegrating rank.
+# @return An S3 object of class \code{FCVAR_opt} that stores the default estimation options.
+# It is a revised version of the output of \code{FCVARoptions()}.
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
+# @family FCVAR estimation functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} calls this function at the start of each estimation to verify
+# validity of options.
+# @export
+#
 FCVARoptionUpdates <- function(opt, p, r) {
 
   #--------------------------------------------------------------------------------
@@ -244,8 +294,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
   if(opt$levelParam & opt$rConstant) {
 
     opt$rConstant <- 0
-    # cat(sprintf('\nWarning, both restricted constant and level parameter selected.\n'))
-    # cat(sprintf('Only level parameter will be included.\n'))
     warning("Both restricted constant and level parameter selected.\n",
             "Only level parameter will be included.\n",
             "To avoid this warning message, please choose one of the above options.")
@@ -265,8 +313,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
      opt$db0[1] != opt$db0[2]) {
 
     opt$db0 <- c(opt$db0[1], opt$db0[1])
-    # cat(sprintf('\nWarning, d=b imposed but starting values are different for d,b.\n'))
-    # cat(sprintf('db0 set to (%g, %g).\n', opt$db0[1], opt$db0[2]))
     warning("Restriction d = b imposed but starting values are different for d and b.\n",
             sprintf('Starting values db0 set to c(%g, %g).\n', opt$db0[1], opt$db0[2]))
 
@@ -281,9 +327,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
   # Check if too many parameters specified in dbMin/dbMax
   if ( length(opt$dbMin) > 2 | length(opt$dbMax) > 2 ) {
 
-
-    # cat(sprintf('\nWARNING: Too many parameters specified in dbMin or dbMax.\n'))
-    # cat(sprintf('\nOnly the first two elements will be used to set bounds in estimation.\n'))
     warning("Too many parameters specified in dbMin or dbMax.\n",
             "Only the first two elements will be used to set bounds in estimation.")
 
@@ -306,29 +349,19 @@ FCVARoptionUpdates <- function(opt, p, r) {
   # Minimum
   if( length(opt$dbMin) == 1 ) {
     opt$dbMin <- c(opt$dbMin, opt$dbMin)
-    # Notification to user.
-    # cat(sprintf('\nWarning: minimum value specified for d only.\n'))
-    # cat(sprintf('Min value of b set to %2.4f\n', opt$dbMin[2]))
     warning("Minimum value specified for d only.\n",
             sprintf('Minimum value of b set to %2.4f\n', opt$dbMin[2]))
   } else {
     # Set as row vector, regardless of input.
-    # opt$dbMin <- reshape(opt$dbMin,1,2)
-    # Not needed since R "recycles".
     opt$dbMin <- matrix(opt$dbMin, nrow = 1, ncol = 2)
   }
   # Maximum
   if(length(opt$dbMax) == 1) {
     opt$dbMax <- c(opt$dbMax, opt$dbMax)
-    # Notification to user.
-    # cat(sprintf('\nWarning: maximum value specified for d only.\n'))
-    # cat(sprintf('Max value of b set to %2.4f\n', opt$dbMax[2]))
     warning("Maximum value specified for d only.\n",
             sprintf('Maximum value of b set to %2.4f.\n', opt$dbMax[2]))
   } else {
     # Set as row vector, regardless of input.
-    # opt$dbMax <- reshape(opt$dbMax,1,2)
-    # Not needed since R "recycles".
     opt$dbMax <- matrix(opt$dbMax, nrow = 1, ncol = 2)
   }
 
@@ -337,14 +370,10 @@ FCVARoptionUpdates <- function(opt, p, r) {
   # Check for consistency among min and max values for fractional
   # parameters.
   if( opt$dbMin[1] > opt$dbMax[1] ) {
-    # cat(sprintf('\nWarning, min > max for bounds on d.\n'))
-    # stop('Invalid bounds imposed on d.')
     stop("Invalid bounds imposed on d.\n",
          "Minimum > maximum for bounds on d, leaving parameter space empty.")
   }
   if( opt$dbMin[2] > opt$dbMax[2] ) {
-    # cat(sprintf('\nWarning, min > max for bounds on b.\n'))
-    # stop('Invalid bounds imposed on b.')
     stop("Invalid bounds imposed on b.\n",
          "Minimum > maximum for bounds on b, leaving parameter space empty.")
   }
@@ -356,8 +385,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
   # inequalities.
   if(!is.null(opt$C_db) & opt$constrained) {
 
-    # cat(sprintf('\nWarning, inequality restrictions imposed and constrained selected.\n'))
-    # cat(sprintf('Restrictions in C_db override constrained options.\n'))
     warning("Inequality restrictions imposed and constrained model selected.\n",
             "Restrictions in C_db override constrained options.")
     opt$constrained <- 0
@@ -609,30 +636,32 @@ FCVARoptionUpdates <- function(opt, p, r) {
 }
 
 
-#' Obtain Bounds on FCVAR Parameters
-#'
-#' \code{GetBounds()} obtains bounds on fractional integration parameters in the FCVAR model.
-#'   This function obtains upper and lower bounds on \code{d}, \code{b} or on
-#'   \code{phi}, which is given by \code{db <- H*phi + h},
-#'   using the restrictions implied by \code{H} and \code{h}.
-#'
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A list object \code{UB_LB_bounds} containing the upper (\code{UB}) and lower (\code{LB})  bounds on either \code{db} or \code{phi}.
-#' These vectors are either 1- or 2-dimensional depending on whether a restriction on \code{d} and \code{b} is imposed or not.
-#' @examples
-#' opt <- FCVARoptions()
-#' UB_LB_bounds <- GetBounds(opt)
-#'
-#' opt <- FCVARoptions()
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' UB_LB_bounds <- GetBounds(opt)
-#' @family FCVAR estimation functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} calls this function at the start of each estimation to specify any bounds on fractional integration parameters.
-#' @export
-#'
+# Obtain Bounds on FCVAR Parameters
+#
+# \code{GetBounds()} obtains bounds on fractional integration parameters in the FCVAR model.
+#   This function obtains upper and lower bounds on \code{d}, \code{b} or on
+#   \code{phi}, which is given by \code{db <- H*phi + h},
+#   using the restrictions implied by \code{H} and \code{h}.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A list object \code{UB_LB_bounds} containing the upper (\code{UB}) and lower (\code{LB})  bounds on either \code{db} or \code{phi}.
+# These vectors are either 1- or 2-dimensional depending on whether a restriction on \code{d} and \code{b} is imposed or not.
+# @examples
+# opt <- FCVARoptions()
+# UB_LB_bounds <- GetBounds(opt)
+#
+# opt <- FCVARoptions()
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# UB_LB_bounds <- GetBounds(opt)
+# @family FCVAR estimation functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} calls this function at the start of each estimation to specify any bounds on fractional integration parameters.
+# @export
+#
 GetBounds <- function(opt) {
 
 

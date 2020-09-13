@@ -7,7 +7,65 @@
 FCVARoptions()
 }
 \value{
-An S3 object of class \code{FCVAR_opt} that stores the default estimation options.
+An S3 object of class \code{FCVAR_opt} that stores the default estimation options,
+which includes the following parameters:
+\describe{
+  \item{\code{UncFminOptions}}{CHECK: Options passed to \code{optimize} function for
+  unconstrained optimization of the likelihood function over the fractional integration parameters.}
+  \item{\code{ConFminOptions}}{CHECK: Options passed to \code{optimize} function for
+  constrained optimization of the likelihood function over the fractional integration parameters.}
+  \item{\code{LineSearch}}{Indicator for conducting a line search optimization within
+  the switching algorithm when optimizing over constraints on the cointegrating relations \code{\beta}
+  or the adjustment coefficients \code{\alpha}. See Doornik (2018, Section 2.2) for details.}
+  \item{\code{LocalMax}}{Indicator to select the local maximum with the highest value of \code{b}
+  when there are multiple local optima. This is meant to alleviate the identification problem discussed
+   in Johansen and Nielsen (2010, Section 2.3)  and Carlini and de Magistris (2019).
+   When \code{LocalMax <- 0}, the optimization returns the values of \code{d} and \code{b}
+   corresponding to the global optimum.}
+  \item{\code{dbMax}}{Upper bound for the fractional integration parameters \code{d}, \code{b}.}
+  \item{\code{dbMin}}{Lower bound for the fractional integration parameters \code{d}, \code{b}.}
+  \item{\code{db0}}{The starting values for optimization of the fractional integration parameters \code{d}, \code{b}.}
+  \item{\code{constrained}}{Indicator to impose restriction \code{dbMax >= d >= b >= dbMin}.}
+  \item{\code{restrictDB}}{Indicator to impose restriction \code{d = b}.}
+  \item{\code{N}}{The number of initial values: the observations to condition upon.}
+  \item{\code{unrConstant}}{Indicator to include an unrestricted constant.}
+  \item{\code{rConstant}}{Indicator to include an restricted constant.}
+  \item{\code{levelParam}}{Indicator to include level parameter.}
+  \item{\code{C_db}}{CHECK whether still used.}
+  \item{\code{c_db}}{CHECK whether still used.}
+  \item{\code{UB_db}}{An upper bound on the fractional integration parameters \code{d} and \code{b},
+  after transforming the parameters to account for any restrictions imposed.}
+  \item{\code{LB_db}}{An lower bound on the fractional integration parameters \code{d} and \code{b},
+  after transforming the parameters to account for any restrictions imposed.}
+  \item{\code{R_psi}}{A matrix for defining restrictions on the fractional integration
+  parameters \code{d} and \code{b}, of the form \eqn{R_{\psi}(d, b)' = r_{\psi}}.}
+  \item{\code{r_psi}}{A vector for defining restrictions on the fractional integration
+  parameters \code{d} and \code{b}, of the form \eqn{R_{\psi}(d, b)' = r_{\psi}}.}
+  \item{\code{R_Alpha}}{A matrix for defining restrictions on the adjustment coefficients
+  of the form \eqn{R_{\alpha}\alpha = r_{\alpha}}.}
+  \item{\code{r_Alpha}}{A vetor for defining restrictions on the adjustment coefficients
+  of the form \eqn{R_{\alpha}\alpha = r_{\alpha}}.}
+  \item{\code{R_Beta}}{A matrix for defining restrictions on the cointegrating relations
+  of the form \eqn{R_{\beta}\beta = r_{\beta}}.}
+  \item{\code{r_Beta}}{A vector for defining restrictions on the cointegrating relations
+  of the form \eqn{R_{\beta}\beta = r_{\beta}}.}
+  \item{\code{print2screen}}{Indicator to print output to screen.}
+  \item{\code{printGammas}}{Indicator to print estimates and standard errors on autoregressive
+  coefficients \eqn{\Gamma_i, i = i, ..., k}.}
+  \item{\code{printRoots}}{Indicator to print roots of characteristic polynomial.}
+  \item{\code{plotRoots}}{Indicator to plot roots of characteristic polynomial.}
+  \item{\code{CalcSE}}{Indicator to calculate the standard errors. It is used when displaying results.}
+  \item{\code{gridSearch}}{Indicator to perform a grid search for the optimization
+  over the fractional integration parameters, for more accurate estimation.
+  This will make estimation take longer.}
+  \item{\code{dbStep1D}}{The step size for the grid search over the fractional integration parameters
+  for the 1-dimensional grid search (such as when restrictions are imposed between \code{d} and \code{b}.). }
+  \item{\code{dbStep2D}}{The step size for the grid search over the fractional integration parameters
+  for the 2-dimensional grid search.}
+  \item{\code{plotLike}}{Indicator to plot the likelihood (only if \code{gridSearch <- 1}).}
+  \item{\code{progress}}{Show a waitbar for a progress indicator for the grid search.}
+  \item{\code{updateTime}}{How often progress is updated in the waitbar for the grid search (in seconds).}
+}
 }
 \description{
 \code{FCVARoptions} defines the estimation options used in the FCVAR
@@ -16,14 +74,23 @@ An S3 object of class \code{FCVAR_opt} that stores the default estimation option
 \examples{
 opt <- FCVARoptions()
 }
+\references{
+Doornik, J. A. (2018) "Accelerated Estimation of Switching Algorithms:
+The Cointegrated VAR Model and Other Applications."
+Scandinavian Journal of Statistics, Volume 45, Issue 2.
+
+Johansen, Søren, and Morten Ørregaard Nielsen (2010) "Likelihood inference for a nonstationary
+fractional autoregressive model." Journal of Econometrics 158, 51–66.
+
+Carlini, F., and P. S. de Magistris (2019) "On the identification of fractionally cointegrated
+VAR models with the F(d) condition." Journal of Business & Economic Statistics 37(1), 134–146.
+}
 \seealso{
 \code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.
 \code{FCVARestn} for use of these options in estimation.
 
 Other FCVAR estimation functions: 
 \code{\link{FCVARestn}()},
-\code{\link{FCVARoptionUpdates}()},
-\code{\link{GetBounds}()},
 \code{\link{summary.FCVAR_model}()}
 }
 \concept{FCVAR estimation functions}

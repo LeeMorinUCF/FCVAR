@@ -39,23 +39,10 @@ xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
 \code{FCVARforecast} calls \code{FracDiff} and \code{Lbk} to calculate the forecast.
 
 Other FCVAR auxilliary functions: 
-\code{\link{FCVARhess}()},
-\code{\link{FCVARlikeFull}()},
 \code{\link{FCVARlikeGrid}()},
-\code{\link{FCVARlikeMu}()},
-\code{\link{FCVARlike}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FCVARsim}()},
 \code{\link{FracDiff}()},
-\code{\link{GetEstimates}()},
-\code{\link{GetFreeParams}()},
-\code{\link{GetParams}()},
-\code{\link{GetResiduals}()},
-\code{\link{GetRestrictedParams}()},
-\code{\link{Lbk}()},
-\code{\link{SEmat2vecU}()},
-\code{\link{SEvec2matU}()},
-\code{\link{TransformData}()},
 \code{\link{plot.FCVAR_grid}()}
 }
 \concept{FCVAR auxilliary functions}

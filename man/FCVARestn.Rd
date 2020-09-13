@@ -78,9 +78,7 @@ validity of options.
 \code{summary.FCVAR_model} prints the output of \code{FCVARestn} to screen.
 
 Other FCVAR estimation functions: 
-\code{\link{FCVARoptionUpdates}()},
 \code{\link{FCVARoptions}()},
-\code{\link{GetBounds}()},
 \code{\link{summary.FCVAR_model}()}
 }
 \concept{FCVAR estimation functions}

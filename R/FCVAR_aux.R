@@ -269,45 +269,47 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 }
 
 
-#' Calculate Parameters of the Cointegrated VAR Model
-#'
-#' \code{GetParams} calculates the parameters of the cointegrated VAR model
-#'  from a multivariate sample.
-#'  This function uses FWL and reduced rank regression to obtain
-#' the estimates of \code{Alpha}, \code{Beta}, \code{Rho}, \code{Pi},
-#' \code{Gamma}, and \code{Omega}, using the notation in Johansen and Nielsen (2012).
-#'
-#' @param x A matrix of variables to be included in the system.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param db The orders of fractional integration.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A list object \code{estimates} containing the estimates,
-#' including the following parameters:
-#' \describe{
-#'   \item{\code{db}}{The orders of fractional integration (taken directly from the input).}
-#'   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
-#'   \item{\code{betaHat}}{A \eqn{p x r} matrix of cointegrating vectors.
-#'       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
-#'   \item{\code{rhoHat}}{A \eqn{p x 1} vector of restricted constatnts.}
-#'   \item{\code{piHat}}{A \eqn{p x p} matrix \eqn{\Pi = \alpha \beta'} of long-run levels.}
-#'   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
-#'   \item{\code{GammaHat}}{A ( \eqn{p x kp} matrix \code{cbind(GammaHat1,...,GammaHatk)})
-#'   of autoregressive coefficients. }
-#' }
-#' @examples
-#' opt <- FCVARoptions()
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' estimates <- GetParams(x, k = 2, r = 1, db = c(1, 1), opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model.
-#' @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
-#' "Likelihood inference for a fractionally cointegrated
-#' vector autoregressive model," Econometrica 80, 2667-2732.
-#' @export
-#'
+# Calculate Parameters of the Cointegrated VAR Model
+#
+# \code{GetParams} calculates the parameters of the cointegrated VAR model
+#  from a multivariate sample.
+#  This function uses FWL and reduced rank regression to obtain
+# the estimates of \code{Alpha}, \code{Beta}, \code{Rho}, \code{Pi},
+# \code{Gamma}, and \code{Omega}, using the notation in Johansen and Nielsen (2012).
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param x A matrix of variables to be included in the system.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param db The orders of fractional integration.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A list object \code{estimates} containing the estimates,
+# including the following parameters:
+# \describe{
+#   \item{\code{db}}{The orders of fractional integration (taken directly from the input).}
+#   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
+#   \item{\code{betaHat}}{A \eqn{p x r} matrix of cointegrating vectors.
+#       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
+#   \item{\code{rhoHat}}{A \eqn{p x 1} vector of restricted constatnts.}
+#   \item{\code{piHat}}{A \eqn{p x p} matrix \eqn{\Pi = \alpha \beta'} of long-run levels.}
+#   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
+#   \item{\code{GammaHat}}{A ( \eqn{p x kp} matrix \code{cbind(GammaHat1,...,GammaHatk)})
+#   of autoregressive coefficients. }
+# }
+# @examples
+# opt <- FCVARoptions()
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# estimates <- GetParams(x, k = 2, r = 1, db = c(1, 1), opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model.
+# @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
+# "Likelihood inference for a fractionally cointegrated
+# vector autoregressive model," Econometrica 80, 2667-2732.
+# @export
+#
 GetParams <- function(x, k, r, db, opt) {
 
   # print('Made it to GetParams!')
@@ -1373,21 +1375,23 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
 }
 
 
-#' Find local optima
-#'
-#' \code{find_local_max} finds the row and column numbers corresponding
-#' to the local maxima of a 1- or 2-dimensional array.
-#'
-#' @param x A 1- or 2-dimensional numerical array of the candidate values
-#' of the objective function.
-#' @return A list object with three elements:
-#' \describe{
-#'   \item{\code{row}}{An integer row number of the local maxima. }
-#'   \item{\code{col}}{An integer column number of the local maxima. }
-#'   \item{\code{value}}{The numeric values of the local maxima. }
-#' }
-#'
-#'
+# Find local optima
+#
+# \code{find_local_max} finds the row and column numbers corresponding
+# to the local maxima of a 1- or 2-dimensional array.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param x A 1- or 2-dimensional numerical array of the candidate values
+# of the objective function.
+# @return A list object with three elements:
+# \describe{
+#   \item{\code{row}}{An integer row number of the local maxima. }
+#   \item{\code{col}}{An integer column number of the local maxima. }
+#   \item{\code{value}}{The numeric values of the local maxima. }
+# }
+#
+#
 find_local_max <- function(x) {
 
   # Determine size of input.
@@ -1480,32 +1484,34 @@ find_local_max <- function(x) {
 
 
 
-#' Likelihood Function for the Unconstrained FCVAR Model
-#'
-#' \code{FCVARlikeMu} calculates the likelihood for the unconstrained FCVAR model
-#' for a given set of parameter values. It is used by the \code{FCVARlikeGrid}
-#' function to numerically optimize over the level parameter for given values of
-#' the fractional parameters.
-#'
-#' @param y A matrix of variables to be included in the system.
-#' @param db The orders of fractional integration.
-#' @param mu The level parameter.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A number \code{like}, the log-likelihood evaluated at the
-#' specified parameter values.
-#' @examples
-#' opt <- FCVARoptions()
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' like <- FCVARlikeMu(mu = colMeans(x), y = x, db = c(1, 1), k = 2, r = 1, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' The \code{FCVARlikeGrid} calls this function to perform a grid search over the
-#' parameter values.
-#' @export
-#'
+# Likelihood Function for the Unconstrained FCVAR Model
+#
+# \code{FCVARlikeMu} calculates the likelihood for the unconstrained FCVAR model
+# for a given set of parameter values. It is used by the \code{FCVARlikeGrid}
+# function to numerically optimize over the level parameter for given values of
+# the fractional parameters.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param y A matrix of variables to be included in the system.
+# @param db The orders of fractional integration.
+# @param mu The level parameter.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A number \code{like}, the log-likelihood evaluated at the
+# specified parameter values.
+# @examples
+# opt <- FCVARoptions()
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# like <- FCVARlikeMu(mu = colMeans(x), y = x, db = c(1, 1), k = 2, r = 1, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# The \code{FCVARlikeGrid} calls this function to perform a grid search over the
+# parameter values.
+# @export
+#
 FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 
 
@@ -1536,34 +1542,36 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 }
 
 
-#' Likelihood Function for the Constrained FCVAR Model
-#'
-#' \code{FCVARlike} calculates the likelihood for the constrained FCVAR model
-#' for a given set of parameter values. This function adjusts the variables with the level parameter,
-#'if present, and returns the log-likelihood given \code{d} and \code{b}.
-#'
-#' @param params A vector of parameters \code{d} and \code{b}
-#' (and \code{mu} if option selected).
-#' @param x A matrix of variables to be included in the system.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A number \code{like}, the log-likelihood evaluated at the
-#' specified parameter values.
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' FCVARlike(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' @export
-#'
+# Likelihood Function for the Constrained FCVAR Model
+#
+# \code{FCVARlike} calculates the likelihood for the constrained FCVAR model
+# for a given set of parameter values. This function adjusts the variables with the level parameter,
+# if present, and returns the log-likelihood given \code{d} and \code{b}.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param params A vector of parameters \code{d} and \code{b}
+# (and \code{mu} if option selected).
+# @param x A matrix of variables to be included in the system.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A number \code{like}, the log-likelihood evaluated at the
+# specified parameter values.
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# FCVARlike(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# @export
+#
 FCVARlike <- function(params, x, k, r, opt) {
 
   # global estimatesTEMP
@@ -1669,51 +1677,53 @@ FCVARlike <- function(params, x, k, r, opt) {
 }
 
 
-#' Obtain concentrated parameter estimates for the Constrained FCVAR Model
-#'
-#' \code{GetEstimates} calculates the concentrated parameter estimates for
-#' the constrained FCVAR model for a given set of parameter values.
-#' It is used after estimating the parameters that are numerically optimized
-#' to obtain the corresponding concentrated parameters.
-#' Like \code{FCVARlike} , this function adjusts the variables with the level parameter,
-#' if present, and returns the log-likelihood given \code{d} and \code{b}.
-#'
-#' @param params A vector of parameters \code{d} and \code{b}
-#' (and \code{mu} if option selected).
-#' @param x A matrix of variables to be included in the system.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A list object \code{estimates} containing the estimates,
-#' including the following parameters:
-#' \describe{
-#'   \item{\code{db}}{The orders of fractional integration (taken directly from the input).}
-#'   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
-#'   \item{\code{betaHat}}{A \eqn{p x r} matrix of cointegrating vectors.
-#'       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
-#'   \item{\code{rhoHat}}{A \eqn{p x 1} vector of restricted constatnts.}
-#'   \item{\code{piHat}}{A \eqn{p x p} matrix \eqn{\Pi = \alpha \beta'} of long-run levels.}
-#'   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
-#'   \item{\code{GammaHat}}{A ( \eqn{p x kp} matrix \code{cbind(GammaHat1,...,GammaHatk)})
-#'   of autoregressive coefficients. }
-#'   \item{\code{muHat}}{A vector of the optimal \code{mu} if level parameter is selected. }
-#' }
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' GetEstimates(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARlike} performs the same calculations to obtain the value
-#' of the likelihood function.
-#' @export
-#'
+# Obtain concentrated parameter estimates for the Constrained FCVAR Model
+#
+# \code{GetEstimates} calculates the concentrated parameter estimates for
+# the constrained FCVAR model for a given set of parameter values.
+# It is used after estimating the parameters that are numerically optimized
+# to obtain the corresponding concentrated parameters.
+# Like \code{FCVARlike} , this function adjusts the variables with the level parameter,
+# if present, and returns the log-likelihood given \code{d} and \code{b}.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param params A vector of parameters \code{d} and \code{b}
+# (and \code{mu} if option selected).
+# @param x A matrix of variables to be included in the system.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A list object \code{estimates} containing the estimates,
+# including the following parameters:
+# \describe{
+#   \item{\code{db}}{The orders of fractional integration (taken directly from the input).}
+#   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
+#   \item{\code{betaHat}}{A \eqn{p x r} matrix of cointegrating vectors.
+#       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
+#   \item{\code{rhoHat}}{A \eqn{p x 1} vector of restricted constatnts.}
+#   \item{\code{piHat}}{A \eqn{p x p} matrix \eqn{\Pi = \alpha \beta'} of long-run levels.}
+#   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
+#   \item{\code{GammaHat}}{A ( \eqn{p x kp} matrix \code{cbind(GammaHat1,...,GammaHatk)})
+#   of autoregressive coefficients. }
+#   \item{\code{muHat}}{A vector of the optimal \code{mu} if level parameter is selected. }
+# }
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# GetEstimates(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARlike} performs the same calculations to obtain the value
+# of the likelihood function.
+# @export
+#
 GetEstimates <- function(params, x, k, r, opt) {
 
   # global estimatesTEMP
@@ -1797,41 +1807,41 @@ GetEstimates <- function(params, x, k, r, opt) {
 }
 
 
-#' Likelihood Function for the FCVAR Model
-#'
-#' \code{FCVARlikeFull} calculates the likelihood for the constrained FCVAR model
-#' for a given set of parameter values.
-#' This function takes the full set of coefficients from a call
-#' to \code{FCVARestn} and returns the log-likelihood given \code{d} and \code{b}.
-#'
-#' @param x A matrix of variables to be included in the system.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param coeffs A list of coefficients of the FCVAR model.
-#' It is an element of the list \code{results} returned by \code{FCVARestn},
-#' without the parameters \code{betaHat} and \code{rhoHat}.
-#' @param betaHat A \eqn{p x r} matrix of cointegrating vectors.
-#' The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.
-#' @param rhoHat A \eqn{p x 1} vector of restricted constatnts.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A number \code{like}, the log-likelihood evaluated at the
-#' specified parameter values.
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
-#'               beta = results$coeffs$betaHat, rho = results$coeffs$rhoHat, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
-#' @export
-#'
+# Likelihood Function for the FCVAR Model
+#
+# \code{FCVARlikeFull} calculates the likelihood for the constrained FCVAR model
+# for a given set of parameter values.
+# This function takes the full set of coefficients from a call
+# to \code{FCVARestn} and returns the log-likelihood given \code{d} and \code{b}.
+#
+# @param x A matrix of variables to be included in the system.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param coeffs A list of coefficients of the FCVAR model.
+# It is an element of the list \code{results} returned by \code{FCVARestn},
+# without the parameters \code{betaHat} and \code{rhoHat}.
+# @param betaHat A \eqn{p x r} matrix of cointegrating vectors.
+# The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.
+# @param rhoHat A \eqn{p x 1} vector of restricted constatnts.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A number \code{like}, the log-likelihood evaluated at the
+# specified parameter values.
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
+#               beta = results$coeffs$betaHat, rho = results$coeffs$rhoHat, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
+# @export
+#
 FCVARlikeFull <- function(x, k, r, coeffs, betaHat, rhoHat, opt) {
 
 
@@ -1855,53 +1865,55 @@ FCVARlikeFull <- function(x, k, r, coeffs, betaHat, rhoHat, opt) {
 }
 
 
-#' Transform Data for Regression
-#'
-#' \code{TransformData} transforms the raw data by fractional differencing.
-#' The output is in the format required for regression and
-#' reduced rank regression.
-#'
-#' @param x A matrix of variables to be included in the system.
-#' @param k The number of lags in the system.
-#' @param db The orders of fractional integration.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A list object \code{Z_array} containing the transformed data,
-#' including the following parameters:
-#' \describe{
-#'   \item{\code{Z0}}{A matrix of data calculated by fractionally differencing
-#'   \code{x} at differencing order \code{d}.}
-#'   \item{\code{Z1}}{The matrix \code{x} (augmented with a vector of ones
-#'   if the model includes a restricted constant term), which is then lagged and stacked
-#'   and fractionally differenced (with order \eqn{d-b}).}
-#'   \item{\code{Z2}}{The matrix \code{x} lagged and stacked
-#'   and fractionally differenced (with order \code{d}).}
-#'   \item{\code{Z3}}{A column of ones if model includes an
-#'   unrestricted constant term, otherwise \code{NULL}.}
-#' }
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' Z_array <- TransformData(x, k = 2, db = results$coeffs$db, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
-#' to estimate the FCVAR model.
-#' \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
-#' to perform the transformation.
-#' @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
-#' "Likelihood inference for a fractionally cointegrated
-#' vector autoregressive model," Econometrica 80, 2667-2732.
-#' @references Johansen, S. (1995). "Likelihood-Based Inference
-#' in Cointegrated Vector Autoregressive Models,"
-#' New York: Oxford University Press.
-#' @export
-#'
+# Transform Data for Regression
+#
+# \code{TransformData} transforms the raw data by fractional differencing.
+# The output is in the format required for regression and
+# reduced rank regression.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param x A matrix of variables to be included in the system.
+# @param k The number of lags in the system.
+# @param db The orders of fractional integration.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A list object \code{Z_array} containing the transformed data,
+# including the following parameters:
+# \describe{
+#   \item{\code{Z0}}{A matrix of data calculated by fractionally differencing
+#   \code{x} at differencing order \code{d}.}
+#   \item{\code{Z1}}{The matrix \code{x} (augmented with a vector of ones
+#   if the model includes a restricted constant term), which is then lagged and stacked
+#   and fractionally differenced (with order \eqn{d-b}).}
+#   \item{\code{Z2}}{The matrix \code{x} lagged and stacked
+#   and fractionally differenced (with order \code{d}).}
+#   \item{\code{Z3}}{A column of ones if model includes an
+#   unrestricted constant term, otherwise \code{NULL}.}
+# }
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# Z_array <- TransformData(x, k = 2, db = results$coeffs$db, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
+# to estimate the FCVAR model.
+# \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
+# to perform the transformation.
+# @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
+# "Likelihood inference for a fractionally cointegrated
+# vector autoregressive model," Econometrica 80, 2667-2732.
+# @references Johansen, S. (1995). "Likelihood-Based Inference
+# in Cointegrated Vector Autoregressive Models,"
+# New York: Oxford University Press.
+# @export
+#
 TransformData <- function(x, k, db, opt) {
 
 
@@ -1958,37 +1970,39 @@ TransformData <- function(x, k, db, opt) {
 }
 
 
-#' Calculate Residuals for the FCVAR Model
-#'
-#' \code{GetResiduals} calculates residuals for the FCVAR model
-#' from given parameter values.
-#'
-#' @param x A matrix of variables to be included in the system.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param coeffs A list of coefficients of the FCVAR model.
-#' It is an element of the list \code{results} returned by \code{FCVARestn}.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A matrix \code{epsilon} of residuals from FCVAR model estimation
-#' calculated with the parameter estimates specified in \code{coeffs}.
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} to estimate the FCVAR model.
-#' @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
-#' "Likelihood inference for a fractionally cointegrated
-#' vector autoregressive model," Econometrica 80, 2667-2732.
-#' @export
-#'
+# Calculate Residuals for the FCVAR Model
+#
+# \code{GetResiduals} calculates residuals for the FCVAR model
+# from given parameter values.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param x A matrix of variables to be included in the system.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param coeffs A list of coefficients of the FCVAR model.
+# It is an element of the list \code{results} returned by \code{FCVARestn}.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A matrix \code{epsilon} of residuals from FCVAR model estimation
+# calculated with the parameter estimates specified in \code{coeffs}.
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} to estimate the FCVAR model.
+# @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
+# "Likelihood inference for a fractionally cointegrated
+# vector autoregressive model," Econometrica 80, 2667-2732.
+# @export
+#
 GetResiduals <- function(x, k, r, coeffs, opt) {
 
 
@@ -2037,34 +2051,36 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
 }
 
 
-#' Calculate Lag Polynomial in the Fractional Lag Operator
-#'
-#' \code{Lbk} calculates a lag polynomial in the fractional lag operator.
-#'
-#' @param x A matrix of variables to be included in the system.
-#' @param b The order of fractional differencing.
-#' @param k The number of lags in the system.
-#' @return A matrix \code{Lbkx} of the form \eqn{[ Lb^1 x, Lb^2 x, ..., Lb^k x]}
-#' where \eqn{Lb = 1 - (1-L)^b}.
-#' The output matrix has the same number of rows as \code{x}
-#' but \code{k} times as many columns.
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' Lbkx <- Lbk(x, b = results$coeffs$db[2], k = 2)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
-#' to estimate the FCVAR model.
-#' \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
-#' to perform the transformation.
-#' @export
-#'
+# Calculate Lag Polynomial in the Fractional Lag Operator
+#
+# \code{Lbk} calculates a lag polynomial in the fractional lag operator.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param x A matrix of variables to be included in the system.
+# @param b The order of fractional differencing.
+# @param k The number of lags in the system.
+# @return A matrix \code{Lbkx} of the form \eqn{[ Lb^1 x, Lb^2 x, ..., Lb^k x]}
+# where \eqn{Lb = 1 - (1-L)^b}.
+# The output matrix has the same number of rows as \code{x}
+# but \code{k} times as many columns.
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# Lbkx <- Lbk(x, b = results$coeffs$db[2], k = 2)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
+# to estimate the FCVAR model.
+# \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
+# to perform the transformation.
+# @export
+#
 Lbk <- function(x, b, k) {
 
   # print('summary(x) = ')
@@ -2190,56 +2206,58 @@ FracDiff <- function(x, d) {
 }
 
 
-#' Count the Number of Free Parameters
-#'
-#' \code{GetFreeParams} counts the number of free parameters based on
-#' 	the number of coefficients to estimate minus the total number of
-#' 	restrictions. When both \code{alpha} and \code{beta} are restricted,
-#' 	the rank condition is used to count the free parameters in those two variables.
-#'
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param p The number of variables in the system.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @param rankJ The rank of a conditioning matrix, as described in
-#' Boswijk & Doornik (2004, p.447), which is only used if there are
-#' restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.
-#' @return The number of free parameters \code{fp}.
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
-#' GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = NULL)
-#'
-#' opt <- FCVARoptions()
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
-#' GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
-#'
-#' opt <- FCVARoptions()
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' opt$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
-#' GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
-#' and use this in the calculation of the degrees of freedom
-#' for a variety of statistics.
-#' @references Boswijk, H. P. and J. A. Doornik (2004).
-#' "Identifying, estimating and testing restricted cointegrated systems:
-#' An overview," Statistica Neerlandica 58, 440-465.
-#' @export
-#'
+# Count the Number of Free Parameters
+#
+# \code{GetFreeParams} counts the number of free parameters based on
+# 	the number of coefficients to estimate minus the total number of
+# 	restrictions. When both \code{alpha} and \code{beta} are restricted,
+# 	the rank condition is used to count the free parameters in those two variables.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param p The number of variables in the system.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @param rankJ The rank of a conditioning matrix, as described in
+# Boswijk & Doornik (2004, p.447), which is only used if there are
+# restrictions imposed on \code{alpha} or \code{beta}, otherwise \code{NULL}.
+# @return The number of free parameters \code{fp}.
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+# GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = NULL)
+#
+# opt <- FCVARoptions()
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+# GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
+#
+# opt <- FCVARoptions()
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# opt$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+# GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
+# and use this in the calculation of the degrees of freedom
+# for a variety of statistics.
+# @references Boswijk, H. P. and J. A. Doornik (2004).
+# "Identifying, estimating and testing restricted cointegrated systems:
+# An overview," Statistica Neerlandica 58, 440-465.
+# @export
+#
 GetFreeParams <- function(k, r, p, opt, rankJ) {
 
   # ---- First count the number of parameters -------- %
@@ -2279,37 +2297,39 @@ GetFreeParams <- function(k, r, p, opt, rankJ) {
 }
 
 
-#' Calculate the Hessian Matrix
-#'
-#' \code{FCVARhess} calculates the Hessian matrix of the
-#' 	log-likelihood by taking numerical derivatives.
-#' 	It is used to calculate the standard errors of parameter estimates.
-#'
-#' @param x A matrix of variables to be included in the system.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param coeffs A list of coefficients of the FCVAR model.
-#' It is an element of the list \code{results} returned by \code{FCVARestn}.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return The \code{hessian} matrix  of second derivatives of the FCVAR
-#' log-likelihood function, calculated with the parameter estimates
-#' specified in \code{coeffs}.
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} to estimate the FCVAR model and calculate
-#' standard errors of the estimates.
-#' @export
-#'
+# Calculate the Hessian Matrix
+#
+# \code{FCVARhess} calculates the Hessian matrix of the
+# 	log-likelihood by taking numerical derivatives.
+# 	It is used to calculate the standard errors of parameter estimates.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param x A matrix of variables to be included in the system.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param coeffs A list of coefficients of the FCVAR model.
+# It is an element of the list \code{results} returned by \code{FCVARestn}.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return The \code{hessian} matrix  of second derivatives of the FCVAR
+# log-likelihood function, calculated with the parameter estimates
+# specified in \code{coeffs}.
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} to estimate the FCVAR model and calculate
+# standard errors of the estimates.
+# @export
+#
 FCVARhess <- function(x, k, r, coeffs, opt) {
 
 
@@ -2386,44 +2406,45 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 }
 
 
-#' Collect Parameters into a Vector
-#'
-#' \code{SEmat2vecU} transforms the model parameters in matrix
-#' 	form into a vector.
-#'
-#' @param coeffs A list of coefficients of the FCVAR model.
-#' It is an element of the list \code{results} returned by \code{FCVARestn}.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param p The number of variables in the system.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return A vector \code{param} of parameters in the FCVAR model.
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
-#' coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
-#'
-#' params <- matrix(seq(25))
-#' coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
-#' params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} to estimate the FCVAR model and calculate
-#' standard errors of the estimates.
-#' \code{SEmat2vecU} is called by \code{FCVARhess} to sort the parameters
-#' into a vector to calculate the Hessian matrix.
-#' \code{SEvec2matU} is a near inverse of \code{SEmat2vecU},
-#' in the sense that \code{SEvec2matU} obtains only a
-#' subset of the parameters in \code{results$coeffs}.
-#' @export
-#'
+# Collect Parameters into a Vector
+#
+# \code{SEmat2vecU} transforms the model parameters in matrix
+# 	form into a vector.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param coeffs A list of coefficients of the FCVAR model.
+# It is an element of the list \code{results} returned by \code{FCVARestn}.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param p The number of variables in the system.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return A vector \code{param} of parameters in the FCVAR model.
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+# coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+#
+# params <- matrix(seq(25))
+# coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+# params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} to estimate the FCVAR model and calculate
+# standard errors of the estimates.
+# \code{SEmat2vecU} is called by \code{FCVARhess} to sort the parameters
+# into a vector to calculate the Hessian matrix.
+# \code{SEvec2matU} is a near inverse of \code{SEmat2vecU},
+# in the sense that \code{SEvec2matU} obtains only a
+# subset of the parameters in \code{results$coeffs}.
+#
 SEmat2vecU <- function(coeffs, k, r, p , opt) {
 
   # If restriction d=b is imposed, only adjust d.
@@ -2463,47 +2484,47 @@ SEmat2vecU <- function(coeffs, k, r, p , opt) {
 }
 
 
-
-#' Extract Parameters from a Vector
-#'
-#' \code{SEvec2matU} transforms the vectorized model parameters
-#' 	into matrices.
-#'
-#' @param param A vector of parameters in the FCVAR model.
-#' @param k The number of lags in the system.
-#' @param r The cointegrating rank.
-#' @param p The number of variables in the system.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#' @return \code{coeffs}, a list of coefficients of the FCVAR model.
-#' It has the same form as an element of the list \code{results}
-#' returned by \code{FCVARestn}.
-#'
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' results <- FCVARestn(x, k = 2, r = 1, opt)
-#' params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
-#' coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
-#'
-#' params <- matrix(seq(25))
-#' coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
-#' params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} to estimate the FCVAR model and calculate
-#' standard errors of the estimates.
-#' \code{SEmat2vecU} is called by \code{FCVARhess} to convert the parameters
-#' from a vector into the coefficients after calculating the Hessian matrix.
-#' \code{SEmat2vecU} is a near inverse of \code{SEvec2matU},
-#' in the sense that \code{SEvec2matU} obtains only a
-#' subset of the parameters in \code{results$coeffs}.
-#' @export
-#'
+# Extract Parameters from a Vector
+#
+# \code{SEvec2matU} transforms the vectorized model parameters
+# 	into matrices.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param param A vector of parameters in the FCVAR model.
+# @param k The number of lags in the system.
+# @param r The cointegrating rank.
+# @param p The number of variables in the system.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+# @return \code{coeffs}, a list of coefficients of the FCVAR model.
+# It has the same form as an element of the list \code{results}
+# returned by \code{FCVARestn}.
+#
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+# params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
+# coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+#
+# params <- matrix(seq(25))
+# coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
+# params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} to estimate the FCVAR model and calculate
+# standard errors of the estimates.
+# \code{SEmat2vecU} is called by \code{FCVARhess} to convert the parameters
+# from a vector into the coefficients after calculating the Hessian matrix.
+# \code{SEmat2vecU} is a near inverse of \code{SEvec2matU},
+# in the sense that \code{SEvec2matU} obtains only a
+# subset of the parameters in \code{results$coeffs}.
+#
 SEvec2matU <- function(param, k, r, p, opt ) {
 
   # Create list for output.
@@ -2557,73 +2578,75 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 
 
 
-#' Calculate Restricted Estimates for the FCVAR Model
-#'
-#' \code{GetRestrictedParams} calculates restricted estimates of
-#' cointegration parameters and error variance in the FCVAR model.
-#' To calculate the optimum, it uses the switching algorithm
-#' of Boswijk and Doornik (2004, page 455) to optimize over free parameters
-#' \eqn{\psi} and \eqn{\phi} directly, combined with the line search proposed by
-#' Doornik (2016, working paper). We translate between  \eqn{(\psi, \phi)} and
-#' \eqn{(\alpha, \beta)} using the relation of \eqn{R_\alpha vec(\alpha) = 0} and
-#' \eqn{A\psi = vec(\alpha')}, and \eqn{R_\beta vec(\beta) = r_\beta} and
-#' \eqn{H\phi + h = vec(\beta)}. Note the transposes.
-#'
-#' @param beta0 The unrestricted estimate of \code{beta},
-#' a \eqn{p x r} matrix of cointegrating vectors
-#' returned from \code{FCVARestn} or \code{GetParams}.
-#' @param S00 A matrix of product moments,
-#' calculated from the output of \code{TransformData} in \code{GetParams}.
-#' @param S01 A matrix of product moments,
-#' calculated from the output of \code{TransformData} in \code{GetParams}.
-#' @param S11 A matrix of product moments,
-#' calculated from the output of \code{TransformData} in \code{GetParams}.
-#' @param cap_T The number of observations in the sample.
-#' @param p The number of variables in the system.
-#' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
-#' generated from \code{FCVARoptions()}.
-#'
-#'#' @return A list object \code{switched_mats} containing the restricted estimates,
-#' including the following parameters:
-#' \describe{
-#'   \item{\code{betaStar}}{A \eqn{p x r} matrix of cointegrating vectors.
-#'       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
-#'   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
-#'   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
-#' }
-#' @examples
-#' opt <- FCVARoptions()
-#' opt$gridSearch   <- 0 # Disable grid search in optimization.
-#' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-#' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-#' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-#' opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-#' opt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
-#' betaStar <- matrix(c(-0.95335616, -0.07345676, -0.29277318), nrow = 3)
-#' S00 <- matrix(c(0.0302086527,  0.001308664,  0.0008200923,
-#'                 0.0013086640,  0.821417610, -0.1104617893,
-#'                 0.0008200923, -0.110461789,  0.0272861128), nrow = 3)
-#' S01 <- matrix(c(-0.0047314320, -0.04488533,  0.006336798,
-#'                 0.0026708007,  0.17463884, -0.069006455,
-#'                 -0.0003414163, -0.07110324,  0.022830494), nrow = 3, byrow = TRUE)
-#' S11 <- matrix(c( 0.061355941,  -0.4109969,  -0.007468716,
-#'                  -0.410996895,  70.6110313, -15.865097810,
-#'                  -0.007468716, -15.8650978,   3.992435799), nrow = 3)
-#' switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, cap_T = 316, p = 3, opt)
-#' @family FCVAR auxilliary functions
-#' @seealso \code{FCVARoptions} to set default estimation options.
-#' \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,
-#' which in turn calls \code{GetRestrictedParams} if there are restrictions
-#' imposed on \code{alpha} or \code{beta}.
-#' @references Boswijk, H. P. and J. A. Doornik (2004).
-#' "Identifying, estimating and testing restricted cointegrated systems:
-#' An overview," Statistica Neerlandica 58, 440-465.
-#' @references Doornik, J. A. (2018).
-#' "Accelerated estimation of switching algorithms: the cointegrated
-#' VAR model and other applications,"
-#' Forthcoming in Scandinavian Journal of Statistics.
-#' @export
-#'
+# Calculate Restricted Estimates for the FCVAR Model
+#
+# \code{GetRestrictedParams} calculates restricted estimates of
+# cointegration parameters and error variance in the FCVAR model.
+# To calculate the optimum, it uses the switching algorithm
+# of Boswijk and Doornik (2004, page 455) to optimize over free parameters
+# \eqn{\psi} and \eqn{\phi} directly, combined with the line search proposed by
+# Doornik (2016, working paper). We translate between  \eqn{(\psi, \phi)} and
+# \eqn{(\alpha, \beta)} using the relation of \eqn{R_\alpha vec(\alpha) = 0} and
+# \eqn{A\psi = vec(\alpha')}, and \eqn{R_\beta vec(\beta) = r_\beta} and
+# \eqn{H\phi + h = vec(\beta)}. Note the transposes.
+# Note that Roxygen comments are excluded to keep this function internal.
+# However, the contents of Roxygen comments are shown below for those who read the scripts.
+#
+# @param beta0 The unrestricted estimate of \code{beta},
+# a \eqn{p x r} matrix of cointegrating vectors
+# returned from \code{FCVARestn} or \code{GetParams}.
+# @param S00 A matrix of product moments,
+# calculated from the output of \code{TransformData} in \code{GetParams}.
+# @param S01 A matrix of product moments,
+# calculated from the output of \code{TransformData} in \code{GetParams}.
+# @param S11 A matrix of product moments,
+# calculated from the output of \code{TransformData} in \code{GetParams}.
+# @param cap_T The number of observations in the sample.
+# @param p The number of variables in the system.
+# @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
+# generated from \code{FCVARoptions()}.
+#
+# @return A list object \code{switched_mats} containing the restricted estimates,
+# including the following parameters:
+# \describe{
+#   \item{\code{betaStar}}{A \eqn{p x r} matrix of cointegrating vectors.
+#       The \eqn{r x 1} vector \eqn{\beta x_t} is the stationary cointegration relations.}
+#   \item{\code{alphaHat}}{A \eqn{p x r} matrix of adjustment parameters.}
+#   \item{\code{OmegaHat}}{A \eqn{p x p} covariance matrix of the error terms.}
+# }
+# @examples
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+# opt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+# betaStar <- matrix(c(-0.95335616, -0.07345676, -0.29277318), nrow = 3)
+# S00 <- matrix(c(0.0302086527,  0.001308664,  0.0008200923,
+#                 0.0013086640,  0.821417610, -0.1104617893,
+#                 0.0008200923, -0.110461789,  0.0272861128), nrow = 3)
+# S01 <- matrix(c(-0.0047314320, -0.04488533,  0.006336798,
+#                 0.0026708007,  0.17463884, -0.069006455,
+#                 -0.0003414163, -0.07110324,  0.022830494), nrow = 3, byrow = TRUE)
+# S11 <- matrix(c( 0.061355941,  -0.4109969,  -0.007468716,
+#                  -0.410996895,  70.6110313, -15.865097810,
+#                  -0.007468716, -15.8650978,   3.992435799), nrow = 3)
+# switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, cap_T = 316, p = 3, opt)
+# @family FCVAR auxilliary functions
+# @seealso \code{FCVARoptions} to set default estimation options.
+# \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,
+# which in turn calls \code{GetRestrictedParams} if there are restrictions
+# imposed on \code{alpha} or \code{beta}.
+# @references Boswijk, H. P. and J. A. Doornik (2004).
+# "Identifying, estimating and testing restricted cointegrated systems:
+# An overview," Statistica Neerlandica 58, 440-465.
+# @references Doornik, J. A. (2018).
+# "Accelerated estimation of switching algorithms: the cointegrated
+# VAR model and other applications,"
+# Forthcoming in Scandinavian Journal of Statistics.
+# @export
+#
 GetRestrictedParams <- function(beta0, S00, S01, S11, cap_T, p, opt) {
 
 

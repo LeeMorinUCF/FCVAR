@@ -70,9 +70,7 @@ vector autoregressions," Journal of Econometrics 192, 64-85.
 Other FCVAR postestimation functions: 
 \code{\link{FCVARhypoTest}()},
 \code{\link{GetCharPolyRoots}()},
-\code{\link{LMtest}()},
 \code{\link{MVWNtest}()},
-\code{\link{Qtest}()},
 \code{\link{plot.FCVAR_roots}()},
 \code{\link{summary.FCVAR_roots}()},
 \code{\link{summary.MVWN_stats}()}
