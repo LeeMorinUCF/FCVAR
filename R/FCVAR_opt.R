@@ -390,7 +390,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
     opt$constrained <- 0
 
     if(opt$gridSearch) {
-      # cat(sprintf('Grid search has been switched off.\n'))
       message("Grid search has been switched off.")
       opt$gridSearch <- 0
     }
@@ -405,9 +404,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
     # First check if restriction is valid
     if (opt$restrictDB & ((opt$R_psi[1,1] == 0) |
                           (opt$R_psi[1,2] != 0)) ) {
-      # cat(sprintf('\nError in R_psi. When restrictDB = 1, only '))
-      # cat(sprintf('restrictions on d can be imposed.\n'))
-      # stop('Invalid restriction for d=b model.')
       stop("Invalid restriction for d = b model.\n",
            "When restrictDB = 1, only restrictions on d can be imposed.\n",
            "Adjust option R_psi by removing nonzero entries on b.")
@@ -425,20 +421,14 @@ FCVARoptionUpdates <- function(opt, p, r) {
   # If d=b is imposed, add it to the other equality restrictions on d,b.
   if(opt$restrictDB) {
 
-    # Check conformability:
-    # opt$R_psi <- [opt$R_psi [1 -1]]
     # Stacking a matrix on a new row:
     # Stacking because the equality restriction might be an additional
     # restriction on d and b.
     opt$R_psi <- rbind(opt$R_psi, c(1, -1))
     opt$r_psi <- c(opt$r_psi, 0)
-    # Alternative with matrix notation:
-    # opt$R_psi <- cbind(opt$R_psi, matrix(c(1, -1), nrow = 1, ncol = 2))
-    # opt$r_psi <- matrix(c(opt$r_psi, 0), nrow = 2, ncol = 1)
-    # But it led to non-conformable matrices.
+
     if(opt$constrained) {
-      # cat(sprintf('\nNote: Redundant options. Both constrained (d>=b) and restrict (d=b) selected.'))
-      # cat(sprintf('\n Only d=b imposed.\n'))
+
       warning("Redundant options constraining d and b.\n",
               "Both constrained (d >= b) and restrict (d = b) selected.\n",
               "Only d = b is imposed.")
@@ -448,18 +438,12 @@ FCVARoptionUpdates <- function(opt, p, r) {
 
   }
 
-  # print('Made it here in EstnOptions!')
-  #
-  # print('opt$R_psi = ')
-  # print(opt$R_psi)
 
   # Check restrictions on fractional parameters.
   if (is.null(opt$R_psi)) {
 
     # Ensure that parameter space for fractional parameters is non-empty.
     if(opt$dbMax[1] < opt$dbMin[2] & opt$constrained) {
-      # cat(sprintf('\nWarning: Redefine restrictions on fractional parameters.\n'))
-      # stop('Empty parameter space for (d,b).')
       stop("Empty parameter space for (d, b).\n",
            "Redefine restrictions on fractional parameters.")
     }
@@ -470,13 +454,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
     UB <- UB_LB_bounds$UB
     LB <- UB_LB_bounds$LB
 
-    # print('LB, UB = ')
-    # print(UB_LB_bounds)
-    # print(LB)
-    # print(UB)
-    #
-    # print('Check (LB > UB):')
-    # print('Check (LB > UB):')
 
     # if (LB > UB) {
     if (any(LB > UB)) {
@@ -488,8 +465,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
 
     # Check if grid search is necessary.
     if ( (nrow(opt$R_psi) > 1 & opt$gridSearch) ) {
-      # cat(sprintf('\nd and b are exactly identified by imposed restrictions\n'))
-      # cat(sprintf('so grid search has been turned off.\n'))
       warning("Fractional differencing parameters d and b\n",
               "are exactly identified by imposed restrictions\n",
               "so grid search has been turned off.")
@@ -498,9 +473,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
 
     # Check for redundancies.
     if(qr(opt$R_psi)$rank < nrow(opt$R_psi)) {
-      # cat(sprintf('\nWARNING: R_psi has reduced rank!\n'))
-      # cat(sprintf('\nRedefine R_psi with linearly independent restrictions.\n'))
-      # stop('Redundant restrictions in R_psi matrix')
       stop("Redundant restrictions in R_psi matrix.\n",
            "R_psi has reduced rank!",
            "Redefine R_psi with linearly independent restrictions.")
@@ -520,9 +492,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
 
     # Check if restricted parameters actually exist.
     if(r == 0) {
-      # cat(sprintf('\nWARNING: Cannot impose restrictions on alpha if r=0!\n'))
-      # cat(sprintf('Either remove the restriction (set R_Alpha = NULL)  or increase rank (set r>0).\n'))
-      # stop('Imposing restrictions on empty parameters')
       stop("Imposing restrictions on empty parameters.\n",
            "Cannot impose restrictions on alpha if r = 0!\n",
            "Either remove the restriction (set R_Alpha = NULL)  or increase rank (set r > 0).")
@@ -531,9 +500,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
     # Check if column length of R_Alpha matches the number of
     # parameters.
     if(ncol(opt$R_Alpha) != p * r) {
-      # cat(sprintf('\nWARNING: The length of R_Alpha does not match the number of parameters!\n'))
-      # cat(sprintf('Please respecify R_Alpha so that the number of columns is p*r.\n'))
-      # stop('Restriction misspecification')
       stop("Restriction misspecification.\n",
            "The length of R_Alpha does not match the number of parameters!\n",
            "Respecify R_Alpha so that the number of columns is p*r.")
@@ -541,9 +507,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
 
     # Check for redundancies.
     if(qr(opt$R_Alpha)$rank < nrow(opt$R_Alpha)) {
-      # cat(sprintf('\nWARNING: R_Alpha has reduced rank!\n'))
-      # cat(sprintf('\nRedefine R_Alpha with linearly independent restrictions.\n'))
-      # stop('Redundant restrictions in R_Alpha matrix')
       stop("Redundant restrictions in R_Alpha matrix.\n",
            "R_Alpha has reduced rank!",
            "Redefine R_Alpha with linearly independent restrictions.")
@@ -568,9 +531,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
 
     # Check if restricted parameters actually exist.
     if(r == 0) {
-      # cat(sprintf('\nWARNING: Cannot impose restrictions on Beta if r=0!\n'))
-      # cat(sprintf('Either remove the restriction (set R_Beta = NULL)  or increase rank (set r>0).\n'))
-      # stop('Imposing restrictions on empty parameters')
       stop("Imposing restrictions on empty parameters.\n",
            "Cannot impose restrictions on beta if r = 0!\n",
            "Either remove the restriction (set R_Beta = NULL)  or increase rank (set r > 0).")
@@ -579,9 +539,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
     # Check if column length of R_Beta matches the number of
     # parameters (note p1 not p).
     if(ncol(opt$R_Beta) != p1 * r) {
-      # cat(sprintf('\nWARNING: The length of R_Beta does not match the number of parameters!\n'))
-      # cat(sprintf('Please respecify R_Beta so that the number of columns is p1*r.\n'))
-      # stop('Restriction misspecification')
       stop("Restriction misspecification.\n",
            "The length of R_Beta does not match the number of parameters!\n",
            "Respecify R_Beta so that the number of columns is p1*r.")
@@ -589,9 +546,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
 
     # Check for redundancies.
     if(qr(opt$R_Beta)$rank < nrow(opt$R_Beta)) {
-      # cat(sprintf('\nWARNING: R_Beta has reduced rank!\n'))
-      # cat(sprintf('\nRedefine R_Beta with linearly independent restrictions.\n'))
-      # stop('Redundant restrictions in R_Beta matrix')
       stop("Redundant restrictions in R_Beta matrix.\n",
            "R_Beta has reduced rank!",
            "Redefine R_Beta with linearly independent restrictions.")
@@ -609,11 +563,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
       # a restricted constant is being estimated, then it
       # needs to be accounted for in the restrictions.
       if(nrow(opt$r_Beta) != nrow(opt$R_Beta)) {
-        # cat(sprintf('\nWARNING: Row dimensions of R_Beta and r_Beta do not match!\n'))
-        # cat(sprintf('Please redefine these matrices so that dimensions match.\n'))
-        # cat(sprintf('Note: if a restricted constant has been included, \n'))
-        # cat(sprintf('the Beta matrix has an additional row.\n'))
-        # stop('All restrictions must be specified in the r_Beta variable')
         stop("Row dimensions of R_Beta and r_Beta do not match!\n",
              "Redefine these matrices so that dimensions match.\n",
              "Note: if a restricted constant has been included, \n",
@@ -626,8 +575,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
 
   }
 
-
-  # print('Made it to the end of EstnOptions!')
 
   # Return the updated object of estimation options.
   newOpt <- opt
@@ -665,12 +612,6 @@ FCVARoptionUpdates <- function(opt, p, r) {
 GetBounds <- function(opt) {
 
 
-  # print('Made it here in GetBounds!')
-  #
-  # print('opt$R_psi = ')
-  # print(opt$R_psi)
-  # print(is.null(opt$R_psi))
-
   if(is.null(opt$R_psi)) {
     # R_psi empty. Upper and lower bounds are the max and min values input
     # by the user. Both different and same bounds are permitted for d, b.
@@ -678,11 +619,6 @@ GetBounds <- function(opt) {
     UB <- opt$dbMax
     # Minimum
     LB <- opt$dbMin
-
-    # print('Made it to the null case in GetBounds!')
-    # print('LB, UB = ')
-    # print(LB)
-    # print(UB)
 
   } else {
 
@@ -694,26 +630,8 @@ GetBounds <- function(opt) {
     s <- opt$r_psi
     H <- pracma::null(R)
 
-
-    # print('Made it to the else case in GetBounds!')
-    # print('R * R^T = ')
-    # print(R %*% t(R))
-
     h <- t(R) %*% solve(R %*% t(R)) %*% s
 
-
-    # print('H = ')
-    # print(H)
-    # print('h = ')
-    # print(h)
-    # print('nrow(R) = ')
-    # print(nrow(R))
-    # print('ncol(R) = ')
-    # print(ncol(R))
-    # print('size(R,1) = ')
-    # print(size(R,1))
-    # print('size(R,2) = ')
-    # print(size(R,2))
 
     UB <- NULL
     LB <- NULL
@@ -729,8 +647,6 @@ GetBounds <- function(opt) {
     # If there is 1 restriction, then there is 1 free parameter.
     if(nrow(R) == 1) {
 
-
-      # print('Made it to the one-restriction case in GetBounds!')
 
       # Calculate endpoints of the grid from dbMin and dbMax to free
       # parameter phi. Note that since the null space can be either
@@ -787,12 +703,6 @@ GetBounds <- function(opt) {
   }
 
   UB_LB_bounds <- list(UB = UB, LB = LB)
-
-
-  # print('LB, UB = ')
-  # print(UB_LB_bounds)
-  # print(LB)
-  # print(UB)
 
   return(UB_LB_bounds)
 }
