@@ -78,11 +78,6 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
   # Do not calculate standard errors.
   opt$CalcSE <- 0
 
-  # Shouldn't this be done here, too?
-  # Update options based on initial user input.
-  # opt <- FCVARoptionUpdates(opt, p, r)
-  # Maybe not, because it is already done in FCVARestn.
-
 
   #--------------------------------------------------------------------------------
   # Create storage bins for output
@@ -112,14 +107,12 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 
   for (k in 0:kmax) {
 
-    # cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
     message(sprintf('Estimating for k = %d and r = %d.', k, r))
 
     # ----- Estimation ---------#
     results <- FCVARestn(x, k, r, opt)
 
 
-    # cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
     message(sprintf('Finished Estimation for k = %d and r = %d.', k, r))
 
     # ----- Record relevant output ---------%
@@ -130,8 +123,6 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 
     # ----- White noise tests ---------%
     MVWNtest_stats <- MVWNtest(results$Residuals, order, printWN)
-    # [ ~, pvWNQ(k+1,:), ~, pvWNLM(k+1,:), ~, pvMVq(k+1,:) ]  <- MVWNtest(...)
-    # Need to make sense of this after writing MVWNtest. Check.
     pvWNQ[k+1, ] <- MVWNtest_stats$pvQ
     pvWNLM[k+1, ] <- MVWNtest_stats$pvLM
     pvMVq[k+1, ] <- MVWNtest_stats$pvMVQ
@@ -178,7 +169,6 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
   # Print output if required, restoring original settings.
   opt$print2screen <- print2screen
   if (opt$print2screen) {
-    # print.FCVARlagSelect(FCVARlagSelectStats, kmax, r, p, cap_T, order, opt)
     summary(object = FCVARlagSelectStats)
   }
 
@@ -214,7 +204,6 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' \code{summary.FCVAR_lags} prints a summary of the output of \code{FCVARlagSelect} to screen.
 #' @export
 #'
-# print.FCVARlagSelect <- function(stats, kmax, r, p, cap_T, order, opt) {
 summary.FCVAR_lags <- function(object, ...) {
 
 
@@ -240,19 +229,12 @@ summary.FCVAR_lags <- function(object, ...) {
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf('Parameter Estimates and Information Criteria:\n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
-  # cat(sprintf(' k  r    d    b      LogL     LR    pv    AIC       BIC     pmvQ'))
   cat(sprintf(' k  r    d    b      LogL     LR    pv    AIC       BIC'))
-  # for (i in 1:p) {
-  #   cat(sprintf(' pQ%1.0f  pLM%1.0f', i,i))
-  # }
 
 
   cat(sprintf('\n'))
   for (k in seq(object$kmax, 0, by = -1) ) {
 
-    #       cat(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f %8.2f %4.2f',
-    #             k, r, D(k+1,:), loglik(k+1), LRtest(k+1),
-    #           pvLRtest(k+1), aic(k+1), bic(k+1), pvMVq(k+1,:))
     cat(sprintf('%2.0f %2.0f %4.3f %4.3f %7.2f %6.2f %5.3f %8.2f',
                 k, object$r, object$D[k+1, 1], object$D[k+1, 2], object$loglik[k+1],
                 object$LRtest[k+1], object$pvLRtest[k+1], object$aic[k+1]))
@@ -261,13 +243,6 @@ summary.FCVAR_lags <- function(object, ...) {
     # Print BIC information criteria and add asterisk if min value
     cat(sprintf(' %8.2f', object$bic[k+1]))
     if(k+1 == object$i_bic) {cat(sprintf('*'))} else {cat(sprintf(' '))}
-
-    # # Print multivariate white noise test P-values
-    # cat(sprintf(' %4.2f', pvMVq[k+1, ]))
-    # # Print the individual series white noise test P-values
-    # for (i in 1:p) {
-    #   cat(sprintf(' %4.2f %4.2f', pvWNQ[k+1,i], pvWNLM[k+1,i]))
-    # }
 
 
     cat(sprintf('\n'))
@@ -382,13 +357,10 @@ FCVARrankTests <- function(x, k, opt) {
   # Estimate models for all ranks
   for (r in 0 : p) {
 
-
-    # cat(sprintf('Estimating for k = %d and r = %d.\n\n', k, r))
     message(sprintf('Estimating for k = %d and r = %d.', k, r))
 
     results <- FCVARestn(x, k, r, opt)
 
-    # cat(sprintf('Finished Estimation for k = %d and r = %d.\n\n', k, r))
     message(sprintf('Finished Estimation for k = %d and r = %d.', k, r))
 
     dHat[r+1] <- results$coeffs$db[1]
@@ -414,22 +386,12 @@ FCVARrankTests <- function(x, k, opt) {
       (opt$rConstant  & !opt$unrConstant & opt$restrictDB) |
       (opt$levelParam & !opt$unrConstant & opt$restrictDB) )  ) {
 
-      # Previous function call within FCVAR (deprecated):
-      # p_val <- GetPvalues(p-r, bHat[r+1], consT, LRstat[r+1], opt)
-
-      # New function from fracdist package.
+      # Call function from fracdist package for p-values.
       p_val <- fracdist::fracdist_values(iq = p - r,
                                          iscon = consT,
                                          bb = bHat[r+1],
                                          stat = LRstat[r+1])
 
-      # Print output for testing.
-      # print(sprintf('P-value calculation: P-value = %f', p_val))
-
-      # Testing fracdist version.
-      # pval_1 <- fracdist::fracdist_values(iq = 1, iscon = 0, bb = 0.73, stat = 3.84)
-      # pval_1 <- fracdist::fracdist_values(iq = 1, iscon = 0, bb = 0.43, stat = 3.84)
-      # pval_1 <- fracdist::fracdist_values(iq = 1, iscon = 0, bb = 0.505, stat = 3.84)
 
     } else {
       warning(sprintf('P-values not calculated for the rank test with rank %d.\n', r),
@@ -439,14 +401,6 @@ FCVARrankTests <- function(x, k, opt) {
               '3. there is only a level parameter and d = b.\n')
     }
 
-    # If automatic calls to P-value program have not been installed or
-    # enabled, then p_val is empty. Set it to 999 so that it can have a
-    # value for storage in the rankTestStats matrix below.
-    # if(is.null(p_val)) {
-    #   p_val <- 999
-    #   # warning("P-values not calculated.\n",
-    #   #         "Refer to documentation to install software for computing P-values.")
-    # }
 
     # Store P-values, if calculated.
     if(!is.null(p_val)) {
@@ -478,7 +432,6 @@ FCVARrankTests <- function(x, k, opt) {
   # Print the results to screen.
   if (opt$print2screen) {
 
-    # print.FCVARrankTests(stats = rankTestStats, k, p, cap_T, opt)
     summary.FCVAR_ranks(object = rankTestStats)
 
   }
@@ -515,7 +468,6 @@ FCVARrankTests <- function(x, k, opt) {
 #' \code{summary.FCVAR_ranks} prints a summary of the output of \code{FCVARrankTests} to screen.
 #' @export
 #'
-# print.FCVARrankTests <- function(stats, k, p, cap_T, opt) {
 summary.FCVAR_ranks <- function(object, ...) {
 
 
@@ -536,7 +488,6 @@ summary.FCVAR_ranks <- function(object, ...) {
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   cat(sprintf('Rank     d      b     Log-likelihood   LR statistic   P-value\n'))
   for (i in 1:object$p) {
-    # if (stats$pv[i] != 999) {
     if (!is.na(object$pv[i])) {
       cat(sprintf('%2.0f     %5.3f  %5.3f  %15.3f  %13.3f  %8.3f\n',
                   i-1, object$dHat[i], object$bHat[i], object$LogL[i], object$LRstat[i], object$pv[i]))
@@ -633,23 +584,16 @@ FCVARbootRank <- function(x, k, opt, r1, r2, B) {
 
   for (j in 1:B) {
 
-    # print('j = ')
-    # print(j)
-
     # Display replication count every show_iters Bootstraps
     if(round((j+1)/show_iters) == (j+1)/show_iters) {
       # cat(sprintf('iteration: %1.0f\n', j))
       message(sprintf('Completed bootstrap replication %d of %d.', j, B))
     }
 
-    # print('made it before mBS')
     # (1) generate bootstrap DGP under the null
     xBS <- FCVARsimBS(data, mBS, cap_T)
 
-    # Faiing on the previous line, with zero rank.
-    # print('made it after mBS')
-
-    # append initial values to bootstrap sample
+    # Append initial values to bootstrap sample
     BSs <- rbind(data, xBS)
 
     # (2) estimate unrestricted model

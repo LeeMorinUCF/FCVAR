@@ -32,8 +32,6 @@ FCVARsim <- function(x, model, NumPeriods) {
   # Preliminary definitions
   #--------------------------------------------------------------------------------
 
-  # x <- data
-  # p <- ncol(data)
   p <- ncol(x)
   opt <- model$options
   cf  <- model$coeffs
@@ -161,20 +159,9 @@ FCVARsimBS <- function(data, model, NumPeriods) {
   b <- cf$db[2]
   T <- nrow(model$Residuals)
 
-  # print('model = ')
-  # print(model)
-
   # Generate disturbance term for use in the bootstrap.
 
-  # print('ncol(model$Residuals) = ')
-  # print(ncol(model$Residuals))
-  # print('mean(model$Residuals) = ')
-  # print(mean(model$Residuals))
-  # print('colMeans(model$Residuals) = ')
-  # print(colMeans(model$Residuals))
-  # Duh!
-
-  # Centre residuals
+  # Center residuals
   res <- model$Residuals -
     matrix(1, nrow = nrow(model$Residuals), ncol = 1) %*% colMeans(model$Residuals)
 
@@ -195,7 +182,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
   for (i in 1:NumPeriods) {
 
 
-    # append x with zeros to simplify calculations
+    # Append x with zeros to simplify calculations
     x <- rbind(x, rep(0, p))
     T <- nrow(x)
 
@@ -210,15 +197,6 @@ FCVARsimBS <- function(data, model, NumPeriods) {
     # Main term, take fractional lag
     z <- Lbk(y, d, 1)
 
-    # print('cf$PiHat = ')
-    # print(cf$PiHat)
-
-    # print('!is.null(cf$alphaHat) = ')
-    # print(!is.null(cf$alphaHat))
-    # print('!is.na(cf$alphaHat) = ')
-    # print(!is.na(cf$alphaHat))
-    # print('!is.na(cf$alphaHat[1]) = ')
-    # print(!is.na(cf$alphaHat[1]))
 
     # Error correction term
     if( !is.null(cf$alphaHat) && !is.na(cf$alphaHat[1])) {
@@ -312,13 +290,6 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 #
 GetParams <- function(x, k, r, db, opt) {
 
-  # print('Made it to GetParams!')
-  # print('k = ')
-  # print(k)
-  # print('r = ')
-  # print(r)
-  # print('db = ')
-  # print(db)
 
   Z_array <- TransformData(x, k, db, opt)
   Z0 <- Z_array$Z0
@@ -355,9 +326,6 @@ GetParams <- function(x, k, r, db, opt) {
   # FWL Regressions
   #--------------------------------------------------------------------------------
 
-  # print('Z2hat = ')
-  # print(Z2hat)
-
   if ( (k == 0) || is.infinite(kappa(t(Z2hat) %*% Z2hat)) ) {
 
     # No lags, so there are no effects of Z2.
@@ -367,15 +335,6 @@ GetParams <- function(x, k, r, db, opt) {
     # t(Z2hat) %*% Z2hat is ill-conditioned.
 
   } else {
-
-    # print('dim(Z2hat) = ')
-    # print(dim(Z2hat))
-    # print('summary(Z2hat) = ')
-    # print(summary(Z2hat))
-    # print('t(Z2hat) %*% Z2hat = ')
-    # print(t(Z2hat) %*% Z2hat)
-    # print('kappa(t(Z2hat) %*% Z2hat) = ')
-    # print(kappa(t(Z2hat) %*% Z2hat))
 
     # Lags included: Obtain the residuals from FWL regressions.
     # Unless, of course, Z2hat is near zero and
@@ -395,9 +354,7 @@ GetParams <- function(x, k, r, db, opt) {
   if (r == 0) {
 
     betaHat <- NULL
-    # betaStar <- NULL # Doesn't work for PiHat below
     betaStar <- NA
-    # alphaHat <- NULL # Doesn't work for PiHat below
     alphaHat <- NA
     PiHat <- NULL
     rhoHat <- NULL
@@ -405,44 +362,16 @@ GetParams <- function(x, k, r, db, opt) {
 
   } else if (( r > 0 ) & ( r < p )) {
 
-    # For d = startVal, need to match this:
-    # >> [V,D] = eig( inv(S11)*S10*inv(S00)*S01 );
-    # >> V
-    #
-    # V =
-    #
-    #   -0.9441   -0.8883    0.3380
-    # -0.1072    0.0466    0.0062
-    # -0.3117    0.4569    0.9411
-    #
-    # >> D
-    #
-    # D =
-    #
-    #   0.0506         0         0
-    # 0    0.0257         0
-    # 0         0    0.0015
-    #
-    # >>
-    #
 
-
-    # Clean this up:
+    # Calculate solution from eigenvectors
     eig_out <- eigen( solve(S11) %*% S10 %*% solve(S00) %*% S01 )
     D <- eig_out$values # Only the vector, not the diagonal matrix.
     V1 <- eig_out$vectors
 
-    # V <- sortrows( [ V diag(D) ], p1+1 )
     V2 <- t( cbind(t(V1), D)[order(D), ] )
 
-    # V <- V2[1:p1, ]
     V <- V2[1:p1, , drop = FALSE]
-    # betaStar <- V( 1:p1, p1 : -1 : p1-r+1 )
-    # betaStar <- matrix(V[ 1:p1, seq(p1, p1-r+1, by = -1) ],
-    #                    nrow = p1, ncol = p1-r-1)
     betaStar <- V[ 1:p1, seq(p1, p1-r+1, by = -1), drop = FALSE]
-    # Error when k = 2 and r = 2:
-    # data length exceeds size of matrix
 
 
 
@@ -453,8 +382,6 @@ GetParams <- function(x, k, r, db, opt) {
     if (!is.null(opt$R_Alpha) | !is.null(opt$R_Beta) ) {
 
 
-      # [ betaStar, alphaHat, OmegaHat ]...
-      # <- GetRestrictedParams(betaStar, S00, S01, S11, T, p, opt)
       switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, T, p, opt)
       betaStar <- switched_mats$betaStar
       alphaHat <- switched_mats$alphaHat
@@ -466,11 +393,6 @@ GetParams <- function(x, k, r, db, opt) {
 
 
     } else {
-
-      # print('betaStar = ')
-      # print(betaStar)
-      # print('S11 = ')
-      # print(S11)
 
       # Otherwise, alpha and beta are unrestricted, but unidentified.
       alphaHat <- S01 %*% betaStar %*% solve(t(betaStar) %*% S11 %*% betaStar)
@@ -515,20 +437,10 @@ GetParams <- function(x, k, r, db, opt) {
       rhoHat <- NULL
     }
 
-    # print('V = ')
-    # print(V)
-    # print('betaHat = ')
-    # print(betaHat)
-    # print('rhoHat = ')
-    # print(rhoHat)
-
     # Check conformability:
     betaStar <- rbind(betaHat, rhoHat)
 
   }
-
-  # print('betaHat = ')
-  # print(betaHat)
 
   # Calculate PiStar independently of how betaStar was estimated.
   PiStar <- alphaHat %*% t(betaStar)
@@ -649,9 +561,9 @@ GetParams <- function(x, k, r, db, opt) {
 #' opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 #' opt$progress     <- 2 # Show progress report on each value of b.
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 #' \dontrun{plot.FCVAR_grid(likeGrid_params)}
 #'
 #' # Linear restriction on fractional parameters.
@@ -665,9 +577,9 @@ GetParams <- function(x, k, r, db, opt) {
 #' opt$R_psi        <- matrix(c(2, -1), nrow = 1, ncol = 2)
 #' opt$r_psi        <- 0.5
 #' opt$progress     <- 2 # Show progress report on each value of b.
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 #' \dontrun{plot.FCVAR_grid(likeGrid_params)}
 #'
 #' # Constrained 2-dimensional optimization.
@@ -681,9 +593,9 @@ GetParams <- function(x, k, r, db, opt) {
 #' opt$constrained  <- 1 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 #' opt$progress     <- 2 # Show progress report on each value of b.
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 #' }
 #'
 #' # Unconstrained 2-dimensional optimization.
@@ -696,9 +608,9 @@ GetParams <- function(x, k, r, db, opt) {
 #' opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 #' opt$progress     <- 2 # Show progress report on each value of b.
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 #' }
 #' @family FCVAR auxilliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -727,12 +639,9 @@ FCVARlikeGrid <- function(x, k, r, opt) {
   #   step size will be smaller if searching in only one dimension.
   if(is.null(opt$R_psi)) {
     Grid2d <- 1
-    # dbStep <- 0.02
-    # dbStep <- 0.2
     dbStep <- opt$dbStep2D # Make this a variable in options.
   } else {
     Grid2d <- 0
-    # dbStep <- 0.01
     dbStep <- opt$dbStep1D
   }
 
@@ -774,12 +683,11 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     if(opt$constrained) {
       # Since it is possible to have different grid lengths for d and
       # b when the parameters have different max/min values, the
-      # following function calculates the total number of iterations
+      # following block calculates the total number of iterations
       # by counting the number of instances in which the grid values
       # in b are less than or equal to those in d. This should be
       # moved to the beginning of the loop for faster computation
       # later.
-      # totIters <- sum(sum(bsxfun(@le,repmat(bGrid',1, nD),dGrid))) %' ))))
       bdGrid <- expand.grid(dGrid = dGrid, bGrid = bGrid)
       totIters <- sum(bdGrid[, 'bGrid'] <= bdGrid[, 'dGrid'])
     } else {
@@ -802,14 +710,10 @@ FCVARlikeGrid <- function(x, k, r, opt) {
   # Initialize progress reports.
   if(opt$progress != 0) {
     if(opt$progress == 1) {
-      # This is cute but... not right now:
-      # M_status_bar <- waitbar(0,['Model: k= ',num2str(k), ', r= ', num2str(r)])
-      # OK, here it is:
       progbar <- utils::txtProgressBar(min = 0, max = totIters, style = 3)
 
     }
 
-    # lastTic <- tic()
   }
 
 
@@ -852,8 +756,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     if(opt$constrained & Grid2d) {
       # Start at the index that corresponds to the first value in the
       # grid for d that is >= b
-      # dStart <-  find(dGrid>=b, 1)
-      # dStart <- dGrid[dGrid >= b][1]
       dStart <- which(dGrid >= b)[1]
     }
 
@@ -883,12 +785,8 @@ FCVARlikeGrid <- function(x, k, r, opt) {
         # <- fminunc(@( params ) -FCVARlikeMu(x, db, params, k, r, opt), ...
         #            StartVal, opt$UncFminOptions )
 
-        # print('Made it here!')
-
         min_out <- stats::optim(StartVal,
                          function(params) {-FCVARlikeMu(params, x, db, k, r, opt)})
-
-        # print('Didnt make it here!')
 
         muHat <- min_out$par
         maxLike <- min_out$value
@@ -910,47 +808,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   }
 
-  # # Save the workspace at this point.
-  # save.image(file = 'FCVARlikeGridData1.RData')
-  #
-  # # Testing: Analyze the like grid
-  # nrow(like)
-  # ncol(like)
-  # summary(like)
-  # max(like)
-  # min(like)
-  #
-  # # Stack into a data frame.
-  # like_df <- data.frame(expand.grid(b = bGrid,
-  #                                   d = dGrid),
-  #                       like = NA)
-  # head(like_df)
-  # tail(like_df)
-  #
-  # for (col_num in 1:ncol(like)) {
-  #   like_df[seq((col_num - 1)*length(bGrid) + 1,
-  #             col_num*length(bGrid)), 'like'] <- like[, col_num]
-  # }
-  #
-  # head(like_df[order(-like_df[ , 'like']), ])
-  # tail(like_df[order(-like_df[ , 'like']), ])
-  #
-  # # Test some values.
-  # like[bGrid == 0.49, dGrid == 0.01]
-  # like[bGrid > 0.469 & bGrid < 0.471, dGrid == 0.01]
-
-  # Restricted version:
-  # like_df <- data.frame(cbind(bGrid, like))
-  # colnames(like_df) <- c('phi', 'like')
-  # like_df[, 'b'] <- NA
-  # like_df[, 'b'] <- H[1]*like_df[, 'phi'] + h[1]
-  # head(like_df[order(-like_df[ , 'like']), ])
-  #
-  # head(like_df[order(-like_df[ , 'like']), ][like_df[ , 'b'] > 0.65 &
-  #                                              like_df[ , 'b'] < 0.68, ])
-
-
-  # db <- H*phi + h
 
   #--------------------------------------------------------------------------------
   # FIND THE MAX OVER THE GRID
@@ -960,16 +817,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
     # Local max.
     if(Grid2d) {
-      # Matlab version:
-      # [!,smax,!,!] <- extrema2(like,1)
-      # [indexB,indexD] <- ind2sub(size(like),smax)
-
-      # # Temporary: replace with global max:
-      # indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
-      # # print('indexB_and_D = ')
-      # # print(indexB_and_D)
-      # indexB <- indexB_and_D[, 1, drop = FALSE]
-      # indexD <- indexB_and_D[, 2, drop = FALSE]
 
       # Implement local max:
       loc_max_out <- find_local_max(as.array(like))
@@ -986,12 +833,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
       max_like <- max(like, na.rm = TRUE)
 
     } else {
-      # Matlab version:
-      # [!,indexB,!,!] <- extrema(like)
-
-      # # Temporary: replace with global max:
-      # indexB <- which(like == max(like))
-      # indexD <- 1
 
       # Implement local max:
       # Need to pad 1-D array with boundary columns.
@@ -1016,12 +857,8 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     if(is.null(indexB) | is.null(indexD)) {
       warning('Failure to find local maximum. Returning global maximum instead.')
 
-      # [ indexB, indexD ] <- find(like == max(max(like)))
       max_like <- max(like, na.rm = TRUE)
-      indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
-
-      # print('indexB_and_D = ')
-      # print(indexB_and_D)
+      indexB_and_D <- which(like == max_like, arr.ind = TRUE)
 
       indexB <- indexB_and_D[, 1, drop = FALSE]
       indexD <- indexB_and_D[, 2, drop = FALSE]
@@ -1030,12 +867,8 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   } else {
     # Global max.
-    # [ indexB, indexD ] <- find(like == max(max(like)))
     max_like <- max(like, na.rm = TRUE)
     indexB_and_D <- which(like == max(like, na.rm = TRUE), arr.ind = TRUE)
-
-    # print('indexB_and_D = ')
-    # print(indexB_and_D)
 
     indexB <- indexB_and_D[, 1, drop = FALSE]
     indexD <- indexB_and_D[, 2, drop = FALSE]
@@ -1048,8 +881,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     # the highest value of b.
     if(Grid2d) {
       # Sort in ascending order according to indexB.
-      # [indexB,indBindx] <- sort(indexB)
-      # indexB <- indexB[order(indexB)]
       indBindx <- order(indexB)
       indexB <- indexB[indBindx]
       indexD <- indexD[indBindx]
@@ -1087,15 +918,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     # Translate local maxima.
     for (i in 1:length(local_max$b)) {
       local_max_db <- matrix(c(local_max$b[i]), nrow = length(local_max$b[i]), ncol = 1)
-      # local_max_db <- matrix(c(local_max$b), nrow = 1, ncol = length(local_max$b))
-      print('local_max_db = ')
-      print(local_max_db)
-      print('H = ')
-      print(H)
-      print('h = ')
-      print(h)
-      print('H %*% local_max_db = ')
-      print(H %*% local_max_db)
 
       dbHatStar_i <- t(H %*% local_max_db + h)
       local_max$b[i] <- dbHatStar_i[1]
@@ -1113,12 +935,8 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   # Print final progress report.
   if (opt$progress != 0) {
-    # if (toc(lastTic) > opt$updateTime | iterCount == totIters) {
     if ( iterCount == totIters) {
       if (opt$progress == 1) {
-        # SimNotes <- sprintf('Model: k=%g, r=%g\nb=%4.2f, d=%4.2f, like=%8.2f',
-        #                     k, r, db[2],db[1], like[iB,iD] )
-        # waitbar(iterCount/totIters,M_status_bar, SimNotes)
         utils::setTxtProgressBar(progbar, value = iterCount)
         message(sprintf('\nProgress : %5.1f%%, b = %4.2f, d = %4.2f, like = %g.',
                         (iterCount/totIters)*100,
@@ -1129,7 +947,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
                         dbHatStar[2], dbHatStar[1], max(like, na.rm = TRUE) ))
       }
 
-      # lastTic <- tic()
     }
 
   }
@@ -1167,53 +984,17 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   # Add level parameter corresponding to max likelihood.
   if(opt$levelParam) {
-    # muHatStar  <- t(mu[, indexB, indexD, drop = FALSE])
-    # mu is not a matrix so transpose t() doesnt apply.
-    # It is a vector, so it should not matter much.
-    # Also, without the drop = FALSE, it will automatically collapse to a vector.
-
-
-    # # Troubleshooting here:
-    # test <- array(seq(18), dim = c(2,3,3))
-    # test
-    # # Take a slice.
-    # test_vec <- test[ ,2,2]
-    # test_vec
-    #
-    # par_test <- matrix(c(100,200), nrow = 1, ncol = 2)
-    # par_test
-    #
-    # c(par_test, test_vec)
-    # cbind(par_test, test_vec)
-    #
-    # matrix(c(par_test, test_vec), nrow = 1, ncol = length(par_test) + length(test_vec))
-
-
-
-    # print('mu[, indexB, indexD] = ')
-    # print(mu[, indexB, indexD])
-    # print('params = ')
-    # print(params)
-
 
     muHatStar  <- mu[, indexB, indexD]
     likeGrid_params$muHatStar <- muHatStar
 
 
-    # print('cbind(params, muHatStar) = ')
-    # print(cbind(params, muHatStar))
-    #
-    # params <- cbind(params, muHatStar)
-
-    # Don't ask:
+    # Concatenate parameter values.
     params <- matrix(c(params, muHatStar),
                      nrow = 1, ncol = length(params) + length(muHatStar))
-    # Vectors and matrices and arrays. Oh my!
 
 
     likeGrid_params$params <- params
-    # print('params = ')
-    # print(params)
 
   }
 
@@ -1231,7 +1012,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
   if (opt$plotLike) {
 
-    # plot.FCVARlikeGrid(likeGrid_params, k, r, opt, main = 'default')
     graphics::plot(x = likeGrid_params)
 
   }
@@ -1267,8 +1047,8 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' opt$progress <- 2 # Show progress report on each value of b.
-#' newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
-#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+#' # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+#' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 #' \dontrun{plot(likeGrid_params)}
 #' @note Calls \code{graphics::persp} when \code{x$Grid2d == TRUE} and
 #' calls \code{graphics::plot} when \code{x$Grid2d == FALSE}.
@@ -1277,9 +1057,6 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' \code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 #' @export
 #'
-# plot.FCVARlikeGrid <- function(likeGrid_params, k, r, opt,
-#                                 file = NULL, file_ext = NULL,
-#                                 main = NULL) {
 plot.FCVAR_grid <- function(x, y = NULL, ...) {
 
   # Extract parameters.
@@ -1308,17 +1085,9 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
   if(Grid2d) {
     # 2-dimensional plot.
 
-    # Color palette (100 colors)
-    # col.pal <- colorRampPalette(c("blue", "red"))
-    # col.pal <- colorRampPalette(c("yellow", "red"))
-    # colors <- col.pal(100)
     colors <- grDevices::rainbow(100)
-    # colors <- heat.colors(100)
-    # height of facets
-    # like.facet.center <- (like[-1, -1] + like[-1, -ncol(like)] + like[-nrow(like), -1] + like[-nrow(like), -ncol(like)])/4
     like2D <- t(like)
     like.facet.center <- (like2D[-1, -1] + like2D[-1, -ncol(like2D)] + like2D[-nrow(like2D), -1] + like2D[-nrow(like2D), -ncol(like2D)])/4
-    # like.facet.center <- like2D
     # Range of the facet center on a 100-scale (number of colors)
     like.facet.range <- cut(like.facet.center, 100)
 
@@ -1327,22 +1096,17 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
     # 5.1 4.1 4.1 2.1
     # bottom, left, top and right margins respectively.
     graphics::par(mar = c(1.1, 1.1, 2.1, 1.1))
-    # Reset after.
+    # Reset after:
     # graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
 
     graphics::persp(dGrid_orig, bGrid_orig,
-          # like,
           like2D,
           xlab = 'd',
           ylab = 'b',
-          # zlab = 'Log-likelihood',
           zlab = '',
           main = main,
-          # phi = 45, theta = 45,
           phi = 45, theta = -55,
-          # r = sqrt(3), # The distance of the eyepoint from the centre of the plotting box.
           r = 1.5,
-          # d = 1, # The strength of the perspective transformation.
           d = 4.0,
           xaxs = "i",
           col = colors[like.facet.range]
@@ -1413,15 +1177,11 @@ find_local_max <- function(x) {
   # Proceed by ruling out locally dominated points.
 
   # Check above.
-  # x_check <- rbind(matrix( - Inf, nrow = 1, ncol = ncols),
-  #                  x[ - nrows, ])
   x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
   x_check[ - 1, ] <- x[ - nrows, ]
   loc_max_ind <- loc_max_ind & (x > x_check)
 
   # Check below.
-  # x_check <- rbind(x[ - 1, ],
-  #                  matrix( - Inf, nrow = 1, ncol = ncols))
   x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
   x_check[ - nrows, ] <- x[ - 1, ]
   loc_max_ind <- loc_max_ind & (x > x_check)
@@ -1431,15 +1191,11 @@ find_local_max <- function(x) {
   if (ncols > 1) {
 
     # Check left.
-    # x_check <- cbind(matrix( - Inf, nrow = nrows, ncol = 1),
-    #                  x[ , - ncols])
     x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
     x_check[ , - 1] <- x[ , - ncols]
     loc_max_ind <- loc_max_ind & (x > x_check)
 
     # Check right.
-    # x_check <- cbind(x[ , - 1],
-    #                  matrix( - Inf, nrow = nrows, ncol = 1))
     x_check <- matrix( - Inf, nrow = nrows, ncol = ncols)
     x_check[ , - ncols] <- x[ , - 1]
     loc_max_ind <- loc_max_ind & (x > x_check)
@@ -1518,15 +1274,6 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
   t <- nrow(y)
   x <- y - matrix(1, nrow = t, ncol = 1) %*% mu
 
-  # print(summary(x))
-  # print('mu = ')
-  # print(mu)
-  # print('db = ')
-  # print(db)
-  # print('k = ')
-  # print(k)
-  # print('r = ')
-  # print(r)
 
   # Obtain concentrated parameter estimates.
   estimates <- GetParams(x, k, r, db, opt)
@@ -1535,8 +1282,6 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
   cap_T <- t - opt$N
   p <- ncol(x)
   like <- - cap_T*p/2*( log(2*pi) + 1)  - cap_T/2*log(det(estimates$OmegaHat))
-
-
 
   return(like)
 }
@@ -1579,9 +1324,6 @@ FCVARlike <- function(params, x, k, r, opt) {
   cap_T <- nrow(x)
   p <- ncol(x)
 
-  # print('params = ')
-  # print(params)
-
 
   # If there is one linear restriction imposed, optimization is over phi,
   #  so translate from phi to (d,b), otherwise, take parameters as
@@ -1609,19 +1351,6 @@ FCVARlike <- function(params, x, k, r, opt) {
   # Modify the data by a mu level.
   if (opt$levelParam) {
 
-    # print('class(params) = ')
-    # print(class(params))
-    # print('class(mu) = ')
-    # print(class(mu))
-    #
-    # print('mu = ')
-    # print(mu)
-    # print('diag(mu) = ')
-    # print(diag(mu))
-    #
-    #
-    # print('T = ')
-    # print(T)
     y <- x - matrix(1, nrow = cap_T, ncol = p) %*% diag(mu)
   } else {
     y <- x
@@ -1640,10 +1369,6 @@ FCVARlike <- function(params, x, k, r, opt) {
 
 
 
-  # Could have a function GetEstimates() that does all of the above.
-  # estimates <- GetEstimates(params, x, k, r, opt)
-
-
   # Storing the estimates in a global structure here allows us to skip a
   #   call to GetParams after optimization to recover the coefficient
   #   estimates
@@ -1660,18 +1385,11 @@ FCVARlike <- function(params, x, k, r, opt) {
 
 
   # Calculate value of likelihood function.
-  # T <- nrow(y) - opt$N
-  # p <- ncol(y)
   # Base this on raw inputs:
   cap_T <- nrow(x) - opt$N
   p <- ncol(x)
   like <- - cap_T*p/2*( log(2*pi) + 1)  - cap_T/2*log(det(estimates$OmegaHat))
 
-  # Assign the value for the global variable estimatesTEMP.
-  # Might adjust this later but it will work for now.
-  # print('Search list in FCVARlike():')
-  # print(search())
-  # assign("estimatesTEMP", estimatesTEMP, envir = .GlobalEnv)
 
   return(like)
 }
@@ -1726,13 +1444,8 @@ FCVARlike <- function(params, x, k, r, opt) {
 #
 GetEstimates <- function(params, x, k, r, opt) {
 
-  # global estimatesTEMP
-
   cap_T <- nrow(x)
   p <- ncol(x)
-
-  # print('params = ')
-  # print(params)
 
 
   # If there is one linear restriction imposed, optimization is over phi,
@@ -1761,19 +1474,6 @@ GetEstimates <- function(params, x, k, r, opt) {
   # Modify the data by a mu level.
   if (opt$levelParam) {
 
-    # print('class(params) = ')
-    # print(class(params))
-    # print('class(mu) = ')
-    # print(class(mu))
-    #
-    # print('mu = ')
-    # print(mu)
-    # print('diag(mu) = ')
-    # print(diag(mu))
-    #
-    #
-    # print('T = ')
-    # print(T)
     y <- x - matrix(1, nrow = cap_T, ncol = p) %*% diag(mu)
   } else {
     y <- x
@@ -1790,10 +1490,6 @@ GetEstimates <- function(params, x, k, r, opt) {
   # Obtain concentrated parameter estimates$
   estimates <- GetParams(y, k, r, c(d, b), opt)
 
-  # Storing the estimates in a global structure here allows us to skip a
-  #   call to GetParams after optimization to recover the coefficient
-  #   estimates
-  # estimatesTEMP <- estimates
   # If level parameter is present, they are the last p parameters in the
   #   params vector
   if (opt$levelParam) {
@@ -1916,9 +1612,6 @@ FCVARlikeFull <- function(x, k, r, coeffs, betaHat, rhoHat, opt) {
 #
 TransformData <- function(x, k, db, opt) {
 
-
-  # print(summary(x))
-
   # Number of initial values and sample size.
   N <- opt$N
   cap_T <- nrow(x) - N
@@ -2018,7 +1711,6 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
   #--------------------------------------------------------------------------------
   # Transform data
   #--------------------------------------------------------------------------------
-  # [ Z0, Z1, Z2, Z3 ] <- TransformData(y, k, coeffs$db, opt)
   Z_array <- TransformData(y, k, coeffs$db, opt)
   Z0 <- Z_array$Z0
   Z1 <- Z_array$Z1
@@ -2082,13 +1774,6 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
 # @export
 #
 Lbk <- function(x, b, k) {
-
-  # print('summary(x) = ')
-  # print(summary(x))
-  # print('b = ')
-  # print(b)
-  # print('k = ')
-  # print(k)
 
   p <- ncol(x)
 
@@ -2159,32 +1844,18 @@ Lbk <- function(x, b, k) {
 FracDiff <- function(x, d) {
 
 
-  # print(summary(x))
-
   if(is.null(x)) {
     dx <- NULL
   } else {
 
 
-    # T <- nrow(x)
     p <- ncol(x)
-
-
-
     cap_T <- nrow(x)
     np2 <- stats::nextn(2*cap_T - 1, 2)
 
     k <- 1:(cap_T-1)
     b <- c(1, cumprod((k - d - 1)/k))
 
-
-    # print('np2 = ')
-    # print(np2)
-    # print('iT = ')
-    # print(iT)
-    #
-    # print('c(...) = ')
-    # print(summary(c(x, rep(0, np2 - iT))))
 
     dx <- matrix(0, nrow = cap_T, ncol = p)
 
@@ -2706,19 +2377,6 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, cap_T, p, opt) {
   likeSearch <- matrix(NA, nrow = nS, ncol = 1)
   OmegaSearch <- array(0, dim = c(p, p,nS))
 
-  # print('vecPiLS = ')
-  # print(vecPiLS)
-  # print('alphaHat = ')
-  # print(alphaHat)
-  # print('kronecker(alphaHat, diag(p1)) = ')
-  # print(kronecker(alphaHat, diag(p1)))
-  # print('h = ')
-  # print(h)
-  # print('kronecker(alphaHat, diag(p1)) %*% h = ')
-  # print(kronecker(alphaHat, diag(p1)) %*% h)
-  #
-
-
 
   # Get candidate values for entering the switching algorithm.
   vecPhi1 <- solve(t(H) %*%
@@ -2746,10 +2404,6 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, cap_T, p, opt) {
   OmegaHat <- S00 - S01 %*% betaStar %*% t(alphaHat) -
     alphaHat %*% t(betaStar) %*% t(S01) +
     alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
-
-
-
-
 
   # Calculate the likelihood.
   like1 <- - log(det(OmegaHat))
@@ -2805,23 +2459,16 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, cap_T, p, opt) {
       alphaHat %*% t(betaStar) %*% t(S01) +
       alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
 
-
-
-
     # Calculate the likelihood.
     like1 <- - log(det(OmegaHat))
 
     if(i > 0) {
 
-
       # Calculate relative change in likelihood
       likeChange <- (like1 - like0) / (1 + abs(like0))
 
-
-
       # Check relative change and enter line search if below tolerance.
       if(likeChange < TolSearch && opt$LineSearch) {
-
 
         # Calculate changes in parameters.
         deltaPhi <- vecPhi1 - vecPhi0_c
@@ -2836,8 +2483,6 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, cap_T, p, opt) {
         vecPsi2[ ,1]       <- vecPsi1
         likeSearch[1]      <- like1
         OmegaSearch[ , ,1] <- OmegaHat
-
-
 
         for (iL in 2:nS) {
 
@@ -2863,11 +2508,7 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, cap_T, p, opt) {
 
         }
 
-
-
-
         # Update max likelihood and OmegaHat based on line search.
-        # [ iSearch ] <- find(likeSearch == max(max(likeSearch)))
         iSearch <- which(likeSearch == max(likeSearch), arr.ind = TRUE)
 
         # If there are identical likelihoods, choose smallest

@@ -36,7 +36,7 @@ for a sequence of lag lengths.
 \code{summary.MVWN_stats} prints a summary of these statistics to screen.
 }
 \note{
-The LM test should be consistent for heteroskedastic series, the Q-test is not.
+The LM test is consistent for heteroskedastic series; the Q-test is not.
 }
 \examples{
 opt <- FCVARoptions()

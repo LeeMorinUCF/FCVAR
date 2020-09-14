@@ -288,9 +288,6 @@ FCVARforecast <- function(x, model, NumPeriods) {
   # Preliminary steps
   #--------------------------------------------------------------------------------
 
-  # x <- x1
-  # x <- data
-  # p <- ncol(data)
   p <- ncol(x)
   opt <- model$options
   cf  <- model$coeffs
@@ -306,8 +303,6 @@ FCVARforecast <- function(x, model, NumPeriods) {
 
 
     # Append x with zeros to simplify calculations.
-    # x <- rbind(x, matrix(0, nrow = 1, ncol = p))
-    # x <- rbind(x, rep(0, p))
     xf <- rbind(xf, rep(0, p))
     cap_T <- nrow(xf)
 
@@ -324,11 +319,6 @@ FCVARforecast <- function(x, model, NumPeriods) {
 
     # Error correction term.
     if(!is.null(cf$alphaHat)) {
-
-      # print('size(cf$PiHat) = ')
-      # print(size(cf$PiHat))
-      # print('size(FracDiff( Lbk(y, b, 1), d - b )) = ')
-      # print(size(FracDiff( Lbk(y, b, 1), d - b )))
 
 
       z <- z + FracDiff( Lbk(y, b, 1), d - b ) %*% t(cf$PiHat)
@@ -433,15 +423,6 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
     PiStar <- PiStar + coeffs$alphaHat %*% t(coeffs$betaHat)
   }
 
-  # print('coeffs$GammaHat = ')
-  # print(coeffs$GammaHat)
-  # print('i = ')
-  # print(i)
-  # print('p = ')
-  # print(p)
-  # print('2:k = ')
-  # print(2:k)
-
 
   if (k > 0) {
     Gamma1 <- coeffs$GammaHat[ , 1 : p]
@@ -460,13 +441,6 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
     Gammak <- coeffs$GammaHat[ , seq(((k-1)*p + 1), k*p)]
     PiStar <- cbind(PiStar, ( - Gammak ))
   }
-
-  # print('PiStar = ')
-  # print(PiStar)
-  # print('p = ')
-  # print(p)
-  # print('k = ')
-  # print(k)
 
   # Pad with an identity for the transition of the lagged variables.
   if (k > 0) {
@@ -539,7 +513,6 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 #' Econometric Theory 24, 651-676.
 #' @export
 #'
-# print.GetCharPolyRoots <- function(cPolyRoots) {
 summary.FCVAR_roots <- function(object, ...) {
 
   cat(sprintf('--------------------------------------------------------------------------------\n'))
@@ -599,16 +572,8 @@ summary.FCVAR_roots <- function(object, ...) {
 #' Econometric Theory 24, 651-676.
 #' @export
 #'
-# plot.GetCharPolyRoots <- function(cPolyRoots, b,
-#                                   file = NULL, file_ext = NULL,
-#                                   xlim = NULL, ylim = NULL, main = NULL) {
 plot.FCVAR_roots <- function(x, y = NULL, ...) {
 
-
-  # print('cPolyRoots = ')
-  # print(cPolyRoots)
-  # print('b = ')
-  # print(b)
 
   # Extract parameters from FCVAR_roots object.
   cPolyRoots <- x$cPolyRoots
@@ -642,16 +607,6 @@ plot.FCVAR_roots <- function(x, y = NULL, ...) {
 
 
   # Determine axes based on largest roots, if not specified.
-  # if (is.null(xlim) & is.null(ylim)) {
-  #   maxXYaxis <- max( c(transformedUnitCircleX, unitCircleX,
-  #                       transformedUnitCircleY, unitCircleY) )
-  #   minXYaxis <- min( c(transformedUnitCircleX, unitCircleX,
-  #                       transformedUnitCircleY, unitCircleY) )
-  #   maxXYaxis <- max( maxXYaxis, -minXYaxis )
-  #
-  #   xlim <- 2*c(-maxXYaxis, maxXYaxis)
-  #   ylim <- 2*c(-maxXYaxis, maxXYaxis)
-  # }
   if ('xlim' %in% names(dots) & 'ylim' %in% names(dots)) {
 
     xlim <- dots$xlim
@@ -678,12 +633,6 @@ plot.FCVAR_roots <- function(x, y = NULL, ...) {
 
 
 
-  # if (!is.null(main)) {
-  #   if (main == 'default') {
-  #     main <- c('Roots of the characteristic polynomial',
-  #               'with the image of the unit circle')
-  #   }
-  # }
   if ('main' %in% names(dots)) {
     main <- dots$main
   } else {
@@ -772,29 +721,22 @@ MVWNtest <- function(x, maxlag, printResults) {
   # Perform univariate Q and LM tests and store the results.
   for (i in 1:p) {
 
-    # Qtest_out <- Qtest(matrix(x[,i], nrow = T, ncol = 1), maxlag)
     Qtest_out <- Qtest(x[,i, drop = FALSE], maxlag)
     Q[i] <- Qtest_out$Qstat
     pvQ[i] <- Qtest_out$pv
 
-    # LMtest_out <- LMtest(matrix(x[,i], nrow = T, ncol = 1), maxlag)
     LMtest_out <- LMtest(x[,i, drop = FALSE], maxlag)
     LM[i] <- LMtest_out$LMstat
     pvLM[i] <- LMtest_out$pv
 
   }
 
-  # print('Finished the loop on columns')
-
   # Perform multivariate Q test.
-  # [mvQ, pvMVQ] <- Qtest(x,maxlag)
-  # Qtest_out <- Qtest(matrix(x, nrow = T, ncol = p), maxlag)
   Qtest_out <- Qtest(x[ , , drop = FALSE], maxlag)
   mvQ <- Qtest_out$Qstat
   pvMVQ <- Qtest_out$pv
 
 
-  # Output a list of results.
   # Output a MVWN_stats object of results.
   MVWNtest_stats <- list(
     Q = Q,
@@ -811,7 +753,6 @@ MVWNtest <- function(x, maxlag, printResults) {
   # Print output
   if (printResults) {
 
-    # print.MVWNtest(stats = MVWNtest_stats, maxlag, p)
     summary(MVWNtest_stats)
 
   }
@@ -861,7 +802,6 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' The LM test is consistent for heteroskedastic series, the Q-test is not.
 #' @export
 #'
-# print.MVWNtest <- function(stats, maxlag, p) {
 summary.MVWN_stats <- function(object, ...) {
 
   cat(sprintf('\n       White Noise Test Results (lag = %g)\n', object$maxlag))
@@ -924,24 +864,11 @@ summary.MVWN_stats <- function(object, ...) {
 #
 LMtest <- function(x, q) {
 
-  # print('In LMtest')
-  # print(size(x))
-  # print(q)
-  # print(nrow(x))
-  # print(ncol(x))
-  # print('(q+1):T = ')
-  # print((q+1):T)
-
-
-  # cat(sprintf('x is %d by %d', nrow(x), ncol(x)))
 
   # Breusch-Godfrey Lagrange Multiplier test for serial correlation.
   cap_T <- nrow(x)
   x <- x - mean(x)
 
-  # cat(sprintf('x is %d by %d', nrow(x), ncol(x)))
-
-  # print(x)
 
   y <- x[seq(q + 1, cap_T), ,  drop = FALSE]
   z <- x[seq(1, cap_T - q), ,  drop = FALSE]
@@ -952,48 +879,17 @@ LMtest <- function(x, q) {
 
 
 
-  # print(head(y))
-  # print(tail(y))
-  # cat(sprintf('y is %d by %d', nrow(y), ncol(y)))
-
-
   e <- y
-  # print(head(e))
-  # print(tail(e))
-
-
-  # cat(sprintf('e is %d by %d', nrow(e), ncol(e)))
-  # cat(sprintf('z is %d by %d', nrow(z), ncol(z)))
-  # kron_test <- kronecker(matrix(1, 1, q), e)
-  # cat(sprintf('kron_test is %d by %d', nrow(kron_test), ncol(kron_test)))
-
-
-  # s <- z[,1:q] * repmat(e,1,q)
-  # Translate this properly:
   s <- z[,1:q,  drop = FALSE] * kronecker(matrix(1, 1, q), e)
-
-  # cat(sprintf('s is %d by %d', nrow(s), ncol(s)))
 
   sbar <- t(colMeans(s))
 
-  # print('sbar = ')
-  # print(sbar)
-
   kron_sbar <- kronecker(matrix(1, nrow(s)), sbar)
 
-  # print(head(kron_sbar))
-  # print(tail(kron_sbar))
-
-  # The next line bsxfun(@FUNC, A, B) applies the element-by-element binary
-  # operation FUNC to arrays A and B, with singleton expansion enabled.
-  # Need to translate this to R:
-  # s <- mapply(minus, s, sbar)
-  # Never mind that fancy pants stuff for something that
-  # is not even calculated in a loop.
   s <- s - kron_sbar
 
   S <- t(s) %*% s/cap_T
-  # LMstat <- T*sbar %*% S^(-1) %*% t(sbar)
+
   LMstat <- cap_T*sbar %*% solve(S) %*% t(sbar)
   pv <- 1 - stats::pchisq(LMstat, q)
 
@@ -1054,25 +950,11 @@ LMtest <- function(x, q) {
 #
 Qtest <- function(x, maxlag) {
 
-  # print('class(x) = ')
-  # print(class(x))
-
   cap_T <- nrow(x)
   p <- ncol(x)
 
-  # print('p = ')
-  # print(p)
-  # print('T = ')
-  # print(T)
-
-  # t <- 7
-  # print(x[t, , drop = FALSE])
-  # print(t(x[t, , drop = FALSE]))
-  # print(t(x[t, , drop = FALSE]) %*% x[t, , drop = FALSE])
-
   C0 <- matrix(0, nrow = p, ncol = p)
   for (t in 1:cap_T) {
-    # C0 <- C0 + x[t, ] %*% t(x[t, ])
     C0 <- C0 + t(x[t, , drop = FALSE]) %*% x[t, , drop = FALSE]
   }
   C0 <- C0/cap_T
@@ -1090,10 +972,6 @@ Qtest <- function(x, maxlag) {
   # (Multivariate) Q statistic
   Qstat <- 0
   for (j in 1:maxlag) {
-    # Qstat <- Qstat+trace(C(:,:,j)'*inv(C0)*C(:,:,j)*inv(C0)) / (T-j) %'
-    # The following line is a more efficient calculation than the previous
-    # Qstat <- Qstat+trace( (C(:,:,j)'/C0)*(C(:,:,j)/C0) ) / (T-j) %' #'
-    # Need function for trace:
     Qstat <- Qstat + sum(diag( (t(C[ , ,j]) %*% solve(C0)) %*% (C[ , ,j] %*% solve(C0)) )) / (cap_T - j)
   }
 

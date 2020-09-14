@@ -15,8 +15,8 @@ which includes the following parameters:
   \item{\code{ConFminOptions}}{CHECK: Options passed to \code{optimize} function for
   constrained optimization of the likelihood function over the fractional integration parameters.}
   \item{\code{LineSearch}}{Indicator for conducting a line search optimization within
-  the switching algorithm when optimizing over constraints on the cointegrating relations \code{\beta}
-  or the adjustment coefficients \code{\alpha}. See Doornik (2018, Section 2.2) for details.}
+  the switching algorithm when optimizing over constraints on the cointegrating relations \eqn{\beta}
+  or the adjustment coefficients \eqn{\alpha}. See Doornik (2018, Section 2.2) for details.}
   \item{\code{LocalMax}}{Indicator to select the local maximum with the highest value of \code{b}
   when there are multiple local optima. This is meant to alleviate the identification problem discussed
    in Johansen and Nielsen (2010, Section 2.3)  and Carlini and de Magistris (2019).
