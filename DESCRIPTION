@@ -38,3 +38,9 @@ Suggests:
     testthat
 VignetteBuilder: knitr
 Remotes: LeeMorinUCF/fracdist
+NeedsCompilation: no
+Packaged: 2020-09-13 19:40:58 UTC; le279259
+Author: Lealand Morin [aut, cre] (<https://orcid.org/0000-0001-8539-1386>),
+  Morten Nielsen [aut] (<https://orcid.org/0000-0000-9999-9999>),
+  Michal Popiel [aut] (<https://orcid.org/0000-0000-9999-9999>)
+Maintainer: Lealand Morin <lealand.morin@ucf.edu>
