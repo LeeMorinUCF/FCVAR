@@ -161,33 +161,43 @@ FCVARoptions <- function(...) {
     # Note: these restrictions are non-standard and should only be
     # specified if constrained = 0. Furthermore, the grid search is not
     # equipped to handle these types of restrictions.
-    C_db = NULL,
-    c_db = NULL,
+    # C_db = NULL,
+    # c_db = NULL,
+    C_db = if ('C_db' %in% names(opt_dots)) {opt_dots$C_db} else {NULL},
+    c_db = if ('c_db' %in% names(opt_dots)) {opt_dots$c_db} else {NULL},
 
     # Upper and lower bounds for parameters d and b.
     # Note: these options are set automatically in the
     # FCVARoptionUpdates function below based on inputs of 'dbMax',
     # and 'dbMin'.
-    UB_db = NULL,
-    LB_db = NULL,
+    # UB_db = NULL,
+    # LB_db = NULL,
+    UB_db = if ('UB_db' %in% names(opt_dots)) {opt_dots$UB_db} else {NULL},
+    LB_db = if ('LB_db' %in% names(opt_dots)) {opt_dots$LB_db} else {NULL},
 
     # Equality constraints on parameters d and b.
     # Specified as R_psi * [d b] = r_psi
-    R_psi = NULL,
-    r_psi = NULL,
+    # R_psi = NULL,
+    # r_psi = NULL,
+    R_psi = if ('R_psi' %in% names(opt_dots)) {opt_dots$R_psi} else {NULL},
+    r_psi = if ('r_psi' %in% names(opt_dots)) {opt_dots$r_psi} else {NULL},
 
 
     # Restrictions on Alpha matrix.
     # Specified as R_Alpha*vec(Alpha) = r_Alpha
     # Note: r_Alpha can only have 0s
-    R_Alpha = NULL,
-    r_Alpha = NULL,
+    # R_Alpha = NULL,
+    # r_Alpha = NULL,
+    R_Alpha = if ('R_Alpha' %in% names(opt_dots)) {opt_dots$R_Alpha} else {NULL},
+    r_Alpha = if ('r_Alpha' %in% names(opt_dots)) {opt_dots$r_Alpha} else {NULL},
 
     # Restrictions on Beta matrix.
     # Specified as R_Beta*vec(Beta) = r_Beta
     # Note: r_Beta can have non-zero elements.
-    R_Beta = NULL,
-    r_Beta = NULL,
+    # R_Beta = NULL,
+    # r_Beta = NULL,
+    R_Beta = if ('R_Beta' %in% names(opt_dots)) {opt_dots$R_Beta} else {NULL},
+    r_Beta = if ('r_Beta' %in% names(opt_dots)) {opt_dots$r_Beta} else {NULL},
 
     #--------------------------------------------------------------------------------
     # OUTPUT OPTIONS
@@ -252,7 +262,8 @@ FCVARoptions <- function(...) {
 
   # Replace any default options with arguments passed through opt_dots (...).
   # Skip those already assigned (arguments in matrix form).
-  matrix_args <- c('dbMax', 'dbMin')
+  matrix_args <- c('dbMax', 'dbMin', 'C_db', 'c_db', 'R_psi', 'r_psi',
+                   'R_Alpha', 'r_Alpha', 'R_Beta', 'r_Beta')
   dots_arg_list <- names(opt_dots)[!(names(opt_dots) %in% matrix_args)]
 
   for (arg_name in dots_arg_list) {

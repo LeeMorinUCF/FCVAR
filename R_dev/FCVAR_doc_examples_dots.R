@@ -32,18 +32,18 @@ opt <- FCVARoptions()
 
 # FCVARoptionUpdates(opt, p, r)
 
-opt <- FCVARoptions()
-opt$gridSearch   <- 0 # Disable grid search in optimization.
-opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1)
 
 # Repeat with dots argument:
-newOpt_0 <- newOpt
+# newOpt_0 <- newOpt
 opt <- FCVARoptions(
         gridSearch   = 0, # Disable grid search in optimization.
-        dbMin        = matrix(c(0.01, 0.01), nrow = 1), # Set lower bound for d,b.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
         constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 )
@@ -58,41 +58,91 @@ opt <- FCVARoptions()
 UB_LB_bounds <- GetBounds(opt)
 # save(UB_LB_bounds, list = c('UB_LB_bounds'), file = 'tests/testthat/soln_estn/UB_LB_bounds_def.RData')
 
-opt <- FCVARoptions()
-opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt <- FCVARoptions()
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+
+opt <- FCVARoptions(
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00) # Set upper bound for d,b.
+)
 UB_LB_bounds <- GetBounds(opt)
 # save(UB_LB_bounds, list = c('UB_LB_bounds'), file = 'tests/testthat/soln_estn/UB_LB_bounds_mod.RData')
 
 
 # FCVARestn(x,k,r,opt)
 
-opt <- FCVARoptions()
-opt$gridSearch   <- 0 # Disable grid search in optimization.
-opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+# opt <- FCVARoptions()
+# opt$gridSearch   <- 0 # Disable grid search in optimization.
+# opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
+# opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
+# opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 # save(results, list = c('results'), file = 'tests/testthat/soln_estn/results_m1.RData')
 # capture.output(results <- FCVARestn(x, k = 2, r = 1, opt), file = 'tests/testthat/soln_estn/results_m1.txt')
 
+# For restrictions on the same model, it makes sense to copy the options object
+# and make changes to specific items.
 opt1 <- opt
 opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt1$r_psi <- 1
 m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
+
+# But it also makes sense to allow for those restrictions to be placed up front.
+opt1 <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_psi        = matrix(c(1, 0), nrow = 1, ncol = 2),
+        r_psi        = 1
+
+)
+
+m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
 # capture.output(m1r1 <- FCVARestn(x, k = 2, r = 1, opt1),
 #                file = 'tests/testthat/soln_estn/results_m1r1.txt')
 
+# Likewise, add restrictions to existing model.
 opt1 <- opt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 # capture.output(m1r2 <- FCVARestn(x, k = 2, r = 1, opt1),
 #                file = 'tests/testthat/soln_estn/results_m1r2.txt')
 
+# Or start a new object with otherwise same restrictions.
+opt1 <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+)
+m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
+
+# Method 1: modify existing model.
 opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
+
+# Or start new options object.
+opt1 <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_Alpha      = matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+)
+m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
+
 # capture.output(m1r4 <- FCVARestn(x, k = 2, r = 1, opt1),
 #                file = 'tests/testthat/soln_estn/results_m1r4.txt')
 
@@ -110,11 +160,22 @@ m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 
 # FCVARlagSelect(x, kmax, r, order, opt )
 
+# Modify options after defaults:
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
+
+# Or pass arguments upon definition:
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
 # capture.output(FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt), file = 'tests/testthat/soln_spec/FCVARlagSelectStats.txt')
@@ -128,9 +189,18 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
+summary.FCVAR_lags(object = FCVARlagSelectStats)
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-print.FCVARlagSelect(stats = FCVARlagSelectStats, kmax = 3, r = 3, p = 3, order, opt)
+summary.FCVAR_lags(object = FCVARlagSelectStats)
 
 
 # FCVARrankTests(x, k, opt)
@@ -140,8 +210,18 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 rankTestStats <- FCVARrankTests(x, k = 2, opt)
+
+
+
 # capture.output(rankTestStats <- FCVARrankTests(x, k = 2, opt), file = 'tests/testthat/soln_spec/rankTestStats.txt')
 # save(rankTestStats, list = c('rankTestStats'), file = 'tests/testthat/soln_spec/rankTestStats.RData')
 
@@ -153,9 +233,16 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 rankTestStats <- FCVARrankTests(x, k = 2, opt)
-print.FCVARrankTests(stats = rankTestStats, k = 2, p = ncol(x), T = nrow(x), opt)
+summary.FCVAR_ranks(object = rankTestStats)
 
 
 # FCVARbootRank <- function(x, k, opt, r1, r2, B)
@@ -166,6 +253,14 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$plotRoots <- 0
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        plotRoots    = 0
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 set.seed(42)
 # FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
@@ -187,6 +282,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
@@ -205,17 +307,24 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
-print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
+summary.MVWN_stats(object = MVWNtest_stats)
 
 set.seed(27)
 WN <- rnorm(100)
 RW <- cumsum(rnorm(100))
 MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
-print.MVWNtest(stats = MVWNtest_stats, maxlag = 12)
+summary.MVWN_stats(object = MVWNtest_stats)
 
 
 
@@ -227,6 +336,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
@@ -251,6 +367,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
@@ -275,21 +398,57 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 m1 <- FCVARestn(x, k = 2, r = 1, opt)
+
+
 opt1 <- opt
 opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt1$r_psi <- 1
+
+opt1 <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_psi        = matrix(c(1, 0), nrow = 1, ncol = 2),
+        r_psi        = 1
+)
 m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
 Hdb <- FCVARhypoTest(modelUNR = m1, modelR = m1r1)
 
+
 opt1 <- opt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+
+opt1 <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+)
 m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 Hbeta1 <- FCVARhypoTest(m1, m1r2)
 
+
 opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+
+opt1 <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_Alpha      = matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+)
 m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 Halpha2 <- FCVARhypoTest(m1, m1r4)
 
@@ -331,6 +490,19 @@ opt$plotRoots <- 0
 optUNR <- opt
 optRES <- opt
 optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+
+
+optUNR <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        plotRoots    = 0
+)
+optRES <- optUNR
+# Same options plus one more restriction.
+optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+
 set.seed(42)
 FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 # FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 5)
@@ -350,6 +522,14 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+
+opt1 <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_Alpha      = matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+)
 m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
 # save(xf, m1r4, list = c('xf', 'm1r4'), file = 'tests/testthat/soln_post/xf.RData')
@@ -362,6 +542,14 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
@@ -374,11 +562,18 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-print.GetCharPolyRoots(cPolyRoots)
-plot.GetCharPolyRoots(cPolyRoots, b = results$coeffs$db[2])
+summary.FCVAR_roots(cPolyRoots)
+plot.FCVAR_roots(cPolyRoots)
 
 # plot.GetCharPolyRoots(cPolyRoots)
 
@@ -387,11 +582,18 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 cPolyRoots <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-print.GetCharPolyRoots(cPolyRoots)
-plot.GetCharPolyRoots(cPolyRoots, b= results$coeffs$db[2])
+summary.FCVAR_roots(cPolyRoots)
+plot.FCVAR_roots(cPolyRoots, b= results$coeffs$db[2])
 
 
 ################################################################################
@@ -405,6 +607,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 x_sim <- FCVARsim(x, results, T_sim = 100)
@@ -417,6 +626,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 xBS <- FCVARsimBS(x[1:10, ], results, NumPeriods = 100)
@@ -431,6 +647,14 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 
@@ -446,12 +670,22 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 opt$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt$r_psi <- 1
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_psi        = matrix(c(1, 0), nrow = 1, ncol = 2),
+        r_psi        = 1
+)
+
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 
-y <- x - matrix(1, nrow = T+opt$N, ncol = p) %*% diag(results$coeffs$muHat)
+y <- x - matrix(1, nrow = T+opt$N, ncol = 3) %*% diag(results$coeffs$muHat)
 
 estimates <- GetParams(y, k = 2, r = 1, db = results$coeffs$db, opt)
 
@@ -468,6 +702,18 @@ opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 1 # Show progress bar update on each value of b.
 # opt$progress     <- 2 # Show progress report on each value of b.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        restrictDB   = 1, # impose restriction d=b ? 1 <- yes, 0 <- no.
+        progress     = 1 # Show progress bar update on each value of b.
+        # progress     = 2 # Show progress report on each value of b.
+)
+
+
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
@@ -497,6 +743,21 @@ opt$R_psi        <- matrix(c(2, -1), nrow = 1, ncol = 2)
 opt$r_psi        <- 0.5
 opt$progress     <- 1 # Show progress bar update on each value of b.
 # opt$progress     <- 2 # Show progress report on each value of b.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        restrictDB   = 0, # impose restriction d=b ? 1 <- yes, 0 <- no.
+        # Impose linear restriction on d and b:
+        R_psi        = matrix(c(2, -1), nrow = 1, ncol = 2),
+        r_psi        = 0.5,
+        progress     = 1 # Show progress bar update on each value of b.
+        # progress     = 2 # Show progress report on each value of b.
+
+)
+
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
@@ -529,6 +790,17 @@ opt$constrained  <- 1 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 1 # Show progress bar update on each value of b.
 # opt$progress     <- 2 # Show progress report on each value of b.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 1, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        restrictDB   = 0, # impose restriction d=b ? 1 <- yes, 0 <- no.
+        progress     = 1, # Show progress bar update on each value of b.
+        # progress     = 2 # Show progress report on each value of b.
+)
+
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
@@ -546,6 +818,17 @@ opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 1 # Show progress bar update on each value of b.
 # opt$progress     <- 2 # Show progress report on each value of b.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        restrictDB   = 0, # impose restriction d=b ? 1 <- yes, 0 <- no.
+        progress     = 1 # Show progress bar update on each value of b.
+        # progress     = 2 # Show progress report on each value of b.
+)
+
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
@@ -565,6 +848,16 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        restrictDB   = 1, # impose restriction d=b ? 1 <- yes, 0 <- no.
+        progress     = 2 # Show progress report on each value of b.
+)
+
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
@@ -578,6 +871,14 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 FCVARlikeMu(mu = results$coeffs$muHat, y = x, db = results$coeffs$db, k = 2, r = 1, opt)
@@ -590,6 +891,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 FCVARlike(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
@@ -602,6 +910,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
@@ -615,6 +930,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 Z_array <- TransformData(x, k = 2, db = results$coeffs$db, opt)
@@ -627,6 +949,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
@@ -639,6 +968,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 Lbkx <- Lbk(x, b = results$coeffs$db[2], k = 2)
@@ -668,6 +1004,13 @@ opt <- FCVARoptions()
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        # gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = NULL)
 
@@ -676,6 +1019,14 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+
+opt <- FCVARoptions(
+        # gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+)
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
 
@@ -684,6 +1035,14 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+
+opt <- FCVARoptions(
+        # gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_Alpha      = matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+)
 newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
 
@@ -695,6 +1054,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
@@ -707,6 +1073,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
@@ -724,6 +1097,13 @@ opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 params <- SEmat2vecU(coeffs = results$coeffs, k = 2, r = 1, p = 3, opt)
@@ -742,6 +1122,14 @@ opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+
+opt <- FCVARoptions(
+        gridSearch   = 0, # Disable grid search in optimization.
+        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+)
 opt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
