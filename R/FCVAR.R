@@ -61,6 +61,7 @@
 #'
 #' @docType package
 #' @name FCVAR
+#' @return Returns \code{NULL}. Object included for description only.
 NULL
 
 

@@ -79,8 +79,13 @@
 #' VAR models with the F(d) condition." Journal of Business & Economic Statistics 37(1), 134–146.
 #' @export
 #'
-FCVARoptions <- function() {
+FCVARoptions <- function(...) {
 
+  # Take list of arguments passed to FCVARoptions, if any.
+  opt_dots <- list(...)
+  # Any valid arguments here will overwrite default options.
+
+  # Create list of default options.
   opt <- list(
 
     #--------------------------------------------------------------------------------
@@ -111,8 +116,10 @@ FCVARoptions <- function() {
     LocalMax   = 1,
 
     # Set upper and lower bound for d,b parameters.
-    dbMax = 2,
-    dbMin = 0.01,
+    # dbMax = 2,
+    # dbMin = 0.01,
+    dbMax = if ('dbMax' %in% names(opt_dots)) {opt_dots$dbMax} else {2},
+    dbMin = if ('dbMin' %in% names(opt_dots)) {opt_dots$dbMin} else {0.01},
 
     # Starting value for optimization.
     db0 = c(1, 1),
@@ -242,6 +249,16 @@ FCVARoptions <- function() {
 
 
   )
+
+  # Replace any default options with arguments passed through opt_dots (...).
+  # Skip those already assigned (arguments in matrix form).
+  matrix_args <- c('dbMax', 'dbMin')
+  dots_arg_list <- names(opt_dots)[!(names(opt_dots) %in% matrix_args)]
+
+  for (arg_name in dots_arg_list) {
+    opt[arg_name] <- unname(unlist(opt_dots[arg_name]))
+  }
+
 
   # Define class of object.
   class(opt) <- 'FCVAR_opt'
