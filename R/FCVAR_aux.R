@@ -2363,8 +2363,10 @@ GetRestrictedParams <- function(beta0, S00, S01, S11, cap_T, p, opt) {
     alphaHat %*% t(betaStar) %*% S11 %*% betaStar %*% t(alphaHat)
 
   # Algorithm specifications.
-  iters   <- opt$UncFminOptions$MaxFunEvals
-  Tol     <- opt$UncFminOptions$TolFun
+  # iters   <- opt$UncFminOptions$MaxFunEvals
+  # Tol     <- opt$UncFminOptions$TolFun
+  iters   <- opt$unc_optim_control$maxit
+  Tol     <- opt$unc_optim_control$reltol
   conv    <- 0
   i       <- 0
 

@@ -9,10 +9,18 @@
 #' @return An S3 object of class \code{FCVAR_opt} that stores the default estimation options,
 #' which includes the following parameters:
 #' \describe{
-#'   \item{\code{UncFminOptions}}{CHECK: Options passed to \code{optimize} function for
-#'   unconstrained optimization of the likelihood function over the fractional integration parameters.}
-#'   \item{\code{ConFminOptions}}{CHECK: Options passed to \code{optimize} function for
-#'   constrained optimization of the likelihood function over the fractional integration parameters.}
+#'   \item{\code{unc_optim_control}}{A list of options in the form of the argument \code{control}
+#'   in the \code{optim} function for *unconstrained* optimization of the likelihood function
+#'   over the fractional integration parameters.
+#'   This is also used in the switching algorithm employed when linear constraints are imposed on
+#'   the cointegrating relations \code{beta} or the adjustment coefficients \code{alpha},
+#'   so it must at least contain the arguments \code{maxit} and \code{reltol},
+#'   since it uses those parameters.}
+#'   \item{\code{con_optim_control}}{A list of options in the form of the argument \code{control}
+#'   in either the \code{optim} or the \code{constrOptim} function for *constrained* optimization
+#'   of the likelihood function over the fractional integration parameters,
+#'   using the 'L-BFGS-B' algorithm.
+#'   It must at least contain the arguments \code{maxit} and \code{pgtol}.}
 #'   \item{\code{LineSearch}}{Indicator for conducting a line search optimization within
 #'   the switching algorithm when optimizing over constraints on the cointegrating relations \eqn{\beta}
 #'   or the adjustment coefficients \eqn{\alpha}. See Doornik (2018, Section 2.2) for details.}
@@ -93,19 +101,26 @@ FCVARoptions <- function(...) {
     #--------------------------------------------------------------------------------
 
     # Estimation options for unconstrained optimization.
-    UncFminOptions = list(MaxFunEvals = 1000,
-                          TolFun = 1e-8 #, # Not all are used in R.
-                          # TolX = 1e-8,
-                          # Display = 'off'
+    # UncFminOptions = list(MaxFunEvals = 1000,
+    #                       TolFun = 1e-8 #, # Not all are used in R.
+    #                       # TolX = 1e-8,
+    #                       # Display = 'off'
+    # ),
+    unc_optim_control = list(maxit = 1000,
+                             reltol = 1e-8 #, # Not all are used in R.
+                             # TolX = 1e-8,
+                             # Display = 'off'
     ),
 
     # Estimation options for constrained optimization.
-    ConFminOptions = list(MaxFunEvals = 1000,
-                          TolFun = 1e-8,
-                          # TolX = 1e-8,
-                          # Display = 'off',
-                          # Algorithm = 'interior-point',
-                          Algorithm = 'L-BFGS-B'),
+    # ConFminOptions = list(MaxFunEvals = 1000,
+    #                       TolFun = 1e-8,
+    #                       # TolX = 1e-8,
+    #                       # Display = 'off',
+    #                       # Algorithm = 'interior-point',
+    #                       Algorithm = 'L-BFGS-B'),
+    con_optim_control = list(maxit = 1000,
+                             pgtol = 1e-8),
     # L-BFGS-B is limited-memory BFGS with bounds.
 
     # Activate live search for switching algorithm in restricted model

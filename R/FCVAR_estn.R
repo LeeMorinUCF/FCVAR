@@ -230,8 +230,11 @@ FCVARestn <- function(x, k, r, opt) {
       # Add the options for optimization. Check.
       min_out <- stats::optim(StartVal,
                        function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)},
-                       control = list(maxit = opt$UncFminOptions$MaxFunEvals,
-                                      reltol = opt$UncFminOptions$TolFun))
+                       # control = list(maxit = opt$UncFminOptions$MaxFunEvals,
+                       #                reltol = opt$UncFminOptions$TolFun),
+                       # control = list(maxit = opt$unc_optim_control$maxit,
+                       #                reltol = opt$unc_optim_control$reltol),
+                       control = opt$unc_optim_control)
 
 
       muHat <- min_out$par
@@ -290,16 +293,22 @@ FCVARestn <- function(x, k, r, opt) {
                              ui = Cdb,
                              ci = - cdb,
                              method = 'L-BFGS-B', lower = LB, upper = UB,
-                             control = list(maxit = opt$ConFminOptions$MaxFunEvals,
-                                            pgtol = opt$ConFminOptions$TolFun))
+                             # control = list(maxit = opt$ConFminOptions$MaxFunEvals,
+                             #                pgtol = opt$ConFminOptions$TolFun),
+                             # control = list(maxit = opt$con_optim_control$maxit,
+                             #                pgtol = opt$con_optim_control$pgtol),
+                             control = opt$con_optim_control)
     } else {
       # Constrained version with L-BFGS-B:
       # This uses only the box constraints LB and UB:
       min_out <- stats::optim(startVals,
                        function(params) {-FCVARlike(params, x, k, r, opt)},
                        method = 'L-BFGS-B', lower = LB, upper = UB,
-                       control = list(maxit = opt$ConFminOptions$MaxFunEvals,
-                                      pgtol = opt$ConFminOptions$TolFun))
+                       # control = list(maxit = opt$ConFminOptions$MaxFunEvals,
+                       #                pgtol = opt$ConFminOptions$TolFun),
+                       # control = list(maxit = opt$con_optim_control$maxit,
+                       #                pgtol = opt$con_optim_control$pgtol),
+                       control = opt$con_optim_control)
     }
 
 
