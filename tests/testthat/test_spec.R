@@ -7,11 +7,13 @@ test_that("Lag selection results and output are correct", {
   load(file = 'soln_spec/FCVARlagSelectStats.RData')
   FCVARlagSelectStats_text_soln <- readLines('soln_spec/FCVARlagSelectStats.txt')
 
-  opt <- FCVARoptions()
-  opt$gridSearch   <- 0 # Disable grid search in optimization.
-  opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-  opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-  opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+  opt <- FCVARoptions(
+    gridSearch   = 0, # Disable grid search in optimization.
+    dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+    dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+    constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+    plotRoots    = 0 # Don't create plots for tests.
+  )
   x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
   # FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
 
@@ -28,11 +30,13 @@ test_that("Rank Testing results and output are correct", {
   load(file = 'soln_spec/rankTestStats.RData')
   rankTestStats_text_soln <- readLines('soln_spec/rankTestStats.txt')
 
-  opt <- FCVARoptions()
-  opt$gridSearch   <- 0 # Disable grid search in optimization.
-  opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-  opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-  opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+  opt <- FCVARoptions(
+    gridSearch   = 0, # Disable grid search in optimization.
+    dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+    dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+    constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+    plotRoots    = 0 # Don't create plots for tests.
+  )
   x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
   # rankTestStats <- FCVARrankTests(x, k = 2, opt)
 
@@ -50,12 +54,13 @@ test_that("Bootstrap Rank Testing results and output are correct", {
   load(file = 'soln_spec/FCVARbootRank_stats.RData')
   FCVARbootRank_stats_text_soln <- readLines('soln_spec/FCVARbootRank_stats.txt')
 
-  opt <- FCVARoptions()
-  opt$gridSearch   <- 0 # Disable grid search in optimization.
-  opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-  opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-  opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-  opt$plotRoots <- 0
+  opt <- FCVARoptions(
+    gridSearch   = 0, # Disable grid search in optimization.
+    dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+    dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+    constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+    plotRoots    = 0 # Don't create plots for tests.
+  )
   x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
   set.seed(42)
   # FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)

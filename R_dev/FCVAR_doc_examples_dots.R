@@ -82,7 +82,8 @@ opt <- FCVARoptions(
         gridSearch   = 0, # Disable grid search in optimization.
         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
-        constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+        plotRoots    = 0 # Don't create plots for tests.
 )
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
@@ -103,7 +104,8 @@ opt1 <- FCVARoptions(
         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
         constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
         R_psi        = matrix(c(1, 0), nrow = 1, ncol = 2),
-        r_psi        = 1
+        r_psi        = 1,
+        plotRoots    = 0 # Don't create plots for tests.
 
 )
 
@@ -124,7 +126,8 @@ opt1 <- FCVARoptions(
         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
         constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-        R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+        R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3),
+        plotRoots    = 0 # Don't create plots for tests.
 )
 m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 
@@ -139,7 +142,8 @@ opt1 <- FCVARoptions(
         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
         constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-        R_Alpha      = matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+        R_Alpha      = matrix(c(0, 1, 0), nrow = 1, ncol = 3),
+        plotRoots    = 0 # Don't create plots for tests.
 )
 m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 

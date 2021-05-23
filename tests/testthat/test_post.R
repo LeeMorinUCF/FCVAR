@@ -39,13 +39,15 @@ test_that("Bootstrap hypothesis testing results and output are correct", {
   load(file = 'soln_post/FCVARboot_stats.RData')
   FCVARboot_stats_text_soln <- readLines('soln_post/FCVARboot_stats.txt')
 
-  opt <- FCVARoptions()
-  opt$gridSearch   <- 0 # Disable grid search in optimization.
-  opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
-  opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
-  opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+  opt <- FCVARoptions(
+    gridSearch   = 0, # Disable grid search in optimization.
+    dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+    dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+    constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+    plotRoots    = 0 # Don't create plots for tests.
+  )
   x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-  opt$plotRoots <- 0
+
   optUNR <- opt
   optRES <- opt
   optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
@@ -65,6 +67,7 @@ test_that("Bootstrap hypothesis testing results and output are correct", {
 test_that("forecasts are calculated correctly", {
   load(file = 'soln_post/xf.RData')
 
+  # Options that generated model m1r4:
   # opt <- FCVARoptions()
   # opt$gridSearch   <- 0 # Disable grid search in optimization.
   # opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
