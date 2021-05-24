@@ -1599,7 +1599,12 @@ These functions are used in \fct{FCVARlikeGrid}, which allows the user to pre-es
   % [d \quad b]
   = H\phi + h,
 \end{equation}
-where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi}^{\prime})^{-1} r_\psi$. The bounds on $\phi$ are derived from \verb|opt$dbMin| and \verb|opt$dbMax| in a similar way\footnote{In this figure, the parameters are chosen so that $R_{\psi} = (2, -1)$ and $r_\psi$ = 0.5}.
+where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi}^{\prime})^{-1} r_\psi$. The bounds on $\phi$ are derived from \verb|opt$dbMin| and \verb|opt$dbMax| in a similar way.
+In the example in Figure~\ref{fig:gridPhi}, 
+the parameters are chosen with $R_{\psi} = [2, -1]$ and $r_\psi$ = 0.5, 
+so that the restriction imposed is $[2, -1] [d, b]^{\prime} = 2d - b = 0.5$.
+In this case, $H = [1, 2]^{\prime}$ and $h = [0.2, -0.1]^{\prime}$, 
+and $\phi$ ranges from $\phi = 0.05$, where $b = 0$, to $\phi = 2.1$, where $b = 2$. 
 
 % I have no idea why this wasn't as easy as it should have been:
 \begin{figure}[H]
