@@ -72,6 +72,11 @@ The \pkg{FCVAR} package ties together the features of these models in a maximum 
 %% - May contain multiple authors for the same affiliation
 %%   (in the same first line, separated by comma).
 \Address{
+  Lealand Morin\\
+  Department of Economics\\
+  University of Central Florida\\
+  E-mail: \email{Lealand.Morin@ucf.edu}\\
+  \phantom{0}\\
   Morten \O rregaard Nielsen\\
   Queen's University\\
   Address \\
@@ -79,16 +84,11 @@ The \pkg{FCVAR} package ties together the features of these models in a maximum 
   CREATES\\
   Address \\
   E-mail: \email{mon@econ.queensu.ca}\\
-  URL: \url{https://mortens.webpage/~software/}\\
+  URL: \url{https://sites.google.com/view/mortennielsen}\\
   \phantom{0}\\
   Micha\l{} Ksawery Popiel\\
   Analysis Group\\
-  E-mail: \email{Michal.Popiel@analysisgroup.com}\\
-  \phantom{0}\\
-  Lealand Morin\\
-  Department of Economics\\
-  University of Central Florida\\
-  E-mail: \email{Lealand.Morin@ucf.edu}
+  E-mail: \email{Michal.Popiel@analysisgroup.com}
 }
 
 \begin{document}
@@ -186,7 +186,7 @@ The \pkg{fracdiff}%
 \footnote{There appears to be some duplication between this package and ours: 
 the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. 
 Specifically, \code{fracdiff::diffseries(x, d) - FCVAR::FracDiff(x - mean(x), d)} is numerically very small. 
-The demeaning step is not required to estimate the FCVAR model, as the mean parameters are estimated jointly with the others while optimizing the likelihood function. }
+The demeaning step is not required to estimate the FCVAR model, as the parameters in the conditional mean are estimated jointly with the others while optimizing the likelihood function. }
 %
 package by \citep{fracdiff2020} includes one such example. 
 % 
@@ -620,14 +620,15 @@ The next set of initialization commands
 assign values to the variables contained in the object \verb|opt|, defined by the function \fct{FCVARoptions}. 
 
 \begin{Code}
-opt              <- FCVARoptions() 
-opt$unrConstant  <- 0   # include an unrestricted constant? 
-opt$rConstant    <- 0   # include a restricted constant? 
-opt$levelParam   <- 1   # include level parameter? 
-opt$constrained  <- 0   # impose restriction dbMax >= d >= b >= dbMin? 
-opt$restrictDB   <- 1   # impose restriction d = b ? 
-opt$db0          <- c(0.80, 0.80) # set starting values for optimization.
-opt$gridSearch   <- 0
+opt              <- FCVARoptions(
+    opt$unrConstant  = 0   # include an unrestricted constant? 
+    opt$rConstant    = 0   # include a restricted constant? 
+    opt$levelParam   = 1   # include level parameter? 
+    opt$constrained  = 0   # impose restriction dbMax >= d >= b >= dbMin? 
+    opt$restrictDB   = 1   # impose restriction d = b ? 
+    opt$db0          = c(0.80, 0.80) # set starting values for optimization.
+    opt$gridSearch   = 0
+) 
 \end{Code}
 
 The first line initializes the object \verb|opt| and assigns all of the default options set in \verb|FCVARoptions|. 
@@ -1231,10 +1232,16 @@ Var3     |  10.725  0.553 |  12.237  0.427  |
 ---------------------------------------------
 \end{verbatim}
 
-Sometimes it is the case that the model output is not normalized with respect to the user's variable of interest, for example when restrictions are imposed on $\alpha$ or $\beta$. For this reason, we also include a code section that normalizes the output, i.e.\ imposes an identity matrix in the first $r \times r$ block of $\beta$. 
-That is, $\hat{\alpha}$ is post multiplied by $G^{-1}$ so that $\pi= \hat{\alpha}(G^{-1})G\hat{\beta}' = ab'$\footnote{Let's revise this sentence to account for the changing definition of $\hat{\alpha}$ and $\hat{\beta}$ throughout the calculation}.
-Of course, this code section should only be executed if it does not interfere with any restrictions imposed on the model.
-
+The model output is usually not normalized with respect to the user's variable of interest, for example, 
+when restrictions are imposed on $\alpha$ or $\beta$. 
+For this reason, we also include a code section that normalizes the output, 
+i.e.\ imposes an identity matrix in the first $r \times r$ block of $\beta$. 
+Suppose that $\tilde{\alpha}$ and $\tilde{\beta}$ are the particular estimates of $\alpha$ and $\beta$. 
+Then, $\tilde{\alpha}$ can be post-multiplied by $G^{-1}$, where $G^{\prime}$ is the inverse of the 
+upper $r \times r$ block of $\tilde{\beta}$. 
+Then $\Pi= \tilde{\alpha}  \tilde{\beta}^{\prime} = (\tilde{\alpha}G^{-1}) (G\tilde{\beta}^{\prime})$, 
+so that $\Pi= \hat{\alpha}\hat{\beta}^{\prime}$
+Of course, this code section should only be executed if it does not interfere with any restrictions imposed on the model. 
 
 %\begin{lstlisting}[frame=single,caption={Normalizing output}, label = normOut]
 \begin{CodeChunk} 
@@ -1265,6 +1272,26 @@ As an example of when this feature can be useful, consider model $\mathscr{H}_{\
 \end{CodeChunk}  
 
 
+
+In the unrestricted case, however, this normalization is always imposed, since the reduced-rank matrix $\Pi$
+has only $(2p - r)r$ degrees of freedom and the restriction of the upper $r \times r$ block of $\hat{\beta}$, 
+is enough to identify the remaining $(p - r)r + pr$ parameters in $\hat{\alpha}$ and $\hat{\beta}$. 
+From a practical point of view, the user may want to make a deliberate choice 
+of the order of the variables in the vector $X_{t}$, so that the cointegrating relations can be stated in the form
+$X_{j,t} = - \beta_{r+1, t}X_{r+1,t} - \beta_{r+2, t}X_{r+2,t} - \dots - \beta_{p, t}X_{p,t}$, 
+for $j = 1, \dots, r$,
+if this form permits an easier interpretation. 
+
+One implication of this discussion of identification is that 
+arbitrary restrictions on the matrices $\hat{\alpha}$ and $\hat{\beta}$
+must overidentify the parameters in order to be tested. 
+That is, the restrictions to be tested must go beyond the restriction that 
+the upper $r \times r$ block of $\hat{\beta}$ is the identity matrix.%
+\footnote{
+Otherwise, the optimized values of the likelihood function might be equal 
+under the restricted and unrestricted models 
+and the likelihood ratio statistic will have value zero. 
+If the user observes this outcome, further restrictions are required to overidentify the restricted model.}
 
 %\begin{leftbar}
 %Finally, there might be a reference to a \verb|{table}| such as
@@ -1633,16 +1660,16 @@ Anything else we want to include?
 
 The results in this paper were obtained using
 \proglang{R}~3.5.1. 
-with the \pkg{FCVAR} package Version 0.0.0.9000. 
+with the \pkg{FCVAR} package version 0.0.0.9000. 
 When determining cointegrating rank, the $p$~values for rank tests are obtained using the 
-\pkg{fracdist} package Version 0.0.0.9000. 
+\pkg{fracdist} package version 0.1.1. 
 \proglang{R} itself
 and all packages used are available from the Comprehensive
 \proglang{R} Archive Network (CRAN) at
 \url{https://CRAN.R-project.org/}.
 
 The latest version of the \proglang{MATLAB} package \pkg{FCVARmodel.m} in \cite{Nielsen2016} 
-can be downloaded from one of the author's website at Queen's University:
+can be downloaded from the Website of one of the authors at Queen's University:
 % 
 \begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
 \end{center}
