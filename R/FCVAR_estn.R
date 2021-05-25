@@ -480,7 +480,34 @@ FCVARestn <- function(x, k, r, opt) {
   #--------------------------------------------------------------------------------
 
 
+
+
+  # Calculate the Hessian, if necessary.
   if(opt$CalcSE) {
+
+
+    H <- FCVARhess(x, k, r, results$coeffs, opt)
+
+    # Test invertibility of Hessian matrix,
+    # and if so, calculate the inverse.
+    Hinv <- try(solve(H))
+    if (class(Hinv)[1] == "try-error") {
+      warning("Hessian matrix is singular or ill-conditioned.",
+              "Consider changing your model specification,",
+              "as it may have be underidentified or badly misspecified.")
+      H_invertible <- FALSE
+    } else {
+      H_invertible <- TRUE
+    }
+
+
+  } else {
+    # Hessian not calculated if standard errors not calculated.
+    H_invertible <- FALSE
+  }
+
+
+  if(opt$CalcSE & H_invertible) {
 
     # If any restrictions have been imposed, the Hessian matrix must be
     #   adjusted to account for them.
@@ -551,12 +578,14 @@ FCVARestn <- function(x, k, r, opt) {
 
 
       # Calculate unrestricted Hessian.
-      H <- FCVARhess(x, k, r, results$coeffs, opt)
+      # H <- FCVARhess(x, k, r, results$coeffs, opt)
+      # Done once, outside if statement.
 
       # Harry would go crazy if he saw how many times we
       # would be inverting this matrix!
       # (But it's small, so it's okay.)
-      Hinv <- solve(H)
+      # Hinv <- solve(H)
+      # Done once, outside if statement.
 
 
       # R doesn't like to invert empty matrices:
@@ -576,8 +605,10 @@ FCVARestn <- function(x, k, r, opt) {
 
     } else {
       # Model is unrestricted.
-      H <- FCVARhess(x, k, r, results$coeffs, opt)
-      Q <- -solve(H)
+      # H <- FCVARhess(x, k, r, results$coeffs, opt)
+      # Q <- -solve(H)
+      # Done once, outside if statement.
+      Q <- -Hinv
     }
 
 
