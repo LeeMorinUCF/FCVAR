@@ -492,9 +492,9 @@ FCVARestn <- function(x, k, r, opt) {
     # and if so, calculate the inverse.
     Hinv <- try(solve(H))
     if (class(Hinv)[1] == "try-error") {
-      warning("Hessian matrix is singular or ill-conditioned.",
-              "Consider changing your model specification,",
-              "as it may have be underidentified or badly misspecified.")
+      warning("Hessian matrix is singular or ill-conditioned.\n",
+              "  Consider changing your model specification,",
+              "as it may be underidentified or severely misspecified.")
       H_invertible <- FALSE
     } else {
       H_invertible <- TRUE
