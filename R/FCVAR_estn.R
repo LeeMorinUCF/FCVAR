@@ -122,10 +122,16 @@ FCVARestn <- function(x, k, r, opt) {
   # If Rpsi is empty, then optimization is over (d,b), otherwise it is
   #  over phi. If it is over phi, need to make adjustments to startVals
   #  and make Cdb and cdb empty.
+  if (is.null(opt$R_psi)) {
+    num_R_psi_rows <- 0
+  } else {
+    num_R_psi_rows <- nrow(opt$R_psi)
+  }
 
 
 
-  if(nrow(Rpsi) == 1) {
+  # if(nrow(Rpsi) == 1)
+  if (num_R_psi_rows == 1) {
 
     H_psi <- pracma::null(Rpsi)
 
@@ -203,7 +209,8 @@ FCVARestn <- function(x, k, r, opt) {
   }
 
 
-  if(nrow(opt$R_psi) == 2) { # i.e. 2 restrictions?
+  # if(nrow(opt$R_psi) == 2) {
+  if (num_R_psi_rows == 2) { # i.e. 2 restrictions?
 
     # d,b are exactly identified by the linear restrictions and Rpsi is
     #  invertible. We use opt$R_psi here because Rpsi is adjusted
@@ -688,7 +695,7 @@ summary.FCVAR_model <- function(object, ...) {
   }
 
   # create a variable for output strings
-  yesNo <- c('No','Yes')
+  yesNo <- c('No','Yes') # Ironic ordering, No?
   cat(sprintf('\n--------------------------------------------------------------------------------\n'))
   cat(sprintf('                      Fractionally Cointegrated VAR: Estimation Results                              '))
   cat(sprintf('\n--------------------------------------------------------------------------------\n'))
@@ -700,7 +707,14 @@ summary.FCVAR_model <- function(object, ...) {
 
 
 
-  if (nrow(opt$R_psi) == 1) {
+  # if (nrow(opt$R_psi) == 1) {
+  if (is.null(opt$R_psi)) {
+    num_R_psi_rows <- 0
+  } else {
+    num_R_psi_rows <- nrow(opt$R_psi)
+  }
+
+  if (num_R_psi_rows == 1) {
 
     # 1 restriction.
     dbUB <- H_psi*UB[1]
