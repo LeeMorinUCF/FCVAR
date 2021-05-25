@@ -124,35 +124,37 @@ FCVARestn <- function(x, k, r, opt) {
   #  and make Cdb and cdb empty.
 
 
+  if (!is.null(Rpsi)) {
+    if (nrow(Rpsi) == 1) {
 
-  if(nrow(Rpsi) == 1) {
+      H_psi <- pracma::null(Rpsi)
 
-    H_psi <- pracma::null(Rpsi)
+      # Need to back out phi from given db0
+      startVals <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(startVals)
 
-    # Need to back out phi from given db0
-    startVals <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% t(startVals)
+      if(opt$gridSearch) {
+        # Translate from d,b to phi.
 
-    if(opt$gridSearch) {
-      # Translate from d,b to phi.
+        UB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% opt$UB_db
+        LB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% opt$LB_db
+      } else {
+        # Otherwise GetBounds returns the values in terms of phi.
+        UB <- opt$UB_db
+        LB <- opt$LB_db
+      }
 
-      UB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% opt$UB_db
-      LB <- solve(t(H_psi) %*% H_psi) %*% t(H_psi) %*% opt$LB_db
-    } else {
-      # Otherwise GetBounds returns the values in terms of phi.
-      UB <- opt$UB_db
-      LB <- opt$LB_db
+      # Add warning about turning these off if non-empty?
+      Cdb <- NULL
+      cdb <- NULL
+
+      # Turn off equality restrictions if only one restriction is imposed
+      #  because they will be imposed inside the profile likelihood
+      #  function that is being maximized.
+
+      Rpsi <- NULL
+      rpsi <- NULL
+
     }
-
-    # Add warning about turning these off if non-empty?
-    Cdb <- NULL
-    cdb <- NULL
-
-    # Turn off equality restrictions if only one restriction is imposed
-    #  because they will be imposed inside the profile likelihood
-    #  function that is being maximized.
-
-    Rpsi <- NULL
-    rpsi <- NULL
 
   } else {
 
@@ -162,6 +164,8 @@ FCVARestn <- function(x, k, r, opt) {
     H_psi <- NULL
 
   }
+
+
 
 
 
@@ -203,69 +207,73 @@ FCVARestn <- function(x, k, r, opt) {
   }
 
 
-  if(nrow(opt$R_psi) == 2) { # i.e. 2 restrictions?
+  if (!is.null(Rpsi)) {
 
-    # d,b are exactly identified by the linear restrictions and Rpsi is
-    #  invertible. We use opt$R_psi here because Rpsi is adjusted
-    #  depending on the presence of level parameters. Transpose is
-    #  necessary to match input/output of other cases.
-    dbTemp <- t(t(opt$R_psi) %*% solve(opt$R_psi %*% t(opt$R_psi)) %*% opt$r_psi)
-    y <- x
+    if(nrow(opt$R_psi) == 2) { # i.e. 2 restrictions?
 
-    if(opt$levelParam) {
-      # Optimize over level parameter for given (d,b).
-      StartVal <- y[1, ]
+      # d,b are exactly identified by the linear restrictions and Rpsi is
+      #  invertible. We use opt$R_psi here because Rpsi is adjusted
+      #  depending on the presence of level parameters. Transpose is
+      #  necessary to match input/output of other cases.
+      dbTemp <- t(t(opt$R_psi) %*% solve(opt$R_psi %*% t(opt$R_psi)) %*% opt$r_psi)
+      y <- x
 
-      # [ muHat, maxLike, ! ]
-      # <- fminunc(@( params ) -FCVARlikeMu(x, dbTemp, params, k, r, opt),
-      #            StartVal, opt$UncFminOptions )
+      if(opt$levelParam) {
+        # Optimize over level parameter for given (d,b).
+        StartVal <- y[1, ]
 
-      # Need to implement optimization correctly.
-      # min_out <- optim_unc(-FCVARlikeMu(params, x, dbTemp, k, r, opt),
-      #                      startVal, opt$UncFminOptions)
+        # [ muHat, maxLike, ! ]
+        # <- fminunc(@( params ) -FCVARlikeMu(x, dbTemp, params, k, r, opt),
+        #            StartVal, opt$UncFminOptions )
 
-      # min_out <- stats::optim(StartVal,
-      #                  function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)})
+        # Need to implement optimization correctly.
+        # min_out <- optim_unc(-FCVARlikeMu(params, x, dbTemp, k, r, opt),
+        #                      startVal, opt$UncFminOptions)
 
-      # Add the options for optimization. Check.
-      min_out <- stats::optim(StartVal,
-                       function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)},
-                       # control = list(maxit = opt$UncFminOptions$MaxFunEvals,
-                       #                reltol = opt$UncFminOptions$TolFun),
-                       # control = list(maxit = opt$unc_optim_control$maxit,
-                       #                reltol = opt$unc_optim_control$reltol),
-                       control = opt$unc_optim_control)
+        # min_out <- stats::optim(StartVal,
+        #                  function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)})
 
-
-      muHat <- min_out$par
-      maxLike <- min_out$value
+        # Add the options for optimization. Check.
+        min_out <- stats::optim(StartVal,
+                                function(params) {-FCVARlikeMu(params, x, dbTemp, k, r, opt)},
+                                # control = list(maxit = opt$UncFminOptions$MaxFunEvals,
+                                #                reltol = opt$UncFminOptions$TolFun),
+                                # control = list(maxit = opt$unc_optim_control$maxit,
+                                #                reltol = opt$unc_optim_control$reltol),
+                                control = opt$unc_optim_control)
 
 
-      y <- x - matrix(1, nrow = cap_T+opt$N, ncol = p) %*% diag(muHat)
-    } else {
-      maxLike <- -FCVARlike(dbTemp, y, k, r, opt)
+        muHat <- min_out$par
+        maxLike <- min_out$value
+
+
+        y <- x - matrix(1, nrow = cap_T+opt$N, ncol = p) %*% diag(muHat)
+      } else {
+        maxLike <- -FCVARlike(dbTemp, y, k, r, opt)
+      }
+
+
+
+      # Obtain concentrated parameter estimates.
+      estimates <- GetParams(y, k, r, dbTemp, opt)
+
+
+      # Storing the estimates in a global structure here allows us to skip a
+      #   call to GetParams after optimization to recover the coefficient
+      #   estimates
+      estimatesTEMP <- estimates
+      # If level parameter is present, they are the last p parameters in the
+      #   params vector
+      if (opt$levelParam) {
+        estimatesTEMP$muHat <- muHat
+      } else {
+        estimatesTEMP$muHat <- NULL
+      }
+
+
+
+
     }
-
-
-
-    # Obtain concentrated parameter estimates.
-    estimates <- GetParams(y, k, r, dbTemp, opt)
-
-
-    # Storing the estimates in a global structure here allows us to skip a
-    #   call to GetParams after optimization to recover the coefficient
-    #   estimates
-    estimatesTEMP <- estimates
-    # If level parameter is present, they are the last p parameters in the
-    #   params vector
-    if (opt$levelParam) {
-      estimatesTEMP$muHat <- muHat
-    } else {
-      estimatesTEMP$muHat <- NULL
-    }
-
-
-
 
   } else {
     # [ !, maxLike, ! ]
@@ -289,26 +297,26 @@ FCVARestn <- function(x, k, r, opt) {
 
       # This version uses inequality bounds:
       min_out <- stats::constrOptim(startVals,
-                             function(params) {-FCVARlike(params, x, k, r, opt)},
-                             ui = Cdb,
-                             ci = - cdb,
-                             method = 'L-BFGS-B', lower = LB, upper = UB,
-                             # control = list(maxit = opt$ConFminOptions$MaxFunEvals,
-                             #                pgtol = opt$ConFminOptions$TolFun),
-                             # control = list(maxit = opt$con_optim_control$maxit,
-                             #                pgtol = opt$con_optim_control$pgtol),
-                             control = opt$con_optim_control)
+                                    function(params) {-FCVARlike(params, x, k, r, opt)},
+                                    ui = Cdb,
+                                    ci = - cdb,
+                                    method = 'L-BFGS-B', lower = LB, upper = UB,
+                                    # control = list(maxit = opt$ConFminOptions$MaxFunEvals,
+                                    #                pgtol = opt$ConFminOptions$TolFun),
+                                    # control = list(maxit = opt$con_optim_control$maxit,
+                                    #                pgtol = opt$con_optim_control$pgtol),
+                                    control = opt$con_optim_control)
     } else {
       # Constrained version with L-BFGS-B:
       # This uses only the box constraints LB and UB:
       min_out <- stats::optim(startVals,
-                       function(params) {-FCVARlike(params, x, k, r, opt)},
-                       method = 'L-BFGS-B', lower = LB, upper = UB,
-                       # control = list(maxit = opt$ConFminOptions$MaxFunEvals,
-                       #                pgtol = opt$ConFminOptions$TolFun),
-                       # control = list(maxit = opt$con_optim_control$maxit,
-                       #                pgtol = opt$con_optim_control$pgtol),
-                       control = opt$con_optim_control)
+                              function(params) {-FCVARlike(params, x, k, r, opt)},
+                              method = 'L-BFGS-B', lower = LB, upper = UB,
+                              # control = list(maxit = opt$ConFminOptions$MaxFunEvals,
+                              #                pgtol = opt$ConFminOptions$TolFun),
+                              # control = list(maxit = opt$con_optim_control$maxit,
+                              #                pgtol = opt$con_optim_control$pgtol),
+                              control = opt$con_optim_control)
     }
 
 
@@ -342,6 +350,9 @@ FCVARestn <- function(x, k, r, opt) {
 
     maxLike <- min_out$value
   }
+
+
+
 
 
 
