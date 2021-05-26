@@ -99,3 +99,75 @@ opt2 <- FCVARoptions(
 m2r2 <- FCVARestn(x, k = 2, r = 2, opt2)
 
 
+#----------------------------------------------------------------------
+# Try variants on restrictions on beta.
+#----------------------------------------------------------------------
+
+
+opt <- FCVARoptions(
+  gridSearch   = 0, # Disable grid search in optimization.
+  dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+  dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+  constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+  plotRoots    = 0 # Don't create plots for tests.
+)
+x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+m1 <- FCVARestn(x, k = 2, r = 1, opt)
+
+
+
+# Or start a new object with otherwise same restrictions.
+opt1 <- FCVARoptions(
+  gridSearch   = 0, # Disable grid search in optimization.
+  dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+  dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+  constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+  R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3),
+  plotRoots    = 0 # Don't create plots for tests.
+)
+m1r1_0 <- FCVARestn(x, k = 2, r = 1, opt1)
+
+
+
+# Or start a new object with otherwise same restrictions.
+opt1 <- FCVARoptions(
+  gridSearch   = 0, # Disable grid search in optimization.
+  dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+  dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+  constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+  R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3),
+  r_Beta       = matrix(c(1), nrow = 1, ncol = 1),
+  plotRoots    = 0 # Don't create plots for tests.
+)
+m1r1_1 <- FCVARestn(x, k = 2, r = 1, opt1)
+
+
+
+
+# Or start a new object with otherwise same restrictions.
+opt1 <- FCVARoptions(
+  gridSearch   = 0, # Disable grid search in optimization.
+  dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+  dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+  constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+  R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3),
+  r_Beta       = matrix(c(1.1), nrow = 1, ncol = 1),
+  plotRoots    = 0 # Don't create plots for tests.
+)
+m1r1_11 <- FCVARestn(x, k = 2, r = 1, opt1)
+
+
+
+# These models are observationally equivalent,
+# with a scalar multiplying and dividing alpha and beta.
+# Now try testing hypotheses to throw errors.
+
+# This is a valid test, with beta_1 = 0.
+H_m1r1_0 <- FCVARhypoTest(modelUNR = m1, modelR = m1r1_0)
+
+# These are not:
+H_m1r1_1 <- FCVARhypoTest(modelUNR = m1, modelR = m1r1_1)
+H_m1r1_11 <- FCVARhypoTest(modelUNR = m1, modelR = m1r1_11)
+
+
+
