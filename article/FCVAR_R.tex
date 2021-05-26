@@ -78,6 +78,7 @@ The \pkg{FCVAR} package ties together the features of these models in a maximum 
   E-mail: \email{Lealand.Morin@ucf.edu}\\
   \phantom{0}\\
   Morten \O rregaard Nielsen\\
+  Department of Economics\\
   Queen's University\\
   Address \\
   \emph{and}\\
@@ -136,17 +137,19 @@ In contrast, the fractionally cointegrated VAR model can detect relationships be
 This allows for the detection of relationships with deviations that correct more slowly than with the CVAR. 
 % 
 
-The packages currently available concentrate more heavily on the features of one of these two types of models. 
+The packages currently available concentrate more heavily on the features of one of two types of models:
+those with cointegrated series and those with fractionally integrated series. 
 % 
-Many packages concentrate on either the CVAR alone, which is restricted to integer orders of integration. Some focus on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, or estimating a single-equation model. 
+Many packages focus on the CVAR alone, which is restricted to integer orders of integration. Some focus on specific features of the variables, such as estimating the integration order, identifying whether a  cointegrating relationship exists, or estimating a single-equation model. 
 Those that do consider fractionally cointegrated systems follow approaches developed earlier in the literature. 
 The software in \pkg{FCVAR} treats the time series as a system and estimates all parameters together in a maximum likelihood framework. 
 This provides a flexible set of options for conducting inference on many features of the cointegrating relationship. 
 
-The most common tests impose (linear or equality restrictions) on the cointegrating space and the (error correction vectors). 
-The user can also test equality and inequality restrictions on the fractional differencing parameters. 
-In addition, the user can test any linear restriction on the short run autoregressive parameters. 
-The maximum likelihood framework allows for joint testing of any combination of these restrictions with a likelihood ratio test. 
+The most common tests impose linear restrictions on the parameters defining the cointegrating space and the process of error correction. 
+In \pkg{FCVAR}, the user can also test equality and inequality restrictions on the fractional differencing parameters. 
+In addition, the user can test any linear restriction on the short-run autoregressive parameters. 
+Since the parameters are all jointly estimated in one parametric maximum likelihood framework, 
+it is possible to jointly test any combination of these restrictions with a likelihood ratio test. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,7 +157,7 @@ The maximum likelihood framework allows for joint testing of any combination of 
 % Abridged version
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-An exhaustive listing of the R packages \citep{R} available for time series analysis was compiled by 
+A comprehensive listing of the R packages \citep{R} available for time series analysis was compiled by 
 \citet{Hyndman2020}.
 % 
 Of the packages that estimate integer-order cointegration, such as in the CVAR, several packages perform Engle-Granger tests, following \citet{EngleGranger1987}. 
@@ -168,7 +171,7 @@ The \pkg{tseries} package \citep{tseries2019} implements this test,
 as well as the \pkg{urca} package \citep{urca2016}. 
 % 
 There are also a variety of choices among modified ordinary least squares (OLS) approaches, 
-including the \pkg{cointReg} package in \cite{cointReg2016}, implementing the methods of \citet{PhillipsHansen1990} \citet{PhillipsLoretan1991}, \citet{Saikkonen1991} and \citet{StockWatson1993}. 
+including the \pkg{cointReg} package in \cite{cointReg2016}, implementing the methods of \citet{PhillipsHansen1990}, \citet{PhillipsLoretan1991}, \citet{Saikkonen1991}, and \citet{StockWatson1993}. 
 % 
 Following a maximum likelihood approach, 
 the \pkg{tsDyn} package and the \pkg{urca} package
@@ -177,13 +180,14 @@ Of the packages designed for the CVAR model,
 \pkg{urca} is perhaps the closest available to the \pkg{FCVAR} package, in terms of the testing opportunities available.
 
 
-The methods above allow for only a discrete form of cointegration between the series. 
+The methods above allow for only a discrete form of cointegration between the series:
+models restricted to integer orders of integration. 
 There are several packages designed for series with fractional integration or long memory. 
 % 
 A number of these pacakages are focused on estimation of $ARFIMA$ models, or autoregressive fractionally integrated moving average models. 
 % 
 The \pkg{fracdiff}%
-\footnote{There appears to be some duplication between this package and ours: 
+\footnote{There appears to be some duplication between this package and \pkg{FCVAR}: 
 the \fct{diffseries} function in \pkg{fracdiff} is based on the same algorithm in \cite{Jensen2014} as \fct{FracDiff} in \pkg{FCVAR}, except that \fct{diffseries} demeans the data first. 
 Specifically, \code{fracdiff::diffseries(x, d) - FCVAR::FracDiff(x - mean(x), d)} is numerically very small. 
 The demeaning step is not required to estimate the FCVAR model, as the parameters in the conditional mean are estimated jointly with the others while optimizing the likelihood function. }
@@ -197,15 +201,15 @@ The \pkg{PACKAGE-NAME} provides a careful optimization procedure by showing esti
 % 
 
 The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods to investigate both fractional integration and cointegrating relationships. 
-They implement the early semiparametric approaches for estimating the cointegrating vector, including that of 
-\citet{Robinson1994} and later \citet{RobinsonMarinucci2003}, \citet{MarmolVelasco2004},  \citet{ChristensenNielsen2006} and \citet{Robinson2008}. 
+The authors implement the early semiparametric approaches for estimating the cointegrating vector, including that of 
+\citet{Robinson1994} and later \citet{RobinsonMarinucci2003}, \citet{MarmolVelasco2004},  \citet{ChristensenNielsen2006}, and \citet{Robinson2008}. 
 % 
 They also implement more recent procedures of \citet{Nielsen2010} and \citet{WangWangChan2015}, 
 as well as the frequency-domain test for fractional cointegration in \citet{SouzaEtal2018}. 
 % 
 % I'm not unintentionally padding with so many references but, in this case, our point is that these guys include everything but the kitchen sink---the kitchen sink being the FCVAR. 
 % 
-One feature that is missing, however, is the maximum likelihood method of \citet{Johansen1995}, which was extended to fractional processes in (\textbf{cite JN papers}).
+One feature that is missing, however, is the maximum likelihood method of \citet{Johansen1995}, which he extended to fractional processes in \cite{Johansen2008}. % (\textbf{cite JN papers}).
 This framework allows for joint testing of a comprehensive set of restrictions and provides the 
 foundation on which the \pkg{FCVAR} package is built. 
 
@@ -230,7 +234,9 @@ foundation on which the \pkg{FCVAR} package is built.
 
 % \subsection{Roadmap}
 
-The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes an example of a modeling session, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes another example program, which demonstrates some additional functionality of the software. Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
+The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes an example of a modeling session, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes another example program, which demonstrates some additional functionality of the software. 
+
+% Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
 % Section \ref{sec programs} describes how each of the major program files work (each in a separate subsection). 
 % The Appendix contains a version change log.
 % These are removed as they belong in the package documentation. 
@@ -1527,7 +1533,7 @@ in which the last $p$~value is printed to compare the bootstrap $p$~value to tha
 \subsection{Simulation}
 \label{sec:simulation}
 
-Finally, 
+Next, 
 % Listing~\ref{simFCVAR} 
 this example
 shows how to simulate an FCVAR model for a given set of parameters. The user provides data for starting values and a list containing model parameters for simulation as well as the number of periods to simulate. The simulated data are generated using Gaussian errors.
@@ -1582,17 +1588,33 @@ the generated data is shown in Figure~\ref{fig:sim}.
 
 
 
-Users should be aware that the likelihood function is sometimes badly behaved, in that there may be local optima. To mitigate this problem...
+Users should be aware that the likelihood function is sometimes badly behaved, 
+in that there may be multiple local optima. 
+This is a typical problem with models with fractionally integrated series, 
+which is the reason the \textbf{package\_name} package, designed for univariate series, 
+employs a series of optimization routines, each with different starting values, 
+in an attempt to discover several local optima. 
+% 
+To mitigate this problem in the FCVAR model, the \pkg{FCVAR} package includes functions for 
+calculating the value of the likelihood function on a grid of values of the fractional integration parameters $d$ and $b$. 
+% 
+The function \fct{FCVARlikeGrid} conducts this grid search, 
+which provides parameter values that are used as starting values for the optimization on $d$ and $b$. 
+It also allows for the possibility of overcoming an identification problem outlined in \textbf{[Reference goes here]}. 
+When the likelihood function has multiple local optima, 
+the identification problem is overcome if the estimator of the pair of parameters $[d, b]$ is chosen 
+with the highest value of $b$, among the local optima. 
 
-We also make use of the excellent \verb|extrema.m| and \verb|extrema2.m| functions, which are written by Carlos Adrián Vargas Aguilera and are freely available from the Mathworks website. For simplicity these are included in the Auxiliary subfolder.
+As an aid to users while distingushing between local and global optima, 
+the output of the \fct{FCVARlikeGrid} is a class of S3 object called \texttt{FCVAR\_grid} that 
+is endowed with the \fct{plot} method. 
+Together, these functions can produce four kinds of plots, corresponding to the four types of grid searches, 
+under four alternative types of constaints on $d$ and $b$. 
+The first two cases are two-dimensional problems in $d$ and $b$. 
+% 
+In the first case, with $d$ and $b$ completely unconstrained, the grid search is over two dimensions within the bounds specified by \verb|opt$dbMin| and \verb|opt$dbMax|. An example of the likelihood obtained in an unconstrained grid search is shown in Figure~\ref{fig:gridFree}. Next, if $d\ge b$ is imposed via \verb|opt$constrained <- 1| (imposed in \cite{johansen2012likelihood} but relaxed in \cite{JN2018}) the computation time can be cut in half. An example of this likelihood is shown in Figure~\ref{fig:gridConstrained}. 
 
-\begin{leftbar}
-The above functions are currently not implemented in the R package, although I think there exist functions that already do this. 
-Can we provide a use case in which the functions correct a problem or improve efficiency in the optimization?
-The reason I ask is that I don't have a test case in which I needed to use this feature. 
-\end{leftbar}
-
-These functions are used in \fct{FCVARlikeGrid}, which allows the user to pre-estimate to obtain starting values by using a grid search. There are four types of estimation that the grid search can perform. If $d$ and $b$ are completely unconstrained, the grid search is over two dimensions within the bounds specified by \verb|opt$dbMin| and \verb|opt$dbMax|. An example of the likelihood obtained in an unconstrained grid search is shown in Figure~\ref{fig:gridFree}. Next, if $d\ge b$ is imposed via \verb|opt$constrained <- 1| (imposed in \cite{johansen2012likelihood} but relaxed in \cite{JN2018}) the computation can be cut in half. An example of this likelihood is shown in Figure~\ref{fig:gridConstrained}. If the restriction $d=b$ is imposed, then the grid search is one-dimensional as shown in Figure~\ref{fig:gridDB}. Finally, if a restriction is imposed on either $d$ or $b$ via $R_\psi$ and $r_\psi$ in \eqref{R psi}, then the grid search is also one-dimensional. An example of this situation is shown in Figure~\ref{fig:gridPhi}. Note that the $x$-axis is over the parameter $\phi$ and the fractional parameters are found from
+If the restriction $d=b$ is imposed, then the grid search is one-dimensional as shown in Figure~\ref{fig:gridDB}. Finally, if a restriction is imposed on either $d$ or $b$ via $R_\psi$ and $r_\psi$ in \eqref{R psi}, then the grid search is also one-dimensional. An example of this situation is shown in Figure~\ref{fig:gridPhi}. Note that the horizontal axis is over the parameter $\phi$ and the fractional parameters are found from
 \begin{equation}
   \begin{bmatrix}
     d \\ b
@@ -1601,24 +1623,25 @@ These functions are used in \fct{FCVARlikeGrid}, which allows the user to pre-es
   = H\phi + h,
 \end{equation}
 where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi}^{\prime})^{-1} r_\psi$. The bounds on $\phi$ are derived from \verb|opt$dbMin| and \verb|opt$dbMax| in a similar way.
-
-{\large Need to switch $b$ and $d$.}
-
+% 
 In the example in Figure~\ref{fig:gridPhi}, 
 the parameters are chosen with $R_{\psi} = [2, -1]$ and $r_\psi$ = 0.5, 
 so that the restriction imposed is $[2, -1] [d, b]^{\prime} = 2d - b = 0.5$.
 In this case, $H = [1, 2]^{\prime}/\sqrt{5}$ and $h = [0.2, -0.1]^{\prime}$, 
 and $\phi$ ranges from $\phi = 0.05\times\sqrt{5} = 0.12$, where $b = 0$, 
 to $\phi = 2.1\times\sqrt{5} = 2.35$, where $b = 2$. 
-
-This restriction produces a likelihood function with two local optima. 
+% 
+This restriction, although somewhat artificial, produces a likelihood function with two local optima. 
 The global optimum takes place at $\phi = 0.346\times\sqrt{5} = 0.77$, 
 which corresponds to $d = 0.546$ and $b = 0.591$, 
 with a likelihood value of $451.36$.
 A local maximum occurs at $\phi = 0.753\times\sqrt{5} = 1.68$, 
 which corresponds to $d = 0.953$ and $b = 1.405$, 
 with a likelihood value of $445.19$. 
-
+According to the recommendation of \textbf{[Reference goes here]}, 
+users are advised to choose the local optimum with $b = 1.405$ under this particular constraint on $d$ and $b$. 
+With the functionality offered by \fct{FCVARlikeGrid}, 
+the user can be assured that the optimization of the likelihood is functioning properly.  
 
 % From the example in R:
 % likeGrid_params$local_max
@@ -1634,6 +1657,8 @@ with a likelihood value of $445.19$.
 
 
 % I have no idea why this wasn't as easy as it should have been:
+% Maybea subfig vs subfigure difference. 
+% At least it works.
 \begin{figure}[H]
   \centering
   \subfigure[Unconstrained]{
@@ -1664,21 +1689,6 @@ with a likelihood value of $445.19$.
 
 
 
-
-%% -- Summary/conclusions/discussion -------------------------------------------
-
-\section{Summary and discussion} \label{sec:summary}
-
-\begin{leftbar}
-Should we talk about anything in the pipeline, such as the stata version or the multifractional version?
-I am leaning toward including the multifractional version on the repository in a development repo as a beta version. That way, it will be available to power users with the \pkg{devtools} package, where this version can be installed by 
-
-\verb|devtools::install_github(LeeMorinUCF/FCVAR)|. 
-
-In the meantime, we can run it through some tests and examples before putting it on the version in the repository. 
-Anything else we want to include?
-\end{leftbar}
-
 %% -- Optional special unnumbered sections -------------------------------------
 
 \section*{Computational details}
@@ -1690,13 +1700,36 @@ Anything else we want to include?
 %maps, tables, \dots) that are not cited in the main text can be credited here.
 %\end{leftbar}
 
+The \pkg{FCVAR} package is available on 
+the Comprehensive
+\proglang{R} Archive Network (CRAN) at
+\url{https://CRAN.R-project.org/}, 
+and can be loaded using the \verb|install.packages()| function, as in 
+
+\begin{Code}
+R> install.packages("FCVAR")
+R> library(FCVAR)
+\end{Code}
+
+A development version is stored in a GitHub repository and can be installed by entering 
+
+\begin{Code}
+devtools::install_github(LeeMorinUCF/FCVAR)
+\end{Code}
+
+
+ Under this approach, users must have installed the \pkg{devtools} package 
+and have the supplementary toolkit \pkg{Rtools} installed. 
+
+
 The results in this paper were obtained using
 \proglang{R}~3.5.1. 
 with the \pkg{FCVAR} package version 0.0.0.9000. 
 When determining cointegrating rank, the $p$~values for rank tests are obtained using the 
 \pkg{fracdist} package version 0.1.1. 
-\proglang{R} itself
-and all packages used are available from the Comprehensive
+\proglang{R} itself,
+in addition to each package used in this document, 
+is also available from the Comprehensive
 \proglang{R} Archive Network (CRAN) at
 \url{https://CRAN.R-project.org/}.
 
