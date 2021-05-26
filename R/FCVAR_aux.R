@@ -883,20 +883,41 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     # the highest value of b.
     if(Grid2d) {
       # Sort in ascending order according to indexB.
+      # In a 2-D grid, the ordering is unambiguous:
+      # sorting in increasing indexB is also increasing in b.
       indBindx <- order(indexB)
       indexB <- indexB[indBindx]
       indexD <- indexD[indBindx]
     } else {
-      # Sort in ascending order.
-      indexB <- indexB[order(indexB)]
+      # Sort in ascending order by b.
+      # indexB <- indexB[order(indexB)]
+
+      # Not so fast!
+      # In a 1-D grid, the ordering is also unambiguous
+      # WHEN THERE ARE NO RESTRICTIONS, aside from d = b:
+      # sorting in increasing indexB is also increasing in b.
+      # However, when a linear restriction is placed on d and b,
+      # the grid is on the 1-D parameter phi,
+      # and the relationship with b is either positive or negative,
+      # depending on the second element of H in H*[d, b]' + h.
+      if(!is.null(opt$R_psi)) {
+        sign_H2 <- sign(H[2])
+      } else {
+        sign_H2 <- 1
+      }
+      # Then, sort in the appropriate order.
+      indexB <- indexB[order(sign_H2*indexB)]
+
     }
 
     # Take last value, which is the local maximum with highest value of b.
     indexB <- indexB[length(indexB)]
-    indexD <- indexD[length(indexD)]
+    indexD <- indexD[length(indexD)] # Works even in 1-D grid, since both ordered by b.
 
     # Choosing this local maximum avoids the identification problem.
-    max_like <- local_max$like[which.max(local_max$b)]
+    # max_like <- local_max$like[which.max(local_max$b)]
+    # Again, the order depends on the sign of H[2], if it is a restricted model.
+    max_like <- local_max$like[which.max(sign_H2*local_max$b)]
 
     # cat(sprintf('\nWarning, grid search did not find a unique maximum of the log-likelihood function.\n')  )
     message('Grid search did not find a unique maximum of the log-likelihood function.',
@@ -909,6 +930,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     dbHatStar <- t(H %*% bGrid[indexB] + h)
 
     # Translate the grid points to units of the original parameters.
+    # This is useful for plotting the likelihood function.
     bGrid_orig <- 0*bGrid
     dGrid_orig <- 0*dGrid
     for (i in 1:length(bGrid)) {
@@ -919,11 +941,17 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
     # Translate local maxima.
     for (i in 1:length(local_max$b)) {
+      # Recall that, in this case, bGrid is actually the grid for phi,
+      # the 1-D search parameter in the restricted definition of [d, b].
       local_max_db <- matrix(c(local_max$b[i]), nrow = length(local_max$b[i]), ncol = 1)
 
       dbHatStar_i <- t(H %*% local_max_db + h)
-      local_max$b[i] <- dbHatStar_i[1]
-      local_max$d[i] <- dbHatStar_i[2]
+      # These were switched:
+      # local_max$b[i] <- dbHatStar_i[1]
+      # local_max$d[i] <- dbHatStar_i[2]
+      # d is the first parameter in [d, b]; b is the second.
+      local_max$d[i] <- dbHatStar_i[1]
+      local_max$b[i] <- dbHatStar_i[2]
     }
 
   } else {

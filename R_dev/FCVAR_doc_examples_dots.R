@@ -779,11 +779,23 @@ points(likeGrid_params$bGrid[which(likeGrid_params$like == likeGrid_params$max_l
 likeGrid_params$dbHatStar
 likeGrid_params$max_like
 # cbind(likeGrid_params$dGrid_orig, likeGrid_params$bGrid_orig, likeGrid_params$like)
+
 likeGrid_params$local_max
+# $b
+# [1] 0.5913777 1.4053064
+#
+# $d
+# [1] 0.5456888 0.9526532
+#
+# $like
+# [1] 451.3568 445.1917
 
 # Check restriction.
-2*likeGrid_params$local_max$b - likeGrid_params$local_max$d
-
+# Before, when the order was incorrect:
+# 2*likeGrid_params$local_max$b - likeGrid_params$local_max$d
+# Now that they are correctly ordered:
+2*likeGrid_params$local_max$d - likeGrid_params$local_max$b
+# Both equal r_psi.
 
 # Constrained 2-dimensional optimization.
 # Impose restriction dbMax >= d >= b >= dbMin.
