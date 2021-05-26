@@ -639,7 +639,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
   #   step size will be smaller if searching in only one dimension.
   if(is.null(opt$R_psi)) {
     Grid2d <- 1
-    dbStep <- opt$dbStep2D # Make this a variable in options.
+    dbStep <- opt$dbStep2D # This variable was added to options.
   } else {
     Grid2d <- 0
     dbStep <- opt$dbStep1D
@@ -764,7 +764,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
       iterCount <- iterCount + 1
 
-      # db is definied in terms of d,b for use by FCVARlikeMU
+      # db is defined in terms of d,b for use by FCVARlikeMU
       # if level parameters are present and for displaying in
       # the output. phi is used by FCVARlike, which can
       # handle both phi or d,b and makes appropriate
@@ -855,7 +855,9 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 
     # If there is no local max, return global max.
     if(is.null(indexB) | is.null(indexD)) {
-      warning('Failure to find local maximum. Returning global maximum instead.')
+      warning('Failure to find local maximum. Returning global maximum instead.',
+              'Check whether global maximum is on a boundary and, if so, ',
+              'consider expanding the constraints on d and b. ')
 
       max_like <- max(like, na.rm = TRUE)
       indexB_and_D <- which(like == max_like, arr.ind = TRUE)

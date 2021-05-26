@@ -781,6 +781,8 @@ likeGrid_params$max_like
 # cbind(likeGrid_params$dGrid_orig, likeGrid_params$bGrid_orig, likeGrid_params$like)
 likeGrid_params$local_max
 
+# Check restriction.
+2*likeGrid_params$local_max$b - likeGrid_params$local_max$d
 
 
 # Constrained 2-dimensional optimization.

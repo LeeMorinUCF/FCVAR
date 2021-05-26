@@ -720,6 +720,10 @@ summary.FCVAR_model <- function(object, ...) {
   cap_T <- object$cap_T
   opt <- object$opt
 
+  # Option of adding a warning if SEs were not calculated
+  # (and are identically zero, as a result).
+  # SE_missing <- sum(abs(SEmat2vecU(coeffs = object$SE,
+  #                                  k, r, p, opt)), na.rm = TRUE) == 0
 
   if (!opt$CalcSE) {
     cat(sprintf('Warning: standard errors have not been calculated!\n'))
