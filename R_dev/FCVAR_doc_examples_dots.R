@@ -838,7 +838,9 @@ opt$progress     <- 1 # Show progress bar update on each value of b.
 # opt$progress     <- 2 # Show progress report on each value of b.
 
 opt <- FCVARoptions(
-        gridSearch   = 0, # Disable grid search in optimization.
+        dbStep1D     = 0.01, # Coarser grid for plotting example.
+        dbStep2D     = 0.2, # Coarser grid for plotting example.
+        # dbStep2D     = 0.01, # Finer grid for figure in text.
         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
         constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -855,8 +857,15 @@ likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 
 
 # plot.FCVAR_grid(likeGrid_params, ...)
+plot(likeGrid_params)
 # Previously:
 # plot.FCVARlikeGrid(likeGrid_params, k, r, opt, file, file_ext, main)
+fig_file_name <- 'grid3d'
+fig_path <- sprintf('article/Figures/%s', fig_file_name)
+png(fig_path)
+plot(likeGrid_params)
+dev.off()
+
 
 # Restrict equality of fractional parameters.
 opt <- FCVARoptions()

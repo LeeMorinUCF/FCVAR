@@ -147,7 +147,8 @@ This provides a flexible set of options for conducting inference on many feature
 
 The most common tests impose linear restrictions on the parameters defining the cointegrating space and the process of error correction. 
 In \pkg{FCVAR}, the user can also test equality and inequality restrictions on the fractional differencing parameters. 
-In addition, the user can test any linear restriction on the short-run autoregressive parameters. 
+In addition, the user can test any linear restriction % on the cointegrating relations, the adjustment coefficients, or 
+on the short-run autoregressive parameters. 
 Since the parameters are all jointly estimated in one parametric maximum likelihood framework, 
 it is possible to jointly test any combination of these restrictions with a likelihood ratio test. 
 
@@ -166,7 +167,7 @@ One such package is \pkg{aTSA} for \emph{Alternative Time Series Analysis} \cite
 another is the \pkg{egcm} package in \citep{egcm2017}. 
 % 
 Other packages have implemeted the cointegration tests in \citet{PhillipsOuliaris1990}. 
-This amounts to running a regression of the response variable on a set of regressors and testing the residuals for a unit root following \cite{PhillipsPerron1988}. 
+This amounts to running a regression of the response variable on a set of regressors and testing the residuals for a unit root, following \cite{PhillipsPerron1988}. 
 The \pkg{tseries} package \citep{tseries2019} implements this test, 
 as well as the \pkg{urca} package \citep{urca2016}. 
 % 
@@ -184,7 +185,8 @@ The methods above allow for only a discrete form of cointegration between the se
 models restricted to integer orders of integration. 
 There are several packages designed for series with fractional integration or long memory. 
 % 
-A number of these pacakages are focused on estimation of $ARFIMA$ models, or autoregressive fractionally integrated moving average models. 
+A number of these pacakages are focused on estimation of $ARFIMA$ models, 
+or autoregressive fractionally integrated moving average models. 
 % 
 The \pkg{fracdiff}%
 \footnote{There appears to be some duplication between this package and \pkg{FCVAR}: 
@@ -197,7 +199,8 @@ package by \citep{fracdiff2020} includes one such example.
 Other options include the \pkg{arfima} package by \cite{arfima2018}
 and \pkg{nsarfima} package by \citep{nsarfima2019}. 
 The latter package uses a few types of optimization methods built on the $ARFIMA$ model, including both maximum likelihood (as in \citet{Beran1995}) and minimum distance (as in \citet{Mayoral2007}) estimators. 
-The \pkg{PACKAGE-NAME} provides a careful optimization procedure by showing estimates corresponding to multiple local optima---a common occurrence in these models---and this feature is accounted for in \pkg{FCVAR} as well.
+The \pkg{arfima} package follows a careful optimization procedure 
+that displays several sets of estimates corresponding to multiple local optima---a common occurrence in these models---and this feature is accounted for in \pkg{FCVAR} as well.
 % 
 
 The package \pkg{LongMemoryTS} is in a class of its own, in that it uses a wide variety of methods to investigate both fractional integration and cointegrating relationships. 
@@ -209,7 +212,8 @@ as well as the frequency-domain test for fractional cointegration in \citet{Souz
 % 
 % I'm not unintentionally padding with so many references but, in this case, our point is that these guys include everything but the kitchen sink---the kitchen sink being the FCVAR. 
 % 
-One feature that is missing, however, is the maximum likelihood method of \citet{Johansen1995}, which he extended to fractional processes in \cite{Johansen2008}. % (\textbf{cite JN papers}).
+One feature that is missing, however, is the maximum likelihood method of \citet{Johansen1995}, 
+which was extended to fractional processes in \cite{Johansen2008}. % (\textbf{cite JN papers}).
 This framework allows for joint testing of a comprehensive set of restrictions and provides the 
 foundation on which the \pkg{FCVAR} package is built. 
 
@@ -234,7 +238,7 @@ foundation on which the \pkg{FCVAR} package is built.
 
 % \subsection{Roadmap}
 
-The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes an example of a modeling session, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes another example program, which demonstrates some additional functionality of the software. 
+The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes an example of a modeling session, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes other examples, which demonstrate some additional functionality of the software. 
 
 % Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
 % Section \ref{sec programs} describes how each of the major program files work (each in a separate subsection). 
@@ -271,7 +275,7 @@ The fractionally cointegrated vector autoregressive (FCVAR) model was proposed i
 \end{equation}
 where $\varepsilon_{t}$ is $p$-dimensional $i.i.d.(0,\Omega)$, $\Delta^{d}$ is the fractional difference operator, and $L_{b}=1-\Delta^{b}$ is the fractional lag operator.\footnote{Both the fractional difference and fractional lag operators are defined in terms of their binomial expansion in the lag operator, $L$. Note that the expansion of $L_{b}$ has no term in $L^{0}$ and thus only lagged disequilibrium errors appear in \eqref{vecm model}.} \cite{johansen2012likelihood} imposed two restrictions on the parameter space, $d\geq b$ and $d-b<1/2$, in their asymptotic analysis. However, these restrictions were relaxed in \cite{JN2018b,JN2018}.
 
-Model \eqref{vecm model} includes the \cite{Johansen1995} CVAR model as the special case $d=b=1$; see \cite{JN2018}. Some of the parameters are well-known from the CVAR model and these have the usual interpretations also in the FCVAR model. The most important of these are the long-run parameters $\alpha$ and $\beta$, which are $p \times r$ matrices with $0 \leq r \leq p$. The rank $r$ is termed the cointegration, or cofractional, rank. The columns of $\beta$ constitute the $r$ cointegration (cofractional) vectors such that $\beta' X_t$ are the cointegrating combinations of the variables in the system, i.e.\ the long-run equilibrium relations. The parameters in $\alpha$ are the adjustment or loading coefficients which represent the speed of adjustment towards equilibrium for each of the variables. The short-run dynamics of the variables are governed by the parameters $\Gamma=(\Gamma _{1},\ldots ,\Gamma _{k})$ in the autoregressive augmentation.
+Model \eqref{vecm model} includes the \cite{Johansen1995} CVAR model as the special case $d=b=1$; see \cite{JN2018}. Some of the parameters are well-known from the CVAR model and these have the usual interpretations in the FCVAR model. The most important of these are the long-run parameters $\alpha$ and $\beta$, which are $p \times r$ matrices with $0 \leq r \leq p$. The rank $r$ is termed the cointegration, or cofractional, rank. The columns of $\beta$ constitute the $r$ cointegration (cofractional) vectors such that $\beta' X_t$ are the cointegrating combinations of the variables in the system, i.e.\ the long-run equilibrium relations. The parameters in $\alpha$ are the adjustment or loading coefficients which represent the speed of adjustment towards equilibrium for each of the variables. The short-run dynamics of the variables are governed by the parameters $\Gamma=(\Gamma _{1},\ldots ,\Gamma _{k})$ in the autoregressive augmentation.
 
 The FCVAR model has two additional parameters compared with the CVAR model, namely the fractional parameters $d$ and $b$. Here, $d$ denotes the fractional integration order of the observable time series and $b$ determines the degree of fractional cointegration, i.e.\ the reduction in fractional integration order of $\beta'X_t$ compared to $X_t$ itself. These parameters are estimated jointly with the remaining parameters. This model thus has the same main structure as in the standard CVAR model in that it allows for modeling of both cointegration and adjustment towards equilibrium, but is more general since it accommodates fractional integration and cointegration.
 
@@ -327,7 +331,7 @@ for model \eqref{model with constants}, and hence also for submodels of model \e
 \lambda =(d,b,\alpha,\beta,\Gamma,\mu).
 \label{epstau level}
 \end{equation}
-It is shown in \cite{johansen2012likelihood} and \cite{Dolatabadi2014} how, for fixed $(d,b)$, the estimation of model \eqref{model with constants} reduces to regression and reduced rank regression as in \cite{Johansen1995}. In this way the parameters $(\alpha ,\beta,\Gamma,\rho,\xi)$ can be concentrated out of the likelihood function, and numerical optimization is only needed to optimize the profile likelihood function over the two fractional parameters, $d$ and $b$. In model \eqref{model with level par} we can similarly concentrate the parameters $(\alpha ,\beta,\Gamma)$ out of the likelihood function resulting in numerical optimization over $(d,b,\mu)$, making the estimation of model \eqref{model with level par} slightly more involved numerically than that of model \eqref{model with constants}.
+It is shown in \cite{johansen2012likelihood} and \cite{Dolatabadi2014} how, for fixed $(d,b)$, the estimation of model \eqref{model with constants} reduces to regression and reduced rank regression as in \cite{Johansen1995}. In this way, the parameters $(\alpha ,\beta,\Gamma,\rho,\xi)$ can be concentrated out of the likelihood function, and numerical optimization is only needed to optimize the profile likelihood function over the two fractional parameters, $d$ and $b$. In model \eqref{model with level par} we can similarly concentrate the parameters $(\alpha ,\beta,\Gamma)$ out of the likelihood function resulting in numerical optimization over $(d,b,\mu)$, making the estimation of model \eqref{model with level par} slightly more involved numerically than that of model \eqref{model with constants}.
 
 For model \eqref{model with constants} with $\xi=0$, \cite{johansen2012likelihood} shows that asymptotic theory is standard when $b<0.5$, and for the case $b>0.5$ asymptotic theory is non-standard and involves fractional Brownian motion of type II. Specifically, when $b>0.5$, \cite{johansen2012likelihood} shows that under i.i.d.\ errors with suitable moment conditions, the conditional maximum likelihood parameter estimates  $(\hat{d},\hat{b},\hat{\alpha},\hat{\Gamma}_{1},\ldots,\hat{\Gamma}_{k})$ are asymptotically Gaussian, while $(\hat{\beta},\hat{\rho})$\ are locally asymptotically mixed normal. These results allow asymptotically standard (chi-squared) inference on all parameters of the model, including the cointegrating relations and orders of fractionality, using quasi-likelihood ratio tests. As in the CVAR model, see \cite{Johansen1995}, the same results hold for the same parameters in the full models \eqref{model with constants} and \eqref{model with level par}, whereas the asymptotic distribution theory for the remaining parameters, $\xi$ and $\mu$, is currently unknown.
 
@@ -381,13 +385,15 @@ We formulate hypotheses as
   &R_\alpha \mathrm{vec}(\alpha) = 0, \label{R alpha} \\
   &R_\beta \mathrm{vec}(\beta^{\ast}) = r_\beta, \label{R beta}
 \end{align}
-with $\beta^{\ast} = (\beta', \rho')'$, and use the switching algorithm in \cite[p.\ 455]{Boswijk2004} to optimize the likelihood numerically subject to the restrictions. The switching algorithm can be improved by adding a line search, see \cite{Doornik2016}. This is done by setting the option \verb|opt$LineSearch = 1|, which is the default setting.
+with $\beta^{\ast} = (\beta', \rho')'$, and use the switching algorithm in \cite[p.\ 455]{Boswijk2004} to optimize the likelihood numerically subject to the restrictions. The switching algorithm can be improved by adding a line search, see \cite{Doornik2016}. This is done by setting the option \verb|opt$LineSearch <- 1|, which is the default setting.
 
 The only limitation on the linear restrictions that can be imposed on $(d,b,\alpha,\beta^{\ast})$ in \eqref{R psi}--\eqref{R beta} is that only homogenous restrictions can be imposed on $\mathrm{vec}(\alpha)$ in \eqref{R alpha}. Otherwise, any combination of linear restrictions can be imposed on these parameters. For now, the remaining parameters cannot be restricted.
 
 Note that, when the restricted constant term $\rho$ is included in the model, restrictions on $\beta$ and $\rho$ must be written in the form given by \eqref{R beta}. This is without loss of generality.
 
-The restrictions in \eqref{R psi}--\eqref{R beta} above can be implemented individually or simultaneously in the MATLAB program. The next section provides an example session illustrating the use of the program with a step-by-step description of a typical empirical analysis, including several restricted models in Section \ref{subsec hypo}.
+The restrictions in \eqref{R psi}--\eqref{R beta} above can be implemented individually or simultaneously 
+in the \pkg{FCVAR} package % MATLAB program. 
+The next section provides an example session illustrating the use of the package with a step-by-step description of a typical empirical analysis, including several restricted models in Section \ref{subsec hypo}.
 
 \subsection{Forecasting from the FCVAR model}
 
@@ -411,18 +417,18 @@ We let conditional expectation given the information set at time $t$ be denoted 
 L_{\hat{b}}^{i}(X_{t+1}-\hat{\mu}).
 \label{forecast one}
 \end{equation}
-This defines the one-step ahead forecast of $X_{t+1}$ given information at time $t$. 
+This defines the one-step-ahead forecast of $X_{t+1}$ given information at time $t$. 
 
-Multi-period ahead forecasts can be generated recursively. That is, to calculate the $h$-step ahead forecast, we first generalize (\ref{forecast one}) as
+Multi-period-ahead forecasts can be generated recursively. That is, to calculate the $h$-step-ahead forecast, we first generalize (\ref{forecast one}) as
 \begin{equation}
 \hat{X}_{t+j|t}=\hat{\mu}+L_{\hat{d}} (\hat{X}_{t+j|t}-\hat{\mu})+\hat{\alpha}\hat{\beta}^{\prime}
 \Delta^{\hat{d}-\hat{b}}L_{\hat{b}}(\hat{X}_{t+j|t}-\hat{\mu})+\sum_{i=1}^{k}
 \hat{\Gamma}_{i}\Delta^{\hat{d}} L_{\hat{b}}^{i}(\hat{X}_{t+j|t}-\hat{\mu}),
 \label{forecast multi}
 \end{equation}
-where $\hat{X}_{s|t}=X_{s}$ for $s\leq t$. Then forecasts are calculated recursively from (\ref{forecast multi}) for $j=1,2,\ldots,h$ to generate $h$-step ahead forecasts, $\hat{X}_{t+h|t}$.
+where $\hat{X}_{s|t}=X_{s}$ for $s\leq t$. Then forecasts are calculated recursively from (\ref{forecast multi}) for $j=1,2,\ldots,h$ to generate $h$-step-ahead forecasts, $\hat{X}_{t+h|t}$.
 
-Clearly, one-step ahead and $h$-step ahead forecasts for the model \eqref{model with constants} with a restricted constant term, and possibly also an unrestricted constant term, instead of the level parameter can be calculated entirely analogously.
+Clearly, one-step-ahead and $h$-step-ahead forecasts for the model \eqref{model with constants} with a restricted constant term, and possibly also an unrestricted constant term, instead of the level parameter, can be calculated entirely analogously.
 
 
 
@@ -557,7 +563,9 @@ A demonstration of analysis is shown in \verb|FCVAR_replication_JNP2014.R| and i
 
 \subsection{Importing data}
 
-The first step is importing the data. Executing the code 
+The first step is importing the data. 
+In pactice, a user could assign a data frame from a saved dataset, using, e.g.~\fct{read.csv}. 
+In this example, executing the code 
 % in Listing~\ref{data}, 
 shown below assigns data from the external dataset \verb|votingJNP2014|, which is available with the package. 
 
@@ -626,24 +634,25 @@ The next set of initialization commands
 assign values to the variables contained in the object \verb|opt|, defined by the function \fct{FCVARoptions}. 
 
 \begin{Code}
-opt              <- FCVARoptions(
-    opt$unrConstant  = 0   # include an unrestricted constant? 
-    opt$rConstant    = 0   # include a restricted constant? 
-    opt$levelParam   = 1   # include level parameter? 
-    opt$constrained  = 0   # impose restriction dbMax >= d >= b >= dbMin? 
-    opt$restrictDB   = 1   # impose restriction d = b ? 
-    opt$db0          = c(0.80, 0.80) # set starting values for optimization.
-    opt$gridSearch   = 0
-) 
+R> opt <- FCVARoptions(
+     opt$unrConstant  = 0,   # Include an unrestricted constant? 
+     opt$rConstant    = 0,   # Include a restricted constant? 
+     opt$levelParam   = 1,   # Include level parameter? 
+     opt$constrained  = 0,   # Impose restriction dbMax >= d >= b >= dbMin? 
+     opt$restrictDB   = 1    # Impose restriction d = b ? 
+    ) 
+R> opt$db0 <- c(0.80, 0.80) # Set starting values for optimization.
+R> opt$gridSearch <- 0   # Use given starting values instead of a grid search.
 \end{Code}
 
-The first line initializes the object \verb|opt| and assigns all of the default options set in \verb|FCVARoptions|. 
-The code block above 
-shows how to easily change any of the default options. 
+The first assignment initializes the object \verb|opt| and assigns all of the default options set in \verb|FCVARoptions|, 
+other than the arguments stated in the function call. 
+The next two commands
+show how to easily change any of the default options after \verb|opt| is defined. 
 Defining the program options in this way allows the user to create and store several option objects with different attributes. 
 This can be very convenient when, for example, performing the same hypothesis tests on different data sets. 
 
-The next set of option settings define the model to be estimated. 
+The option settings within the call to \fct{FCVARoptions} define the model to be estimated. 
 In the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. 
 Adding deterministics requires setting the variable corresponding to the type of deterministic component, either \verb|rConstant| or \verb|unrConstant|, to \verb|1|. 
 % 
@@ -659,7 +668,7 @@ so that several values of $d$ and $b$ can be tested as potential starting values
 This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014} because the likelihood function may have several local optima. 
 This functionality is described in detail in Section \ref{sec:extensions}. 
 
-Another option related to optimization is a line search in the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$, such as when conduction hypothesis tests. 
+Another option related to optimization is a line search in the switching algorithm for estimation of models with restrictions on $\alpha$ and/or $\beta$, such as when conducting hypothesis tests. 
 This is added via the option \verb|opt$LineSearch <- 1| and is the default. See \citet[Section 2.2]{Doornik2016} for details. 
 
 The remaining options can be divided into several categories: numerical optimization, model deterministics and restrictions, output and grid search. 
@@ -679,11 +688,11 @@ Once the options are set, the user moves to the next step, which involves choosi
 which performs estimation of models with lag-orders from $0$ to \verb|kmax|. The program performs lag selection on the full-rank unrestricted model. 
 
 % The output generated by this function is shown below. 
-\begin{leftbar}
-Our \proglang{MATLAB} output is wider than 80 characters. This will sometimes be a problem. 
-In particular, in the JSS draft, 80 characters in the \verb|CodeChunk| environment will fit well within the margins.
-What follows is the revised format of the output.
-\end{leftbar}
+%\begin{leftbar}
+%Our \proglang{MATLAB} output is wider than 80 characters. This will sometimes be a problem. 
+%In particular, in the JSS draft, 80 characters in the \verb|CodeChunk| environment will fit well within the margins.
+%What follows is the revised format of the output.
+%\end{leftbar}
 
 %\begin{lstlisting}[frame=single,caption={Lag selection}, label = FCVARlagSelect]
 %\end{lstlisting}
@@ -787,12 +796,12 @@ Here the user first specifies the choice for the rank based on the previously pe
 
 The program output is shown below. It begins with a table summarizing relevant model specifications and then the coefficients and their standard errors. The roots of the characteristic polynomial are displayed at the bottom. 
 
-\begin{leftbar}
-I trimmed the output to 80 characters wide. 
-There were no numbers in that range, only comments. 
-Besides, it is no coincidence that only the output in the first 80 characters lies in the margins of a JSS article.
-The output from the software should lie within this range. 
-\end{leftbar}
+%\begin{leftbar}
+%I trimmed the output to 80 characters wide. 
+%There were no numbers in that range, only comments. 
+%Besides, it is no coincidence that only the output in the first 80 characters lies in the margins of a JSS article.
+%The output from the software should lie within this range. 
+%\end{leftbar}
 
 \begin{CodeChunk} 
 \begin{CodeInput}
@@ -959,6 +968,9 @@ The plot is shown in Figure~\ref{fig:Roots}.
 \end{figure}
 
 Furthermore, the estimation was performed with the grid search and the plot option selected, i.e.\ with \verb|opt$gridSearch <- 1| and \verb|opt$plotLike <- 1|, which produces a plot of the log-likelihood. The plot for this model is shown in Figure~\ref{fig:m1_likelihood}.
+Note that the horizontal axis is the parameter $\phi$, which represents both parameters $d$ and $b$, 
+which are constrained to be equal in this specification. 
+Other such restrictions are described in more detail in Section \ref{sec:extensions}. 
 
 \begin{figure}[H]
   \centering
@@ -967,12 +979,12 @@ Furthermore, the estimation was performed with the grid search and the plot opti
   \label{fig:m1_likelihood}
 \end{figure}
 
-The complete results for the unrestricted model are stored in the list \verb|m1| and can be accessed anytime. For instance, if the user would like to perform a more careful analysis of the residuals they are stored in \verb|m1$Residuals|.
+The complete results for the unrestricted model are stored in the S3 object \verb|m1| of class \verb|FCVAR_model| and can be accessed anytime. For instance, if the user would like to perform a more careful analysis of the residuals they are stored in \verb|m1$Residuals|.
 
 \subsection{Hypothesis testing}
 \label{subsec hypo}
 
-We now move into the hypothesis testing section of the code where we can test several restricted models and perform inference. For restricted model estimation the grid search option is switched off because computation can be very slow, especially in the presence of the level parameter. However, if the user wishes to verify the accuracy of the results or if estimates are close to the upper or lower bound, the grid search option can resolve these issues and give the user additional insight about the behaviour of the likelihood.
+We now move into the hypothesis testing section of the code where we can test several restricted models and perform inference. For restricted model estimation the grid search option is switched off because computation can be very slow, especially in the presence of the level parameter. However, if the user wishes to verify the accuracy of the results or if estimates are close to the upper or lower bound, the grid search option can resolve these issues and give the user additional insight about the behaviour of the likelihood, as shown in Section \ref{sec:extensions}. 
 
 All hypotheses are defined as shown in \eqref{R psi}--\eqref{R beta}. The first hypothesis test is $\mathscr{H}_d^1$ (for precise definitions of each hypothesis, please see \cite{JNP2014}), 
 %and it is shown in Listing~\ref{Hdb1}. 
@@ -990,9 +1002,9 @@ R> Hdb <- FCVARhypoTest(m1, m1r1)
 \end{Code}
 %\end{lstlisting}
 
-Here we test the CVAR model (null hypothesis $d=b=1$) against the FCVAR model (alternative hypothesis $d=b\ne 1$). Since \verb|opt1$restrictDB <- 1| was selected in the choice of options,
+Here we test the CVAR model (null hypothesis $d=b=1$) against the FCVAR model (alternative hypothesis $d=b\ne 1$). Since \verb|opt$restrictDB <- 1| was selected in the choice of options,
 % in Listing \ref{intl2}, 
-the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1$R_psi = [1 0]| and \verb|opt1$r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the MATLAB structure \verb|m1r1|. As before, the user can perform a series of white noise tests on the residuals by calling the \fct{MVWNtest} function. The next step is to perform the actual test. With the results structures from the restricted and unrestricted models, the user can call the function \fct{FCVARhypoTest} and perform an LR test. This function takes the two model result structures as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
+the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1$R_psi = [1 0]| and \verb|opt1$r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the S3 object \verb|m1r1| of class \verb|FCVAR_model|. As before, the user can perform a series of white noise tests on the residuals by calling the \fct{MVWNtest} function. The next step is to perform the actual test. With the objects returned from the restricted and unrestricted models, the user can call the function \fct{FCVARhypoTest} and perform an LR test. This function takes the two model result objects as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
 
 Since the output of the estimated model and the white noise tests are similar to the previous example, we only show the output from the hypothesis test. 
 
@@ -1019,7 +1031,7 @@ R> Hbeta1 <- FCVARhypoTest(m1, m1r2)
 \end{Code}
 %\end{lstlisting}
 
-Since the object \verb|opt1| has the restriction $d=b=1$ stored, the first step is to reset the options to default. The restriction on $\beta$ is then specified as in \eqref{R beta}. There are two things to note here. First, the column length of $R_{\beta}$ must equal $p_1 r$, where $p_1=p+1$ if a restricted constant is present and $p_1=p$ otherwise; recall that $p$ is the number of variables in the system and $r$ is the number of cointegrating vectors. Second, zero restrictions are the default and automatically imposed when $r_{\beta}$ is empty. Therefore, the user only needs to specify $r_{\beta}$ if it includes non-zero elements. Recall that for restrictions on $\alpha$ only $r_\alpha = 0$ is allowed so that there is no need to specify $r_\alpha$. As before, the restricted model is estimated with results stored in \verb|m1r2|, the residuals are tested for white noise, and the model under the null is tested against the unrestricted model \verb|m1| with results stored in \verb|Hbeta1|.
+Since the object \verb|opt1| has the restriction $d=b=1$ stored, the first step is to reset the options to default. The restriction on $\beta$ is then specified as in \eqref{R beta}. There are two details to note here. First, the column length of $R_{\beta}$ must equal $p_1 r$, where $p_1=p+1$ if a restricted constant is present and $p_1=p$ otherwise; recall that $p$ is the number of variables in the system and $r$ is the number of cointegrating vectors. Second, zero restrictions are the default and automatically imposed when $r_{\beta}$ is empty. Therefore, the user only needs to specify $r_{\beta}$ if it includes non-zero elements. Recall that for restrictions on $\alpha$ only $r_\alpha = 0$ is allowed so that there is no need to specify $r_\alpha$. As before, the restricted model is estimated with results stored in \verb|m1r2|, the residuals are tested for white noise, and the model under the null is tested against the unrestricted model \verb|m1| with results stored in \verb|Hbeta1|.
 
 Again, since the estimation output is similar to the first example, we only show the results of the hypothesis test here. With a $p$~value close to zero, this hypothesis is also strongly rejected.
 
@@ -1033,7 +1045,8 @@ P-value: 	 0.000
 \end{verbatim}
 
 Next, we move to tests on $\alpha$. 
-In this case, we test restriction that political variable is long-run exogenous.
+In this case, we test the restriction that the political variable is long-run exogenous, 
+i.e.~that the adjustment coefficient on this variable is zero.
 
 %\begin{lstlisting}[frame=single,caption={Hypothesis $\mathscr{H}_{\alpha}^1$}, label = Ha1]
 \begin{Code}
@@ -1061,7 +1074,7 @@ P-value: 	 0.001
 
 We next move to the remaining long-run exogeneity tests, $\mathscr{H}_{\alpha}^2$ and $\mathscr{H}_{\alpha}^3$, shown
 % in Listings \ref{Ha2} and \ref{Ha3}, respectively. 
-the examples below.
+in the examples below.
 % The results of the tests are shown below each listing.
 The hypothesis $\mathscr{H}_{\alpha}^2$ tests that the interest-rate is long-run exogenous.
 
@@ -1284,7 +1297,7 @@ has only $(2p - r)r$ degrees of freedom and the restriction of the upper $r \tim
 is enough to identify the remaining $(p - r)r + pr$ parameters in $\hat{\alpha}$ and $\hat{\beta}$. 
 From a practical point of view, the user may want to make a deliberate choice 
 of the order of the variables in the vector $X_{t}$, so that the cointegrating relations can be stated in the form
-$X_{j,t} = - \beta_{r+1, t}X_{r+1,t} - \beta_{r+2, t}X_{r+2,t} - \dots - \beta_{p, t}X_{p,t}$, 
+$X_{j,t} = - \beta_{r+1, j}X_{r+1,t} - \beta_{r+2, j}X_{r+2,t} - \dots - \beta_{p, j}X_{p,t}$, 
 for $j = 1, \dots, r$,
 if this form permits an easier interpretation. 
 
@@ -1448,7 +1461,7 @@ This code block
 demonstrates the use of the wild bootstrap for hypothesis tests on the parameters, as developed by \cite{Boswijk2013} for the CVAR model. 
 The function \fct{FCVARboot} returns the results of the wild bootstrap. 
 The user specifies two sets of options corresponding to two different nested models, the restricted model with \verb|optRES| and the unrestricted model with \verb|optUNR|. 
-This particlar example tests the restriction that political variables do not enter the cointegrating relation(s).
+This particular example tests the restriction that political variables do not enter the cointegrating relation(s).
 
 % The wild bootstrap is programmed to perform under parallel processing. If the user has the capability to use multiple processors, then computation time can be greatly reduced. 
 % If not, the function can still be performed, but the bootstrap iterations will appear out of order since the loop is coded using \verb|parfor| instead of \verb|for|. 
@@ -1488,6 +1501,10 @@ The user might also be interested in comparing the bootstrap likelihood ratio te
 % The second part of Listing~\ref{BSh} performs this comparison by producing 
 These objects can be used to produce 
 a plot of the two distributions, shown in Figure~\ref{fig:BS}.
+Note that, in the small sample, the statistic has probability mass over negative values, 
+and the upper tail is much thicker. 
+This is the reason for the larger bootstrap $p$~value
+and a justification for conducting the bootstrap test. 
 
 \begin{figure}[tbh]
   \centering
@@ -1586,24 +1603,65 @@ the generated data is shown in Figure~\ref{fig:sim}.
 % \subsection{Dealing with Local Optima}
 \subsection{Plotting the likelihood function} \label{sec:extensions}
 
+%Quote from above:
+%
+%In practice, the grid search would be set with  \verb|opt$gridSearch <- 1|, i.e.~the default, particularly in an initial investigation of the data, 
+%so that several values of $d$ and $b$ can be tested as potential starting values. 
+%This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014} because the likelihood function may have several local optima. 
 
 
 Users should be aware that the likelihood function is sometimes badly behaved, 
 in that there may be multiple local optima. 
 This is a typical problem with models with fractionally integrated series, 
-which is the reason the \textbf{package\_name} package, designed for univariate series, 
-employs a series of optimization routines, each with different starting values, 
+which is the reason the \pkg{arfima} package, designed for univariate series, 
+employs a series of optimization runs, each with different starting values, 
 in an attempt to discover several local optima. 
 % 
 To mitigate this problem in the FCVAR model, the \pkg{FCVAR} package includes functions for 
 calculating the value of the likelihood function on a grid of values of the fractional integration parameters $d$ and $b$. 
 % 
+
+
 The function \fct{FCVARlikeGrid} conducts this grid search, 
 which provides parameter values that are used as starting values for the optimization on $d$ and $b$. 
-It also allows for the possibility of overcoming an identification problem outlined in \textbf{[Reference goes here]}. 
+It also allows for the possibility of overcoming an identification problem outlined in 
+\citet[Section 2.3]{johniel2010} and \cite{Carlini2014}. 
 When the likelihood function has multiple local optima, 
-the identification problem is overcome if the estimator of the pair of parameters $[d, b]$ is chosen 
-with the highest value of $b$, among the local optima. 
+the identification problem is alleviated if the estimator of the pair of parameters $[d, b]$ is chosen 
+the one with the highest value of $b$, among the local optima. 
+Note that this estimator is \emph{not necessarily} the one that achieves the global optimum. 
+
+
+% I have no idea why this wasn't as easy as it should have been:
+% Maybe a subfig vs subfigure difference. 
+% At least it works.
+\begin{figure}[H]
+  \centering
+  \subfigure[Unconstrained]{
+    \label{fig:gridFree}
+    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/grid3d.png}
+    \includegraphics[width = 200pt]{Figures/grid3d.png}
+  } 
+  \subfigure[$d\ge b$]{ 
+    \label{fig:gridConstrained}
+    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridConst.png}
+    \includegraphics[width = 200pt]{Figures/gridConst.png}
+  }
+  \\
+  \subfigure[$d = b$]{
+    \label{fig:gridDB}
+    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridDB.png}
+    \includegraphics[width = 200pt]{Figures/gridDB.png}
+  } 
+  \subfigure[Restrictions imposed]{
+    \label{fig:gridPhi}
+    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridPhi.png}
+    \includegraphics[width = 200pt]{Figures/gridPhi.png}
+  }
+  \caption{Grid search}
+  \label{fig:LikeGrid}
+\end{figure}
+
 
 As an aid to users while distingushing between local and global optima, 
 the output of the \fct{FCVARlikeGrid} is a class of S3 object called \texttt{FCVAR\_grid} that 
@@ -1638,7 +1696,7 @@ with a likelihood value of $451.36$.
 A local maximum occurs at $\phi = 0.753\times\sqrt{5} = 1.68$, 
 which corresponds to $d = 0.953$ and $b = 1.405$, 
 with a likelihood value of $445.19$. 
-According to the recommendation of \textbf{[Reference goes here]}, 
+According to the recommendation in \cite{Carlini2014}, 
 users are advised to choose the local optimum with $b = 1.405$ under this particular constraint on $d$ and $b$. 
 With the functionality offered by \fct{FCVARlikeGrid}, 
 the user can be assured that the optimization of the likelihood is functioning properly.  
@@ -1655,36 +1713,6 @@ the user can be assured that the optimization of the likelihood is functioning p
 % [1] 451.3568 445.1917
 
 
-
-% I have no idea why this wasn't as easy as it should have been:
-% Maybea subfig vs subfigure difference. 
-% At least it works.
-\begin{figure}[H]
-  \centering
-  \subfigure[Unconstrained]{
-    \label{fig:gridFree}
-    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/grid3d.png}
-    \includegraphics[width = 200pt]{Figures/grid3d.png}
-  } 
-  \subfigure[$d\ge b$]{ 
-    \label{fig:gridConstrained}
-    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridConst.png}
-    \includegraphics[width = 200pt]{Figures/gridConst.png}
-  }
-  \\
-  \subfigure[$d = b$]{
-    \label{fig:gridDB}
-    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridDB.png}
-    \includegraphics[width = 200pt]{Figures/gridDB.png}
-  } 
-  \subfigure[Restrictions imposed]{
-    \label{fig:gridPhi}
-    % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridPhi.png}
-    \includegraphics[width = 200pt]{Figures/gridPhi.png}
-  }
-  \caption{Grid search}
-  \label{fig:LikeGrid}
-\end{figure}
 
 
 
