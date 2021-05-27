@@ -80,10 +80,9 @@ The \pkg{FCVAR} package ties together the features of these models in a maximum 
   Morten \O rregaard Nielsen\\
   Department of Economics\\
   Queen's University\\
-  Address \\
   \emph{and}\\
   CREATES\\
-  Address \\
+  Aarhus University \\
   E-mail: \email{mon@econ.queensu.ca}\\
   URL: \url{https://sites.google.com/view/mortennielsen}\\
   \phantom{0}\\
@@ -1626,10 +1625,18 @@ The function \fct{FCVARlikeGrid} conducts this grid search,
 which provides parameter values that are used as starting values for the optimization on $d$ and $b$. 
 It also allows for the possibility of overcoming an identification problem outlined in 
 \citet[Section 2.3]{johniel2010} and \cite{Carlini2014}. 
-When the likelihood function has multiple local optima, 
-the identification problem is alleviated if the estimator of the pair of parameters $[d, b]$ is chosen 
-the one with the highest value of $b$, among the local optima. 
+% 
+This identification problem occurs if the model lag order $k$ is overspecified. 
+In this case, there may be, asymptotically, several local maxima with identical maximal values, 
+and the correct estimator is the one corresponding to the largest value of the parameter $b$. 
+%
 Note that this estimator is \emph{not necessarily} the one that achieves the global optimum. 
+% 
+For this reason, when the likelihood function has multiple local optima, 
+the identification problem is alleviated if the estimator of the pair of parameters $[d, b]$ is chosen as
+the one with the highest value of $b$, among the local optima, 
+and the optimization continues using that gridpoint as the starting values for $d$ and $b$ in \fct{FCVARestn}. 
+This is the procedure that is followed if the user selects the option \verb|opt$gridSearch <- 1|.
 
 
 % I have no idea why this wasn't as easy as it should have been:
@@ -1699,7 +1706,7 @@ with a likelihood value of $445.19$.
 According to the recommendation in \cite{Carlini2014}, 
 users are advised to choose the local optimum with $b = 1.405$ under this particular constraint on $d$ and $b$. 
 With the functionality offered by \fct{FCVARlikeGrid}, 
-the user can be assured that the optimization of the likelihood is functioning properly.  
+the user can be assured that the optimization of the likelihood produces a consistent estimator.  
 
 % From the example in R:
 % likeGrid_params$local_max

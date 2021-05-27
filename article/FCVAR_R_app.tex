@@ -60,8 +60,16 @@ for \\
 ``The Fractionally Cointegrated Vector Autoregression Model in \proglang{R}'' \\
 }
 
-\vspace{1.0in}
+\vspace{0.5in}
 
+
+{\huge \it
+A.K.A.  \\
+``The pieces that landed on the cutting room floo\proglang{R}'' \\
+}
+
+
+\vspace{1.0in}
 
 {\large 
 Lealand Morin \\
@@ -309,6 +317,10 @@ The current package does not have the following functionality.
 It could be implemented but I imagine there already exists something in R that can serve this role. 
 However, I think I don't quite understand the problem without it. 
 Can you provide an example? \\
+
+\textbf{Solution: }
+You explained it and I added an example that uses this functionality.
+I think the numerical example also makes the calculation of restrictions more concrete.  \\
 
 As of v.1.4.0, the new option \verb|opt$LocalMax| allows more control over the grid search. If \verb|opt$LocalMax <- 0|, the function \fct{FCVARlikeGrid} returns the parameter values corresponding to the global maximum of the likelihood on the grid. If \verb|opt$LocalMax <- 1|, then \fct{FCVARlikeGrid} returns the parameter values for the local maximum corresponding to the highest value of $b$. This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014}. As of v.1.4.0, the default setting is \verb|opt$LocalMax <- 1|.
 

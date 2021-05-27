@@ -860,7 +860,7 @@ likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 plot(likeGrid_params)
 # Previously:
 # plot.FCVARlikeGrid(likeGrid_params, k, r, opt, file, file_ext, main)
-fig_file_name <- 'grid3d'
+fig_file_name <- 'grid3d.png'
 fig_path <- sprintf('article/Figures/%s', fig_file_name)
 png(fig_path)
 plot(likeGrid_params)
