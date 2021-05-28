@@ -12,7 +12,7 @@ FCVARhypoTest(modelUNR, modelR)
 \item{modelR}{A list of estimation results created for the restricted model.}
 }
 \value{
-A list object \code{LRtest} containing the test results,
+A list \code{LRtest} containing the test results,
 including the following parameters:
 \describe{
   \item{\code{loglikUNR}}{The log-likelihood for the unrestricted model.}

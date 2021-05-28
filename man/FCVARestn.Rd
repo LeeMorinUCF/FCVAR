@@ -17,7 +17,7 @@ FCVARestn(x, k, r, opt)
 generated from \code{FCVARoptions()}.}
 }
 \value{
-A list object \code{object} containing the estimation results,
+An S3 object of class \code{FCVAR_model} containing the estimation results,
 including the following parameters:
 \describe{
   \item{\code{startVals}}{Starting values used for optimization.}

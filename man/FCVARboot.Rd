@@ -23,7 +23,7 @@ for the unrestricted model.}
 \item{B}{The number of bootstrap samples.}
 }
 \value{
-A list object \code{FCVARboot_stats} containing the estimation results,
+A list \code{FCVARboot_stats} containing the estimation results,
 including the following parameters:
 \describe{
   \item{\code{LRbs}}{A \eqn{B x 1} vector of simulated likelihood ratio statistics}

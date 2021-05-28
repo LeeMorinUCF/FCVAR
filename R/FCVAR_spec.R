@@ -18,9 +18,9 @@
 #' @return An S3 object of type \code{FCVAR_lags} containing the results
 #' from repeated estimation of the FCVAR model with different orders
 #' of the autoregressive lag length.
-#' Note that row \code{j} of each of the vectors in \code{FCVARlagSelectStats}
-#' contains the associated results for lag length \code{j+1}
-#' \code{FCVARlagSelectStats} includes the following parameters:
+#' Note that row \code{j} of each of the vectors in the \code{FCVAR_lags} object
+#' contains the associated results for lag length \code{j+1}.
+#' The \code{FCVAR_lags} object includes the following parameters:
 #' \describe{
 #'   \item{\code{D}}{A (\code{kmax} + 1) x 2 vector of estimates of d and b.}
 #'   \item{\code{loglik}}{A (\code{kmax} + 1) x 1 vector of log-likelihood values.}
@@ -522,12 +522,12 @@ summary.FCVAR_ranks <- function(object, ...) {
 #' @param B The number of bootstrap samples.
 #' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return A list object \code{FCVARbootRank_stats} containing the test results,
+#' @return A list \code{FCVARbootRank_stats} containing the test results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{LRbs}}{A B x 1 vector of simulated likelihood ratio statistics.}
 #'   \item{\code{pv}}{An approximate p-value for LRstat based on the bootstrap distribution. }
-#'   \item{\code{H}}{A list containing LR test results, it is
+#'   \item{\code{H}}{A list containing LR test results. It is
 #'   identical to the output from \code{HypoTest}, with one addition,
 #'   namely \code{H$pvBS} which is the bootstrap p-value)}
 #'   \item{\code{mBS}}{Model estimates under the null hypothesis. }

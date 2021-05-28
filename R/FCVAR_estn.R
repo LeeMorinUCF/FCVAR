@@ -15,7 +15,7 @@
 #' @param r The cointegrating rank.
 #' @param opt An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options,
 #' generated from \code{FCVARoptions()}.
-#' @return A list object \code{object} containing the estimation results,
+#' @return An S3 object of class \code{FCVAR_model} containing the estimation results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{startVals}}{Starting values used for optimization.}

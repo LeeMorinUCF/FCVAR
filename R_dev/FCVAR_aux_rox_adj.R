@@ -1057,7 +1057,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' by calculating the likelihood function
 #' on a grid of candidate parameter values.
 #' This function evaluates the likelihood over a grid of values
-#' 	for \code{c(d,b)} (or \code{phi}, when  there are constraints on \code{c(d,b)}).
+#' 	for \code{c(d,b)} (or \code{phi}, when  there are constraints on \code{c(d,b)).
 #' 	It can be used when parameter estimates are sensitive to
 #' 	starting values to give an approximation of the global max which can
 #' 	then be used as the starting value in the numerical optimization in

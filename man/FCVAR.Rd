@@ -4,6 +4,9 @@
 \name{FCVAR}
 \alias{FCVAR}
 \title{A package for estimating the Fractionally Cointegrated VAR model.}
+\value{
+Returns \code{NULL}. Object included for description only.
+}
 \description{
 The FCVAR package estimates the Fractionally Cointegrated
 Vector Autoregression (VAR) model. It includes functions for lag selection,

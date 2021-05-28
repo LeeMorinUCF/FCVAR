@@ -1,23 +1,25 @@
 
 
 
-#' Default Estimation Options
+#' Set Estimation Options
 #'
 #' \code{FCVARoptions} defines the estimation options used in the FCVAR
 #'   estimation procedure and the related programs.
 #'
+#' @param ... a list of arguments to set to values other than the default settings.
+#' See argument names in return value below.
 #' @return An S3 object of class \code{FCVAR_opt} that stores the default estimation options,
 #' which includes the following parameters:
 #' \describe{
 #'   \item{\code{unc_optim_control}}{A list of options in the form of the argument \code{control}
-#'   in the \code{optim} function for *unconstrained* optimization of the likelihood function
+#'   in the \code{optim} function for \emph{unconstrained} optimization of the likelihood function
 #'   over the fractional integration parameters.
 #'   This is also used in the switching algorithm employed when linear constraints are imposed on
 #'   the cointegrating relations \code{beta} or the adjustment coefficients \code{alpha},
 #'   so it must at least contain the arguments \code{maxit} and \code{reltol},
 #'   since it uses those parameters.}
 #'   \item{\code{con_optim_control}}{A list of options in the form of the argument \code{control}
-#'   in either the \code{optim} or the \code{constrOptim} function for *constrained* optimization
+#'   in either the \code{optim} or the \code{constrOptim} function for \emph{constrained} optimization
 #'   of the likelihood function over the fractional integration parameters,
 #'   using the 'L-BFGS-B' algorithm.
 #'   It must at least contain the arguments \code{maxit} and \code{pgtol}.}
@@ -75,6 +77,12 @@
 #' }
 #' @examples
 #' opt <- FCVARoptions()
+#' opt <- FCVARoptions(
+#'     gridSearch   = 0, # Disable grid search in optimization.
+#'     dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+#'     dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+#'     constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#' )
 #' @family FCVAR estimation functions
 #' @seealso \code{FCVARoptionUpdates} to set and test estimation options for validity and compatibility.
 #' \code{FCVARestn} for use of these options in estimation.

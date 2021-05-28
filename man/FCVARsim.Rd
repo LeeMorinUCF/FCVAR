@@ -20,7 +20,7 @@ A \code{NumPeriods} \eqn{x p} matrix \code{xBS} of simulated observations.
 \description{
 \code{FCVARsim} simulates the FCVAR model as specified by
 input \code{model} and starting values specified by \code{data}.
-Errors are drawn from a Normal distribution.
+Errors are drawn from a normal distribution.
 }
 \examples{
 opt <- FCVARoptions()

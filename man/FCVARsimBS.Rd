@@ -15,12 +15,12 @@ The parameters in \code{model} can also be set or adjusted by assigning new valu
 \item{NumPeriods}{The number of time periods in the simulation.}
 }
 \value{
-A \code{NumPeriods} \eqn{x p} matrix \code{xBS} of simulated bootstrap values.
+A \code{NumPeriods} by \eqn{p} matrix \code{xBS} of simulated bootstrap values.
 }
 \description{
 \code{FCVARsimBS} simulates the FCVAR model as specified by
 input \code{model} and starting values specified by \code{data}.
-It creates a bootstrap sample by augmenting each iteration
+It creates a wild bootstrap sample by augmenting each iteration
 with a bootstrap error. The errors are sampled from the
 residuals specified under the \code{model} input and have a
 positive or negative sign with equal probability (the Rademacher distribution).

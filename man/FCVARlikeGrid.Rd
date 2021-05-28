@@ -21,10 +21,10 @@ An S3 object of type \code{FCVAR_grid} containing the optimization results,
 including the following parameters:
 \describe{
   \item{\code{params}}{A vector \code{params} of \code{d} and \code{b}
-(and \code{mu} if level parameter is selected)
-corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.}
+  (and \code{mu} if level parameter is selected)
+  corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.}
   \item{\code{dbHatStar}}{A vector of \code{d} and \code{b}
-  corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}}
+  corresponding to a maximum over the grid of \code{c(d,b)} or \code{phi}.}
   \item{\code{muHatStar}}{A vector of the optimal \code{mu} if level parameter is selected. }
   \item{\code{Grid2d}}{An indicator for whether or not the optimization
   is conducted over a 2-dimensional parameter space,

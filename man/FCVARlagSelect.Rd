@@ -24,9 +24,9 @@ generated from \code{FCVARoptions()}.}
 An S3 object of type \code{FCVAR_lags} containing the results
 from repeated estimation of the FCVAR model with different orders
 of the autoregressive lag length.
-Note that row \code{j} of each of the vectors in \code{FCVARlagSelectStats}
-contains the associated results for lag length \code{j+1}
-\code{FCVARlagSelectStats} includes the following parameters:
+Note that row \code{j} of each of the vectors in the \code{FCVAR_lags} object
+contains the associated results for lag length \code{j+1}.
+The \code{FCVAR_lags} object includes the following parameters:
 \describe{
   \item{\code{D}}{A (\code{kmax} + 1) x 2 vector of estimates of d and b.}
   \item{\code{loglik}}{A (\code{kmax} + 1) x 1 vector of log-likelihood values.}

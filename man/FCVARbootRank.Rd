@@ -22,12 +22,12 @@ generated from \code{FCVARoptions()}.}
 \item{B}{The number of bootstrap samples.}
 }
 \value{
-A list object \code{FCVARbootRank_stats} containing the test results,
+A list \code{FCVARbootRank_stats} containing the test results,
 including the following parameters:
 \describe{
   \item{\code{LRbs}}{A B x 1 vector of simulated likelihood ratio statistics.}
   \item{\code{pv}}{An approximate p-value for LRstat based on the bootstrap distribution. }
-  \item{\code{H}}{A list containing LR test results, it is
+  \item{\code{H}}{A list containing LR test results. It is
   identical to the output from \code{HypoTest}, with one addition,
   namely \code{H$pvBS} which is the bootstrap p-value)}
   \item{\code{mBS}}{Model estimates under the null hypothesis. }

@@ -8,7 +8,7 @@
 #'
 #' @param modelUNR A list of estimation results created for the unrestricted model.
 #' @param modelR A list of estimation results created for the restricted model.
-#' @return A list object \code{LRtest} containing the test results,
+#' @return A list \code{LRtest} containing the test results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{loglikUNR}}{The log-likelihood for the unrestricted model.}
@@ -136,7 +136,7 @@ FCVARhypoTest <- function(modelUNR, modelR) {
 #' @param optUNR An S3 object of class \code{FCVAR_opt} that stores the chosen estimation options
 #'   for the unrestricted model.
 #' @param B The number of bootstrap samples.
-#' @return A list object \code{FCVARboot_stats} containing the estimation results,
+#' @return A list \code{FCVARboot_stats} containing the estimation results,
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{LRbs}}{A \eqn{B x 1} vector of simulated likelihood ratio statistics}
@@ -481,7 +481,7 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 #' transformed for the fractional model, see Johansen (2008).
 #'
 #' @param object An S3 object of type \code{FCVAR_roots} with the following elements:
-#' #' \describe{
+#' \describe{
 #'   \item{\code{cPolyRoots}}{A vector of the roots of the characteristic polynomial.
 #'     It is an element of the list of estimation \code{results} output from \code{FCVARestn}.}
 #'   \item{\code{b}}{A numeric value of the fractional cointegration parameter.}

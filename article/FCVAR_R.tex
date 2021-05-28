@@ -44,8 +44,6 @@
 \Shorttitle{Fractionally Cointegrated VAR in \proglang{R}}
 
 %% - \Abstract{} almost as usual
-%% I figure that it is best to explain what this package does in plain English,  
-%% in case any normal people get past the title and want to know what this package does. 
 \Abstract{
   This article illustrates how to estimate 
   the fractionally cointegrated vector autoregression model (FCVAR) in \proglang{R}, based on a companion package in \proglang{MATLAB}. 
@@ -54,11 +52,8 @@
   The fractionally cointegrated VAR model can detect relationships between variables that are cointegrated of a fractional order, with deviations that can be fractionally integrated but of a lower order than the variables themselves. 
   This allows for the detection of relationships with deviations that correct more slowly. 
 The \pkg{FCVAR} package ties together the features of these models in a maximum likelihood approach to allow for a comprehensive set of testing options. 
-
-
-
-
 }
+
 
 %% - \Keywords{} with LaTeX markup, at least one required
 %% - \Plainkeywords{} without LaTeX markup (if necessary)
@@ -146,7 +141,7 @@ This provides a flexible set of options for conducting inference on many feature
 
 The most common tests impose linear restrictions on the parameters defining the cointegrating space and the process of error correction. 
 In \pkg{FCVAR}, the user can also test equality and inequality restrictions on the fractional differencing parameters. 
-In addition, the user can test any linear restriction % on the cointegrating relations, the adjustment coefficients, or 
+In addition, the user can test any linear restriction 
 on the short-run autoregressive parameters. 
 Since the parameters are all jointly estimated in one parametric maximum likelihood framework, 
 it is possible to jointly test any combination of these restrictions with a likelihood ratio test. 
@@ -224,25 +219,11 @@ foundation on which the \pkg{FCVAR} package is built.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% Moved to end, as per JSS style:
-%The latest version of the package can be downloaded from one of the author's website at Queen's University:
-%% 
-%\begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
-%\end{center}
-%% 
-%\noindent It is freely available for non-commercial, academic use. 
-%The use of this program requires a functioning installation of MATLAB. 
-%The version of \proglang{MATLAB} available at the release of the last version was \proglang{MATLAB} 9.0, 	R2016a, number 35. However, any recent version should work.  
-%\proglang{MATLAB} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
 
 % \subsection{Roadmap}
 
 The next section describes the FCVAR model and the restricted models that can be estimated with this program. Section \ref{sec:main} describes an example of a modeling session, which is a replication of one of the tables of results in \cite{JNP2014}. Section \ref{sec:examples} describes other examples, which demonstrate some additional functionality of the software. 
 
-% Importantly, these are the only two files that would need to be changed to apply the program for other empirical analyses. 
-% Section \ref{sec programs} describes how each of the major program files work (each in a separate subsection). 
-% The Appendix contains a version change log.
-% These are removed as they belong in the package documentation. 
 
 % JSS Style Notes:
 %% -- Manuscript ---------------------------------------------------------------
@@ -447,18 +428,6 @@ Clearly, one-step-ahead and $h$-step-ahead forecasts for the model \eqref{model 
 %% - Comments within the code chunks should be avoided - these should be made
 %%   within the regular LaTeX text.
 
-%But first... Examples of displaying code in JSS style. 
-%
-%The data can be loaded by
-%%
-%\begin{CodeChunk}
-%\begin{CodeInput}
-%R> data("quine", package = "MASS")
-%\end{CodeInput}
-%\end{CodeChunk}
-%%
-%and a basic frequency distribution of the response variable is displayed in
-%Figure~\ref{fig:quine}.
 
 %\begin{leftbar}
 %For code input and output, the style files provide dedicated environments.
@@ -474,55 +443,6 @@ Clearly, one-step-ahead and $h$-step-ahead forecasts for the model \eqref{model 
 %before and after code input/output should be avoided (see above).
 %\end{leftbar}
 
-% JSS format for figures:
-%A basic frequency distribution of the response variable is displayed in
-%%Figure~\ref{fig:quine}.
-%
-%\begin{figure}[t!]
-%\centering
-%\includegraphics{delete-this-image}
-%\caption{\label{fig:quine} Frequency distribution for number of days absent
-%from school.}
-%\end{figure}
-
-
-%As a first model for the \code{quine} data, we fit the basic Poisson regression
-%model. (Note that JSS prefers when the second line of code is indented by two
-%spaces.)
-%%
-%\begin{CodeChunk}
-%\begin{CodeInput}
-%R> m_pois <- glm(Days ~ (Eth + Sex + Age + Lrn)^2, data = quine,
-%+    family = poisson)
-%\end{CodeInput}
-%\end{CodeChunk}
-%%
-%Hence, the full summary of that model is shown below.
-%%
-%\begin{CodeChunk}
-%\begin{CodeInput}
-%R> summary(m_nbin)
-%\end{CodeInput}
-%\begin{CodeOutput}
-%Call:
-%glm.nb(formula = Days ~ (Eth + Sex + Age + Lrn)^2, data = quine, 
-%    init.theta = 1.60364105, link = log)
-%
-%Coefficients: (1 not defined because of singularities)
-%            Estimate Std. Error z value Pr(>|z|)    
-%(Intercept)  3.00155    0.33709   8.904  < 2e-16 ***
-% ...
-%\end{CodeOutput}
-%\end{CodeChunk}
-%
-%
-%
-%Here is another example of code:
-%\begin{Code}
-%glm(formula, data, subset, na.action, weights, offset,
-%  family = gaussian, start = NULL, control = glm.control(...),
-%  model = TRUE, y = TRUE, x = FALSE, ...)
-%\end{Code}
 
 
 %\begin{leftbar}
@@ -550,63 +470,21 @@ A demonstration of analysis is shown in \verb|FCVAR_replication_JNP2014.R| and i
 \item Hypothesis testing
 \end{enumerate}
 
-% Understood by R users:
-% i.e. don't open the package unless you want to know what's in it.
-% 
-%It is important to note that all necessary commands for file execution and option modification can be called from this script. All other files contained in the package (described in detail in the next section) do not require any modification by the user.
-
-% Instructions not necessary: in package documentation
-% 
-%To accommodate the sequential nature of the procedure, the main file is broken up into \textit{code sections}\footnote{For more information see \url{ http://www.mathworks.com/help/MATLAB/MATLAB_prog/run-sections-of-programs.html}}. These \textit{code sections}, known as \textit{cells} in previous versions of MATLAB, allow the user to execute specific parts of a script individually. Each of the \textit{code sections} are delimited by a double comment \verb|%%| and the section header. 
-
 
 \subsection{Importing data}
 
 The first step is importing the data. 
 In pactice, a user could assign a data frame from a saved dataset, using, e.g.~\fct{read.csv}. 
 In this example, executing the code 
-% in Listing~\ref{data}, 
 shown below assigns data from the external dataset \verb|votingJNP2014|, which is available with the package. 
 
-%\lstset{firstnumber=last}
-%\begin{lstlisting}[frame=single,caption={Importing data}, label = data]
-%\begin{CodeChunk} 
-%\begin{CodeInput}
-%\begin{Code}
-%R> data <- read.csv('data_JNP2014.csv')
-%R> x1 <- data(, c(1, 3, 5)) 
-%R> x2 <- data(, [2 3 5]) 
-%R> x3 <- data(, [1 2 3 5])
-%R> x4 <- data(, [1 3 4 5 6])
-%R> x5 <- data(, [2 3 4 5 6])
-%R> x6 <- data(, [1 2 3 4 5 6])
-%\end{Code}
-%\end{CodeInput}
-%\end{CodeChunk}
-%\end{lstlisting}
-
-%\begin{leftbar}
-%Better to use names of variables for clarity. 
-%Are we actually using these matrices? 
-%Maybe we don't need numbers. 
-%I think we only use \verb|x1|, so we should just call it \verb|x|.
-%Finally, the actual command for a user will be from a data folder in the package. 
-%\end{leftbar}
 
 \begin{Code}
 R> x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 \end{Code}
 
-% Old version, example for user's data:
-% But this would not be included here.  
-%\begin{Code}
-%R> data <- read.csv('data_JNP2014.csv')
-%R> x1 <- data[, c("lib", "ir_can", "un_can")]
-%\end{Code}
-
 
 The columns of the full dataset contain the following variables: (1) aggregate support for the Liberal party, (2) aggregate support for the Conservative party, (3) Canadian 3-month T-bill rates, (4) US 3-month T-bill rates, (5) Canadian unemployment rate, and (6) US unemployment rate. 
-%Since each of the models in JNP (2014) contain different combinations of these variables, the relevant columns of \verb|data| for each model are assigned to different matrices of variables named \verb|x1| through \verb|x6|. 
 This example uses the variables in the first, third and fifth columns. 
 
 \subsection{Choosing options}
@@ -634,14 +512,14 @@ assign values to the variables contained in the object \verb|opt|, defined by th
 
 \begin{Code}
 R> opt <- FCVARoptions(
-     opt$unrConstant  = 0,   # Include an unrestricted constant? 
-     opt$rConstant    = 0,   # Include a restricted constant? 
-     opt$levelParam   = 1,   # Include level parameter? 
-     opt$constrained  = 0,   # Impose restriction dbMax >= d >= b >= dbMin? 
-     opt$restrictDB   = 1    # Impose restriction d = b ? 
+     unrConstant  = 0,
+     rConstant    = 0,
+     levelParam   = 1,
+     constrained  = 0,
+     restrictDB   = 1
     ) 
-R> opt$db0 <- c(0.80, 0.80) # Set starting values for optimization.
-R> opt$gridSearch <- 0   # Use given starting values instead of a grid search.
+R> opt$db0 <- c(0.80, 0.80)
+R> opt$gridSearch <- 0
 \end{Code}
 
 The first assignment initializes the object \verb|opt| and assigns all of the default options set in \verb|FCVARoptions|, 
@@ -649,7 +527,8 @@ other than the arguments stated in the function call.
 The next two commands
 show how to easily change any of the default options after \verb|opt| is defined. 
 Defining the program options in this way allows the user to create and store several option objects with different attributes. 
-This can be very convenient when, for example, performing the same hypothesis tests on different data sets. 
+This can be very convenient when, for example, performing the same hypothesis tests on different data sets, 
+or when performing a series of hypothesis tests that share many settings with a base model. 
 
 The option settings within the call to \fct{FCVARoptions} define the model to be estimated. 
 In the present example, a model estimated with options \verb|opt| will include the level parameter $\mu$ but no restricted or unrestricted constant. 
@@ -683,18 +562,9 @@ These are explained in detail in the package documentation.
 \subsection{Lag-order selection}
 
 Once the options are set, the user moves to the next step, which involves choosing the appropriate lag order. The relevant information is obtained with a call to \fct{FCVARlagSelect}
-%, shown in Listing~\ref{FCVARlagSelect}, 
 which performs estimation of models with lag-orders from $0$ to \verb|kmax|. The program performs lag selection on the full-rank unrestricted model. 
 
-% The output generated by this function is shown below. 
-%\begin{leftbar}
-%Our \proglang{MATLAB} output is wider than 80 characters. This will sometimes be a problem. 
-%In particular, in the JSS draft, 80 characters in the \verb|CodeChunk| environment will fit well within the margins.
-%What follows is the revised format of the output.
-%\end{leftbar}
 
-%\begin{lstlisting}[frame=single,caption={Lag selection}, label = FCVARlagSelect]
-%\end{lstlisting}
 \begin{CodeChunk} 
 \begin{CodeInput}
 R> FCVARlagSelectStats <- FCVARlagSelect(x1, kmax, p, order, opt)
@@ -733,13 +603,11 @@ Estimates of $d$ and $b$ are reported for each lag ($k$) with rank ($r$) set to 
 \subsection{Cointegration rank testing}
 
 The user now chooses the lag-order based on the information provided above and can move to the next step, which is cointegration rank testing. 
-% The next code section is shown in listing~\ref{RankSelect}. T
 In the next code block, the user first assigns the lag augmentation, $k = 2$ in this case, and then calls the function \fct{FCVARrankTests}. 
 
 %% --------- COINTEGRATION RANK TESTING ---------- %
-%Executing the code in Listing~\ref{RankSelect} produces the following output. 
 
-%\begin{lstlisting}[frame=single,caption={Cointegration rank testing}, label = RankSelect]
+
 \begin{CodeChunk} 
 \begin{CodeInput}
 R> k <- 2
@@ -772,40 +640,21 @@ The $p$~values are calculated by the \pkg{fracdist} package, which obtains simul
 The table is meant to be read sequentially from lowest to highest rank, i.e.\ from top to bottom. Since we can reject the null of rank 0 against the alternative of rank 3 we move to the test of rank 1 against rank 3. This test fails to reject with a $p$~value of $0.820$, so this is the appropriate choice in this case.
 
 
+%% --------- UNRESTRICTED MODEL ESTIMATION ---------- %
+
 \subsection{Unrestricted model estimation}
 
 With the rank and lag selected, the user can now move to the next code section. 
-% , shown in Listing~\ref{unrEst}.
-% 
 
-% Split this up below:
-%% --------- UNRESTRICTED MODEL ESTIMATION ---------- %
-%\begin{lstlisting}[frame=single,caption={Unrestricted model estimation}, label = unrEst]
-%\begin{CodeChunk} 
-%\begin{CodeInput}
-%R> r <- 1
-%R> opt1 <- DefaultOpt
-%R> m1 <- FCVARestn(x1, k, r, opt1)
-%R> MVWNtest(m1$Residuals, order, printWNtest)
-%\end{CodeInput}
-%\end{CodeChunk} 
-%\end{lstlisting}
-% 
 Here the user first specifies the choice for the rank based on the previously performed cointegrating rank tests (thus setting $r=1$ in this example). Next, the default options set in the initialization, see Section \ref{subsec choosing options}, are assigned to \verb|opt1|, which is used as an argument in the call to the function \fct{FCVARestn}. This function is the main part of the program since it performs the estimation of the parameters, obtains model residuals and standard errors, and calculates many other relevant components such as the number of free parameters and the roots of the characteristic polynomial. If \verb|opt1$print2screen <- 1| then, in addition to storing all of these results in the list \verb|m1|, the function outputs the estimation results to the command window. To see a list of variables stored in \verb|m1|, the user can type \verb|m1| in the command line. 
 
 The program output is shown below. It begins with a table summarizing relevant model specifications and then the coefficients and their standard errors. The roots of the characteristic polynomial are displayed at the bottom. 
 
-%\begin{leftbar}
-%I trimmed the output to 80 characters wide. 
-%There were no numbers in that range, only comments. 
-%Besides, it is no coincidence that only the output in the first 80 characters lies in the margins of a JSS article.
-%The output from the software should lie within this range. 
-%\end{leftbar}
 
 \begin{CodeChunk} 
 \begin{CodeInput}
 R> r <- 1
-R> opt1 <- DefaultOpt
+R> opt1 <- opt
 R> m1 <- FCVARestn(x1, k, r, opt1)
 \end{CodeInput}
 \begin{CodeOutput}
@@ -931,7 +780,6 @@ In addition to the coefficient estimates, we are also interested in testing the 
 After the unrestricted model has been estimated, this code section concludes with a call to \fct{MVWNtest}, which performs a series of white noise tests on the residuals and prints the output in the command window.
 %
 The results of the white noise tests
-%, called in the last line of Listing \ref{unrEst}, 
 are shown below. For each residual both the Q- and LM-test statistics and their $p$~values are reported, in addition to the multivariate Q-test and $p$~value in the first line of the table. From the output of this table we can conclude that there does not appear to be any problems with serial correlation in the residuals.
 
 
@@ -953,16 +801,27 @@ Var3     |  10.591  0.564 |  12.265  0.425  |
 \end{CodeChunk} 
 
 Because \verb|opt$plotRoots <- 1| in the options, 
-% in Listing~\ref{intl2}, 
-the roots of the characteristic polynomial is also plotted along with the unit circle and the transformed unit circle, $\mathbb{C}_{\hat{b}}$, see \cite{Johansen2008}. 
+the roots of the characteristic polynomial are also plotted along with the unit circle and the transformed unit circle, $\mathbb{C}_{\hat{b}}$, see \cite{Johansen2008}. 
 The plot is shown in Figure~\ref{fig:Roots}.
-% Note that the axes of the plot are fixed, and therefore very large roots may not be shown in the plot (in this example, the real root \verb|-2.893|). This should not be a problem since such roots will always be well outside the transformed unit circle.
+
+
+% JSS format for figures:
+%A basic frequency distribution of the response variable is displayed in
+%%Figure~\ref{fig:quine}.
+%
+%\begin{figure}[t!]
+%\centering
+%\includegraphics{delete-this-image}
+%\caption{\label{fig:quine} Frequency distribution for number of days absent
+%from school.}
+%\end{figure}
+
 
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale = .6, keepaspectratio=true]{Figures/roots.png}
-  \caption{Roots of characteristic polynomial}
+  \caption{Roots of the characteristic polynomial.}
   \label{fig:Roots}
 \end{figure}
 
@@ -974,7 +833,7 @@ Other such restrictions are described in more detail in Section \ref{sec:extensi
 \begin{figure}[H]
   \centering
   \includegraphics[scale = .6, keepaspectratio=true]{Figures/m1_likelihood.png}
-  \caption{Plot of log-likelihood}
+  \caption{Plot of the log-likelihood function.}
   \label{fig:m1_likelihood}
 \end{figure}
 
@@ -986,23 +845,21 @@ The complete results for the unrestricted model are stored in the S3 object \ver
 We now move into the hypothesis testing section of the code where we can test several restricted models and perform inference. For restricted model estimation the grid search option is switched off because computation can be very slow, especially in the presence of the level parameter. However, if the user wishes to verify the accuracy of the results or if estimates are close to the upper or lower bound, the grid search option can resolve these issues and give the user additional insight about the behaviour of the likelihood, as shown in Section \ref{sec:extensions}. 
 
 All hypotheses are defined as shown in \eqref{R psi}--\eqref{R beta}. The first hypothesis test is $\mathscr{H}_d^1$ (for precise definitions of each hypothesis, please see \cite{JNP2014}), 
-%and it is shown in Listing~\ref{Hdb1}. 
 shown below. 
 
 %% --------- IMPOSE RESTRICTIONS AND TEST THEM ---------- %
-%\begin{lstlisting}[frame=single,caption={Hypothesis $\mathscr{H}_d^1$}, label = Hdb1]
+
 \begin{Code}
-R> opt1 <- DefaultOpt
+R> opt1 <- opt
 R> opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 R> opt1$r_psi <- 1
 R> m1r1 <- FCVARestn(x1, k, r, opt1)
 R> MVWNtest_m1r1 <- MVWNtest(m1r1$Residuals, order, printWNtest)
 R> Hdb <- FCVARhypoTest(m1, m1r1)
 \end{Code}
-%\end{lstlisting}
+
 
 Here we test the CVAR model (null hypothesis $d=b=1$) against the FCVAR model (alternative hypothesis $d=b\ne 1$). Since \verb|opt$restrictDB <- 1| was selected in the choice of options,
-% in Listing \ref{intl2}, 
 the restriction that $d=b$ is already imposed. Thus, the user needs to only impose an additional restriction that either $d$ or $b$ is equal to one. In this example, the restriction that $d=1$ is imposed by setting \verb|opt1$R_psi = [1 0]| and \verb|opt1$r_psi = 1|, but the result would be the same if $b=1$ were imposed instead. The restricted model is then estimated and the results are stored in the S3 object \verb|m1r1| of class \verb|FCVAR_model|. As before, the user can perform a series of white noise tests on the residuals by calling the \fct{MVWNtest} function. The next step is to perform the actual test. With the objects returned from the restricted and unrestricted models, the user can call the function \fct{FCVARhypoTest} and perform an LR test. This function takes the two model result objects as inputs, automatically compares the number of free parameters to obtain the degrees of freedom, computes the LR test statistic, and displays the output. The results of this test are then stored in the list \verb|Hdb| and can be accessed at any time.
 
 Since the output of the estimated model and the white noise tests are similar to the previous example, we only show the output from the hypothesis test. 
@@ -1020,17 +877,15 @@ The log-likelihoods from both models are reported, along with the degrees of fre
 
 The next hypothesis of interest is $\mathscr{H}_{\beta}^1$, which is a zero restriction on the first element of the cointegration vector.
 
-%\begin{lstlisting}[frame=single,caption={Hypothesis $\mathscr{H}_{\beta}^1$}, label = Hb1]
 \begin{Code}
-R> opt1 <- DefaultOpt
+R> opt1 <- opt
 R> opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 R> m1r2 <- FCVARestn(x1, k, r, opt1)
 R> MVWNtest_m1r2 <- MVWNtest(m1r2$Residuals, order, printWNtest)
 R> Hbeta1 <- FCVARhypoTest(m1, m1r2)
 \end{Code}
-%\end{lstlisting}
 
-Since the object \verb|opt1| has the restriction $d=b=1$ stored, the first step is to reset the options to default. The restriction on $\beta$ is then specified as in \eqref{R beta}. There are two details to note here. First, the column length of $R_{\beta}$ must equal $p_1 r$, where $p_1=p+1$ if a restricted constant is present and $p_1=p$ otherwise; recall that $p$ is the number of variables in the system and $r$ is the number of cointegrating vectors. Second, zero restrictions are the default and automatically imposed when $r_{\beta}$ is empty. Therefore, the user only needs to specify $r_{\beta}$ if it includes non-zero elements. Recall that for restrictions on $\alpha$ only $r_\alpha = 0$ is allowed so that there is no need to specify $r_\alpha$. As before, the restricted model is estimated with results stored in \verb|m1r2|, the residuals are tested for white noise, and the model under the null is tested against the unrestricted model \verb|m1| with results stored in \verb|Hbeta1|.
+Since the object \verb|opt1| has the restriction $d=b=1$ stored, the first step is to reset the options to those of the base model. The restriction on $\beta$ is then specified as in \eqref{R beta}. There are two details to note here. First, the column length of $R_{\beta}$ must equal $p_1 r$, where $p_1=p+1$ if a restricted constant is present and $p_1=p$ otherwise; recall that $p$ is the number of variables in the system and $r$ is the number of cointegrating vectors. Second, zero restrictions are the default and automatically imposed when $r_{\beta}$ is empty. Therefore, the user only needs to specify $r_{\beta}$ if it includes non-zero elements. Recall that for restrictions on $\alpha$ only $r_\alpha = 0$ is allowed so that there is no need to specify $r_\alpha$. As before, the restricted model is estimated with results stored in \verb|m1r2|, the residuals are tested for white noise, and the model under the null is tested against the unrestricted model \verb|m1| with results stored in \verb|Hbeta1|.
 
 Again, since the estimation output is similar to the first example, we only show the results of the hypothesis test here. With a $p$~value close to zero, this hypothesis is also strongly rejected.
 
@@ -1047,18 +902,16 @@ Next, we move to tests on $\alpha$.
 In this case, we test the restriction that the political variable is long-run exogenous, 
 i.e.~that the adjustment coefficient on this variable is zero.
 
-%\begin{lstlisting}[frame=single,caption={Hypothesis $\mathscr{H}_{\alpha}^1$}, label = Ha1]
 \begin{Code}
-R> opt1 <- DefaultOpt
+R> opt1 <- opt
 R> opt1$R_Alpha <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 R> opt1$gridSearch <- 0
 R> m1r3 <- FCVARestn(x1, k, r, opt1)
 R> MVWNtest_m1r3 <- MVWNtest(m1r3$Residuals, order, printWNtest)
 R> Halpha1 <- FCVARhypoTest(m1, m1r3)
 \end{Code}
-%\end{lstlisting}
 
-Again we first reset \verb|opt1| to the default options to clear previously imposed restrictions. Note that, if it were the case that we failed to reject $\mathscr{H}_{\beta}^1$ and wanted to leave it imposed while adding a restriction on $\alpha$, we could either omit the first line \verb|opt1 <- DefaultOpt|, or we could replace it with \verb|opt1 <- m1r2$options|. The latter assignment is preferred in this case because it is explicit about which model options we are leaving imposed.
+Again we first reset \verb|opt1| to the original options to clear previously imposed restrictions. Note that, if it were the case that we failed to reject $\mathscr{H}_{\beta}^1$ and wanted to leave it imposed while adding a restriction on $\alpha$, we could either omit the first line \verb|opt1 <- opt|, or we could replace it with \verb|opt1 <- m1r2$options|. The latter assignment is preferred in this case because it is explicit about which model options we are leaving imposed.
 
 The hypothesis $\mathscr{H}_{\alpha}^1$ is tested in the exact same way as before, only now we are changing the variable $R_{\alpha}$ instead of $R_{\beta}$. The results are shown below and we can see that this hypothesis is also rejected.
 
@@ -1072,16 +925,12 @@ P-value: 	 0.001
 \end{verbatim}
 
 We next move to the remaining long-run exogeneity tests, $\mathscr{H}_{\alpha}^2$ and $\mathscr{H}_{\alpha}^3$, shown
-% in Listings \ref{Ha2} and \ref{Ha3}, respectively. 
 in the examples below.
-% The results of the tests are shown below each listing.
 The hypothesis $\mathscr{H}_{\alpha}^2$ tests that the interest-rate is long-run exogenous.
 
-%\begin{lstlisting}[frame=single,caption={Hypothesis $\mathscr{H}_{\alpha}^2$}, label = Ha2]
-%% Test restriction that interest-rate is long-run exogenous.
 \begin{CodeChunk} 
 \begin{CodeInput}
-R> opt1 <- DefaultOpt
+R> opt1 <- opt
 R> opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 R> opt1$gridSearch <- 0
 R> m1r4 <- FCVARestn(x1, k, r, opt1)
@@ -1101,10 +950,9 @@ P-value: 	 0.426
 
 Next, we test the hypothesis $\mathscr{H}_{\alpha}^3$ that unemployment is long-run exogenous.
 
-%\begin{lstlisting}[frame=single,caption={Hypothesis $\mathscr{H}_{\alpha}^3$}, label = Ha3]
 \begin{CodeChunk} 
 \begin{CodeInput}
-R> opt1 <- DefaultOpt
+R> opt1 <- opt
 R> opt1$gridSearch <- 0
 R> opt1$R_Alpha <- matrix(c(0, 0, 1), nrow = 1, ncol = 3)
 R> m1r5 <- FCVARestn(x1, k, r, opt1)
@@ -1261,7 +1109,6 @@ Then $\Pi= \tilde{\alpha}  \tilde{\beta}^{\prime} = (\tilde{\alpha}G^{-1}) (G\ti
 so that $\Pi= \hat{\alpha}\hat{\beta}^{\prime}$
 Of course, this code section should only be executed if it does not interfere with any restrictions imposed on the model. 
 
-%\begin{lstlisting}[frame=single,caption={Normalizing output}, label = normOut]
 \begin{CodeChunk} 
 \begin{CodeInput}
 R> modelRstrct <- m1r4
@@ -1312,6 +1159,8 @@ and the likelihood ratio statistic will have value zero.
 If the user observes this outcome, further restrictions are required to overidentify the restricted model.
 For this problem and others, the \fct{FCVARtest} function prints warning messages to guide the user to restate the restrictions.}
 
+
+% JSS Notes:
 %\begin{leftbar}
 %Finally, there might be a reference to a \verb|{table}| such as
 %Table~\ref{tab:overview}. Usually, these are placed at the top of the page
@@ -1339,29 +1188,21 @@ For this problem and others, the \fct{FCVARtest} function prints warning message
 %\end{table}
 
 
-
-
-
-
-
-
-
 \section{Additional examples}
 \label{sec:examples}
 
 To show some additional functionality of the FCVAR software package, this section contains several other examples, which are based on \cite{JNP2014}, but are not part of that paper. 
 These include forecasting, bootstrap tesing, simulation and plotting of the likelihood function. 
 
+
+%% --------- FORECAST ---------- %
+
 \subsection{Forecasting}
 \label{sec:forecasting}
 
-% Listing~\ref{forecast} 
 This code block 
 performs recursive one-step ahead forecasts for each of the variables as well as the equilibrium relation. 
-%
-%\begin{lstlisting}[frame=single,caption={Forecasting}, label = forecast]
-%% --------- FORECAST ---------- %
-%
+
 \begin{Code}
 R> NumPeriods <- 12
 R> modelF <- m1r4
@@ -1369,121 +1210,42 @@ R> xf <- FCVARforecast(x1, modelF, NumPeriods)
 R> seriesF <- rbind(x1, xf) 
 R> equilF <- seriesF %*% modelF$coeffs$betaHat
 \end{Code}
-%
-%% Determine the size of the vertical line to delimit data and forecast
-%%   values.
-%T = size(x1,1);
-%yMaxS  = max(max(seriesF));
-%yMinS  = min(min(seriesF));
-%yMaxEq = max(max(equilF));
-%yMinEq = min(min(equilF));
-%
-%% Plot the results.
-%figure
-%subplot(2,1,1);
-%plot(seriesF), 
-%title('Series including forecast'), xlabel('t');
-%line([T T], [yMinS yMaxS], 'Color','k');
-%subplot(2,1,2);
-%plot(equilF), 
-%title('Equilibrium relation including forecasts'), xlabel('t');
-%line([T T], [yMinEq yMaxEq], 'Color','k');
-%\end{lstlisting}
-%
-
 
 % Two-panel figure with forecasts and euilibrium relation.
 \begin{figure}[H]
   \centering
   \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_vars_eqbm.png}
-  \caption{Forecast and equilibrium relationship of final model 12 steps ahead}
+  \caption{Forecast and equilibrium relationship of final model 12 steps ahead.}
   \label{fig:forecast}
 \end{figure}
 
 
 The user specifies the forecast horizon (\verb|NumPeriods|) as well as the model (in this case, \verb|modelF <- m1r4|). These two inputs, along with the data, are used in the call to the function \fct{FCVARforecast}. This function returns \verb|xf|, a \verb|NumPeriods| by $p$ matrix of forecasted values of $X$, 
 which are forecasted to take place after \verb|x1|. 
-% This code section also plots the original series and the equilibrium relation $X\hat{\beta}$  along with the forecasts. These plots are shown in Figure~\ref{fig:forecast}.
 Figure~\ref{fig:forecast} plots the original series and the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
-% Figure~\ref{fig:forecast_vars} plots the original series and Figure~\ref{fig:forecast_eqbm} plots the equilibrium relation $X\hat{\beta}$, stored in \verb|equilF|,  along with the forecasts. 
 
 
-%The forecasts can be printed to screen by typing \verb|xf| in the command window. For this example, the forecast yields the following output:
-%\begin{verbatim}
-%xf =
-%
-%   -0.143651232445609   5.857045691984009  -2.636093400885282
-%   -0.084880236401301   5.959876423543075  -2.654427734412809
-%   -0.025317647188555   6.110372247993035  -2.673504395263888
-%    0.023637193159649   6.291703833118448  -2.692354312615941
-%    0.065948385719753   6.495095415827381  -2.710793696483187
-%    0.101480482760750   6.712274724017515  -2.728550463910498
-%    0.131038772676406   6.937036380068601  -2.745463810349039
-%    0.155108028894535   7.164423215402036  -2.761407736878001
-%    0.174198620780072   7.390568568007144  -2.776296703046935
-%    0.188773441631705   7.612444943293763  -2.790074682226306
-%    0.199275426254352   7.827704702527144  -2.802710965769232
-%    0.206124920473081   8.034550676278421  -2.814195673339702
-%\end{verbatim}
-
-%\begin{figure}[H]
-%  \centering
-%  % \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast.png}
-%\subfigure{\includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_vars.png}}\\
-%\subfigure{\includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_eqbm.png}}
-%  \caption{Forecast of final model 12 steps ahead}
-%  \label{fig:forecast}
-%\end{figure}
-
-
-%\begin{figure}[H]
-%  \centering
-%  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_vars.png}
-%  \caption{Forecast of final model 12 steps ahead}
-%  \label{fig:forecast_vars}
-%\end{figure}
-%
-%\begin{figure}[H]
-%  \centering
-%  \includegraphics[scale = 1, keepaspectratio=true]{Figures/forecast_eqbm.png}
-%  \caption{Forecast equilibrium relationship of final model 12 steps ahead}
-%  \label{fig:forecast_eqbm}
-%\end{figure}
-
-
+%% --------- BOOTSTRAP HYPOTHESIS TEST ---------- %
 
 \subsection{Bootstrap hypothesis test}
 \label{sec:bootstr-hypoth-test}
 
-% Listing~\ref{BSh} 
 This code block
 demonstrates the use of the wild bootstrap for hypothesis tests on the parameters, as developed by \cite{Boswijk2013} for the CVAR model. 
 The function \fct{FCVARboot} returns the results of the wild bootstrap. 
 The user specifies two sets of options corresponding to two different nested models, the restricted model with \verb|optRES| and the unrestricted model with \verb|optUNR|. 
 This particular example tests the restriction that political variables do not enter the cointegrating relation(s).
 
-% The wild bootstrap is programmed to perform under parallel processing. If the user has the capability to use multiple processors, then computation time can be greatly reduced. 
-% If not, the function can still be performed, but the bootstrap iterations will appear out of order since the loop is coded using \verb|parfor| instead of \verb|for|. 
-
-
-%\begin{lstlisting}[frame=single,caption={Bootstrap hypothesis test}, label = BSh]
-%% --------- BOOTSTRAP HYPOTHESIS TEST ---------- %
 \begin{Code}
-R> DefaultOpt$plotRoots <- 0
-R> optUNR <- DefaultOpt
-R> optRES <- DefaultOpt
+R> opt$plotRoots <- 0
+R> optUNR <- opt
+R> optRES <- opt
 R> optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 R> set.seed(42)
 R> FCVARboot_stats <- FCVARboot(x1, k, r, optRES, optUNR, B = 999)
 R> LRbs_density <- density(FCVARboot_stats$LRbs)
 \end{Code}
 
-%% Plot bootstrap density with chi-squared density
-%figure; plot(XI,F, XI, chi2pdf(XI,H.df))
-%
-%legend(['Bootstrap PDF with ', num2str(B), ' BS samples'],...
-%    ['Chi Squared with ', num2str(H.df),' df'])
-%\end{lstlisting}
 
 An example of the output is
 \begin{verbatim}
@@ -1497,7 +1259,6 @@ P-value (BS): 	 0.021
 \end{verbatim}
 
 The user might also be interested in comparing the bootstrap likelihood ratio test statistic distribution to the asymptotic one, a $\chi$-squared distribution with \verb|H$df| degrees of freedom. 
-% The second part of Listing~\ref{BSh} performs this comparison by producing 
 These objects can be used to produce 
 a plot of the two distributions, shown in Figure~\ref{fig:BS}.
 Note that, in the small sample, the statistic has probability mass over negative values, 
@@ -1508,30 +1269,26 @@ and a justification for conducting the bootstrap test.
 \begin{figure}[tbh]
   \centering
   \includegraphics[scale = 1, keepaspectratio=true]{Figures/LRdensity_bw045.png}
-  \caption{Density of bootstrap LR test statistic}
+  \caption{Density of bootstrap LR test statistic.}
   \label{fig:BS}
 \end{figure}
 
 
+%% --------- BOOTSTRAP RANK TEST ---------- %
+
 \subsection{Bootstrap rank test}
 \label{sec:bootstrap-rank-test}
 
-% Listing~\ref{BSr}
 This code block
 shows how to perform a wild bootstrap rank test, following the methodology of \cite{Cavaliere2010} for the CVAR model. This procedure works in much the same way as the bootstrap hypothesis test described in Section~\ref{sec:bootstr-hypoth-test}. The difference is that, instead of providing two sets of estimation options, the user specifies two different ranks for comparison.
 
-%\begin{lstlisting}[frame=single,caption={Bootstrap rank test}, label = BSr]
-%% --------- BOOTSTRAP RANK TEST ---------- %
 % Test rank 0 against rank 1
 \begin{Code}
 R> r1 <- 0
 R> r2 <- 1
-R> FCVARbootRank_stats <- FCVARbootRank(x1, k, DefaultOpt, r1, r2, B = 999)
-R> cat(sprintf('P-value: \t %1.3f\n', rankTestStats$pv[1]))
+R> FCVARbootRank_stats <- FCVARbootRank(x1, k, opt, r1, r2, B = 999)
+R> cat(sprintf('P-value (asy): \t %1.3f\n', rankTestStats$pv[1]))
 \end{Code}
-% Compare to P-value based on asymptotic distribution
-% fprintf('P-value: \t %1.3f\n', rankTestStats.pv(1));
-%\end{lstlisting}
 
 The results are printed as
 \begin{verbatim}
@@ -1541,30 +1298,22 @@ Restricted log-likelihood:   440.040
 Test results:
 LR statistic: 	 22.268
 P-value (BS): 	 0.031
-# Need to modify program (with a particular seed):
-P-value: 	 0.043
+P-value (asy): 	 0.043
 \end{verbatim}
 in which the last $p$~value is printed to compare the bootstrap $p$~value to that based on the asymptotic distribution. 
+
+%% --------- SIMULATION ---------- %
 
 \subsection{Simulation}
 \label{sec:simulation}
 
-Next, 
-% Listing~\ref{simFCVAR} 
-this example
+Next, this example
 shows how to simulate an FCVAR model for a given set of parameters. The user provides data for starting values and a list containing model parameters for simulation as well as the number of periods to simulate. The simulated data are generated using Gaussian errors.
 
-%\begin{lstlisting}[frame=single,caption={Simulation}, label = simFCVAR]
-%% --------- SIMULATION ---------- %
 \begin{Code}
 R> T_sim <- 100
 R> xSim <- FCVARsim(x1, modelF, T_sim)
 \end{Code}
-% Plot the results
-%figure;
-%plot(xSim)
-%legend('Support', 'Unemployment', 'Interest rate')
-%\end{lstlisting}
 
 For the example above, 
 using the same data as for the forecasting example above, 
@@ -1578,36 +1327,14 @@ the generated data is shown in Figure~\ref{fig:sim}.
 \end{figure}
 
 
-
-
-
-
 %% -- Summary/conclusions/discussion -------------------------------------------
 
 %% -- Extensions ---------------------------------------------------------------------
 
 % \section{Extensions} \label{sec:extensions}
 
-%\subsection{Extension for $p$~values} \label{sec:fdpval}
-%
-% Users don't need to do this in R:
-% 
-% We will simply mention it in the section on rank selection. 
-%
-%Although the MATLAB program can run standalone, one of the functions, \verb|FCVARrankTests.m|, makes an external system call to a separately installed program, \verb|fdpval|. This external program is the C++ implementation of a Fortran program used to obtain simulated $p$~values from \cite{mackinnon2014numerical}. If the user would like $p$~values for the cointegration rank tests to be automatically calculated, we recommend obtaining this companion program, which is made available by Jason Rhinelander and can be downloaded from: 
-%\begin{center} \url{https://github.com/jagerman/fracdist/releases}
-%\end{center}
-%It can be either installed or downloaded in a compressed folder. It is important to note where the program is stored or installed, because the MATLAB program requires the program location as an input in the estimation options. For example, if the program is stored in the folder \verb|/usr/bin/| on a Linux system, the location variable is defined as follows, \verb|progLoc = '"/usr/bin/fdpval"'|. For details see Sections~\ref{sec:estoptions.m} and~\ref{sec:getpvals}.
-
 % \subsection{Dealing with Local Optima}
 \subsection{Plotting the likelihood function} \label{sec:extensions}
-
-%Quote from above:
-%
-%In practice, the grid search would be set with  \verb|opt$gridSearch <- 1|, i.e.~the default, particularly in an initial investigation of the data, 
-%so that several values of $d$ and $b$ can be tested as potential starting values. 
-%This is meant to alleviate the identification problem discussed in \citet[Section 2.3]{johniel2010} and \cite{Carlini2014} because the likelihood function may have several local optima. 
-
 
 Users should be aware that the likelihood function is sometimes badly behaved, 
 in that there may be multiple local optima. 
@@ -1618,7 +1345,6 @@ in an attempt to discover several local optima.
 % 
 To mitigate this problem in the FCVAR model, the \pkg{FCVAR} package includes functions for 
 calculating the value of the likelihood function on a grid of values of the fractional integration parameters $d$ and $b$. 
-% 
 
 
 The function \fct{FCVARlikeGrid} conducts this grid search, 
@@ -1639,12 +1365,10 @@ and the optimization continues using that gridpoint as the starting values for $
 This is the procedure that is followed if the user selects the option \verb|opt$gridSearch <- 1|.
 
 
-% I have no idea why this wasn't as easy as it should have been:
-% Maybe a subfig vs subfigure difference. 
-% At least it works.
+
 \begin{figure}[H]
   \centering
-  \subfigure[Unconstrained]{
+  \subfigure[$(d, b)$ unconstrained]{
     \label{fig:gridFree}
     % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/grid3d.png}
     \includegraphics[width = 200pt]{Figures/grid3d.png}
@@ -1660,19 +1384,19 @@ This is the procedure that is followed if the user selects the option \verb|opt$
     % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridDB.png}
     \includegraphics[width = 200pt]{Figures/gridDB.png}
   } 
-  \subfigure[Restrictions imposed]{
+  \subfigure[$R_\psi (d, b)^\prime = r_\psi, \quad (d, b)^\prime = H\phi + h$]{ 
     \label{fig:gridPhi}
     % \includegraphics[scale = 0.10, keepaspectratio=true]{Figures/gridPhi.png}
     \includegraphics[width = 200pt]{Figures/gridPhi.png}
   }
-  \caption{Grid search}
+  \caption{Plots of the log-likelihood function under alternative restrictions.}
   \label{fig:LikeGrid}
 \end{figure}
 
 
 As an aid to users while distingushing between local and global optima, 
 the output of the \fct{FCVARlikeGrid} is a class of S3 object called \texttt{FCVAR\_grid} that 
-is endowed with the \fct{plot} method. 
+is compatible with the generic \fct{plot} method. 
 Together, these functions can produce four kinds of plots, corresponding to the four types of grid searches, 
 under four alternative types of constaints on $d$ and $b$. 
 The first two cases are two-dimensional problems in $d$ and $b$. 
@@ -1684,7 +1408,6 @@ If the restriction $d=b$ is imposed, then the grid search is one-dimensional as 
   \begin{bmatrix}
     d \\ b
   \end{bmatrix}
-  % [d \quad b]
   = H\phi + h,
 \end{equation}
 where $H = (R_{\psi}^{\prime})_\perp$ and $h = R_{\psi}^{\prime} (R_\psi R_{\psi}^{\prime})^{-1} r_\psi$. The bounds on $\phi$ are derived from \verb|opt$dbMin| and \verb|opt$dbMax| in a similar way.

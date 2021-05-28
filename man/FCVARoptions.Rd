@@ -2,18 +2,30 @@
 % Please edit documentation in R/FCVAR_opt.R
 \name{FCVARoptions}
 \alias{FCVARoptions}
-\title{Default Estimation Options}
+\title{Set Estimation Options}
 \usage{
-FCVARoptions()
+FCVARoptions(...)
+}
+\arguments{
+\item{...}{a list of arguments to set to values other than the default settings.
+See argument names in return value below.}
 }
 \value{
 An S3 object of class \code{FCVAR_opt} that stores the default estimation options,
 which includes the following parameters:
 \describe{
-  \item{\code{UncFminOptions}}{CHECK: Options passed to \code{optimize} function for
-  unconstrained optimization of the likelihood function over the fractional integration parameters.}
-  \item{\code{ConFminOptions}}{CHECK: Options passed to \code{optimize} function for
-  constrained optimization of the likelihood function over the fractional integration parameters.}
+  \item{\code{unc_optim_control}}{A list of options in the form of the argument \code{control}
+  in the \code{optim} function for \emph{unconstrained} optimization of the likelihood function
+  over the fractional integration parameters.
+  This is also used in the switching algorithm employed when linear constraints are imposed on
+  the cointegrating relations \code{beta} or the adjustment coefficients \code{alpha},
+  so it must at least contain the arguments \code{maxit} and \code{reltol},
+  since it uses those parameters.}
+  \item{\code{con_optim_control}}{A list of options in the form of the argument \code{control}
+  in either the \code{optim} or the \code{constrOptim} function for \emph{constrained} optimization
+  of the likelihood function over the fractional integration parameters,
+  using the 'L-BFGS-B' algorithm.
+  It must at least contain the arguments \code{maxit} and \code{pgtol}.}
   \item{\code{LineSearch}}{Indicator for conducting a line search optimization within
   the switching algorithm when optimizing over constraints on the cointegrating relations \eqn{\beta}
   or the adjustment coefficients \eqn{\alpha}. See Doornik (2018, Section 2.2) for details.}
@@ -73,6 +85,12 @@ which includes the following parameters:
 }
 \examples{
 opt <- FCVARoptions()
+opt <- FCVARoptions(
+    gridSearch   = 0, # Disable grid search in optimization.
+    dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+    dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+    constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+)
 }
 \references{
 Doornik, J. A. (2018) "Accelerated Estimation of Switching Algorithms:
