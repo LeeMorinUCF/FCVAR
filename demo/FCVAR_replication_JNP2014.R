@@ -1,51 +1,39 @@
 ################################################################################
 #
-# Example of Analysis using the FCVAR Model
+# Example of Analysis Using the FCVAR Model
 #
 #
 # Lee Morin, Ph.D.
 # Assistant Professor
 # Department of Economics
-# College of Business Administration
+# College of Business
 # University of Central Florida
 #
-# April 16, 2020
+# June 5, 2021
 #
 ################################################################################
 #
-# This code replicates Table 4: FCVAR results for Model 1, in
+# This code replicates statistics for Table 4: FCVAR results for Model 1, in
 # Maggie E.C. Jones, Morten \Orregaard Nielsen & Michal Ksawery Popiel (2014).
 #   "A fractionally cointegrated VAR analysis of economic voting and political support,"
 #   Canadian Journal of Economics.
+# It serves as the set of examples for the vignette to accompany
+#   the R package FCVAR.
 #
 ################################################################################
 
 # Clear workspace.
 rm(list = ls(all = TRUE))
 
+
 ################################################################################
 # Import Data
 ################################################################################
 
-
-# data <- read.csv('data_JNP2014.csv')
-
-# data for each model.
-# x1 <- data[, c(1, 3, 5)]
-# x2 <- data[, c(2, 3, 5)]
-# x3 <- data[, c(1, 2, 3, 5)]
-# x4 <- data[, c(1, 3, 4, 5, 6)]
-# x5 <- data[, c(2, 3, 4, 5, 6)]
-# x6 <- data[, c(1, 2, 3, 4, 5, 6)]
-
-# Rewrite with column names.
-colnames(votingJNP2014)
-# [1] "lib"    "pc"     "ir_can" "ir_us"  "un_can" "un_us"
-# x1 is the only dataset used in the demo with the following variables:
-colnames(votingJNP2014)[c(1, 3, 5)]
-# [1] "lib"    "ir_can" "un_can"
 x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-
+# lib is the aggregate support for the Liberal party,
+# ir_can is the Canadian 3-month T-bill rate, and
+# un_can is the Canadian unemployment rate.
 
 
 ################################################################################
@@ -53,57 +41,34 @@ x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 ################################################################################
 
 p                <- ncol(x1) # system dimension.
-kmax             <- 3    # maximum number of lags for VECM.
-order            <- 12   # number of lags for white noise test in lag selection.
-printWNtest      <- 1    # to print results of white noise tests post-estimation.
+kmax             <- 3    # Maximum number of lags for VECM.
+order            <- 12   # Number of lags for white noise test in lag selection.
+printWNtest      <- 1    # Print results of MVWN test to screen.
 
 #--------------------------------------------------------------------------------
 # Choosing estimation options
 #--------------------------------------------------------------------------------
 
-opt <- FCVARoptions() # Define variable to store Estimation Options (object).
-
-opt$dbMin        <- c(0.01, 0.01) # lower bound for d,b.
-opt$dbMax        <- c(2.00, 2.00) # upper bound for d,b.
-opt$unrConstant  <- 0 # include an unrestricted constant? 1 <- yes, 0 <- no.
-opt$rConstant    <- 0 # include a restricted constant? 1 <- yes, 0 <- no.
-opt$levelParam   <- 1 # include level parameter? 1 <- yes, 0 <- no.
-opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
-opt$db0          <- c(0.8, 0.8) # set starting values for optimization algorithm.
-opt$N            <- 0 # number of initial values to condition upon.
-opt$print2screen <- 1 # print output.
-opt$printRoots   <- 1 # do not print roots of characteristic polynomial.
-opt$plotRoots    <- 1 # do not plot roots of characteristic polynomial.
-opt$gridSearch   <- 1 # For more accurate estimation, perform the grid search.
-# This will make estimation take longer.
-opt$plotLike     <- 0 # Plot the likelihood (if gridSearch <- 1).
-opt$progress 	   <- 0 # Show grid search progress indicator waitbar.
-opt$updateTime   <- 0.5 # How often progress is updated (seconds).
-
-# Linux example:
-opt$progLoc <- '"/usr/bin/fdpval"'  # location path with program name
-# of fracdist program, if installed
-# Note: use both single (outside) and double
-# quotes (inside). This is especially important
-# if path name has spaces.
-# Windows example:
-# opt$progLoc <- '".\fdpval\fdpval"'  # program located in folder fdpval in current directory
-
-# There are many other options (see EstOptions.m for
-# everything else. These can be accessed/modified as in, for example:
-# opt$dbFminOptions$Algorithm <- 'interior-point'
-
-DefaultOpt <- opt # Store the options for restoring them in between hypothesis tests.
+# Define variable to store Estimation Options (in an FCVARoptions object).
+opt <- FCVARoptions(
+  unrConstant = 0,
+  rConstant = 0,
+  levelParam = 1,
+  constrained = 0,
+  restrictDB = 1,
+  dbMin = c(0.01, 0.01),
+  dbMax = c(2.00, 2.00)
+)
+opt$db0 <- c(0.80, 0.80)
+opt$gridSearch <- 0
 
 
 ################################################################################
 # LAG SELECTION
 ################################################################################
 
-opt$gridSearch <- 0
-FCVARlagSelectStats <- FCVARlagSelect(x1, kmax, r = p, order, opt)
-
+FCVARlagSelectStats <- FCVARlagSelect(x1, kmax, p, order, opt)
+# Select lag k <- 2 with minimum value of AIC.
 
 ################################################################################
 # COINTEGRATION RANK TESTING
@@ -117,14 +82,18 @@ rankTestStats <- FCVARrankTests(x1, k, opt)
 # UNRESTRICTED MODEL ESTIMATION
 ################################################################################
 
-k <- 2
+# Set parameters from specification decisions.
 r <- 1
-opt1 <- DefaultOpt
-opt1$gridSearch <- 0
+opt1 <- opt
+opt1$gridSearch <- 1
+opt1$plotLike <- 1
 
 
+# Estimate model and store in an FCVARmodel object.
 m1 <- FCVARestn(x1, k, r, opt1)
 
+
+# Conduct MVWN test on residuals.
 MVWNtest_m1 <- MVWNtest(m1$Residuals, order, printWNtest)
 
 
@@ -132,22 +101,24 @@ MVWNtest_m1 <- MVWNtest(m1$Residuals, order, printWNtest)
 # IMPOSE RESTRICTIONS AND TEST THEM
 ################################################################################
 
-DefaultOpt$gridSearch <- 0	# turn off grid search for restricted models
-#	because it is too intensive.
-
 
 #--------------------------------------------------------------------------------
 # Test restriction that d = b = 1.
 #--------------------------------------------------------------------------------
 
-opt1 <- DefaultOpt
+# Set options to impose restriction.
+opt1 <- opt
 opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt1$r_psi <- 1
 
+
+# Estimate model and store in an FCVARmodel object.
 m1r1 <- FCVARestn(x1, k, r, opt1)
 
 
+# Conduct MVWN test on residuals.
 MVWNtest_m1r1 <- MVWNtest(m1r1$Residuals, order, printWNtest)
+
 
 # Test the null of m1r1 against the alternative m1.
 Hdb <- FCVARhypoTest(m1, m1r1)
@@ -157,12 +128,18 @@ Hdb <- FCVARhypoTest(m1, m1r1)
 # Test restriction that political variables do not enter the cointegrating relation(s).
 #--------------------------------------------------------------------------------
 
-opt1 <- DefaultOpt
+# Set options to impose restriction.
+opt1 <- opt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 
+
+# Estimate model and store in an FCVARmodel object.
 m1r2 <- FCVARestn(x1, k, r, opt1)
 
+
+# Conduct MVWN test on residuals.
 MVWNtest_m1r2 <- MVWNtest(m1r2$Residuals, order, printWNtest)
+
 
 # Test the null of m1r2 against the alternative m1.
 Hbeta1 <- FCVARhypoTest(m1, m1r2)
@@ -172,13 +149,18 @@ Hbeta1 <- FCVARhypoTest(m1, m1r2)
 # Test restriction that political variable is long-run exogenous.
 #--------------------------------------------------------------------------------
 
-opt1 <- DefaultOpt
+# Set options to impose restriction.
+opt1 <- opt
 opt1$R_Alpha <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
-opt1$gridSearch <- 0
 
+
+# Estimate model and store in an FCVARmodel object.
 m1r3 <- FCVARestn(x1, k, r, opt1)
 
+
+# Conduct MVWN test on residuals.
 MVWNtest_m1r3 <- MVWNtest(m1r3$Residuals, order, printWNtest)
+
 
 # Test the null of m1r3 against the alternative m1
 Halpha1 <- FCVARhypoTest(m1, m1r3)
@@ -188,13 +170,18 @@ Halpha1 <- FCVARhypoTest(m1, m1r3)
 # Test restriction that interest-rate is long-run exogenous.
 #--------------------------------------------------------------------------------
 
-opt1 <- DefaultOpt
+# Set options to impose restriction.
+opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-opt1$gridSearch <- 0
 
+
+# Estimate model and store in an FCVARmodel object.
 m1r4 <- FCVARestn(x1, k, r, opt1)
 
+
+# Conduct MVWN test on residuals.
 MVWNtest_m1r4 <- MVWNtest(m1r4$Residuals, order, printWNtest)
+
 
 # Test the null of m1r4 against the alternative m1.
 Halpha2 <- FCVARhypoTest(m1, m1r4)
@@ -204,13 +191,18 @@ Halpha2 <- FCVARhypoTest(m1, m1r4)
 # Test restriction that unemployment is long-run exogenous.
 #--------------------------------------------------------------------------------
 
-opt1 <- DefaultOpt
-opt1$gridSearch <- 0
+# Set options to impose restriction.
+opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 0, 1), nrow = 1, ncol = 3)
 
+
+# Estimate model and store in an FCVARmodel object.
 m1r5 <- FCVARestn(x1, k, r, opt1)
 
+
+# Conduct MVWN test on residuals.
 MVWNtest_m1r5 <- MVWNtest(m1r5$Residuals, order, printWNtest)
+
 
 # Test the null of m1r5 against the alternative m1.
 Halpha3 <- FCVARhypoTest(m1, m1r5)

@@ -39,9 +39,23 @@
 %% - \title{} in title case
 %% - \Plaintitle{} without LaTeX markup (if any)
 %% - \Shorttitle{} with LaTeX markup (if any), used as running title
-\title{The Fractionally Cointegrated Vector Autoregression Model in \proglang{R}}
-\Plaintitle{The Fractionally Cointegrated Vector Autoregression Model in R}
-\Shorttitle{Fractionally Cointegrated VAR in \proglang{R}}
+% 
+% Options for titles:
+%
+%\title{The Fractionally Cointegrated \\ Vector Autoregressive Model in \proglang{R}:\\ The \pkg{FCVAR} Package}
+%\Plaintitle{The Fractionally Cointegrated Vector Autoregressive Model in R: The FCVAR Package}
+%\Shorttitle{The Fractionally Cointegrated VAR in \proglang{R}}
+% 
+%\title{Estimating the Fractionally Cointegrated Vector Autoregressive Model with the \pkg{FCVAR} \proglang{R} Package}
+%\Plaintitle{Estimating the Fractionally Cointegrated Vector Autoregressive Model with the FCVAR R Package}
+%\Shorttitle{The Fractionally Cointegrated VAR in \proglang{R}}
+% 
+\title{\pkg{FCVAR}: An \proglang{R} Package for the Fractionally Cointegrated Vector Autoregressive Model}
+\Plaintitle{FCVAR: An R Package for the Fractionally Cointegrated Vector Autoregressive Model}
+\Shorttitle{The Fractionally Cointegrated VAR in \proglang{R}}
+% 
+% The orphaned "Model" sticks out but I like that "Fractionally Cointegrated Vector Autoregressive" is in one line.
+
 
 %% - \Abstract{} almost as usual
 \Abstract{
@@ -209,9 +223,12 @@ as well as the frequency-domain test for fractional cointegration in \citet{Souz
 One feature that is missing, however, is the maximum likelihood method of \citet{Johansen1995}, 
 which was extended to fractional processes in \cite{Johansen2008}. % (\textbf{cite JN papers}).
 This framework allows for joint testing of a comprehensive set of restrictions and provides the 
-foundation on which the \pkg{FCVAR} package is built. 
-
-
+foundation on which \pkg{FCVAR} is built. 
+% 
+The \pkg{FCVAR} package in \proglang{R} complements
+a \proglang{MATLAB} package \pkg{FCVARmodel.m}, which is documented in \cite{Nielsen2016}
+and estimates the FCVAR model using similar syntax. 
+ 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Review of existing software
@@ -499,9 +516,10 @@ This example uses the variables in the first, third and fifth columns.
 Once the data are imported, the user sets the program options. The script contains two sets of options: the arguments of the estimation functions and an object comprising the settings for model specification and estimation. 
 The first set of options is as follows. 
 \begin{Code}
-p               <- ncol(x1) 
-kmax            <- 3
-order           <- 12
+R> p               <- ncol(x1) 
+R> kmax            <- 3
+R> order           <- 12
+R> printWNtest     <- 1
 \end{Code}
 
 The variable \verb|kmax| determines the highest lag order for the sequential testing that is performed in the lag selection, whereas \verb|p| is the dimension of the system. 
@@ -512,12 +530,14 @@ assign values to the variables contained in the object \verb|opt|, defined by th
 
 \begin{Code}
 R> opt <- FCVARoptions(
-     unrConstant  = 0,
-     rConstant    = 0,
-     levelParam   = 1,
-     constrained  = 0,
-     restrictDB   = 1
-    ) 
+ +    unrConstant  = 0,
+ +    rConstant    = 0,
+ +    levelParam   = 1,
+ +    constrained  = 0,
+ +    restrictDB   = 1,
+ +    dbMin = c(0.01, 0.01),
+ +    dbMax = c(2.00, 2.00)
+ +    ) 
 R> opt$db0 <- c(0.80, 0.80)
 R> opt$gridSearch <- 0
 \end{Code}
@@ -655,6 +675,8 @@ The program output is shown below. It begins with a table summarizing relevant m
 \begin{CodeInput}
 R> r <- 1
 R> opt1 <- opt
+R> opt1$gridSearch <- 1
+R> opt1$plotLike <- 1
 R> m1 <- FCVARestn(x1, k, r, opt1)
 \end{CodeInput}
 \begin{CodeOutput}
@@ -665,8 +687,8 @@ Dimension of system:       3      Number of observations in sample:          316
 Number of lags:            2      Number of observations for estimation:     316 
 Restricted constant:      No      Initial values:                              0
 Unrestricted constant:    No      Level parameter:                           Yes
-Starting value for d:    0.800    Parameter space for d: (0.010 , 2.000) 
-Starting value for b:    0.800    Parameter space for b: (0.010 , 2.000) 
+Starting value for d:    0.569    Parameter space for d: (0.469 , 0.669) 
+Starting value for b:    0.569    Parameter space for b: (0.469 , 0.669) 
 --------------------------------------------------------------------------------
 Cointegrating rank:            1  AIC:              -848.348 
 Log-likelihood:          451.174  BIC:              -746.943 
@@ -685,7 +707,7 @@ log(det(Omega_hat)):     -11.369  Free parameters:        27
 --------------------------------------------------------------------------------
         Var1              1.000     
         Var2              0.111     
-        Var3             -0.240     
+        Var3             -0.241     
 --------------------------------------------------------------------------------
 Note: Identifying restriction imposed.                                                               
 --------------------------------------------------------------------------------
@@ -716,9 +738,9 @@ Note: Standard errors in parenthesis.
 --------------------------------------------------------------------------------
         Var 1            -0.345     
          SE 1         (   0.069  )  
-        Var 2            11.481     
+        Var 2            11.480     
          SE 2         (   0.548  )  
-        Var 3            -2.873     
+        Var 3            -2.872     
          SE 3         (   0.033  )  
 --------------------------------------------------------------------------------
 Note: Standard errors in parenthesis (from numerical Hessian) 
@@ -730,7 +752,7 @@ Note: Standard errors in parenthesis (from numerical Hessian)
 --------------------------------------------------------------------------------
       Var 1            0.276         -0.032         -0.510    
        SE 1        (   0.160  )   (   0.026  )   (   0.513  )  
-      Var 2           -0.148          1.126         -3.289    
+      Var 2           -0.148          1.126         -3.286    
        SE 2        (   0.378  )   (   0.196  )   (   1.975  )  
       Var 3           -0.052          0.008          0.711    
        SE 3        (   0.022  )   (   0.005  )   (   0.170  )  
@@ -741,10 +763,10 @@ Note: Standard errors in parentheses.
 --------------------------------------------------------------------------------
       Variable         Var 1          Var 2          Var 3   
 --------------------------------------------------------------------------------
-      Var 1            0.566          0.106          0.608    
+      Var 1            0.566          0.106          0.609    
        SE 1        (   0.182  )   (   0.045  )   (   0.612  )  
-      Var 2            0.493         -0.462          0.457    
-       SE 2        (   0.562  )   (   0.198  )   (   2.628  )  
+      Var 2            0.493         -0.462          0.451    
+       SE 2        (   0.562  )   (   0.198  )   (   2.627  )  
       Var 3           -0.039         -0.020          0.318    
        SE 3        (   0.033  )   (   0.008  )   (   0.143  )  
 --------------------------------------------------------------------------------
@@ -755,11 +777,11 @@ Note: Standard errors in parentheses.
 --------------------------------------------------------------------------------
     Number     Real part    Imaginary part       Modulus                                             
 --------------------------------------------------------------------------------
-       1         -2.893         -0.000            2.893                                        
+       1         -2.894         -0.000            2.894                                        
        2         -1.522         -0.000            1.522                                        
        3          1.010         -0.927            1.371                                        
        4          1.010          0.927            1.371                                        
-       5          1.107          0.000            1.107                                        
+       5          1.108          0.000            1.108                                        
        6          1.000          0.000            1.000                                        
        7          1.000          0.000            1.000                                        
        8          0.944         -0.261            0.980                                        
@@ -792,10 +814,10 @@ R> MVWNtest_m1 <- MVWNtest(m1$Residuals, order, printWNtest)
 ---------------------------------------------
 Variable |       Q  P-val |      LM  P-val  |
 ---------------------------------------------
-Multivar |  97.879  0.747 |     ----  ----  |
-Var1     |   9.300  0.677 |  11.238  0.509  |
-Var2     |  14.450  0.273 |   8.568  0.739  |
-Var3     |  10.591  0.564 |  12.265  0.425  |
+Multivar |  97.868  0.747 |     ----  ----  |
+Var1     |   9.302  0.677 |  11.238  0.509  |
+Var2     |  14.442  0.273 |   8.566  0.740  |
+Var3     |  10.595  0.564 |  12.269  0.424  |
 ---------------------------------------------
 \end{CodeOutput}
 \end{CodeChunk} 
@@ -1032,7 +1054,7 @@ Note: Standard errors in parenthesis.
          SE 1         (   0.067  )  
         Var 2            11.538     
          SE 2         (   0.553  )  
-        Var 3            -2.874     
+        Var 3            -2.873     
          SE 3         (   0.033  )  
 --------------------------------------------------------------------------------
 Note: Standard errors in parenthesis (from numerical Hessian) 
@@ -1042,9 +1064,9 @@ Note: Standard errors in parenthesis (from numerical Hessian)
 --------------------------------------------------------------------------------
       Variable         Var 1          Var 2          Var 3   
 --------------------------------------------------------------------------------
-      Var 1            0.269         -0.032         -0.511    
+      Var 1            0.269         -0.032         -0.512    
        SE 1        (   0.157  )   (   0.026  )   (   0.507  )  
-      Var 2           -0.013          1.115         -3.004    
+      Var 2           -0.013          1.115         -3.001    
        SE 2        (   0.345  )   (   0.189  )   (   1.909  )  
       Var 3           -0.053          0.008          0.694    
        SE 3        (   0.022  )   (   0.005  )   (   0.164  )  
@@ -1057,7 +1079,7 @@ Note: Standard errors in parentheses.
 --------------------------------------------------------------------------------
       Var 1            0.570          0.104          0.585    
        SE 1        (   0.184  )   (   0.044  )   (   0.606  )  
-      Var 2            0.685         -0.371          0.229    
+      Var 2            0.685         -0.371          0.223    
        SE 2        (   0.508  )   (   0.159  )   (   2.509  )  
       Var 3           -0.043         -0.020          0.330    
        SE 3        (   0.032  )   (   0.008  )   (   0.138  )  
@@ -1071,8 +1093,8 @@ Note: Standard errors in parentheses.
 --------------------------------------------------------------------------------
        1         -2.710         -0.000            2.710                                        
        2         -1.498         -0.000            1.498                                        
-       3          1.130         -0.939            1.469                                        
-       4          1.130          0.939            1.469                                        
+       3          1.129         -0.939            1.469                                        
+       4          1.129          0.939            1.469                                        
        5          1.098          0.000            1.098                                        
        6          1.000          0.000            1.000                                        
        7          1.000          0.000            1.000                                        
@@ -1091,10 +1113,10 @@ Restrictions imposed on the following parameters:
 ---------------------------------------------
 Variable |       Q  P-val |      LM  P-val  |
 ---------------------------------------------
-Multivar |  97.674  0.752 |     ----  ----  |
-Var1     |   9.083  0.696 |  11.268  0.506  |
-Var2     |  14.937  0.245 |   9.339  0.674  |
-Var3     |  10.725  0.553 |  12.237  0.427  |
+Multivar |  97.665  0.752 |     ----  ----  |
+Var1     |   9.084  0.696 |  11.267  0.506  |
+Var2     |  14.931  0.245 |   9.338  0.674  |
+Var3     |  10.729  0.552 |  12.241  0.426  |
 ---------------------------------------------
 \end{verbatim}
 
@@ -1458,10 +1480,20 @@ the user can be assured that the optimization of the likelihood produces a consi
 %maps, tables, \dots) that are not cited in the main text can be credited here.
 %\end{leftbar}
 
-The \pkg{FCVAR} package is available on 
-the Comprehensive
+The results in this paper were obtained using
+\proglang{R}~4.0.5 with the \pkg{FCVAR} package,
+version 0.1.0. 
+% 
+The $p$~values for cointegrating rank tests are obtained using the 
+\pkg{fracdist} package version 0.1.1. 
+% 
+\proglang{R} itself,
+in addition to each package used in this document, 
+is also available from the Comprehensive
 \proglang{R} Archive Network (CRAN) at
-\url{https://CRAN.R-project.org/}, 
+\url{https://CRAN.R-project.org/}.
+% 
+The \pkg{FCVAR} package is available on CRAN, 
 and can be loaded using the \verb|install.packages()| function, as in 
 
 \begin{Code}
@@ -1469,38 +1501,25 @@ R> install.packages("FCVAR")
 R> library("FCVAR")
 \end{Code}
 
-A development version is stored in a GitHub repository and can be installed by entering 
+A development version is stored in a GitHub repository and, 
+with the \pkg{devtools} package 
+and the supplementary toolkit \pkg{Rtools} installed, the 
+\pkg{FCVAR} package can also be installed by entering 
 
 \begin{Code}
 devtools::install_github("LeeMorinUCF/FCVAR")
 \end{Code}
 
 
- Under this approach, users must have installed the \pkg{devtools} package 
-and have the supplementary toolkit \pkg{Rtools} installed. 
-
-
-The results in this paper were obtained using
-\proglang{R}~3.5.1. 
-with the \pkg{FCVAR} package version 0.0.0.9000. 
-When determining cointegrating rank, the $p$~values for rank tests are obtained using the 
-\pkg{fracdist} package version 0.1.1. 
-\proglang{R} itself,
-in addition to each package used in this document, 
-is also available from the Comprehensive
-\proglang{R} Archive Network (CRAN) at
-\url{https://CRAN.R-project.org/}.
-
 The latest version of the \proglang{MATLAB} package \pkg{FCVARmodel.m} in \cite{Nielsen2016} 
-can be downloaded from the Website of one of the authors at Queen's University:
+can be downloaded from the Website of one of the authors at:
 % 
-\begin{center} \url{http://www.econ.queensu.ca/faculty/mon/software/}
+\begin{center} \url{https://sites.google.com/view/mortennielsen/software}
 \end{center}
 % 
-\noindent It is freely available for non-commercial, academic use. 
-The use of this program requires a functioning installation of MATLAB. 
-The version of \proglang{MATLAB} available at the release of the last version was \proglang{MATLAB} 9.0, 	R2016a, number 35. However, any recent version should work.  
-\proglang{MATLAB} users can simply unzip the contents of the zip file into any directory that they plan to use as the working directory of the program.
+\noindent 
+The version of \proglang{MATLAB} available at the release of the last version was 
+\proglang{MATLAB} 9.0, R2016a, number 35. 
 
 
 
