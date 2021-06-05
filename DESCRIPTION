@@ -37,7 +37,6 @@ Suggests:
     rmarkdown,
     testthat
 VignetteBuilder: knitr
-Remotes: LeeMorinUCF/fracdist
 NeedsCompilation: no
 Packaged: 2020-09-13 19:40:58 UTC; le279259
 Author: Lealand Morin [aut, cre] (<https://orcid.org/0000-0001-8539-1386>),
