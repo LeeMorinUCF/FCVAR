@@ -1,6 +1,6 @@
 ################################################################################
 #
-# More Examples of FCVAR Analysis
+# Example of Analysis Using the FCVAR Model
 #
 #
 # Lee Morin, Ph.D.
@@ -13,8 +13,237 @@
 #
 ################################################################################
 #
-# This script demonstrates some of the additional features of the FCVAR
-#   software package:
+# This code replicates statistics for Table 4: FCVAR results for Model 1, in
+# Maggie E.C. Jones, Morten \Orregaard Nielsen & Michal Ksawery Popiel (2014).
+#   "A fractionally cointegrated VAR analysis of economic voting and political support,"
+#   Canadian Journal of Economics.
+# It serves as the set of examples for the vignette to accompany
+#   the R package FCVAR.
+#
+# Note that some of the examples in the *Additional Examples* section of
+#   the manuscript take a long time to run, especially the bootstrap tests
+#   and the grid search examples.
+#
+################################################################################
+
+# Clear workspace.
+rm(list = ls(all = TRUE))
+
+
+################################################################################
+# Import Data
+################################################################################
+
+x1 <- votingJNP2014[, c("lib", "ir_can", "un_can")]
+# lib is the aggregate support for the Liberal party,
+# ir_can is the Canadian 3-month T-bill rate, and
+# un_can is the Canadian unemployment rate.
+
+
+################################################################################
+# INITIALIZATION
+################################################################################
+
+p                <- ncol(x1) # system dimension.
+kmax             <- 3    # Maximum number of lags for VECM.
+order            <- 12   # Number of lags for white noise test in lag selection.
+printWNtest      <- 1    # Print results of MVWN test to screen.
+
+#--------------------------------------------------------------------------------
+# Choosing estimation options
+#--------------------------------------------------------------------------------
+
+# Define variable to store Estimation Options (in an FCVARoptions object).
+opt <- FCVARoptions(
+  unrConstant = 0,
+  rConstant = 0,
+  levelParam = 1,
+  constrained = 0,
+  restrictDB = 1,
+  dbMin = c(0.01, 0.01),
+  dbMax = c(2.00, 2.00)
+)
+opt$db0 <- c(0.80, 0.80)
+opt$gridSearch <- 0
+
+
+################################################################################
+# LAG SELECTION
+################################################################################
+
+FCVARlagSelectStats <- FCVARlagSelect(x1, kmax, p, order, opt)
+# Select lag k <- 2 with minimum value of AIC.
+
+################################################################################
+# COINTEGRATION RANK TESTING
+################################################################################
+
+k <- 2
+rankTestStats <- FCVARrankTests(x1, k, opt)
+
+
+################################################################################
+# UNRESTRICTED MODEL ESTIMATION
+################################################################################
+
+# Set parameters from specification decisions.
+r <- 1
+opt1 <- opt
+opt1$gridSearch <- 1
+opt1$plotLike <- 1
+
+
+# Estimate model and store in an FCVARmodel object.
+m1 <- FCVARestn(x1, k, r, opt1)
+
+
+# Conduct MVWN test on residuals.
+MVWNtest_m1 <- MVWNtest(m1$Residuals, order, printWNtest)
+
+
+################################################################################
+# IMPOSE RESTRICTIONS AND TEST THEM
+################################################################################
+
+
+#--------------------------------------------------------------------------------
+# Test restriction that d = b = 1.
+#--------------------------------------------------------------------------------
+
+# Set options to impose restriction.
+opt1 <- opt
+opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
+opt1$r_psi <- 1
+
+
+# Estimate model and store in an FCVARmodel object.
+m1r1 <- FCVARestn(x1, k, r, opt1)
+
+
+# Conduct MVWN test on residuals.
+MVWNtest_m1r1 <- MVWNtest(m1r1$Residuals, order, printWNtest)
+
+
+# Test the null of m1r1 against the alternative m1.
+Hdb <- FCVARhypoTest(m1, m1r1)
+
+
+#--------------------------------------------------------------------------------
+# Test restriction that political variables do not enter the cointegrating relation(s).
+#--------------------------------------------------------------------------------
+
+# Set options to impose restriction.
+opt1 <- opt
+opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+
+
+# Estimate model and store in an FCVARmodel object.
+m1r2 <- FCVARestn(x1, k, r, opt1)
+
+
+# Conduct MVWN test on residuals.
+MVWNtest_m1r2 <- MVWNtest(m1r2$Residuals, order, printWNtest)
+
+
+# Test the null of m1r2 against the alternative m1.
+Hbeta1 <- FCVARhypoTest(m1, m1r2)
+
+
+#--------------------------------------------------------------------------------
+# Test restriction that political variable is long-run exogenous.
+#--------------------------------------------------------------------------------
+
+# Set options to impose restriction.
+opt1 <- opt
+opt1$R_Alpha <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
+
+
+# Estimate model and store in an FCVARmodel object.
+m1r3 <- FCVARestn(x1, k, r, opt1)
+
+
+# Conduct MVWN test on residuals.
+MVWNtest_m1r3 <- MVWNtest(m1r3$Residuals, order, printWNtest)
+
+
+# Test the null of m1r3 against the alternative m1
+Halpha1 <- FCVARhypoTest(m1, m1r3)
+
+
+#--------------------------------------------------------------------------------
+# Test restriction that interest-rate is long-run exogenous.
+#--------------------------------------------------------------------------------
+
+# Set options to impose restriction.
+opt1 <- opt
+opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
+
+
+# Estimate model and store in an FCVARmodel object.
+m1r4 <- FCVARestn(x1, k, r, opt1)
+
+
+# Conduct MVWN test on residuals.
+MVWNtest_m1r4 <- MVWNtest(m1r4$Residuals, order, printWNtest)
+
+
+# Test the null of m1r4 against the alternative m1.
+Halpha2 <- FCVARhypoTest(m1, m1r4)
+
+
+#--------------------------------------------------------------------------------
+# Test restriction that unemployment is long-run exogenous.
+#--------------------------------------------------------------------------------
+
+# Set options to impose restriction.
+opt1 <- opt
+opt1$R_Alpha <- matrix(c(0, 0, 1), nrow = 1, ncol = 3)
+
+
+# Estimate model and store in an FCVARmodel object.
+m1r5 <- FCVARestn(x1, k, r, opt1)
+
+
+# Conduct MVWN test on residuals.
+MVWNtest_m1r5 <- MVWNtest(m1r5$Residuals, order, printWNtest)
+
+
+# Test the null of m1r5 against the alternative m1.
+Halpha3 <- FCVARhypoTest(m1, m1r5)
+
+
+#--------------------------------------------------------------------------------
+# RESTRICTED MODEL OUTPUT
+#   - print normalized beta and alpha for model m1r4.
+#--------------------------------------------------------------------------------
+
+# Assign model.
+modelRstrct <- m1r4
+
+# Perform Normalization.
+G <- solve(modelRstrct$coeffs$betaHat[1:r, 1:r])
+betaHatR <- modelRstrct$coeffs$betaHat %*% G
+# alphaHat is post multiplied by G^{-1} so that pi = a(G^{-1})Gb' = ab'
+alphaHatR <- modelRstrct$coeffs$alphaHat %*% t(solve(G))
+
+# Yes, I know we shouldn't be inverting, Harry, but this is quick and easy.
+
+# Print output.
+print("betaHatR' = ")
+print(t(betaHatR), print.gap = 5)
+print("alphaHatR' = ")
+print(t(alphaHatR), print.gap = 5)
+
+
+
+################################################################################
+#
+# Additional Examples
+#
+################################################################################
+#
+# The rest of this script demonstrates some of the additional features
+#   of the FCVAR package:
 #
 #   - Forecasting
 #   - Bootstrap test of hypothesis on model coefficients
@@ -29,7 +258,7 @@
 ################################################################################
 
 ################################################################################
-# Set Parameters
+# Set Parameters for Output
 ################################################################################
 
 # Set image file format for figures.
@@ -94,10 +323,6 @@ for (col_num in 2:ncol(seriesF)) {
         lty = col_num,
         col = color_list[col_num])
 }
-# Settings in GUI:
-# legend(197, 22.75, legend = label_list,
-#        col = color_list, lty = 1:3, cex = 0.65)
-# Settings in article:
 legend(150, 20, legend = label_list,
        col = color_list, lty = 1:3, cex = 1.0)
 dev.off()
@@ -122,15 +347,13 @@ dev.off()
 # Plot the series and forecast together.
 #--------------------------------------------------------------------------------
 
-# orig_par <- par()
-
 out_file_path <- sprintf('%s/forecast_vars_eqbm.%s', fig_dir, fig_ext)
 plot.new()
 png(out_file_path)
 
 # Bottom pane: Equilibrium Relation
 par(fig = c(0, 1, 0, 0.4), new = TRUE, mar = c(5.1, 4.1, 1.1, 2.1))
-# Reset plotting parameters after.
+# Reset plotting parameters after (see below):
 # par(fig = c(0, 1, 0, 1), new = FALSE, mar = c(5.1, 4.1, 4.1, 2.1))
 plot(equilF,
      # main = 'Equilibrium Relation, including Forecast',
@@ -167,7 +390,7 @@ legend(200, 20, legend = label_list,
 dev.off()
 
 
-# Reset plotting parameters after.
+# Reset plotting parameters after figure is saved.
 par(fig = c(0, 1, 0, 1), new = FALSE, mar = c(5.1, 4.1, 4.1, 2.1))
 
 
@@ -192,7 +415,6 @@ optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 
 # Number of bootstrap samples to generate
 B <- 999
-# B <- 99
 
 set.seed(42)
 FCVARboot_stats <- FCVARboot(x1, k, r, optRES, optUNR, B)
@@ -203,9 +425,6 @@ mBS <- FCVARboot_stats$mBS
 mUNR <- FCVARboot_stats$mUNR
 
 
-# Save results.
-# out_file_name <- 'R_dev/FCVARboot.RData'
-# save.image(file = out_file_name)
 
 #--------------------------------------------------------------------------------
 # Compare the bootstrap distribution to chi-squared distribution
@@ -266,11 +485,6 @@ mBSr1 <- FCVARbootRank_stats$mBS
 mBSr2 <- FCVARbootRank_stats$mUNR
 
 
-# # Save results.
-# out_file_name <- 'R_dev/FCVARbootRank.RData'
-# save.image(file = out_file_name)
-
-
 #--------------------------------------------------------------------------------
 # Compare to P-value based on asymptotic distribution
 #--------------------------------------------------------------------------------
@@ -278,9 +492,6 @@ mBSr2 <- FCVARbootRank_stats$mUNR
 rankTestStats <- FCVARrankTests(x1, k, opt)
 
 cat(sprintf('P-value (asy): \t %1.3f\n', rankTestStats$pv[1]))
-
-
-
 
 
 
@@ -328,15 +539,6 @@ for (col_num in 2:ncol(x_sim)) {
         lty = col_num,
         col = color_list[col_num])
 }
-# Original:
-# legend('topleft',
-#        c('Support', 'Unemployment', 'Interest Rate'),
-#        # pch = 16,
-#        fill = color_list)
-# Settings in GUI:
-# legend(197, 22.75, legend = label_list,
-#        col = color_list, lty = 1:3, cex = 0.65)
-# Settings in article:
 legend('topleft', legend = label_list,
        col = color_list, lty = 1:3, cex = 1.0)
 dev.off()
@@ -360,16 +562,16 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction mat
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 
-# Output plot for article.
-# out_file_path <- sprintf('%s/gridDB.%s', fig_dir, fig_ext)
-# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
-#                     main = 'default',
-#                     file = out_file_path,
-#                     file_ext = fig_ext)
-# out_file_path <- 'R_dev/Figures/gridDB.png'
-# grDevices::png(out_file_path)
-# graphics::plot(x = likeGrid_params)
-# grDevices::dev.off()
+Output plot for article.
+out_file_path <- sprintf('%s/gridDB.%s', fig_dir, fig_ext)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
+                    main = 'default',
+                    file = out_file_path,
+                    file_ext = fig_ext)
+out_file_path <- 'R_dev/Figures/gridDB.png'
+grDevices::png(out_file_path)
+graphics::plot(x = likeGrid_params)
+grDevices::dev.off()
 
 
 # Linear restriction on fractional parameters.
@@ -387,16 +589,16 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction mat
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 
-# Output plot for article.
-# out_file_path <- sprintf('%s/gridPhi.%s', fig_dir, fig_ext)
-# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
-#                     main = 'default',
-#                     file = out_file_path,
-#                     file_ext = fig_ext)
-# out_file_path <- 'R_dev/Figures/gridPhi.png'
-# grDevices::png(out_file_path)
-# graphics::plot(x = likeGrid_params)
-# grDevices::dev.off()
+Output plot for article.
+out_file_path <- sprintf('%s/gridPhi.%s', fig_dir, fig_ext)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
+                    main = 'default',
+                    file = out_file_path,
+                    file_ext = fig_ext)
+out_file_path <- 'R_dev/Figures/gridPhi.png'
+grDevices::png(out_file_path)
+graphics::plot(x = likeGrid_params)
+grDevices::dev.off()
 
 
 # Constrained 2-dimensional optimization.
@@ -413,16 +615,16 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction mat
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 
-# Output plot for article.
-# out_file_path <- sprintf('%s/gridConst.%s', fig_dir, fig_ext)
-# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
-#                     main = 'default',
-#                     file = out_file_path,
-#                     file_ext = fig_ext)
-# out_file_path <- 'R_dev/Figures/gridConst.png'
-# grDevices::png(out_file_path)
-# graphics::plot(x = likeGrid_params)
-# grDevices::dev.off()
+Output plot for article.
+out_file_path <- sprintf('%s/gridConst.%s', fig_dir, fig_ext)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
+                    main = 'default',
+                    file = out_file_path,
+                    file_ext = fig_ext)
+out_file_path <- 'R_dev/Figures/gridConst.png'
+grDevices::png(out_file_path)
+graphics::plot(x = likeGrid_params)
+grDevices::dev.off()
 
 
 # Unconstrained 2-dimensional optimization.
@@ -439,22 +641,23 @@ newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction mat
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
 
-# Output plot for article.
-# out_file_path <- sprintf('%s/grid3d.%s', fig_dir, fig_ext)
-# plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
-#                     main = 'default',
-#                     file = out_file_path,
-#                     file_ext = fig_ext)
-# out_file_path <- 'R_dev/Figures/grid3d.png'
-# grDevices::png(out_file_path)
-# graphics::plot(x = likeGrid_params)
-# grDevices::dev.off()
-
-
+Output plot for article.
+out_file_path <- sprintf('%s/grid3d.%s', fig_dir, fig_ext)
+plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt,
+                    main = 'default',
+                    file = out_file_path,
+                    file_ext = fig_ext)
+out_file_path <- 'R_dev/Figures/grid3d.png'
+grDevices::png(out_file_path)
+graphics::plot(x = likeGrid_params)
+grDevices::dev.off()
 
 
 
 ################################################################################
 # End
 ################################################################################
+
+
+
 

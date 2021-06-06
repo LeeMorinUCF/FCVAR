@@ -1274,10 +1274,10 @@ An example of the output is
 Bootstrap likelihood ratio test results:
 Unrestricted log-likelihood: 451.174
 Restricted log-likelihood:   444.395
-Test results (df <- 1):
+Test results (df = 1):
 LR statistic: 	 13.557
 P-value: 	 0.000
-P-value (BS): 	 0.021
+P-value (BS): 	 0.022
 \end{verbatim}
 
 The user might also be interested in comparing the bootstrap likelihood ratio test statistic distribution to the asymptotic one, a $\chi$-squared distribution with \verb|H$df| degrees of freedom. 
@@ -1334,6 +1334,7 @@ shows how to simulate an FCVAR model for a given set of parameters. The user pro
 
 \begin{Code}
 R> T_sim <- 100
+R> set.seed(42)
 R> xSim <- FCVARsim(x1, modelF, T_sim)
 \end{Code}
 
