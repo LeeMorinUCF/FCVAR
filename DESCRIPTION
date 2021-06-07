@@ -1,6 +1,6 @@
 Package: FCVAR
-Title: A package for estimating the Fractionally Cointegrated VAR model
-Version: 0.0.0.9000
+Title: Estimation and Inference for the Fractionally Cointegrated VAR
+Version: 0.1.0
 Authors@R: 
   c(person(given = "Lealand",
            family = "Morin",
@@ -8,20 +8,22 @@ Authors@R:
            email = "lealand.morin@ucf.edu",
            comment = c(ORCID = "0000-0001-8539-1386")), 
     person(given = "Morten",
-           # middle = "Oregaard", 
+           # middle = "Orregaard", 
            family = "Nielsen",
            role = c("aut"),
            email = "mon@queensu.ca",
-           comment = c(ORCID = "0000-0000-9999-9999")), 
+           comment = c(ORCID = "0000-0002-1337-9844")), 
     person(given = "Michal",
            # middle = "Ksawery", 
            family = "Popiel",
            role = c("aut"),
-           email = "Michal.Popiel@analysisgroup.com",
-           comment = c(ORCID = "0000-0000-9999-9999")))
-Description: A package for estimating the Fractionally Cointegrated 
-    Vector Autoregression (VAR) model. It includes functions for lag selection,
-    cointegration rank selection and hypothesis testing. 
+           email = "Michal.Popiel@analysisgroup.com"))
+Description: Estimation and inference using the Fractionally Cointegrated 
+    Vector Autoregressive (VAR) model. It includes functions for model specification, 
+    including lag selection and cointegration rank selection, as well as a comprehensive
+    set of options for hypothesis testing, including tests of hypotheses on the 
+    cointegrating relations, the adjustment coefficients and the fractional 
+    differencing parameters. 
 Depends: R (>= 3.5)
 Imports:
     pracma,
@@ -36,10 +38,9 @@ Suggests:
     knitr,
     rmarkdown,
     testthat
-VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2020-09-13 19:40:58 UTC; le279259
+Packaged: 2021-06-07 18:17:58 UTC; le279259
 Author: Lealand Morin [aut, cre] (<https://orcid.org/0000-0001-8539-1386>),
-  Morten Nielsen [aut] (<https://orcid.org/0000-0000-9999-9999>),
-  Michal Popiel [aut] (<https://orcid.org/0000-0000-9999-9999>)
+  Morten Nielsen [aut] (<https://orcid.org/0000-0002-1337-9844>),
+  Michal Popiel [aut]
 Maintainer: Lealand Morin <lealand.morin@ucf.edu>

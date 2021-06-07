@@ -89,7 +89,7 @@
 #' @references Doornik, J. A. (2018) "Accelerated Estimation of Switching Algorithms:
 #' The Cointegrated VAR Model and Other Applications."
 #' Scandinavian Journal of Statistics, Volume 45, Issue 2.
-#' @references Johansen, Søren, and Morten Ørregaard Nielsen (2010) "Likelihood inference for a nonstationary
+#' @references Johansen, Søren, and Morten \enc{Ø}{O}rregaard Nielsen (2010) "Likelihood inference for a nonstationary
 #' fractional autoregressive model." Journal of Econometrics 158, 51–66.
 #' @references Carlini, F., and P. S. de Magistris (2019) "On the identification of fractionally cointegrated
 #' VAR models with the F(d) condition." Journal of Business & Economic Statistics 37(1), 134–146.
