@@ -161,7 +161,7 @@ FCVARhypoTest <- function(modelUNR, modelR) {
 #' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 #' set.seed(42)
 #' \dontrun{FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)}
-#' FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 5)
+#' FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 2)
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called to estimate the models under the null and alternative hypotheses.

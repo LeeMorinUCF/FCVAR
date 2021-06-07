@@ -67,7 +67,7 @@ If \code{opt$LocalMax == 0}, \code{FCVARlikeGrid} returns the parameter values
 \examples{
 # Restrict equality of fractional parameters.
 opt <- FCVARoptions()
-opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
+opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -80,7 +80,7 @@ likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 
 # Linear restriction on fractional parameters.
 opt <- FCVARoptions()
-opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
+opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -98,7 +98,7 @@ likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 # Impose restriction dbMax >= d >= b >= dbMin.
 \dontrun{
 opt <- FCVARoptions()
-opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
+opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
@@ -113,7 +113,7 @@ likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 # Unconstrained 2-dimensional optimization.
 \dontrun{
 opt <- FCVARoptions()
-opt$dbStep1D     <- 0.01 # Coarser grid for plotting example.
+opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
 opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.

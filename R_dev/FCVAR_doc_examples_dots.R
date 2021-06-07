@@ -268,8 +268,8 @@ opt <- FCVARoptions(
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 set.seed(42)
 # FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
-# FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 5)
-# capture.output(FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 5), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.txt')
+# FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 2)
+# capture.output(FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 2), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.txt')
 # save(FCVARbootRank_stats, list = c('FCVARbootRank_stats'), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.RData')
 
 
@@ -508,9 +508,9 @@ optRES <- optUNR
 optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 
 set.seed(42)
-FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
-# FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 5)
-# capture.output(FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 5),
+# FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
+# FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 2)
+# capture.output(FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 2),
 #                file = 'tests/testthat/soln_post/FCVARboot_stats.txt')
 # save(FCVARboot_stats, list = c('FCVARboot_stats'),
 #      file = 'tests/testthat/soln_post/FCVARboot_stats.RData')

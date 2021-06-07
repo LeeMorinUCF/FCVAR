@@ -554,7 +554,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' @examples
 #' # Restrict equality of fractional parameters.
 #' opt <- FCVARoptions()
-#' opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
+#' opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -567,7 +567,7 @@ GetParams <- function(x, k, r, db, opt) {
 #'
 #' # Linear restriction on fractional parameters.
 #' opt <- FCVARoptions()
-#' opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
+#' opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 #' opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -585,7 +585,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' # Impose restriction dbMax >= d >= b >= dbMin.
 #' \dontrun{
 #' opt <- FCVARoptions()
-#' opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
+#' opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
@@ -600,7 +600,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' # Unconstrained 2-dimensional optimization.
 #' \dontrun{
 #' opt <- FCVARoptions()
-#' opt$dbStep1D     <- 0.01 # Coarser grid for plotting example.
+#' opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
 #' opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
@@ -628,6 +628,10 @@ GetParams <- function(x, k, r, db, opt) {
 FCVARlikeGrid <- function(x, k, r, opt) {
 
   p <- ncol(x)
+
+  # Update options to account for all settings and restrictions.
+  # And to output warning or error messages if opt is incorrectly specified.
+  opt <- FCVARoptionUpdates(opt, p, r)
 
 
   #--------------------------------------------------------------------------------
@@ -817,8 +821,29 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     # Local max.
     if(Grid2d) {
 
+      # With constrained model, with d >= b, need to pad like with low values
+      # where b > d, where the like would otherwise be NA,
+      # since they weren't calculated.
+      if(opt$constrained) {
+        like_padded <- like
+        min_like_out_bds = min(like, na.rm = TRUE) - 1000
+        for (iB in 2:nB) {
+          # END at the index that corresponds to the LAST value in the
+          # grid for d that is < b.
+          b <- bGrid[iB]
+          d_lt_b_grid <- which(dGrid < b)
+          dEnd <- d_lt_b_grid[length(d_lt_b_grid)]
+          for (iD in 1:dEnd) {
+            like_padded[iB,iD] <- min_like_out_bds - bGrid[iB]*100 + dGrid[iD]*100
+          }
+        }
+      } else {
+        like_padded <- like
+      }
+
+
       # Implement local max:
-      loc_max_out <- find_local_max(as.array(like))
+      loc_max_out <- find_local_max(as.array(like_padded))
       indexB <- loc_max_out$row
       indexD <- loc_max_out$col
 
@@ -887,6 +912,11 @@ FCVARlikeGrid <- function(x, k, r, opt) {
       indBindx <- order(indexB)
       indexB <- indexB[indBindx]
       indexD <- indexD[indBindx]
+
+      # With 2-D grid, there is no transformation,
+      # so b is monotinically related to indexB.
+      sign_H2 <- 1
+
     } else {
       # Sort in ascending order by b.
       # indexB <- indexB[order(indexB)]
@@ -967,9 +997,9 @@ FCVARlikeGrid <- function(x, k, r, opt) {
     if ( iterCount == totIters) {
       if (opt$progress == 1) {
         utils::setTxtProgressBar(progbar, value = iterCount)
-        message(sprintf('\nProgress : %5.1f%%, b = %4.2f, d = %4.2f, like = %g.',
-                        (iterCount/totIters)*100,
-                        dbHatStar[2], dbHatStar[1], max(like, na.rm = TRUE) ))
+        # message(sprintf('\nProgress : %5.1f%%, b = %4.2f, d = %4.2f, like = %g.',
+        #                 (iterCount/totIters)*100,
+        #                 dbHatStar[2], dbHatStar[1], max(like, na.rm = TRUE) ))
       } else if (opt$progress == 2) {
         message(sprintf('Progress : %5.1f%%, b = %4.2f, d = %4.2f, like = %g.',
                         (iterCount/totIters)*100,
@@ -1070,6 +1100,8 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' @return NULL
 #' @examples
 #' opt <- FCVARoptions()
+#' opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
+#' opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 #' opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.

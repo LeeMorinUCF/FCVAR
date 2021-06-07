@@ -1,15 +1,15 @@
 
 Hypothesis test to bootstrap:
-
+Likelihood ratio test results:
 Unrestricted log-likelihood: 113.388
 Restricted log-likelihood:   113.338
 Test results (df = 1):
 LR statistic: 	 0.099
 P-value: 	 0.753
-Bootstrap results:
+Bootstrap likelihood ratio test results:
 Unrestricted log-likelihood: 113.388
 Restricted log-likelihood:   113.338
 Test results (df <- 1):
 LR statistic: 	 0.099
 P-value: 	 0.753
-P-value (BS): 	 0.400
+P-value (BS): 	 0.500

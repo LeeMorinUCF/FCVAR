@@ -34,7 +34,8 @@ test_that("Hypothesis testing results and output are correct", {
 
 test_that("Bootstrap hypothesis testing results and output are correct", {
 
-  skip('Bootstrap hypothesis test skipped')
+  # No need to skip with B = 2.
+  # skip('Bootstrap hypothesis test takes too long to compute.')
 
   load(file = 'soln_post/FCVARboot_stats.RData')
   FCVARboot_stats_text_soln <- readLines('soln_post/FCVARboot_stats.txt')
@@ -53,9 +54,9 @@ test_that("Bootstrap hypothesis testing results and output are correct", {
   optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
   set.seed(42)
   # FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
-  # FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 5)
+  # FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 2)
 
-  capture.output(FCVARboot_stats_test <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 5),
+  capture.output(FCVARboot_stats_test <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 2),
                  file = 'soln_post/temp.txt')
   FCVARboot_stats_text <- readLines('soln_post/temp.txt')
 

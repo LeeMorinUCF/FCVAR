@@ -64,9 +64,9 @@ test_that("Bootstrap Rank Testing results and output are correct", {
   x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
   set.seed(42)
   # FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
-  # FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 5)
+  # FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 2)
 
-  capture.output(FCVARbootRank_stats_test <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 5),
+  capture.output(FCVARbootRank_stats_test <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 2),
                  file = 'soln_spec/temp.txt')
   FCVARbootRank_stats_text <- readLines('soln_spec/temp.txt')
 
