@@ -644,7 +644,7 @@ xBS <- FCVARsimBS(x[1:10, ], results, NumPeriods = 100)
 
 # GetParams <- function(x, k, r, db, opt)
 
-# TODO: Revise this example after the global variable is removed.
+# TODO: Revise this example after the global variable is removed. Done.
 
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
@@ -738,6 +738,7 @@ likeGrid_params$max_like
 # Linear restriction on fractional parameters.
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
+# opt$dbStep1D     <- 0.01 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
 opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -749,7 +750,7 @@ opt$progress     <- 1 # Show progress bar update on each value of b.
 # opt$progress     <- 2 # Show progress report on each value of b.
 
 opt <- FCVARoptions(
-        gridSearch   = 0, # Disable grid search in optimization.
+        dbStep1D     = 0.01,
         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
         constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
@@ -762,9 +763,9 @@ opt <- FCVARoptions(
 
 )
 
-newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
+# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, newOpt)
+likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 # plot.FCVARlikeGrid(likeGrid_params, k = 2, r = 1, newOpt, main = 'default')
 plot(x = likeGrid_params)
 # Add a point for the optimum.

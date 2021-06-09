@@ -1442,6 +1442,30 @@ In this case, $H = [1, 2]^{\prime}/\sqrt{5}$ and $h = [0.2, -0.1]^{\prime}$,
 and $\phi$ ranges from $\phi = 0.05\times\sqrt{5} = 0.12$, where $b = 0$, 
 to $\phi = 2.1\times\sqrt{5} = 2.35$, where $b = 2$. 
 % 
+
+\begin{Code}
+R> opt <- FCVARoptions(
+  +         dbStep1D     = 0.01, 
+  +         dbMin        = c(0.01, 0.01), 
+  +         dbMax        = c(2.00, 2.00), 
+  +         constrained  = 0, 
+  +         restrictDB   = 0, 
+  +         R_psi        = matrix(c(2, -1), nrow = 1, ncol = 2),
+  +         r_psi        = 0.5
+  + )
+R> likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
+R> likeGrid_params$local_max
+ $b
+ [1] 0.5913777 1.4053064
+
+ $d
+ [1] 0.5456888 0.9526532
+
+ $like
+ [1] 451.3568 445.1917
+\end{Code}
+
+
 This restriction, although somewhat artificial, produces a likelihood function with two local optima. 
 The global optimum takes place at $\phi = 0.346\times\sqrt{5} = 0.77$, 
 which corresponds to $d = 0.546$ and $b = 0.591$, 
@@ -1453,6 +1477,30 @@ According to the recommendation in \cite{Carlini2014},
 users are advised to choose the local optimum with $b = 1.405$ under this particular constraint on $d$ and $b$. 
 With the functionality offered by \fct{FCVARlikeGrid}, 
 the user can be assured that the optimization of the likelihood produces a consistent estimator.  
+
+
+Try it again, with separate blocks:
+
+\begin{CodeChunk} 
+\begin{CodeInput}
+R> opt$constrained = 0
+R> opt$restrictDB = 0
+R> opt$R_psi = matrix(c(2, -1), nrow = 1, ncol = 2)
+R> opt$r_psi = 0.5
+R> likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
+R> likeGrid_params$local_max
+\end{CodeInput}
+\begin{CodeOutput}
+$b
+[1] 0.5913777 1.4053064
+$d
+[1] 0.5456888 0.9526532
+$like
+[1] 451.3568 445.1917
+\end{CodeOutput}
+\end{CodeChunk} 
+
+
 
 % From the example in R:
 % likeGrid_params$local_max

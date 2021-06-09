@@ -2070,7 +2070,8 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
   beta <- coeffs$betaHat
 
   # Specify delta (increment for numerical derivatives).
-  delta <- 10^(-4)
+  # delta <- 10^(-4)
+  delta <- 10^(-6)
   # delta <- 10^(-8)
 
   # Convert the parameters to vector form.
