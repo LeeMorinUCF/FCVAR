@@ -59,6 +59,10 @@ test_that("Bootstrap hypothesis testing results and output are correct", {
   capture.output(FCVARboot_stats_test <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 2),
                  file = 'soln_post/temp.txt')
   FCVARboot_stats_text <- readLines('soln_post/temp.txt')
+  # Remove the residuals, which have trivial numerical differences across platforms.
+  FCVARboot_stats_test$mBS$Residuals <- NULL
+  FCVARboot_stats_test$mUNR$Residuals <- NULL
+  # These are not important for determining the accuracy of this function.
 
   expect_equal(FCVARboot_stats_test, FCVARboot_stats)
   expect_equal(FCVARboot_stats_text, FCVARboot_stats_text_soln)

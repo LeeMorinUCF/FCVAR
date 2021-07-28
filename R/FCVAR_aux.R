@@ -2070,9 +2070,15 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
   beta <- coeffs$betaHat
 
   # Specify delta (increment for numerical derivatives).
-  # delta <- 10^(-4)
-  delta <- 10^(-6)
+  # delta <- 10^(-1)
+  # delta <- 10^(-2)
+  # delta <- 10^(-3)
+  # delta <- 10^(-4) # Default.
+  # delta <- 10^(-5)
+  # delta <- 10^(-6)
   # delta <- 10^(-8)
+  # Added as a parameter in FCVAR_options.
+  delta <- opt$hess_delta
 
   # Convert the parameters to vector form.
   phi0 <- SEmat2vecU(coeffs, k, r, p, opt)

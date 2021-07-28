@@ -69,6 +69,10 @@ test_that("Bootstrap Rank Testing results and output are correct", {
   capture.output(FCVARbootRank_stats_test <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 2),
                  file = 'soln_spec/temp.txt')
   FCVARbootRank_stats_text <- readLines('soln_spec/temp.txt')
+  # Remove the residuals, which have trivial numerical differences across platforms.
+  FCVARbootRank_stats_test$mBS$Residuals <- NULL
+  FCVARbootRank_stats_test$mUNR$Residuals <- NULL
+  # These are not important for determining the accuracy of this function.
 
   expect_equal(FCVARbootRank_stats_test, FCVARbootRank_stats)
   expect_equal(FCVARbootRank_stats_text, FCVARbootRank_stats_text_soln)

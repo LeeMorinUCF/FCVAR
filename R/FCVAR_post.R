@@ -521,8 +521,20 @@ summary.FCVAR_roots <- function(object, ...) {
   cat(sprintf(  '    Number     Real part    Imaginary part       Modulus                                             \n'))
   cat(sprintf('--------------------------------------------------------------------------------\n'))
   for (j in 1:length(object$cPolyRoots)) {
+
+    # Split the roots into real and imaginary parts and calculate modulus.
+    real_root <- Re(object$cPolyRoots[j])
+    # Allow for a tolerance for the imaginary root to be numerically zero.
+    # Otherwise, stray minus signs creep in across platforms (especially 32-bit i386).
+    imag_root <- Im(object$cPolyRoots[j])
+    if (abs(imag_root) < 10^(-6)) {
+      imag_root <- 0
+    }
+    mod_root <- Mod(object$cPolyRoots[j])
+
     cat(sprintf( '      %2.0f       %8.3f       %8.3f         %8.3f                                        \n',
-                 j, Re(object$cPolyRoots[j]), Im(object$cPolyRoots[j]), Mod(object$cPolyRoots[j]) ))
+                 # j, Re(object$cPolyRoots[j]), Im(object$cPolyRoots[j]), Mod(object$cPolyRoots[j]),
+                 j, real_root, imag_root, mod_root ))
   }
 
   cat(sprintf('--------------------------------------------------------------------------------\n'))

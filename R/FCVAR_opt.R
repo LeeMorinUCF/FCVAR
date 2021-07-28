@@ -64,6 +64,9 @@
 #'   \item{\code{printRoots}}{Indicator to print roots of characteristic polynomial.}
 #'   \item{\code{plotRoots}}{Indicator to plot roots of characteristic polynomial.}
 #'   \item{\code{CalcSE}}{Indicator to calculate the standard errors. It is used when displaying results.}
+#'   \item{\code{hess_delta}}{Size of increment for numerical calculation of derivatives of the likelihood
+#'   function for numerical calculation of the Hessian matrix. The default is \code{10^(-4)},
+#'   which works well in practice to balance errors between precision and truncation.}
 #'   \item{\code{gridSearch}}{Indicator to perform a grid search for the optimization
 #'   over the fractional integration parameters, for more accurate estimation.
 #'   This will make estimation take longer.}
@@ -89,7 +92,7 @@
 #' @references Doornik, J. A. (2018) "Accelerated Estimation of Switching Algorithms:
 #' The Cointegrated VAR Model and Other Applications."
 #' Scandinavian Journal of Statistics, Volume 45, Issue 2.
-#' @references Johansen, Søren, and Morten \enc{Ø}{O}rregaard Nielsen (2010) "Likelihood inference for a nonstationary
+#' @references Johansen, S\enc{ø}{o}ren, and Morten \enc{Ø}{O}rregaard Nielsen (2010) "Likelihood inference for a nonstationary
 #' fractional autoregressive model." Journal of Econometrics 158, 51–66.
 #' @references Carlini, F., and P. S. de Magistris (2019) "On the identification of fractionally cointegrated
 #' VAR models with the F(d) condition." Journal of Business & Economic Statistics 37(1), 134–146.
@@ -100,6 +103,8 @@ FCVARoptions <- function(...) {
   # Take list of arguments passed to FCVARoptions, if any.
   opt_dots <- list(...)
   # Any valid arguments here will overwrite default options.
+  # Arguments of fixed size (esp. scalars) will be overwritten at the end,
+  # and variable-sized arguments are assigned within the list definition.
 
   # Create list of default options.
   opt <- list(
@@ -114,11 +119,17 @@ FCVARoptions <- function(...) {
     #                       # TolX = 1e-8,
     #                       # Display = 'off'
     # ),
-    unc_optim_control = list(maxit = 1000,
-                             reltol = 1e-8 #, # Not all are used in R.
-                             # TolX = 1e-8,
-                             # Display = 'off'
-    ),
+    # unc_optim_control = list(maxit = 1000,
+    #                          reltol = 1e-8 #, # Not all are used in R.
+    #                          # TolX = 1e-8,
+    #                          # Display = 'off'
+    # ),
+    unc_optim_control = if ('unc_optim_control' %in% names(opt_dots)) {
+      opt_dots$unc_optim_control
+    } else {
+      list(maxit = 1000,
+           reltol = 1e-8)
+    },
 
     # Estimation options for constrained optimization.
     # ConFminOptions = list(MaxFunEvals = 1000,
@@ -127,8 +138,14 @@ FCVARoptions <- function(...) {
     #                       # Display = 'off',
     #                       # Algorithm = 'interior-point',
     #                       Algorithm = 'L-BFGS-B'),
-    con_optim_control = list(maxit = 1000,
-                             pgtol = 1e-8),
+    # con_optim_control = list(maxit = 1000,
+    #                          pgtol = 1e-8),
+    con_optim_control = if ('con_optim_control' %in% names(opt_dots)) {
+      opt_dots$con_optim_control
+    } else {
+      list(maxit = 1000,
+           pgtol = 1e-8)
+    },
     # L-BFGS-B is limited-memory BFGS with bounds.
 
     # Activate live search for switching algorithm in restricted model
@@ -239,6 +256,11 @@ FCVARoptions <- function(...) {
     #   RankTests.m functions to speed up estimation.
     CalcSE = 1,
 
+    # Standard errors are calculated numerically, by taking numerical centered
+    # derivatives of the likelihood function.
+    # Set increment for changes along each parameter value.
+    hess_delta = 10^(-4),
+
 
     #--------------------------------------------------------------------------------
     # Grid search
@@ -273,7 +295,8 @@ FCVARoptions <- function(...) {
 
   # Replace any default options with arguments passed through opt_dots (...).
   # Skip those already assigned (arguments in matrix form).
-  matrix_args <- c('dbMax', 'dbMin', 'C_db', 'c_db', 'R_psi', 'r_psi',
+  matrix_args <- c('unc_optim_control', 'con_optim_control',
+                   'dbMax', 'dbMin', 'C_db', 'c_db', 'R_psi', 'r_psi',
                    'R_Alpha', 'r_Alpha', 'R_Beta', 'r_Beta')
   dots_arg_list <- names(opt_dots)[!(names(opt_dots) %in% matrix_args)]
 
@@ -349,7 +372,7 @@ FCVARoptionUpdates <- function(opt, p, r) {
   # adjust them so that they are the same for faster and more
   # accurate computation.
   if(opt$restrictDB & length(opt$db0) > 1 &
-     opt$db0[1] != opt$db0[2]) {
+     abs(opt$db0[1] - opt$db0[2]) > 10^-6) {
 
     opt$db0 <- c(opt$db0[1], opt$db0[1])
     warning("Restriction d = b imposed but starting values are different for d and b.\n",
