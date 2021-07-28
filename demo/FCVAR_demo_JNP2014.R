@@ -9,7 +9,7 @@
 # College of Business
 # University of Central Florida
 #
-# June 5, 2021
+# July 28, 2021
 #
 ################################################################################
 #
@@ -18,6 +18,15 @@
 #   "A fractionally cointegrated VAR analysis of economic voting and political support,"
 #   Canadian Journal of Economics.
 #
+# This script also demonstrates some of the additional features of the FCVAR
+#   software package:
+#
+#   - Forecasting
+#   - Bootstrap test of hypothesis on model coefficients
+#   - Bootstrap rank test
+#   - Simulation of fractionally cointegrated process
+#   - Grid search for starting values to improve optimization
+#
 # This demo script serves as the set of examples for the vignette to accompany
 #   the R package FCVAR.
 #
@@ -25,6 +34,10 @@
 
 # Clear workspace.
 rm(list = ls(all = TRUE))
+
+# Install and attach package.
+install.packages('FCVAR')
+library(FCVAR)
 
 
 ################################################################################
@@ -71,6 +84,7 @@ opt$gridSearch <- 0
 FCVARlagSelectStats <- FCVARlagSelect(x1, kmax, p, order, opt)
 # Select lag k <- 2 with minimum value of AIC.
 
+
 ################################################################################
 # COINTEGRATION RANK TESTING
 ################################################################################
@@ -86,7 +100,8 @@ rankTestStats <- FCVARrankTests(x1, k, opt)
 # Set parameters from specification decisions.
 r <- 1
 opt1 <- opt
-opt1$gridSearch <- 1
+# opt1$gridSearch <- 1
+opt1$gridSearch <- 0
 opt1$plotLike <- 1
 
 
@@ -223,7 +238,6 @@ betaHatR <- modelRstrct$coeffs$betaHat %*% G
 # alphaHat is post multiplied by G^{-1} so that pi = a(G^{-1})Gb' = ab'
 alphaHatR <- modelRstrct$coeffs$alphaHat %*% t(solve(G))
 
-# Yes, I know we shouldn't be inverting, Harry, but this is quick and easy.
 
 # Print output.
 print("betaHatR' = ")

@@ -173,14 +173,14 @@ summary.FCVAR_ranks  5.19   0.00    5.18
 # Now make more rigorous tests for submission.
 
 
-> library(rhub)
+# > library(rhub)
+#
+# > rhub_results <- rhub::check_for_cran()
+#
+# rhub_results$cran_summary()
 
-> rhub_results <- rhub::check_for_cran()
 
-rhub_results$cran_summary()
-
-
-# FOund problems related to differences in numerical precision across platforms.
+# Found problems related to differences in numerical precision across platforms.
 # expect_equal(10, 10)
 # expect_equal(10, 10 + 1e-7)
 # expect_equal(10, 10 + 1e-6)

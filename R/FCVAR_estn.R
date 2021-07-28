@@ -3,7 +3,7 @@
 #' Estimate FCVAR model
 #'
 #' \code{FCVARestn} estimates the Fractionally Cointegrated VAR model.
-#'   It is the central function in the \code{FCVAR} package with several nested functions, each
+#'  It is the central function in the \code{FCVAR} package with several nested functions, each
 #' 	described below. It estimates the model parameters, calculates the
 #' 	standard errors and the number of free parameters, obtains the residuals
 #' 	and the roots of the characteristic polynomial.
@@ -71,8 +71,8 @@ FCVARestn <- function(x, k, r, opt) {
   cap_T <- nrow(x) - opt$N # number of observations
   p <- ncol(x)         # number of variables
 
-  # Update options based on initial user input.
-  opt <- FCVARoptionUpdates(opt, p, r)
+  # # Update options based on initial user input.
+  # opt <- FCVARoptionUpdates(opt, p, r)
 
 
   #--------------------------------------------------------------------------------
@@ -89,13 +89,22 @@ FCVARestn <- function(x, k, r, opt) {
     likeGrid_params <- FCVARlikeGrid(x, k, r, opt)
     opt$db0 <- likeGrid_params$params
 
+
     # Change upper and lower bounds to limit the search to some small
     #   interval around the starting values.
     opt$UB_db[1:2] <- pmin(opt$db0[1:2] + c(0.1, 0.1), opt$dbMax)
     opt$LB_db[1:2] <- pmax(opt$db0[1:2] - c(0.1, 0.1), opt$dbMin)
 
+    # Update options based on initial user input and grid search.
+    opt <- FCVARoptionUpdates(opt, p, r)
+
+
 
   } else {
+
+    # Update options based on initial user input.
+    opt <- FCVARoptionUpdates(opt, p, r)
+
     # Call to GetBounds returns upper/lower bounds for (d,b) or
     #  depending on whether or not restrictions have been imposed.
     UB_LB_bounds <- GetBounds(opt)

@@ -79,6 +79,11 @@ UB_LB_bounds <- GetBounds(opt)
 # opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 
 opt <- FCVARoptions(
+        unc_optim_control = list(maxit = 1000,    # Reduce tolerance.
+                                 reltol = 1e-10),
+        con_optim_control = list(maxit = 1000,    # Reduce tolerance.
+                                 pgtol = 1e-10),
+        hess_delta = 10^(-3),  # Stable for testing on 32-bit, 386 architecture.
         gridSearch   = 0, # Disable grid search in optimization.
         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
@@ -86,73 +91,73 @@ opt <- FCVARoptions(
         plotRoots    = 0 # Don't create plots for tests.
 )
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-results <- FCVARestn(x, k = 2, r = 1, opt)
-# save(results, list = c('results'), file = 'tests/testthat/soln_estn/results_m1.RData')
-# capture.output(results <- FCVARestn(x, k = 2, r = 1, opt), file = 'tests/testthat/soln_estn/results_m1.txt')
+# results <- FCVARestn(x, k = 2, r = 1, opt)
+capture.output(results <- FCVARestn(x, k = 2, r = 1, opt), file = 'tests/testthat/soln_estn/results_m1.txt')
+save(results, list = c('results'), file = 'tests/testthat/soln_estn/results_m1.RData')
 
 # For restrictions on the same model, it makes sense to copy the options object
 # and make changes to specific items.
 opt1 <- opt
 opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 opt1$r_psi <- 1
-m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
+# m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
 
-# But it also makes sense to allow for those restrictions to be placed up front.
-opt1 <- FCVARoptions(
-        gridSearch   = 0, # Disable grid search in optimization.
-        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
-        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
-        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-        R_psi        = matrix(c(1, 0), nrow = 1, ncol = 2),
-        r_psi        = 1,
-        plotRoots    = 0 # Don't create plots for tests.
+# # But it also makes sense to allow for those restrictions to be placed up front.
+# opt1 <- FCVARoptions(
+#         gridSearch   = 0, # Disable grid search in optimization.
+#         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+#         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+#         constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#         R_psi        = matrix(c(1, 0), nrow = 1, ncol = 2),
+#         r_psi        = 1,
+#         plotRoots    = 0 # Don't create plots for tests.
+#
+# )
 
-)
-
-m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
-# capture.output(m1r1 <- FCVARestn(x, k = 2, r = 1, opt1),
-#                file = 'tests/testthat/soln_estn/results_m1r1.txt')
+# m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
+capture.output(m1r1 <- FCVARestn(x, k = 2, r = 1, opt1),
+               file = 'tests/testthat/soln_estn/results_m1r1.txt')
 
 # Likewise, add restrictions to existing model.
 opt1 <- opt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
-# capture.output(m1r2 <- FCVARestn(x, k = 2, r = 1, opt1),
-#                file = 'tests/testthat/soln_estn/results_m1r2.txt')
+capture.output(m1r2 <- FCVARestn(x, k = 2, r = 1, opt1),
+               file = 'tests/testthat/soln_estn/results_m1r2.txt')
 
-# Or start a new object with otherwise same restrictions.
-opt1 <- FCVARoptions(
-        gridSearch   = 0, # Disable grid search in optimization.
-        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
-        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
-        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-        R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3),
-        plotRoots    = 0 # Don't create plots for tests.
-)
-m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
+# # Or start a new object with otherwise same restrictions.
+# opt1 <- FCVARoptions(
+#         gridSearch   = 0, # Disable grid search in optimization.
+#         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+#         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+#         constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#         R_Beta       = matrix(c(1, 0, 0), nrow = 1, ncol = 3),
+#         plotRoots    = 0 # Don't create plots for tests.
+# )
+# m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 
 # Method 1: modify existing model.
 opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
-m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
+# m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 
-# Or start new options object.
-opt1 <- FCVARoptions(
-        gridSearch   = 0, # Disable grid search in optimization.
-        dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
-        dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
-        constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
-        R_Alpha      = matrix(c(0, 1, 0), nrow = 1, ncol = 3),
-        plotRoots    = 0 # Don't create plots for tests.
-)
-m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
+# # Or start new options object.
+# opt1 <- FCVARoptions(
+#         gridSearch   = 0, # Disable grid search in optimization.
+#         dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+#         dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+#         constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
+#         R_Alpha      = matrix(c(0, 1, 0), nrow = 1, ncol = 3),
+#         plotRoots    = 0 # Don't create plots for tests.
+# )
+# m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 
-# capture.output(m1r4 <- FCVARestn(x, k = 2, r = 1, opt1),
-#                file = 'tests/testthat/soln_estn/results_m1r4.txt')
+capture.output(m1r4 <- FCVARestn(x, k = 2, r = 1, opt1),
+               file = 'tests/testthat/soln_estn/results_m1r4.txt')
 
-# save(m1r1, m1r2, m1r4,
-#      list = c('m1r1', 'm1r2', 'm1r4'),
-#      file = 'tests/testthat/soln_estn/results_m1r124.RData')
+save(m1r1, m1r2, m1r4,
+     list = c('m1r1', 'm1r2', 'm1r4'),
+     file = 'tests/testthat/soln_estn/results_m1r124.RData')
 
 
 
@@ -181,9 +186,9 @@ opt <- FCVARoptions(
         constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 )
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-# capture.output(FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt), file = 'tests/testthat/soln_spec/FCVARlagSelectStats.txt')
-# save(FCVARlagSelectStats, list = c('FCVARlagSelectStats'), file = 'tests/testthat/soln_spec/FCVARlagSelectStats.RData')
+# FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
+capture.output(FCVARlagSelectStats <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt), file = 'tests/testthat/soln_spec/FCVARlagSelectStats.txt')
+save(FCVARlagSelectStats, list = c('FCVARlagSelectStats'), file = 'tests/testthat/soln_spec/FCVARlagSelectStats.RData')
 
 
 # print.FCVARlagSelect(stats, kmax, r, p, order, opt)
@@ -222,12 +227,12 @@ opt <- FCVARoptions(
         constrained  = 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 )
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
-rankTestStats <- FCVARrankTests(x, k = 2, opt)
+# rankTestStats <- FCVARrankTests(x, k = 2, opt)
 
 
 
-# capture.output(rankTestStats <- FCVARrankTests(x, k = 2, opt), file = 'tests/testthat/soln_spec/rankTestStats.txt')
-# save(rankTestStats, list = c('rankTestStats'), file = 'tests/testthat/soln_spec/rankTestStats.RData')
+capture.output(rankTestStats <- FCVARrankTests(x, k = 2, opt), file = 'tests/testthat/soln_spec/rankTestStats.txt')
+save(rankTestStats, list = c('rankTestStats'), file = 'tests/testthat/soln_spec/rankTestStats.RData')
 
 
 # print.FCVARrankTests <- function(stats, k, p, T, opt)
@@ -269,8 +274,12 @@ x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 set.seed(42)
 # FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 # FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 2)
-# capture.output(FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 2), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.txt')
-# save(FCVARbootRank_stats, list = c('FCVARbootRank_stats'), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.RData')
+capture.output(FCVARbootRank_stats <- FCVARbootRank(x[1:50, ], k = 2, opt, r1 = 0, r2 = 1, B = 2), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.txt')
+# Remove the residuals, which have trivial numerical differences across platforms.
+# These are not important for determining the accuracy of this function.
+FCVARbootRank_stats$mBS$Residuals <- NULL
+FCVARbootRank_stats$mUNR$Residuals <- NULL
+save(FCVARbootRank_stats, list = c('FCVARbootRank_stats'), file = 'tests/testthat/soln_spec/FCVARbootRank_stats.RData')
 
 
 
@@ -510,10 +519,14 @@ optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 set.seed(42)
 # FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 # FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 2)
-# capture.output(FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 2),
-#                file = 'tests/testthat/soln_post/FCVARboot_stats.txt')
-# save(FCVARboot_stats, list = c('FCVARboot_stats'),
-#      file = 'tests/testthat/soln_post/FCVARboot_stats.RData')
+capture.output(FCVARboot_stats <- FCVARboot(x[1:50, ], k = 2, r = 1, optRES, optUNR, B = 2),
+               file = 'tests/testthat/soln_post/FCVARboot_stats.txt')
+# Remove the residuals, which have trivial numerical differences across platforms.
+# These are not important for determining the accuracy of this function.
+FCVARboot_stats$mBS$Residuals <- NULL
+FCVARboot_stats$mUNR$Residuals <- NULL
+save(FCVARboot_stats, list = c('FCVARboot_stats'),
+     file = 'tests/testthat/soln_post/FCVARboot_stats.RData')
 
 
 # FCVARforecast(x, model, NumPeriods)
