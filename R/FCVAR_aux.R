@@ -2192,27 +2192,31 @@ SEmat2vecU <- function(coeffs, k, r, p , opt) {
   }
 
 
-  # Level parameter MuHat.
+  # Append the level parameter MuHat.
   if (opt$levelParam) {
-    param <- cbind(param, matrix(coeffs$muHat, nrow = 1, ncol = p))
+    param <- cbind(matrix(param, nrow = 1, ncol = length(param)),
+                   matrix(coeffs$muHat, nrow = 1, ncol = p))
   }
 
 
   # Unrestricted constant.
   if (opt$unrConstant) {
-    param <- cbind(param, matrix(coeffs$xiHat, nrow = 1, ncol = p))
+    param <- cbind(matrix(param, nrow = 1, ncol = length(param)),
+                   matrix(coeffs$xiHat, nrow = 1, ncol = p))
   }
 
 
   # alphaHat
   if (r > 0) {
-    param <- cbind(param, matrix( coeffs$alphaHat, nrow = 1, ncol = p*r ))
+    param <- cbind(matrix(param, nrow = 1, ncol = length(param)),
+                   matrix( coeffs$alphaHat, nrow = 1, ncol = p*r ))
   }
 
 
   # GammaHat
   if (k > 0) {
-    param <- cbind(param, matrix( coeffs$GammaHat, nrow = 1, ncol = p*p*k ))
+    param <- cbind(matrix(param, nrow = 1, ncol = length(param)),
+                   matrix( coeffs$GammaHat, nrow = 1, ncol = p*p*k ))
   }
 
 

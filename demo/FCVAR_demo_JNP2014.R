@@ -100,9 +100,9 @@ rankTestStats <- FCVARrankTests(x1, k, opt)
 # Set parameters from specification decisions.
 r <- 1
 opt1 <- opt
+# opt1$gridSearch <- 0
 # opt1$gridSearch <- 1
-opt1$gridSearch <- 0
-opt1$plotLike <- 1
+# opt1$plotLike <- 1
 
 
 # Estimate model and store in an FCVARmodel object.
@@ -111,6 +111,50 @@ m1 <- FCVARestn(x1, k, r, opt1)
 
 # Conduct MVWN test on residuals.
 MVWNtest_m1 <- MVWNtest(m1$Residuals, order, printWNtest)
+
+
+# Experiment by imposing linear restriction d = b
+# through restriction matrices.
+opt1 <- opt
+opt1$restrictDB <- 0
+# Alternate approach to impose d = b:
+opt1$R_psi <- matrix(c(1, -1), nrow = 1, ncol = 2)
+# Other example with linear restriction on d and b:
+# opt1$R_psi <- matrix(c(1, -2), nrow = 1, ncol = 2)
+opt1$r_psi <- 0
+m1 <- FCVARestn(x1, k, r, opt1)
+# Error in R %*% Hinv : non-conformable arguments
+# In addition: There were 50 or more warnings (use warnings() to see the first 50)
+# R> warnings()
+# Warning messages:
+# 1: In cbind(param, matrix(coeffs$muHat, nrow = 1, ncol = p)) :
+#   number of rows of result is not a multiple of vector length (arg 1)
+# 2: In matrix(param[1:length(param)], nrow = p, ncol = p *  ... :
+#     data length [17] is not a sub-multiple or multiple of the number of rows [3]
+# 3: In matrix(param[1:length(param)], nrow = p, ncol = p *  ... :
+#     data length [17] is not a sub-multiple or multiple of the number of rows [3]
+
+# Solution (a change within function SEmat2vecU in script FCVAR_aux.R):
+# # Append the level parameter MuHat.
+# if (opt$levelParam) {
+#
+#   # print('Append the level parameter MuHat.')
+#   # print('opt$levelParam = ')
+#   # print(opt$levelParam)
+#   # print('param = ')
+#   # print(param)
+#   # print('coeffs$muHat = ')
+#   # print(coeffs$muHat)
+#
+#   # param <- cbind(param, matrix(coeffs$muHat, nrow = 1, ncol = p))
+#   param <- cbind(matrix(param, nrow = 1, ncol = length(param)),
+#                  matrix(coeffs$muHat, nrow = 1, ncol = p))
+#
+#   # print('new_param = ')
+#   # print(param)
+# }
+#
+# And similarly for the others.
 
 
 ################################################################################
