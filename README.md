@@ -4,11 +4,11 @@ An R Package for the Fractionally Cointegrated VAR Model
 ## Description
 
 Estimation and inference using the Fractionally Cointegrated 
-    Vector Autoregressive (VAR) model. It includes functions for model specification, 
-    including lag selection and cointegration rank selection, as well as a comprehensive
-    set of options for hypothesis testing, including tests of hypotheses on the 
-    cointegrating relations, the adjustment coefficients and the fractional 
-    differencing parameters. 
+Vector Autoregressive (VAR) model. It includes functions for model specification, 
+including lag selection and cointegration rank selection, as well as a comprehensive
+set of options for hypothesis testing, including tests of hypotheses on the 
+cointegrating relations, the adjustment coefficients and the fractional 
+differencing parameters. 
 See the file ```FCVAR_README.pdf``` for examples
 and the Webpage https://sites.google.com/view/mortennielsen/software
 for more information about the FCVAR model.
@@ -21,8 +21,6 @@ Install the development version on GitHub using the ```devtools``` package:
 ```
 library(devtools)
 devtools::install_github("LeeMorinUCF/FCVAR")
-
-
 ```
 
 
@@ -30,7 +28,14 @@ devtools::install_github("LeeMorinUCF/FCVAR")
 ## Release Notes
 
 
+# July 30, 2021: Second submission.
+
+* Added cran-comments.md to .Rbuildignore.
+
+
+
 ### July 30, 2021,  ```FCVAR_0.1.0```: 
+
 * First submission of the FCVAR package. 
 * Added a `NEWS.md` file to track changes to the package.
 
@@ -51,9 +56,14 @@ devtools::install_github("LeeMorinUCF/FCVAR")
 
 There were no ERRORs or WARNINGs.
 
-There was one NOTE:
+There were three NOTEs:
 
-New submission
+* New submission
+
+* Authors' names, conjugations of the verb "cointegrate," the verb "difference," 
+and the acronym "FCVAR" are not mis-spelled. 
+
+* Elapsed time > 10s for some examples.
 
 
 #### Downstream dependencies

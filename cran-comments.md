@@ -1,5 +1,10 @@
 # FCVAR 0.1.0
 
+# July 30, 2021: Second submission.
+
+* Added cran-comments.md to .Rbuildignore.
+
+
 # July 30, 2021: First submission.
 
 First submission of the FCVAR package.  
@@ -24,12 +29,14 @@ First submission of the FCVAR package.
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was one NOTE:
+There were three NOTEs:
 
-New submission
+* New submission
 
-Authors' names, conjugations of the verb "cointegrate" and the acronym "FCVAR"
-are not mis-spelled. 
+* Authors' names, conjugations of the verb "cointegrate," the verb "difference," 
+and the acronym "FCVAR" are not mis-spelled. 
+
+* Elapsed time > 10s for some examples.
 
 
 ## Downstream dependencies
