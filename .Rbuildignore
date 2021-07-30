@@ -6,3 +6,4 @@
 ^vignettes/FCVAR\.Rmd$
 ^article$
 ^FCVAR_README\.pdf$
+^CRAN-RELEASE$
