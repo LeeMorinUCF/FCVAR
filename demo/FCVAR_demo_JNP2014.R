@@ -36,8 +36,8 @@
 rm(list = ls(all = TRUE))
 
 # Install and attach package.
-install.packages('FCVAR')
-library(FCVAR)
+install.packages("FCVAR")
+library("FCVAR")
 
 
 ################################################################################
@@ -507,8 +507,7 @@ opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 
-likeGrid_params <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
-
+likeGrid_params_eq_con <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
 
 
 # Linear restriction on fractional parameters.
@@ -523,7 +522,7 @@ opt$R_psi        <- matrix(c(2, -1), nrow = 1, ncol = 2)
 opt$r_psi        <- 0.5
 opt$progress     <- 2 # Show progress report on each value of b.
 
-likeGrid_params <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
+likeGrid_params_lin_con <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
 
 
 # Constrained 2-dimensional optimization.
@@ -537,7 +536,7 @@ opt$constrained  <- 1 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 
-likeGrid_params <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
+likeGrid_params_2D_con <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
 
 
 # Unconstrained 2-dimensional optimization.
@@ -551,7 +550,31 @@ opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
 
-likeGrid_params <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
+likeGrid_params_2D_unc <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
+
+
+#--------------------------------------------------------------------------------
+# Revisit linear restriction on fractional parameters
+# to investigate likelihood function with multiple local optima.
+#--------------------------------------------------------------------------------
+
+# Linear restriction on fractional parameters.
+opt <- FCVARoptions(
+  dbStep1D     = 0.01,
+  dbMin        = c(0.01, 0.01), # Set lower bound for d,b.
+  dbMax        = c(2.00, 2.00), # Set upper bound for d,b.
+  constrained  = 0, # Impose restriction dbMax >= d >= b >= dbMin ? 1 => yes, 0 => no.
+  restrictDB   = 0) # Impose restriction d=b ? 1 => yes, 0 => no.
+
+# Impose linear restriction on d and b:
+opt$R_psi        <- matrix(c(2, -1), nrow = 1, ncol = 2)
+opt$r_psi        <- 0.5
+opt$progress     <- 2 # Show progress report on each value of b.
+
+likeGrid_params_lin_con <- FCVARlikeGrid(x1, k = 2, r = 1, opt)
+
+# Print grid search output to screen.
+likeGrid_params_lin_con$local_max
 
 
 ################################################################################
