@@ -52,7 +52,7 @@
 #'   parameters \code{d} and \code{b}, of the form \eqn{R_{\psi}(d, b)' = r_{\psi}}.}
 #'   \item{\code{R_Alpha}}{A matrix for defining restrictions on the adjustment coefficients
 #'   of the form \eqn{R_{\alpha}\alpha = r_{\alpha}}.}
-#'   \item{\code{r_Alpha}}{A vetor for defining restrictions on the adjustment coefficients
+#'   \item{\code{r_Alpha}}{A vector for defining restrictions on the adjustment coefficients
 #'   of the form \eqn{R_{\alpha}\alpha = r_{\alpha}}.}
 #'   \item{\code{R_Beta}}{A matrix for defining restrictions on the cointegrating relations
 #'   of the form \eqn{R_{\beta}\beta = r_{\beta}}.}

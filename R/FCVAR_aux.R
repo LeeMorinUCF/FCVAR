@@ -17,7 +17,7 @@
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' x_sim <- FCVARsim(x[1:10, ], results, NumPeriods = 100)
-#' @family FCVAR auxilliary functions
+#' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
 #' Use \code{FCVARsim} to draw a sample from the FCVAR model.
@@ -136,7 +136,7 @@ FCVARsim <- function(x, model, NumPeriods) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' xBS <- FCVARsimBS(x[1:10, ], results, NumPeriods = 100)
-#' @family FCVAR auxilliary functions
+#' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
 #' Use \code{FCVARsim} to draw a sample from the FCVAR model.
@@ -279,7 +279,7 @@ FCVARsimBS <- function(data, model, NumPeriods) {
 # opt <- FCVARoptions()
 # x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 # estimates <- GetParams(x, k = 2, r = 1, db = c(1, 1), opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model.
 # @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
@@ -611,7 +611,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 #' }
-#' @family FCVAR auxilliary functions
+#' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 #' @note If \code{opt$LocalMax == 0}, \code{FCVARlikeGrid} returns the parameter values
@@ -1113,7 +1113,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' \dontrun{plot(likeGrid_params)}
 #' @note Calls \code{graphics::persp} when \code{x$Grid2d == TRUE} and
 #' calls \code{graphics::plot} when \code{x$Grid2d == FALSE}.
-#' @family FCVAR auxilliary functions
+#' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 #' @export
@@ -1323,7 +1323,7 @@ find_local_max <- function(x) {
 # opt <- FCVARoptions()
 # x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 # like <- FCVARlikeMu(mu = colMeans(x), y = x, db = c(1, 1), k = 2, r = 1, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # The \code{FCVARlikeGrid} calls this function to perform a grid search over the
 # parameter values.
@@ -1374,7 +1374,7 @@ FCVARlikeMu <- function(mu, y, db, k, r, opt) {
 # x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 # results <- FCVARestn(x, k = 2, r = 1, opt)
 # FCVARlike(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # @export
 #
@@ -1497,7 +1497,7 @@ FCVARlike <- function(params, x, k, r, opt) {
 # x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 # results <- FCVARestn(x, k = 2, r = 1, opt)
 # GetEstimates(c(results$coeffs$db, results$coeffs$muHat), x, k = 2, r = 1, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARlike} performs the same calculations to obtain the value
 # of the likelihood function.
@@ -1594,7 +1594,7 @@ GetEstimates <- function(params, x, k, r, opt) {
 # results <- FCVARestn(x, k = 2, r = 1, opt)
 # FCVARlikeFull(x, k = 2, r = 1, coeffs = results$coeffs,
 #               beta = results$coeffs$betaHat, rho = results$coeffs$rhoHat, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} for the estimation of coefficients in \code{coeffs}.
 # @export
@@ -1657,7 +1657,7 @@ FCVARlikeFull <- function(x, k, r, coeffs, betaHat, rhoHat, opt) {
 # x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 # results <- FCVARestn(x, k = 2, r = 1, opt)
 # Z_array <- TransformData(x, k = 2, db = results$coeffs$db, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 # to estimate the FCVAR model.
@@ -1749,7 +1749,7 @@ TransformData <- function(x, k, db, opt) {
 # x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 # results <- FCVARestn(x, k = 2, r = 1, opt)
 # epsilon <- GetResiduals(x, k = 2, r = 1, coeffs = results$coeffs, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} to estimate the FCVAR model.
 # @references Johansen, S. and M. \enc{Ø}{O}. Nielsen (2012).
@@ -1826,7 +1826,7 @@ GetResiduals <- function(x, k, r, coeffs, opt) {
 # x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 # results <- FCVARestn(x, k = 2, r = 1, opt)
 # Lbkx <- Lbk(x, b = results$coeffs$db[2], k = 2)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 # to estimate the FCVAR model.
@@ -1882,7 +1882,7 @@ Lbk <- function(x, b, k) {
 #' \dontrun{MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)}
 #' WN_x_d <- FracDiff(x, d = 0.5)
 #' \dontrun{MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)}
-#' @family FCVAR auxilliary functions
+#' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}
 #' to estimate the FCVAR model.
@@ -1977,7 +1977,7 @@ FracDiff <- function(x, d) {
 # opt$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 # GetFreeParams(k = 2, r = 1, p = 3, opt = newOpt, rankJ = 4)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn}, \code{HypoTest} and \code{LagSelect} to estimate the FCVAR model
 # and use this in the calculation of the degrees of freedom
@@ -2053,7 +2053,7 @@ GetFreeParams <- function(k, r, p, opt, rankJ) {
 # x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 # results <- FCVARestn(x, k = 2, r = 1, opt)
 # hessian <- FCVARhess(x, k = 2, r = 1, coeffs = results$coeffs, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} to estimate the FCVAR model and calculate
 # standard errors of the estimates.
@@ -2171,7 +2171,7 @@ FCVARhess <- function(x, k, r, coeffs, opt) {
 # params <- matrix(seq(25))
 # coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
 # params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} to estimate the FCVAR model and calculate
 # standard errors of the estimates.
@@ -2255,7 +2255,7 @@ SEmat2vecU <- function(coeffs, k, r, p , opt) {
 # params <- matrix(seq(25))
 # coeffs <- SEvec2matU(param = params, k = 2, r = 1, p = 3, opt )
 # params <- SEmat2vecU(coeffs = coeffs, k = 2, r = 1, p = 3, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} to estimate the FCVAR model and calculate
 # standard errors of the estimates.
@@ -2373,7 +2373,7 @@ SEvec2matU <- function(param, k, r, p, opt ) {
 #                  -0.410996895,  70.6110313, -15.865097810,
 #                  -0.007468716, -15.8650978,   3.992435799), nrow = 3)
 # switched_mats <- GetRestrictedParams(betaStar, S00, S01, S11, cap_T = 316, p = 3, opt)
-# @family FCVAR auxilliary functions
+# @family FCVAR auxiliary functions
 # @seealso \code{FCVARoptions} to set default estimation options.
 # \code{FCVARestn} calls \code{GetParams} to estimate the FCVAR model,
 # which in turn calls \code{GetRestrictedParams} if there are restrictions

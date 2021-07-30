@@ -275,7 +275,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 #' m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
-#' @family FCVAR auxilliary functions
+#' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
 #' \code{FCVARforecast} calls \code{FracDiff} and \code{Lbk} to calculate the forecast.
