@@ -237,7 +237,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
   cat(sprintf('Bootstrap likelihood ratio test results:'))
   cat(sprintf('\nUnrestricted log-likelihood: %3.3f\nRestricted log-likelihood:   %3.3f\n',
               H$loglikUNR, H$loglikR))
-  cat(sprintf('Test results (df <- %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
+  cat(sprintf('Test results (df = %1.0f):\nLR statistic: \t %3.3f\nP-value: \t %1.3f\n',
               H$df, H$LRstat, H$pv))
   cat(sprintf('P-value (BS): \t %1.3f\n', H$pvBS))
 
