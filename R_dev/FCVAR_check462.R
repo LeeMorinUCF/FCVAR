@@ -156,7 +156,7 @@ summary.FCVAR_ranks  5.19   0.00    5.18
 # Then, submit to CRAN:
 
 # This way, you get a series of questions to
-# run through a chacklist:
+# run through a checklist:
 # devtools::release()
 
 # This way is a short cut,
