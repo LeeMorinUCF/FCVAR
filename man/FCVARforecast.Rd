@@ -22,6 +22,7 @@ A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
 \code{FCVARforecast} calculates recursive forecasts with the FCVAR model.
 }
 \examples{
+\dontrun{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -32,6 +33,7 @@ opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
 xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
+}
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.

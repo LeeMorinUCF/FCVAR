@@ -26,6 +26,7 @@ residuals specified under the \code{model} input and have a
 positive or negative sign with equal probability (the Rademacher distribution).
 }
 \examples{
+\donttest{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -34,6 +35,7 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 xBS <- FCVARsimBS(x[1:10, ], results, NumPeriods = 100)
+}
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.

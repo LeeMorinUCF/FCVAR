@@ -24,6 +24,7 @@ for a sequence of lag lengths.
 The LM test is consistent for heteroskedastic series, the Q-test is not.
 }
 \examples{
+\dontrun{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -32,7 +33,8 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 MVWNtest_stats <- MVWNtest(x = results$Residuals, maxlag = 12, printResults = 1)
-\dontrun{summary(object = MVWNtest_stats)}
+summary(object = MVWNtest_stats)
+}
 
 set.seed(27)
 WN <- stats::rnorm(100)

@@ -9,6 +9,7 @@
 #' @param NumPeriods The number of time periods in the simulation.
 #' @return A \code{NumPeriods} \eqn{x p} matrix \code{xBS} of simulated observations.
 #' @examples
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -17,6 +18,7 @@
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' x_sim <- FCVARsim(x[1:10, ], results, NumPeriods = 100)
+#' }
 #' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
@@ -128,6 +130,7 @@ FCVARsim <- function(x, model, NumPeriods) {
 #' @param NumPeriods The number of time periods in the simulation.
 #' @return A \code{NumPeriods} by \eqn{p} matrix \code{xBS} of simulated bootstrap values.
 #' @examples
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -136,6 +139,7 @@ FCVARsim <- function(x, model, NumPeriods) {
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' results <- FCVARestn(x, k = 2, r = 1, opt)
 #' xBS <- FCVARsimBS(x[1:10, ], results, NumPeriods = 100)
+#' }
 #' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} for the specification of the \code{model}.
@@ -553,6 +557,7 @@ GetParams <- function(x, k, r, db, opt) {
 #'
 #' @examples
 #' # Restrict equality of fractional parameters.
+#' \dontrun{
 #' opt <- FCVARoptions()
 #' opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -563,9 +568,11 @@ GetParams <- function(x, k, r, db, opt) {
 #' # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
-#' \dontrun{plot.FCVAR_grid(likeGrid_params)}
+#' plot.FCVAR_grid(likeGrid_params)
+#' }
 #'
 #' # Linear restriction on fractional parameters.
+#' \dontrun{
 #' opt <- FCVARoptions()
 #' opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -579,7 +586,8 @@ GetParams <- function(x, k, r, db, opt) {
 #' # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
-#' \dontrun{plot.FCVAR_grid(likeGrid_params)}
+#' plot.FCVAR_grid(likeGrid_params)
+#' }
 #'
 #' # Constrained 2-dimensional optimization.
 #' # Impose restriction dbMax >= d >= b >= dbMin.
@@ -1099,6 +1107,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' for the generic plot function.
 #' @return NULL
 #' @examples
+#' \dontrun{
 #' opt <- FCVARoptions()
 #' opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
 #' opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -1110,7 +1119,8 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' opt$progress <- 2 # Show progress report on each value of b.
 #' # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 #' likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
-#' \dontrun{plot(likeGrid_params)}
+#' plot(likeGrid_params)
+#' }
 #' @note Calls \code{graphics::persp} when \code{x$Grid2d == TRUE} and
 #' calls \code{graphics::plot} when \code{x$Grid2d == FALSE}.
 #' @family FCVAR auxiliary functions

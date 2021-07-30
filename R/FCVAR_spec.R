@@ -305,6 +305,7 @@ summary.FCVAR_lags <- function(object, ...) {
 #'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples
+#' \dontrun{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -312,6 +313,7 @@ summary.FCVAR_lags <- function(object, ...) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' rankTestStats <- FCVARrankTests(x, k = 2, opt)
+#' }
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
@@ -453,6 +455,7 @@ FCVARrankTests <- function(x, k, opt) {
 #' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
+#' \dontrun{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -460,7 +463,8 @@ FCVARrankTests <- function(x, k, opt) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' rankTestStats <- FCVARrankTests(x, k = 2, opt)
-#' \dontrun{summary.FCVAR_ranks(object = rankTestStats)}
+#' summary.FCVAR_ranks(object = rankTestStats)
+#' }
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
@@ -534,6 +538,7 @@ summary.FCVAR_ranks <- function(object, ...) {
 #'   \item{\code{mUNR}}{Model estimates under the alternative hypothesis. }
 #' }
 #' @examples
+#' \dontrun{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -542,8 +547,9 @@ summary.FCVAR_ranks <- function(object, ...) {
 #' opt$plotRoots <- 0
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' set.seed(42)
-#' \dontrun{FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)}
+#' FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 #' FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 2)
+#' }
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{HypoTest} for the format of a hypothesis test results.

@@ -29,6 +29,7 @@ where the roots are given as the inverse eigenvalues of the
 coefficient matrix.
 }
 \examples{
+\dontrun{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -37,8 +38,9 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 FCVAR_CharPoly <- GetCharPolyRoots(results$coeffs, opt, k = 2, r = 1, p = 3)
-\dontrun{summary(object = FCVAR_CharPoly)}
-\dontrun{graphics::plot(x = FCVAR_CharPoly)}
+summary(object = FCVAR_CharPoly)
+graphics::plot(x = FCVAR_CharPoly)
+}
 }
 \references{
 Johansen, S. (2008). "A representation theory for a class of

@@ -66,6 +66,7 @@ If \code{opt$LocalMax == 0}, \code{FCVARlikeGrid} returns the parameter values
 }
 \examples{
 # Restrict equality of fractional parameters.
+\dontrun{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -76,9 +77,11 @@ opt$progress     <- 2 # Show progress report on each value of b.
 # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
-\dontrun{plot.FCVAR_grid(likeGrid_params)}
+plot.FCVAR_grid(likeGrid_params)
+}
 
 # Linear restriction on fractional parameters.
+\dontrun{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -92,7 +95,8 @@ opt$progress     <- 2 # Show progress report on each value of b.
 # newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
-\dontrun{plot.FCVAR_grid(likeGrid_params)}
+plot.FCVAR_grid(likeGrid_params)
+}
 
 # Constrained 2-dimensional optimization.
 # Impose restriction dbMax >= d >= b >= dbMin.

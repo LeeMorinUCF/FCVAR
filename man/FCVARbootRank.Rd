@@ -42,6 +42,7 @@ following the method of Cavaliere, Rahbek, and Taylor (2010). It
  null and the model under the alternative.
 }
 \examples{
+\dontrun{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -50,8 +51,9 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$plotRoots <- 0
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 set.seed(42)
-\dontrun{FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)}
+FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 2)
+}
 }
 \references{
 Cavaliere, G., A. Rahbek, and A. M. R. Taylor (2010).

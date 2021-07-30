@@ -28,6 +28,11 @@ devtools::install_github("LeeMorinUCF/FCVAR")
 ## Release Notes
 
 
+# July 30, 2021: Third submission.
+
+* Excluded examples with ```\dontrun``` if run time took longer than 5s.
+
+
 # July 30, 2021: Second submission.
 
 * Added cran-comments.md to .Rbuildignore.

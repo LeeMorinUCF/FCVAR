@@ -23,6 +23,7 @@ input \code{model} and starting values specified by \code{data}.
 Errors are drawn from a normal distribution.
 }
 \examples{
+\donttest{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -31,6 +32,7 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 results <- FCVARestn(x, k = 2, r = 1, opt)
 x_sim <- FCVARsim(x[1:10, ], results, NumPeriods = 100)
+}
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.
