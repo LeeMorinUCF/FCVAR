@@ -38,11 +38,11 @@ xf <- FCVARforecast(x, m1r4, NumPeriods = 12)
 \code{FCVARestn} for the specification of the \code{model}.
 \code{FCVARforecast} calls \code{FracDiff} and \code{Lbk} to calculate the forecast.
 
-Other FCVAR auxilliary functions: 
+Other FCVAR auxiliary functions: 
 \code{\link{FCVARlikeGrid}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FCVARsim}()},
 \code{\link{FracDiff}()},
 \code{\link{plot.FCVAR_grid}()}
 }
-\concept{FCVAR auxilliary functions}
+\concept{FCVAR auxiliary functions}

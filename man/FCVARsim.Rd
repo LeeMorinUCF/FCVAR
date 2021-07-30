@@ -38,11 +38,11 @@ x_sim <- FCVARsim(x[1:10, ], results, NumPeriods = 100)
 Use \code{FCVARsim} to draw a sample from the FCVAR model.
 For simulations intended for bootstrapping statistics, use \code{FCVARsimBS}.
 
-Other FCVAR auxilliary functions: 
+Other FCVAR auxiliary functions: 
 \code{\link{FCVARforecast}()},
 \code{\link{FCVARlikeGrid}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FracDiff}()},
 \code{\link{plot.FCVAR_grid}()}
 }
-\concept{FCVAR auxilliary functions}
+\concept{FCVAR auxiliary functions}

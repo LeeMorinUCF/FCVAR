@@ -14,7 +14,7 @@ cointegration rank selection and hypothesis testing.
 }
 \details{
 Functions in the FCVAR package are divided into four categories:
-Estimation, Postestimation, Specification and Auxilliary functions.
+Estimation, Postestimation, Specification and Auxiliary functions.
 }
 \section{Estimation functions}{
 
@@ -56,9 +56,9 @@ The specification functions are used to estimate a series of models in order
 }
 }
 
-\section{Auxilliary functions}{
+\section{Auxiliary functions}{
 
-The auxilliary functions are used to perform intermediate calculations
+The auxiliary functions are used to perform intermediate calculations
   for estimation.
   These functions are mainly designed for use only within the estimation function.
   Some exceptions include:

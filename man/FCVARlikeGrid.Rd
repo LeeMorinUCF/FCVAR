@@ -134,11 +134,11 @@ autoregressive model," Journal of Econometrics 158, 51-66.
 \code{FCVARoptions} to set default estimation options.
 \code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 
-Other FCVAR auxilliary functions: 
+Other FCVAR auxiliary functions: 
 \code{\link{FCVARforecast}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FCVARsim}()},
 \code{\link{FracDiff}()},
 \code{\link{plot.FCVAR_grid}()}
 }
-\concept{FCVAR auxilliary functions}
+\concept{FCVAR auxiliary functions}

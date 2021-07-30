@@ -48,11 +48,11 @@ likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 \code{FCVARoptions} to set default estimation options.
 \code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.
 
-Other FCVAR auxilliary functions: 
+Other FCVAR auxiliary functions: 
 \code{\link{FCVARforecast}()},
 \code{\link{FCVARlikeGrid}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FCVARsim}()},
 \code{\link{FracDiff}()}
 }
-\concept{FCVAR auxilliary functions}
+\concept{FCVAR auxiliary functions}

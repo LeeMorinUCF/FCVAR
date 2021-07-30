@@ -48,11 +48,11 @@ to estimate the FCVAR model.
 \code{TransformData} in turn calls \code{FracDiff} and \code{Lbk}
 to perform the transformation.
 
-Other FCVAR auxilliary functions: 
+Other FCVAR auxiliary functions: 
 \code{\link{FCVARforecast}()},
 \code{\link{FCVARlikeGrid}()},
 \code{\link{FCVARsimBS}()},
 \code{\link{FCVARsim}()},
 \code{\link{plot.FCVAR_grid}()}
 }
-\concept{FCVAR auxilliary functions}
+\concept{FCVAR auxiliary functions}
