@@ -57,7 +57,10 @@
 #'   Sample model builds with hypothesis tests and examples of other extensions are found
 #'   in the example scripts \code{FCVAR_replication_JNP2014.R} and
 #'   \code{FCVAR_extension_JNP2014.R}.
-#'   See the document \code{future_JSS_article} for details.
+#'   See FCVAR_README.pdf for details
+#'   at \code{https://github.com/LeeMorinUCF/FCVAR/blob/master/FCVAR_README.pdf}
+#'   and also see \code{https://sites.google.com/view/mortennielsen/software}
+#'   for more information about estimating the FCVAR model.
 #'
 #' @docType package
 #' @name FCVAR

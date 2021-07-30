@@ -42,7 +42,7 @@ including the following parameters:
 }
 \description{
 \code{FCVARestn} estimates the Fractionally Cointegrated VAR model.
-  It is the central function in the \code{FCVAR} package with several nested functions, each
+ It is the central function in the \code{FCVAR} package with several nested functions, each
 	described below. It estimates the model parameters, calculates the
 	standard errors and the number of free parameters, obtains the residuals
 	and the roots of the characteristic polynomial.

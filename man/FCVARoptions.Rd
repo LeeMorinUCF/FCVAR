@@ -67,6 +67,9 @@ which includes the following parameters:
   \item{\code{printRoots}}{Indicator to print roots of characteristic polynomial.}
   \item{\code{plotRoots}}{Indicator to plot roots of characteristic polynomial.}
   \item{\code{CalcSE}}{Indicator to calculate the standard errors. It is used when displaying results.}
+  \item{\code{hess_delta}}{Size of increment for numerical calculation of derivatives of the likelihood
+  function for numerical calculation of the Hessian matrix. The default is \code{10^(-4)},
+  which works well in practice to balance errors between precision and truncation.}
   \item{\code{gridSearch}}{Indicator to perform a grid search for the optimization
   over the fractional integration parameters, for more accurate estimation.
   This will make estimation take longer.}
@@ -97,7 +100,7 @@ Doornik, J. A. (2018) "Accelerated Estimation of Switching Algorithms:
 The Cointegrated VAR Model and Other Applications."
 Scandinavian Journal of Statistics, Volume 45, Issue 2.
 
-Johansen, Søren, and Morten \enc{Ø}{O}rregaard Nielsen (2010) "Likelihood inference for a nonstationary
+Johansen, S\enc{ø}{o}ren, and Morten \enc{Ø}{O}rregaard Nielsen (2010) "Likelihood inference for a nonstationary
 fractional autoregressive model." Journal of Econometrics 158, 51–66.
 
 Carlini, F., and P. S. de Magistris (2019) "On the identification of fractionally cointegrated
