@@ -128,7 +128,7 @@ FCVARhypoTest <- function(modelUNR, modelR) {
 #' Bootstrap Likelihood Ratio Test
 #'
 #' \code{FCVARboot} generates a distribution of a likelihood ratio
-#' test statistic using a Wild bootstrap, following the method of
+#' test statistic using a wild bootstrap, following the method of
 #' Boswijk, Cavaliere, Rahbek, and Taylor (2016). It takes two sets
 #' of options as inputs to estimate the model under the null and the
 #' unrestricted model.
@@ -396,7 +396,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #' @param r The cointegrating rank.
 #' @param p The number of variables in the system.
 #' @return An S3 object of type \code{FCVAR_roots} with the following elements:
-#' #' \describe{
+#' \describe{
 #'   \item{\code{cPolyRoots}}{A vector of the roots of the characteristic polynomial.
 #'     It is an element of the list of estimation \code{results} output from \code{FCVARestn}.}
 #'   \item{\code{b}}{A numeric value of the fractional cointegration parameter.}

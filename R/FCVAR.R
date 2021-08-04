@@ -1,7 +1,7 @@
 #' A package for estimating the Fractionally Cointegrated VAR model.
 #'
 #' The FCVAR package estimates the Fractionally Cointegrated
-#' Vector Autoregression (VAR) model. It includes functions for lag selection,
+#' Vector Autoregressive (VAR) model. It includes functions for lag selection,
 #' cointegration rank selection and hypothesis testing.
 #'
 #' Functions in the FCVAR package are divided into four categories:
@@ -15,7 +15,7 @@
 #' estimation procedure and the related programs.
 #' The user can then revise the options such as the settings for optimization and
 #' restrictions for testing hypotheses.
-#' After making these changes, \code{FCVARoptionUpdates} is used to set and test
+#' After making these changes, an internal function \code{FCVARoptionUpdates} sets and tests
 #' estimation options for validity and compatibility.
 #'
 #' @section Postestimation functions:

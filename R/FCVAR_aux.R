@@ -7,7 +7,7 @@
 #' @param model A list of estimation results, just as if estimated from \code{FCVARest}.
 #' The parameters in \code{model} can also be set or adjusted by assigning new values.
 #' @param NumPeriods The number of time periods in the simulation.
-#' @return A \code{NumPeriods} \eqn{x p} matrix \code{xBS} of simulated observations.
+#' @return A \code{NumPeriods} by \eqn{p} matrix \code{xBS} of simulated observations.
 #' @examples
 #' \donttest{
 #' opt <- FCVARoptions()
@@ -518,7 +518,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' This function evaluates the likelihood over a grid of values
 #' 	for \code{c(d,b)} (or \code{phi}).
 #' 	It can be used when parameter estimates are sensitive to
-#' 	starting values to give an approximation of the global max which can
+#' 	starting values to give an approximation of the global maximum that can
 #' 	then be used as the starting value in the numerical optimization in
 #' 	\code{FCVARestn}.
 #' 	\code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.

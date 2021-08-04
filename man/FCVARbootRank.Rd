@@ -26,7 +26,7 @@ A list \code{FCVARbootRank_stats} containing the test results,
 including the following parameters:
 \describe{
   \item{\code{LRbs}}{A B x 1 vector of simulated likelihood ratio statistics.}
-  \item{\code{pv}}{An approximate p-value for LRstat based on the bootstrap distribution. }
+  \item{\code{pv}}{An approximate p-value for the LR statistic based on the bootstrap distribution. }
   \item{\code{H}}{A list containing LR test results. It is
   identical to the output from \code{HypoTest}, with one addition,
   namely \code{H$pvBS} which is the bootstrap p-value)}
@@ -36,7 +36,7 @@ including the following parameters:
 }
 \description{
 \code{FCVARbootRank} generates a distribution of a likelihood ratio
- test statistic for the rank test using a Wild bootstrap,
+ test statistic for the rank test using a wild bootstrap,
 following the method of Cavaliere, Rahbek, and Taylor (2010). It
  takes the two ranks as inputs to estimate the model under the
  null and the model under the alternative.

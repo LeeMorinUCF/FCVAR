@@ -17,7 +17,7 @@ generated from \code{FCVARoptions()}.}
 \value{
 An S3 object of type \code{FCVAR_ranks} containing the results
 from cointegrating rank tests, containing the following \code{(p+1)} vectors
-with \code{i}th element corresponding to \code{rank = i-1}:
+with \code{i}th element corresponding to \code{rank = i-1},
 including the following parameters:
 \describe{
   \item{\code{dHat}}{Estimates of \code{d}.}
@@ -34,6 +34,7 @@ including the following parameters:
 }
 \description{
 \code{FCVARrankTests} performs a sequence of  likelihood ratio tests
+	for cointegrating rank.
 }
 \examples{
 \donttest{

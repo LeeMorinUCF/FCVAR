@@ -38,7 +38,7 @@ including the following parameters:
 }
 \description{
 \code{FCVARboot} generates a distribution of a likelihood ratio
-test statistic using a Wild bootstrap, following the method of
+test statistic using a wild bootstrap, following the method of
 Boswijk, Cavaliere, Rahbek, and Taylor (2016). It takes two sets
 of options as inputs to estimate the model under the null and the
 unrestricted model.

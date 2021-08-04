@@ -15,7 +15,7 @@ The parameters in \code{model} can also be set or adjusted by assigning new valu
 \item{NumPeriods}{The number of time periods in the simulation.}
 }
 \value{
-A \code{NumPeriods} \eqn{x p} matrix \code{xBS} of simulated observations.
+A \code{NumPeriods} by \eqn{p} matrix \code{xBS} of simulated observations.
 }
 \description{
 \code{FCVARsim} simulates the FCVAR model as specified by

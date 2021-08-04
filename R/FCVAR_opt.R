@@ -6,8 +6,8 @@
 #' \code{FCVARoptions} defines the estimation options used in the FCVAR
 #'   estimation procedure and the related programs.
 #'
-#' @param ... a list of arguments to set to values other than the default settings.
-#' See argument names in return value below.
+#' @param ... A list of arguments to set to values other than the default settings.
+#' See the argument names in the return value below.
 #' @return An S3 object of class \code{FCVAR_opt} that stores the default estimation options,
 #' which includes the following parameters:
 #' \describe{
@@ -38,13 +38,13 @@
 #'   \item{\code{restrictDB}}{Indicator to impose restriction \code{d = b}.}
 #'   \item{\code{N}}{The number of initial values: the observations to condition upon.}
 #'   \item{\code{unrConstant}}{Indicator to include an unrestricted constant.}
-#'   \item{\code{rConstant}}{Indicator to include an restricted constant.}
+#'   \item{\code{rConstant}}{Indicator to include a restricted constant.}
 #'   \item{\code{levelParam}}{Indicator to include level parameter.}
 #'   \item{\code{C_db}}{CHECK whether still used.}
 #'   \item{\code{c_db}}{CHECK whether still used.}
 #'   \item{\code{UB_db}}{An upper bound on the fractional integration parameters \code{d} and \code{b},
 #'   after transforming the parameters to account for any restrictions imposed.}
-#'   \item{\code{LB_db}}{An lower bound on the fractional integration parameters \code{d} and \code{b},
+#'   \item{\code{LB_db}}{A lower bound on the fractional integration parameters \code{d} and \code{b},
 #'   after transforming the parameters to account for any restrictions imposed.}
 #'   \item{\code{R_psi}}{A matrix for defining restrictions on the fractional integration
 #'   parameters \code{d} and \code{b}, of the form \eqn{R_{\psi}(d, b)' = r_{\psi}}.}

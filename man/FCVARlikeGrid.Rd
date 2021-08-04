@@ -51,7 +51,7 @@ on a grid of candidate parameter values.
 This function evaluates the likelihood over a grid of values
 	for \code{c(d,b)} (or \code{phi}).
 	It can be used when parameter estimates are sensitive to
-	starting values to give an approximation of the global max which can
+	starting values to give an approximation of the global maximum that can
 	then be used as the starting value in the numerical optimization in
 	\code{FCVARestn}.
 	\code{plot.FCVAR_grid} plots the likelihood function from \code{FCVARlikeGrid}.

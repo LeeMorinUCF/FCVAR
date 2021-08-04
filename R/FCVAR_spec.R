@@ -24,8 +24,8 @@
 #' \describe{
 #'   \item{\code{D}}{A (\code{kmax} + 1) x 2 vector of estimates of d and b.}
 #'   \item{\code{loglik}}{A (\code{kmax} + 1) x 1 vector of log-likelihood values.}
-#'   \item{\code{LRtest}}{A (\code{kmax} + 1) x 1 vector of likelihood ratio test statistics for tests of significance of Gamma_{j+1}}
-#'   \item{\code{pvLRtest}}{A (\code{kmax} + 1) x 1 vector of P-values for the likelihood ratio tests of significance of Gamma_{j+1}}
+#'   \item{\code{LRtest}}{A (\code{kmax} + 1) x 1 vector of likelihood ratio test statistics for tests of significance of \eqn{Gamma_{j+1}}}
+#'   \item{\code{pvLRtest}}{A (\code{kmax} + 1) x 1 vector of P-values for the likelihood ratio tests of significance of \eqn{Gamma_{j+1}}}
 #'   \item{\code{i_aic}}{The lag corresponding to the minimum value of the Akaike information criteria.}
 #'   \item{\code{aic}}{A (\code{kmax} + 1) x 1 vector of values of the Akaike information criterion.}
 #'   \item{\code{i_bic}}{The lag corresponding to the minimum value of the Bayesian information criteria.}
@@ -284,7 +284,7 @@ summary.FCVAR_lags <- function(object, ...) {
 #' Test for Cointegrating Rank
 #'
 #' \code{FCVARrankTests} performs a sequence of  likelihood ratio tests
-# 	for cointegrating rank.
+#' 	for cointegrating rank.
 #'
 #' @param x A matrix of variables to be included in the system.
 #' @param k The number of lags in the system.
@@ -292,7 +292,7 @@ summary.FCVAR_lags <- function(object, ...) {
 #' generated from \code{FCVARoptions()}.
 #' @return An S3 object of type \code{FCVAR_ranks} containing the results
 #' from cointegrating rank tests, containing the following \code{(p+1)} vectors
-#' with \code{i}th element corresponding to \code{rank = i-1}:
+#' with \code{i}th element corresponding to \code{rank = i-1},
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{dHat}}{Estimates of \code{d}.}
@@ -516,7 +516,7 @@ summary.FCVAR_ranks <- function(object, ...) {
 #' Distribution of LR Test Statistic for the Rank Test
 #'
 #' \code{FCVARbootRank} generates a distribution of a likelihood ratio
-#'  test statistic for the rank test using a Wild bootstrap,
+#'  test statistic for the rank test using a wild bootstrap,
 #'	following the method of Cavaliere, Rahbek, and Taylor (2010). It
 #'  takes the two ranks as inputs to estimate the model under the
 #'  null and the model under the alternative.
@@ -532,7 +532,7 @@ summary.FCVAR_ranks <- function(object, ...) {
 #' including the following parameters:
 #' \describe{
 #'   \item{\code{LRbs}}{A B x 1 vector of simulated likelihood ratio statistics.}
-#'   \item{\code{pv}}{An approximate p-value for LRstat based on the bootstrap distribution. }
+#'   \item{\code{pv}}{An approximate p-value for the LR statistic based on the bootstrap distribution. }
 #'   \item{\code{H}}{A list containing LR test results. It is
 #'   identical to the output from \code{HypoTest}, with one addition,
 #'   namely \code{H$pvBS} which is the bootstrap p-value)}

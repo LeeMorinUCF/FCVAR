@@ -21,7 +21,7 @@ generated from \code{FCVARoptions()}.}
 }
 \value{
 An S3 object of type \code{FCVAR_roots} with the following elements:
-#' \describe{
+\describe{
   \item{\code{cPolyRoots}}{A vector of the roots of the characteristic polynomial.
     It is an element of the list of estimation \code{results} output from \code{FCVARestn}.}
   \item{\code{b}}{A numeric value of the fractional cointegration parameter.}
