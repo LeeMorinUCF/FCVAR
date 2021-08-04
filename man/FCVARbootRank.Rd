@@ -42,7 +42,7 @@ following the method of Cavaliere, Rahbek, and Taylor (2010). It
  null and the model under the alternative.
 }
 \examples{
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -51,8 +51,10 @@ opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 
 opt$plotRoots <- 0
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 set.seed(42)
-FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 2)
+# In practice, set the number of bootstraps so that (B+1)*alpha is an integer,
+# where alpha is the chosen level of significance.
+# For example, set B = 999 (but it takes a long time to compute).
 }
 }
 \references{

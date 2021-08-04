@@ -66,7 +66,7 @@ If \code{opt$LocalMax == 0}, \code{FCVARlikeGrid} returns the parameter values
 }
 \examples{
 # Restrict equality of fractional parameters.
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -74,14 +74,13 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 1 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
-# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
-plot.FCVAR_grid(likeGrid_params)
+plot(likeGrid_params)
 }
 
 # Linear restriction on fractional parameters.
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -92,15 +91,14 @@ opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$R_psi        <- matrix(c(2, -1), nrow = 1, ncol = 2)
 opt$r_psi        <- 0.5
 opt$progress     <- 2 # Show progress report on each value of b.
-# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
-plot.FCVAR_grid(likeGrid_params)
+plot(likeGrid_params)
 }
 
 # Constrained 2-dimensional optimization.
 # Impose restriction dbMax >= d >= b >= dbMin.
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -109,13 +107,12 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 1 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
-# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 }
 
 # Unconstrained 2-dimensional optimization.
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
 opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -124,7 +121,6 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 opt$restrictDB   <- 0 # impose restriction d=b ? 1 <- yes, 0 <- no.
 opt$progress     <- 2 # Show progress report on each value of b.
-# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
 }

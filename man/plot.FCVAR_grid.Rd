@@ -31,7 +31,7 @@ Calls \code{graphics::persp} when \code{x$Grid2d == TRUE} and
 calls \code{graphics::plot} when \code{x$Grid2d == FALSE}.
 }
 \examples{
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
 opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -41,9 +41,8 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 opt$progress <- 2 # Show progress report on each value of b.
-# newOpt <- FCVARoptionUpdates(opt, p = 3, r = 1) # Need to update restriction matrices.
 likeGrid_params <- FCVARlikeGrid(x, k = 2, r = 1, opt)
-plot(likeGrid_params)
+graphics::plot(likeGrid_params)
 }
 }
 \seealso{

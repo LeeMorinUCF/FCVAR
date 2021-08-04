@@ -22,7 +22,7 @@ A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
 \code{FCVARforecast} calculates recursive forecasts with the FCVAR model.
 }
 \examples{
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.

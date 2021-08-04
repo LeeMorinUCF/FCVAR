@@ -167,8 +167,10 @@ FCVARhypoTest <- function(modelUNR, modelR) {
 #' optRES <- opt
 #' optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 #' set.seed(42)
-#' FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 #' FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 2)
+#' # In practice, set the number of bootstraps so that (B+1)*alpha is an integer,
+#' # where alpha is the chosen level of significance.
+#' # For example, set B = 999 (but it takes a long time to compute).
 #' }
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -816,12 +818,14 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' summary(object = MVWNtest_stats)
 #' }
 #'
+#' \donttest{
 #' set.seed(27)
 #' WN <- stats::rnorm(100)
 #' RW <- cumsum(stats::rnorm(100))
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 #' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
-#' \donttest{summary(object = MVWNtest_stats)}
+#' summary(object = MVWNtest_stats)
+#' }
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.

@@ -40,7 +40,7 @@ where the roots are given as the inverse eigenvalues of the
 coefficient matrix.
 }
 \examples{
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.

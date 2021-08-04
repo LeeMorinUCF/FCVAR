@@ -44,7 +44,7 @@ of options as inputs to estimate the model under the null and the
 unrestricted model.
 }
 \examples{
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -56,8 +56,10 @@ optUNR <- opt
 optRES <- opt
 optRES$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 set.seed(42)
-FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 999)
 FCVARboot_stats <- FCVARboot(x, k = 2, r = 1, optRES, optUNR, B = 2)
+# In practice, set the number of bootstraps so that (B+1)*alpha is an integer,
+# where alpha is the chosen level of significance.
+# For example, set B = 999 (but it takes a long time to compute).
 }
 }
 \references{

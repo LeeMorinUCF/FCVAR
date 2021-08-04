@@ -28,7 +28,7 @@ including the following parameters:
 	"model is \code{modelUNR}".
 }
 \examples{
-\dontrun{
+\donttest{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -43,14 +43,14 @@ m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
 Hdb <- FCVARhypoTest(modelUNR = m1, modelR = m1r1)
 }
 
-\dontrun{
+\donttest{
 opt1 <- opt
 opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 Hbeta1 <- FCVARhypoTest(m1, m1r2)
 }
 
-\dontrun{
+\donttest{
 opt1 <- opt
 opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)

@@ -30,11 +30,11 @@ and \code{fracdiff::diffseries(x, d = 0.5)} is numerically small.
 \examples{
 set.seed(42)
 WN <- matrix(stats::rnorm(200), nrow = 100, ncol = 2)
-\dontrun{MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)}
+\donttest{MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)}
 x <- FracDiff(x = WN, d = - 0.5)
-\dontrun{MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)}
+\donttest{MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)}
 WN_x_d <- FracDiff(x, d = 0.5)
-\dontrun{MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)}
+\donttest{MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)}
 }
 \references{
 Jensen, A. N. and M. \enc{Ø}{O}. Nielsen (2014).

@@ -20,6 +20,7 @@ the output of \code{FCVARlagSelect}.
 	selection on it by using the likelihood ratio test.
 }
 \examples{
+\donttest{
 opt <- FCVARoptions()
 opt$gridSearch   <- 0 # Disable grid search in optimization.
 opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -27,7 +28,8 @@ opt$dbMax        <- c(2.00, 2.00) # Set upper bound for d,b.
 opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 FCVAR_lag_1 <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-\dontrun{summary(object = FCVAR_lag_1)}
+summary(object = FCVAR_lag_1)
+}
 }
 \seealso{
 \code{FCVARoptions} to set default estimation options.

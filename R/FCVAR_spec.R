@@ -189,6 +189,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -196,7 +197,8 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' FCVAR_lag_1 <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-#' \donttest{summary(object = FCVAR_lag_1)}
+#' summary(object = FCVAR_lag_1)
+#' }
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
@@ -434,7 +436,7 @@ FCVARrankTests <- function(x, k, opt) {
   # Print the results to screen.
   if (opt$print2screen) {
 
-    summary.FCVAR_ranks(object = rankTestStats)
+    summary(object = rankTestStats)
 
   }
 
@@ -463,7 +465,7 @@ FCVARrankTests <- function(x, k, opt) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' rankTestStats <- FCVARrankTests(x, k = 2, opt)
-#' summary.FCVAR_ranks(object = rankTestStats)
+#' summary(object = rankTestStats)
 #' }
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
@@ -547,8 +549,10 @@ summary.FCVAR_ranks <- function(object, ...) {
 #' opt$plotRoots <- 0
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' set.seed(42)
-#' FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 999)
 #' FCVARbootRank_stats <- FCVARbootRank(x, k = 2, opt, r1 = 0, r2 = 1, B = 2)
+#' # In practice, set the number of bootstraps so that (B+1)*alpha is an integer,
+#' # where alpha is the chosen level of significance.
+#' # For example, set B = 999 (but it takes a long time to compute).
 #' }
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
