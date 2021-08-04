@@ -24,6 +24,8 @@ Description: Estimation and inference using the Fractionally Cointegrated
     set of options for hypothesis testing, including tests of hypotheses on the 
     cointegrating relations, the adjustment coefficients and the fractional 
     differencing parameters. 
+    An article describing the FCVAR model with examples is available on the Webpage 
+    <https://sites.google.com/view/mortennielsen/software>.
 Depends: R (>= 3.5)
 Imports:
     pracma,

@@ -21,13 +21,13 @@ citEntry(entry = "Misc",
     author = "Lealand Morin and Morten \\O. Nielsen and Michal K. Popiel",
     year = "2021",
     note = "Unpublished manuscript",
-    url = "https://github.com/LeeMorinUCF/FCVAR/blob/master/FCVAR_README.pdf",
+    url = "https://sites.google.com/view/mortennielsen/software",
 
   textVersion  =
   paste("Lealand Morin, Morten \\O. Nielsen and Michal K. Popiel (2021).",
         "FCVAR: An R Package for the Fractionally Cointegrated Vector Autoregressive Model.",
         "Unpublished manuscript.",
-        "URL https://github.com/LeeMorinUCF/FCVAR/blob/master/FCVAR_README.pdf.")
+        "URL https://sites.google.com/view/mortennielsen/software")
 )
 
 
