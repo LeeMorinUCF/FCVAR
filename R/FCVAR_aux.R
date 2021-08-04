@@ -1163,12 +1163,21 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
     like.facet.range <- cut(like.facet.center, 100)
 
     # Reduce the size of margins.
+    # First, store user's existing par() settings and restore on exit.
+    oldpar <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(oldpar))
+
+    # Defaults are as follows:
     # graphics::par()$mar
     # 5.1 4.1 4.1 2.1
     # bottom, left, top and right margins respectively.
     graphics::par(mar = c(1.1, 1.1, 2.1, 1.1))
-    # Reset after:
+
+    # Remember to reset after:
+    # Not with defaults:
     # graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
+    # But with whatever user settings were in place:
+    # graphics::par(oldpar)
 
     graphics::persp(dGrid_orig, bGrid_orig,
           like2D,
@@ -1184,7 +1193,8 @@ plot.FCVAR_grid <- function(x, y = NULL, ...) {
     )
 
     # Reset the size of margins.
-    graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
+    # graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
+    graphics::par(oldpar)
 
   } else {
     # 1-dimensional plot.

@@ -313,49 +313,6 @@ plot(equilF,
 abline(v = T_xf, col = 'black', lwd = 3, lty = 'dashed')
 
 
-#--------------------------------------------------------------------------------
-# Plot the series and forecast together.
-#--------------------------------------------------------------------------------
-
-plot.new()
-
-# Bottom pane: Equilibrium Relation
-par(fig = c(0, 1, 0, 0.4), new = TRUE, mar = c(5.1, 4.1, 1.1, 2.1))
-# Reset plotting parameters after plotting figure:
-# par(fig = c(0, 1, 0, 1), new = FALSE, mar = c(5.1, 4.1, 4.1, 2.1))
-plot(equilF,
-     xlab = 'Time, t',
-     ylab = 'Equilibrium',
-     ylim = c(yMinEq, yMaxEq),
-     type = 'l',
-     lwd = 3,
-     col = 'black')
-abline(v = T_xf, col = 'black', lwd = 3, lty = 'dashed')
-
-# Top pane: Series and Forecast.
-par(fig = c(0, 1, 0.4, 1.0), new = TRUE, mar = c(2.1, 4.1, 4.1, 2.1))
-col_num <- 1
-plot(seriesF[, col_num],
-     main = 'Variables and Equilibrium Relation with Forecast',
-     ylab = 'Variables',
-     ylim = c(yMinS, yMaxS),
-     type = 'l',
-     lwd = 3,
-     col = color_list[col_num])
-abline(v = T_xf, col = 'black', lwd = 3, lty = 'dashed')
-for (col_num in 2:ncol(seriesF)) {
-  lines(seriesF[, col_num],
-        lwd = 3,
-        lty = col_num,
-        col = color_list[col_num])
-}
-legend(220, 22, legend = label_list,
-       col = color_list, lty = 1:3, cex = 0.55)
-
-# Reset plotting parameters after plot is complete.
-par(fig = c(0, 1, 0, 1), new = FALSE, mar = c(5.1, 4.1, 4.1, 2.1))
-
-
 ################################################################################
 # Bootstrap Hypothesis Test
 ################################################################################
