@@ -557,7 +557,7 @@ GetParams <- function(x, k, r, db, opt) {
 #'
 #' @examples
 #' # Restrict equality of fractional parameters.
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -572,7 +572,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' }
 #'
 #' # Linear restriction on fractional parameters.
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -591,7 +591,7 @@ GetParams <- function(x, k, r, db, opt) {
 #'
 #' # Constrained 2-dimensional optimization.
 #' # Impose restriction dbMax >= d >= b >= dbMin.
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$dbStep1D     <- 0.2 # Coarser grid for plotting example.
 #' opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -606,7 +606,7 @@ GetParams <- function(x, k, r, db, opt) {
 #' }
 #'
 #' # Unconstrained 2-dimensional optimization.
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
 #' opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -1107,7 +1107,7 @@ FCVARlikeGrid <- function(x, k, r, opt) {
 #' for the generic plot function.
 #' @return NULL
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$dbStep1D     <- 0.1 # Coarser grid for plotting example.
 #' opt$dbStep2D     <- 0.2 # Coarser grid for plotting example.
@@ -1897,11 +1897,11 @@ Lbk <- function(x, b, k) {
 #' @examples
 #' set.seed(42)
 #' WN <- matrix(stats::rnorm(200), nrow = 100, ncol = 2)
-#' \dontrun{MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)}
+#' \donttest{MVWNtest_stats <- MVWNtest(x = WN, maxlag = 10, printResults = 1)}
 #' x <- FracDiff(x = WN, d = - 0.5)
-#' \dontrun{MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)}
+#' \donttest{MVWNtest_stats <- MVWNtest(x = x, maxlag = 10, printResults = 1)}
 #' WN_x_d <- FracDiff(x, d = 0.5)
-#' \dontrun{MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)}
+#' \donttest{MVWNtest_stats <- MVWNtest(x = WN_x_d, maxlag = 10, printResults = 1)}
 #' @family FCVAR auxiliary functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} calls \code{GetParams}, which calls \code{TransformData}

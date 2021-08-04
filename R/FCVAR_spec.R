@@ -196,7 +196,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 #' opt$constrained  <- 0 # Impose restriction dbMax >= d >= b >= dbMin ? 1 <- yes, 0 <- no.
 #' x <- votingJNP2014[, c("lib", "ir_can", "un_can")]
 #' FCVAR_lag_1 <- FCVARlagSelect(x, kmax = 3, r = 3, order = 12, opt)
-#' \dontrun{summary(object = FCVAR_lag_1)}
+#' \donttest{summary(object = FCVAR_lag_1)}
 #' @family FCVAR specification functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} is called repeatedly within this function
@@ -305,7 +305,7 @@ summary.FCVAR_lags <- function(object, ...) {
 #'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -455,7 +455,7 @@ FCVARrankTests <- function(x, k, opt) {
 #' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -538,7 +538,7 @@ summary.FCVAR_ranks <- function(object, ...) {
 #'   \item{\code{mUNR}}{Model estimates under the alternative hypothesis. }
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.

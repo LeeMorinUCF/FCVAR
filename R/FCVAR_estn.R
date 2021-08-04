@@ -38,7 +38,7 @@
 #'     generated from \code{FCVARoptions()}.}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -48,20 +48,20 @@
 #' m1 <- FCVARestn(x, k = 2, r = 1, opt)
 #' }
 #'
-#' \dontrun{
+#' \donttest{
 #' opt1 <- opt
 #' opt1$R_psi <- matrix(c(1, 0), nrow = 1, ncol = 2)
 #' opt1$r_psi <- 1
 #' m1r1 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' }
 #'
-#' \dontrun{
+#' \donttest{
 #' opt1 <- opt
 #' opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 #' m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' }
 #'
-#' \dontrun{
+#' \donttest{
 #' opt1 <- opt
 #' opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 #' m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
@@ -706,7 +706,7 @@ FCVARestn <- function(x, k, r, opt) {
 #' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.

@@ -18,7 +18,7 @@
 #'   \item{\code{p_LRtest}}{The p-value for the likelihood ratio test.}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -33,14 +33,14 @@
 #' Hdb <- FCVARhypoTest(modelUNR = m1, modelR = m1r1)
 #' }
 #'
-#' \dontrun{
+#' \donttest{
 #' opt1 <- opt
 #' opt1$R_Beta <- matrix(c(1, 0, 0), nrow = 1, ncol = 3)
 #' m1r2 <- FCVARestn(x, k = 2, r = 1, opt1)
 #' Hbeta1 <- FCVARhypoTest(m1, m1r2)
 #' }
 #'
-#' \dontrun{
+#' \donttest{
 #' opt1 <- opt
 #' opt1$R_Alpha <- matrix(c(0, 1, 0), nrow = 1, ncol = 3)
 #' m1r4 <- FCVARestn(x, k = 2, r = 1, opt1)
@@ -155,7 +155,7 @@ FCVARhypoTest <- function(modelUNR, modelR) {
 #'   \item{\code{mUNR}}{The model estimates under the alternative hypothesis.}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -273,7 +273,7 @@ FCVARboot <- function(x, k, r, optRES, optUNR, B) {
 #' @param NumPeriods The number of time periods in the simulation.
 #' @return A \code{NumPeriods} \eqn{\times p} matrix \code{xf} of forecasted values.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -400,7 +400,7 @@ FCVARforecast <- function(x, model, NumPeriods) {
 #'   \item{\code{b}}{A numeric value of the fractional cointegration parameter.}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -501,7 +501,7 @@ GetCharPolyRoots <- function(coeffs, opt, k, r, p) {
 #' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -574,7 +574,7 @@ summary.FCVAR_roots <- function(object, ...) {
 #' for the generic plot function.
 #' @return NULL
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -711,7 +711,7 @@ plot.FCVAR_roots <- function(x, y = NULL, ...) {
 #'   \item{\code{p}}{The number of variables in the system.}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -804,7 +804,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' @param ... additional arguments affecting the summary produced.
 #' @return NULL
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' opt <- FCVARoptions()
 #' opt$gridSearch   <- 0 # Disable grid search in optimization.
 #' opt$dbMin        <- c(0.01, 0.01) # Set lower bound for d,b.
@@ -821,7 +821,7 @@ MVWNtest <- function(x, maxlag, printResults) {
 #' RW <- cumsum(stats::rnorm(100))
 #' MVWN_x <- as.matrix(data.frame(WN = WN, RW = RW))
 #' MVWNtest_stats <- MVWNtest(x = MVWN_x, maxlag = 10, printResults = 1)
-#' \dontrun{summary(object = MVWNtest_stats)}
+#' \donttest{summary(object = MVWNtest_stats)}
 #' @family FCVAR postestimation functions
 #' @seealso \code{FCVARoptions} to set default estimation options.
 #' \code{FCVARestn} produces the residuals intended for this test.
