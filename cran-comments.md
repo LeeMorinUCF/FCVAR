@@ -52,7 +52,7 @@ There were three NOTEs:
 * Authors' names, conjugations of the verb "cointegrate," the verb "difference," 
 and the acronym "FCVAR" are not mis-spelled. 
 
-* Elapsed time > 10s for some examples.
+* Elapsed time > 10s for some examples. 
 
 
 ## Downstream dependencies

@@ -30,8 +30,8 @@ The \code{FCVAR_lags} object includes the following parameters:
 \describe{
   \item{\code{D}}{A (\code{kmax} + 1) x 2 vector of estimates of d and b.}
   \item{\code{loglik}}{A (\code{kmax} + 1) x 1 vector of log-likelihood values.}
-  \item{\code{LRtest}}{A (\code{kmax} + 1) x 1 vector of likelihood ratio test statistics for tests of significance of \eqn{Gamma_{j+1}}}
-  \item{\code{pvLRtest}}{A (\code{kmax} + 1) x 1 vector of P-values for the likelihood ratio tests of significance of \eqn{Gamma_{j+1}}}
+  \item{\code{LRtest}}{A (\code{kmax} + 1) x 1 vector of likelihood ratio test statistics for tests of significance of \eqn{\Gamma_{j+1}}.}
+  \item{\code{pvLRtest}}{A (\code{kmax} + 1) x 1 vector of P-values for the likelihood ratio tests of significance of \eqn{\Gamma_{j+1}}.}
   \item{\code{i_aic}}{The lag corresponding to the minimum value of the Akaike information criteria.}
   \item{\code{aic}}{A (\code{kmax} + 1) x 1 vector of values of the Akaike information criterion.}
   \item{\code{i_bic}}{The lag corresponding to the minimum value of the Bayesian information criteria.}
