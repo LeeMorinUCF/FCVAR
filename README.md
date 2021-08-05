@@ -37,13 +37,13 @@ is tested and vetted for submission to CRAN.
 
 ## Release Notes
 
-# August 5, 2021: Fifth submission (FCVAR v0.1.1).
+### August 5, 2021: Fifth submission (FCVAR v0.1.1).
 
 * Modified tolerance of bootstrap test results for Solaris platforms. 
 Test results are within acceptable tolerance. 
 
 
-# August 4, 2021: Fourth submission (FCVAR v0.1.0).
+### August 4, 2021: Fourth submission (FCVAR v0.1.0).
 
 * Added link to reference paper in the DESCRIPTION file. 
 * Changed examples with ```\dontrun``` to ```\donttest``` for examples
@@ -55,12 +55,12 @@ inserted command ```on.exit(par(oldpar))``` to restore user's settings,
 immediately after the change to ```par()```. 
 
 
-# July 30, 2021: Third submission (FCVAR v0.1.0).
+### July 30, 2021: Third submission (FCVAR v0.1.0).
 
 * Excluded examples with ```\dontrun``` if run time took longer than 5s.
 
 
-# July 30, 2021: Second submission (FCVAR v0.1.0).
+### July 30, 2021: Second submission (FCVAR v0.1.0).
 
 * Added cran-comments.md to .Rbuildignore.
 
