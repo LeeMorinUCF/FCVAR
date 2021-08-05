@@ -186,3 +186,18 @@ summary.FCVAR_ranks  5.19   0.00    5.18
 # expect_equal(10, 10 + 1e-6)
 # expect_equal(10, 11)
 
+
+
+# Common sequence of builds, tests and checks.
+devtools::load_all()
+devtools::document()
+devtools::build_manual()
+devtools::test()
+devtools::check()
+rhub_results <- rhub::check_for_cran()
+devtools::check_win_release()
+devtools::check_win_devel()
+devtools::release()
+# devtools::submit_cran() # Shortcut without all the questions.
+
+

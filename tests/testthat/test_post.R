@@ -64,7 +64,7 @@ test_that("Bootstrap hypothesis testing results and output are correct", {
   FCVARboot_stats_test$mUNR$Residuals <- NULL
   # These are not important for determining the accuracy of this function.
 
-  expect_equal(FCVARboot_stats_test, FCVARboot_stats)
+  expect_equal(FCVARboot_stats_test, FCVARboot_stats, tolerance = 1e-6)
   expect_equal(FCVARboot_stats_text, FCVARboot_stats_text_soln)
 })
 
