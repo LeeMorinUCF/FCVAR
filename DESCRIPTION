@@ -1,6 +1,6 @@
 Package: FCVAR
 Title: Estimation and Inference for the Fractionally Cointegrated VAR
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
   c(person(given = "Lealand",
            family = "Morin",
