@@ -201,3 +201,17 @@ devtools::release()
 # devtools::submit_cran() # Shortcut without all the questions.
 
 
+# After the release, an automated file CRAN-RELEASES will appear in the main directory.
+# Create a tag in git as follows:
+# git tag name_of_tag commit_hash
+# Then push the tag, like any other commit, with this command:
+# git push origin name_of_tag
+# name_of_tag is usually of the form package_name_v9.9.9
+
+# Then go to github.com and create a release linked to this tag.
+# Copy the description from your NEWS.md file in the release description.
+
+# Then delete the CRAN-RELEASES file, which will be replaced on the next release.
+
+
+
