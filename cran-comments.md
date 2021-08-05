@@ -1,5 +1,10 @@
 # FCVAR 0.1.0
 
+# August 5, 2021: Fifth submission.
+
+* Modified tolerance of bootstrap test results for Solaris platforms.
+Test results are within acceptable tolerance. 
+
 # August 4, 2021: Fourth submission.
 
 * Added link to reference paper in the DESCRIPTION file. 

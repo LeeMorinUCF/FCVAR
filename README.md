@@ -16,16 +16,32 @@ for more information about the FCVAR model.
 
 ## How to Install FCVAR
 
-Install the development version on GitHub using the ```devtools``` package:
+Install the latest release using the ```install.packages()``` function:
+
+```
+install.packages("FCVAR")
+library(FCVAR)
+```
+
+Alternatively, you can install the development version on 
+GitHub using the ```devtools``` package:
 
 ```
 library(devtools)
 devtools::install_github("LeeMorinUCF/FCVAR")
 ```
 
+However, the version on CRAN is recommended because that version
+is tested and vetted for submission to CRAN. 
 
 
 ## Release Notes
+
+# August 5, 2021: Fifth submission.
+
+* Modified tolerance of bootstrap test results for Solaris platforms. 
+Test results are within acceptable tolerance. 
+
 
 # August 4, 2021: Fourth submission.
 
