@@ -192,11 +192,14 @@ summary.FCVAR_ranks  5.19   0.00    5.18
 devtools::load_all()
 devtools::document()
 devtools::build_manual()
+# Run these locally first to avoid embarrassment.
 devtools::test()
 devtools::check()
-rhub_results <- rhub::check_for_cran()
+# Run these first, since they run quickly but return results with a delay.
 devtools::check_win_release()
 devtools::check_win_devel()
+# Run this next, since it takes longer but return results quickly.
+rhub_results <- rhub::check_for_cran()
 devtools::release()
 # devtools::submit_cran() # Shortcut without all the questions.
 
