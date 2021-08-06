@@ -73,8 +73,7 @@ The auxiliary functions are used to perform intermediate calculations
 
 A dataset \code{votingJNP2014} is included for examples of the model building process.
   Sample model builds with hypothesis tests and examples of other extensions are found
-  in the example scripts \code{FCVAR_replication_JNP2014.R} and
-  \code{FCVAR_extension_JNP2014.R}.
+  in the example script \code{FCVAR_demo_JNP2014.R}.
   See FCVAR_README.pdf for details
   at \code{https://github.com/LeeMorinUCF/FCVAR/blob/master/FCVAR_README.pdf}
   and also see \code{https://sites.google.com/view/mortennielsen/software}
