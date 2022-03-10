@@ -388,16 +388,24 @@ FCVARrankTests <- function(x, k, opt) {
     # (1) no deterministic terms, or
     # (2) there is only restricted constant and d=b, or
     # (3) there is only a level parameter and d=b.
+    # In all cases, p-values are only calculated
+    #   rank of system (iq) is an integer from 1 through 12.
     if (bHat[r+1] > 0 & bHat[r+1] < 2 & (
       (!opt$rConstant & !opt$unrConstant & !opt$levelParam) |
       (opt$rConstant  & !opt$unrConstant & opt$restrictDB) |
       (opt$levelParam & !opt$unrConstant & opt$restrictDB) )  ) {
 
       # Call function from fracdist package for p-values.
-      p_val <- fracdist::fracdist_values(iq = p - r,
-                                         iscon = consT,
-                                         bb = bHat[r+1],
-                                         stat = LRstat[r+1])
+      if (p - r <= 12) {
+        p_val <- fracdist::fracdist_values(iq = p - r,
+                                           iscon = consT,
+                                           bb = bHat[r+1],
+                                           stat = LRstat[r+1])
+      } else {
+        warning(sprintf('P-values not calculated for the rank test with rank %d.\n', r),
+                'Tables of simulated quantiles are only avaiable for rank 12 or lower.',
+                'P-values can be calculated by simulation with the FCVARbootRank() function.')
+      }
 
 
     } else {
