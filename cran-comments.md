@@ -15,7 +15,6 @@ p-values are only available by simulation with the FCVARbootRank() function.
 ### Checks on Rhub:
 * Fedora Linux, R-devel, clang, gfortran
 * Ubuntu Linux 20.04.1 LTS, R-release, GCC
-* Windows Server 2008 R2 SP1, R-devel, 32/64 bit
 * Windows Server 2022, R-devel, 64 bit
 
 
