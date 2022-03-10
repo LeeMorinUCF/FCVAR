@@ -7,6 +7,38 @@
 * Added warning message for rank test with rank above 12. In this case, 
 p-values are only available by simulation with the FCVARbootRank() function. 
 
+
+
+## Test environments
+
+
+### Checks on Rhub:
+* Fedora Linux, R-devel, clang, gfortran
+* Ubuntu Linux 20.04.1 LTS, R-release, GCC
+* Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+* Windows Server 2022, R-devel, 64 bit
+
+
+### Checks on local machine:
+* Windows 10 Enterprise, version 20H2, OS build 19042.985, R 4.0.5
+
+### Checks on win-builder:
+* devel and release
+
+
+
+## R CMD check results
+There were no ERRORs or WARNINGs.
+
+There was one NOTE from the check on Windows Server 2022, R-devel, 64 bit on Rhub:
+
+* checking for detritus in the temp directory ... NOTE
+  'lastMiKTeXException'
+* Apparently, this is a known issue with Rhub and does not suggest a problem with the package. 
+
+
+## Previous Submissions
+
 ### August 6, 2021: Sixth submission (FCVAR v0.1.1).
 
 * For models with restricted estimation, skipped tests on CRAN 
