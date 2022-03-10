@@ -2016,7 +2016,12 @@ GetFreeParams <- function(k, r, p, opt, rankJ) {
   numParams <- fDB + fpA + fpB + fpG + fpM + fpRrh + fpUrh
 
   # ---- Next count the number of restrictions -------- %
-  rDB <- nrow(opt$R_psi)
+  # rDB <- nrow(opt$R_psi) # Returns numeric(0) when d==b not imposed.
+  if(is.null(opt$R_psi)) {
+    rDB <- 0
+  } else {
+    rDB <- nrow(opt$R_psi)
+  }
 
 
   if(is.null(opt$R_Beta) & is.null(opt$R_Alpha)) {

@@ -117,6 +117,7 @@ FCVARlagSelect <- function(x, kmax, r, order, opt ) {
 
     message(sprintf('Finished Estimation for k = %d and r = %d.', k, r))
 
+
     # ----- Record relevant output ---------%
     loglik[k+1] <- results$like
     D[k+1, ]    <- results$coeffs$db
