@@ -1,7 +1,7 @@
-# FCVAR 0.1.1
+# FCVAR 0.1.2
 
-### August 6, 2021: Sixth submission (FCVAR v0.1.1).
 
-* For models with restricted estimation, skipped tests on CRAN 
-that compare printed output and require exact equality (i.e. without tolerance), 
-but retained tests on same with default tolerance for numerical equality. 
+### March 10, 2022: Seventh submission (FCVAR v0.1.2).
+
+* Adjustment for issue with counting the number of free parameters in constrained model. 
+
