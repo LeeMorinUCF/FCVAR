@@ -35,7 +35,7 @@ However, the version on CRAN is recommended because that version
 is tested and vetted for submission to CRAN. 
 
 Currently, the development version has no new features that are 
-not already available in the relesed version available on CRAN. 
+not already available in the released version available on CRAN. 
 
 
 ## Release Notes
