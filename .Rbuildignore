@@ -8,3 +8,4 @@
 ^FCVAR_README\.pdf$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
+^CRAN-SUBMISSION$
