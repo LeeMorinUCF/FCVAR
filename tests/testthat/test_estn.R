@@ -272,11 +272,17 @@ test_that("restricted estimation with R_Alpha <- c(0, 1, 0) is correct", {
   m1r4$SE <- NULL
   m1r4_test_SE <- m1r4_test$SE
   m1r4_test$SE <- NULL
-  # Accuracy can only be so high on 32-bit platforms.
+  # Additional comparisons on M1mac found numerical differences in gammaHat.
+  m1r4_test_gammaHat <- m1r4_test$gammaHat
+  m1r4_test$gammaHat <- NULL
+  m1r4_gammaHat <- m1r4$gammaHat
+  m1r4$gammaHat <- NULL
 
+  # Accuracy can only be so high on 32-bit platforms.
   expect_equal(m1r4_test, m1r4)
   expect_equal(m1r4_test_NegInvHessian, m1r4_NegInvHessian, tolerance = 10^(-5))
   expect_equal(m1r4_test_SE, m1r4_SE, tolerance = 10^(-5))
+  expect_equal(m1r4_test_gammaHat, m1r4_gammaHat, tolerance = 10^(-5))
 
   # Exact equality (without tolerance) is not expected on all platforms.
   skip_on_cran()
