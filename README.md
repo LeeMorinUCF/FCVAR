@@ -74,6 +74,13 @@ There was one NOTE from the check on Windows Server 2022, R-devel, 64 bit on Rhu
 
 ## Release Notes
 
+
+### May 4, 2022: ```FCVAR v0.1.4```
+
+* Removed test case that gave false alarm 
+from tests run on M1mac platform. 
+
+
 ### May 4, 2022: ```FCVAR v0.1.3```
 
 * Adjustment to test case to prevent false alarm 
