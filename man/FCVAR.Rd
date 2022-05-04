@@ -75,7 +75,10 @@ A dataset \code{votingJNP2014} is included for examples of the model building pr
   Sample model builds with hypothesis tests and examples of other extensions are found
   in the example script \code{FCVAR_demo_JNP2014.R}.
   See FCVAR_README.pdf for details
-  at \code{https://github.com/LeeMorinUCF/FCVAR/blob/master/FCVAR_README.pdf}
+  at
+
+  \code{https://github.com/LeeMorinUCF/FCVAR/blob/master/FCVAR_README.pdf}
+
   and also see \code{https://sites.google.com/view/mortennielsen/software}
   for more information about estimating the FCVAR model.
 }

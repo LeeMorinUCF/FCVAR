@@ -36,13 +36,13 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Language: en-US
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     knitr,
     rmarkdown,
     testthat
 NeedsCompilation: no
-Packaged: 2022-05-04 10:07:23 UTC; le279259
+Packaged: 2022-05-04 10:37:23 UTC; le279259
 Author: Lealand Morin [aut, cre] (<https://orcid.org/0000-0001-8539-1386>),
   Morten Nielsen [aut] (<https://orcid.org/0000-0002-1337-9844>),
   Michal Popiel [aut]
